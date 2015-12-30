@@ -1,0 +1,5 @@
+apply plugin: 'groovy'
+
+dependencies {
+    compile 'com.android.tools.build:gradle:1.5.0'
+}
