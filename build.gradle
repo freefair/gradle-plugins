@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'groovy'
 
 repositories {
     jcenter()
@@ -6,4 +6,5 @@ repositories {
 
 dependencies {
     compile gradleApi()
+    compile localGroovy()
 }
