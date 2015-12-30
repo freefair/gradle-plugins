@@ -1,5 +1,4 @@
 package io.freefair.gradle.plugin
-
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.BaseVariant
@@ -8,6 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.internal.DefaultDomainObjectSet
+import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
@@ -38,7 +38,10 @@ class AndroidMavenPlugin implements Plugin<Project> {
             return;
         }
 
-        Task allJavadocTask = project.task("javadoc");
+        Task allJavadocTask = project.task("javadoc") { Task jd ->
+            jd.description = "Generate Javadoc for all variants"
+            jd.group = JavaBasePlugin.DOCUMENTATION_GROUP
+        }
 
         variants.all { variant ->
 
@@ -49,7 +52,8 @@ class AndroidMavenPlugin implements Plugin<Project> {
             } as Jar
 
             Javadoc javadocTask = project.task("javadoc${variant.name.capitalize()}", type: Javadoc) { Javadoc javadoc ->
-                description = "Generate Javadoc for the $variant.name variant"
+                javadoc.description = "Generate Javadoc for the $variant.name variant"
+                javadoc.group = JavaBasePlugin.DOCUMENTATION_GROUP;
 
                 javadoc.source = variant.javaCompiler.source
                 javadoc.classpath = variant.javaCompiler.classpath
@@ -63,7 +67,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
 
                 javadoc.setFailOnError false
 
-                if(project.hasProperty("docsDir")){
+                if (project.hasProperty("docsDir")) {
                     File baseDocsDir = project.docsDir;
                     javadoc.destinationDir = new File(baseDocsDir, "javadoc/${variant.dirName}")
                 }
@@ -72,11 +76,11 @@ class AndroidMavenPlugin implements Plugin<Project> {
 
             allJavadocTask.dependsOn javadocTask
 
-            Jar javadocJarTask = project.task("javadoc${variant.name.capitalize()}Jar", type: Jar, dependsOn: javadocTask) {
-                description = "Generate the javadoc jar for the ${variant.name} variant"
+            Jar javadocJarTask = project.task("javadoc${variant.name.capitalize()}Jar", type: Jar, dependsOn: javadocTask) { Jar jar ->
+                jar.description = "Generate the javadoc jar for the ${variant.name} variant"
 
-                classifier = 'javadoc'
-                from javadocTask.destinationDir
+                jar.classifier = 'javadoc'
+                jar.from javadocTask.destinationDir
             } as Jar
 
             if (libraryExtension == null || (libraryExtension.publishNonDefault || libraryExtension.defaultPublishConfig.equals(variant.name))) {
