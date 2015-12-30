@@ -10,6 +10,8 @@ subprojects {
     apply plugin: 'groovy'
     apply plugin: 'maven'
 
+    sourceCompatibility = JavaVersion.VERSION_1_7
+
     dependencies {
         compile gradleApi()
         compile localGroovy()
