@@ -48,7 +48,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
             jd.group = JavaBasePlugin.DOCUMENTATION_GROUP
         }
 
-        Task allJavadocJarTask = project.task("sourcesJar") { Task j ->
+        Task allJavadocJarTask = project.task("javadocJar") { Task j ->
             j.description = "Generate the javadoc jar for all variants"
             j.group = "jar"
         }
