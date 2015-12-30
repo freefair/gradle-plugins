@@ -22,7 +22,7 @@ public class GitVersionPlugin implements Plugin<Project> {
             if(lastTag.equals(currentTag)){
                 if(currentTag.equals("")) {
                     project.version = "-SNAPSHOT"
-                    project.logger.warn("No git tag found")
+                    project.logger.warn "No git tag found"
                 }
                 else
                     project.version = currentTag
@@ -30,7 +30,7 @@ public class GitVersionPlugin implements Plugin<Project> {
                 project.version = "$currentTag-SNAPSHOT"
             }
         } catch (Exception e){
-            project.logger.error("Can't evaluate git tags", e);
+            project.logger.error "Can't evaluate git tags", e
         }
     }
 }

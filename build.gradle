@@ -7,4 +7,6 @@ repositories {
 dependencies {
     compile gradleApi()
     compile localGroovy()
+    compile 'com.android.tools.build:gradle:1.5.0'
+    compile 'com.github.dcendents:android-maven-gradle-plugin:1.3'
 }
