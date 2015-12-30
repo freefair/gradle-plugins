@@ -1,4 +1,5 @@
 package io.freefair.gradle.plugin
+
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.BaseVariant
@@ -19,9 +20,13 @@ class AndroidMavenPlugin implements Plugin<Project> {
         DefaultDomainObjectSet<BaseVariant> variants = null;
         LibraryExtension libraryExtension = null;
 
+        boolean isLibrary = false;
+        boolean isApp = false;
+
         try {
             libraryExtension = project.android
             variants = libraryExtension.libraryVariants;
+            isLibrary = true;
         } catch (Exception e) {
             project.logger.debug("No Library found", e)
         }
@@ -29,6 +34,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
         try {
             AppExtension appExt = project.android
             variants = appExt.applicationVariants;
+            isApp = true;
         } catch (Exception e) {
             project.logger.debug("No Application found", e)
         }
@@ -38,19 +44,19 @@ class AndroidMavenPlugin implements Plugin<Project> {
             return;
         }
 
-        Task allSourcesJarTask = project.task("sourcesJar") { Task j ->
-            j.description = "Generate the sources jar for all variants"
-            j.group = "jar"
+        Task allSourcesJarTask = project.task("sourcesJar") { Task asjTask ->
+            asjTask.description = "Generate the sources jar for all variants"
+            asjTask.group = "jar"
         }
 
-        Task allJavadocTask = project.task("javadoc") { Task jd ->
-            jd.description = "Generate Javadoc for all variants"
-            jd.group = JavaBasePlugin.DOCUMENTATION_GROUP
+        Task allJavadocTask = project.task("javadoc") { Task ajdTasks ->
+            ajdTasks.description = "Generate Javadoc for all variants"
+            ajdTasks.group = JavaBasePlugin.DOCUMENTATION_GROUP
         }
 
-        Task allJavadocJarTask = project.task("javadocJar") { Task j ->
-            j.description = "Generate the javadoc jar for all variants"
-            j.group = "jar"
+        Task allJavadocJarTask = project.task("javadocJar") { Task ajdjTask ->
+            ajdjTask.description = "Generate the javadoc jar for all variants"
+            ajdjTask.group = "jar"
         }
 
         variants.all { variant ->
@@ -71,20 +77,21 @@ class AndroidMavenPlugin implements Plugin<Project> {
                 javadoc.group = JavaBasePlugin.DOCUMENTATION_GROUP;
 
                 javadoc.source = variant.javaCompiler.source
-                javadoc.classpath = variant.javaCompiler.classpath
+                def androidJar = "${project.android.sdkDirectory}/platforms/${project.android.compileSdkVersion}/android.jar"
+                javadoc.classpath = variant.javaCompiler.classpath + project.files(androidJar)
 
                 if (javadoc.getOptions() instanceof StandardJavadocDocletOptions) {
                     StandardJavadocDocletOptions realOptions = getOptions()
 
                     realOptions.links "http://docs.oracle.com/javase/7/docs/api/"
                     realOptions.links "http://developer.android.com/reference/"
+                    realOptions.addStringOption('Xdoclint:none', '-quiet')
                 }
 
                 javadoc.setFailOnError false
 
                 if (project.hasProperty("docsDir")) {
-                    File baseDocsDir = project.docsDir;
-                    javadoc.destinationDir = new File(baseDocsDir, "javadoc/${variant.dirName}")
+                    javadoc.destinationDir = new File(project.docsDir, "javadoc/${variant.dirName}")
                 }
 
             } as Javadoc
@@ -93,6 +100,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
 
             Jar javadocJarTask = project.task("javadoc${variant.name.capitalize()}Jar", type: Jar, dependsOn: javadocTask) { Jar jar ->
                 jar.description = "Generate the javadoc jar for the ${variant.name} variant"
+                jar.group = "jar"
 
                 jar.appendix = variant.name
                 jar.classifier = 'javadoc'
@@ -101,7 +109,13 @@ class AndroidMavenPlugin implements Plugin<Project> {
 
             allJavadocJarTask.dependsOn javadocJarTask
 
-            if (libraryExtension == null || (libraryExtension.publishNonDefault || libraryExtension.defaultPublishConfig.equals(variant.name))) {
+            boolean publishVariant = false;
+
+            if (isLibrary && (libraryExtension.publishNonDefault || libraryExtension.defaultPublishConfig.equals(variant.name))) publishVariant = true
+            if (isApp && variant.baseName.contains("release")) publishVariant = true
+
+            if (publishVariant) {
+                project.logger.info("Adding the $variant.name flavor to the 'archives' artifacts")
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, sourcesJarTask)
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, javadocJarTask)
             }
