@@ -15,6 +15,7 @@ import org.gradle.jvm.tasks.Jar
 
 class AndroidMavenPlugin implements Plugin<Project> {
 
+    @Override
     void apply(Project project) {
 
         DefaultDomainObjectSet<BaseVariant> variants = null;
