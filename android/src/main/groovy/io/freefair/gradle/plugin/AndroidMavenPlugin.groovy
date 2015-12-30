@@ -1,5 +1,4 @@
 package io.freefair.gradle.plugin
-
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.api.BaseVariant
@@ -39,20 +38,33 @@ class AndroidMavenPlugin implements Plugin<Project> {
             return;
         }
 
+        Task allSourcesJarTask = project.task("sourcesJar") { Task j ->
+            j.description = "Generate the sources jar for all variants"
+            j.group = "jar"
+        }
+
         Task allJavadocTask = project.task("javadoc") { Task jd ->
             jd.description = "Generate Javadoc for all variants"
             jd.group = JavaBasePlugin.DOCUMENTATION_GROUP
         }
 
+        Task allJavadocJarTask = project.task("sourcesJar") { Task j ->
+            j.description = "Generate the javadoc jar for all variants"
+            j.group = "jar"
+        }
+
         variants.all { variant ->
 
             Jar sourcesJarTask = project.task("sources${variant.name.capitalize()}Jar", type: Jar) { Jar jar ->
-                jar.description = "Generate the source jar for the $variant.name variant"
-                jar.classifier = "sources"
+                jar.description = "Generate the sources jar for the $variant.name variant"
+                jar.group = "jar"
 
+                jar.classifier = "sources"
                 jar.appendix = variant.name;
                 jar.from variant.javaCompiler.source
             } as Jar
+
+            allSourcesJarTask.dependsOn sourcesJarTask
 
             Javadoc javadocTask = project.task("javadoc${variant.name.capitalize()}", type: Javadoc) { Javadoc javadoc ->
                 javadoc.description = "Generate Javadoc for the $variant.name variant"
@@ -86,6 +98,8 @@ class AndroidMavenPlugin implements Plugin<Project> {
                 jar.classifier = 'javadoc'
                 jar.from javadocTask.destinationDir
             } as Jar
+
+            allJavadocJarTask.dependsOn javadocJarTask
 
             if (libraryExtension == null || (libraryExtension.publishNonDefault || libraryExtension.defaultPublishConfig.equals(variant.name))) {
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, sourcesJarTask)
