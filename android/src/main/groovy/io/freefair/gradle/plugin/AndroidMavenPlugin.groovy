@@ -2,6 +2,7 @@ package io.freefair.gradle.plugin
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.TestedExtension
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -19,6 +20,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
     void apply(Project project) {
 
         DefaultDomainObjectSet<BaseVariant> variants = null;
+        TestedExtension androidExt = null;
         LibraryExtension libraryExtension = null;
 
         boolean isLibrary = false;
@@ -28,6 +30,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
             libraryExtension = project.android
             variants = libraryExtension.libraryVariants;
             isLibrary = true;
+            androidExt = libraryExtension
         } catch (Exception e) {
             project.logger.debug("No Library found", e)
         }
@@ -36,11 +39,12 @@ class AndroidMavenPlugin implements Plugin<Project> {
             AppExtension appExt = project.android
             variants = appExt.applicationVariants;
             isApp = true;
+            androidExt = appExt
         } catch (Exception e) {
             project.logger.debug("No Application found", e)
         }
 
-        if (variants == null) {
+        if (variants == null || androidExt == null) {
             project.logger.error("No Android Variants found")
             return;
         }
@@ -78,14 +82,16 @@ class AndroidMavenPlugin implements Plugin<Project> {
                 javadoc.group = JavaBasePlugin.DOCUMENTATION_GROUP;
 
                 javadoc.source = variant.javaCompiler.source
-                def androidJar = "${project.android.sdkDirectory}/platforms/${project.android.compileSdkVersion}/android.jar"
-                javadoc.classpath = variant.javaCompiler.classpath + project.files(androidJar)
+                javadoc.classpath = variant.javaCompiler.classpath + project.files(androidExt.getBootClasspath())
+
+                javadoc.exclude '**/BuildConfig.java'
+                javadoc.exclude '**/R.java'
 
                 if (javadoc.getOptions() instanceof StandardJavadocDocletOptions) {
-                    StandardJavadocDocletOptions realOptions = getOptions()
+                    StandardJavadocDocletOptions realOptions = javadoc.options as StandardJavadocDocletOptions
 
                     realOptions.links "http://docs.oracle.com/javase/7/docs/api/"
-                    realOptions.links "http://developer.android.com/reference/"
+                    realOptions.linksOffline "http://developer.android.com/reference/", "${androidExt.sdkDirectory}/docs/reference"
                     realOptions.addStringOption('Xdoclint:none', '-quiet')
                 }
 
