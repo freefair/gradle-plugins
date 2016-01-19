@@ -1,58 +1,18 @@
 package io.freefair.gradle.plugin
 
-import com.android.build.gradle.AppExtension
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.TestedExtension
-import com.android.build.gradle.api.BaseVariant
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.tasks.Jar
 
-class AndroidMavenPlugin implements Plugin<Project> {
+class AndroidJavadocJarPlugin extends AndroidProjectPlugin {
 
     @Override
     void apply(Project project) {
-
-        DefaultDomainObjectSet<BaseVariant> variants = null;
-        TestedExtension androidExt = null;
-        LibraryExtension libraryExtension = null;
-
-        boolean isLibrary = false;
-        boolean isApp = false;
-
-        try {
-            libraryExtension = project.android
-            variants = libraryExtension.libraryVariants;
-            isLibrary = true;
-            androidExt = libraryExtension
-        } catch (Exception e) {
-            project.logger.debug("No Library found", e)
-        }
-
-        try {
-            AppExtension appExt = project.android
-            variants = appExt.applicationVariants;
-            isApp = true;
-            androidExt = appExt
-        } catch (Exception e) {
-            project.logger.debug("No Application found", e)
-        }
-
-        if (variants == null || androidExt == null) {
-            project.logger.error("No Android Variants found")
-            return;
-        }
-
-        Task allSourcesJarTask = project.task("sourcesJar") { Task asjTask ->
-            asjTask.description = "Generate the sources jar for all variants"
-            asjTask.group = "jar"
-        }
+        super.apply(project)
 
         Task allJavadocTask = project.task("javadoc") { Task ajdTasks ->
             ajdTasks.description = "Generate Javadoc for all variants"
@@ -64,18 +24,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
             ajdjTask.group = "jar"
         }
 
-        variants.all { variant ->
-
-            Jar sourcesJarTask = project.task("sources${variant.name.capitalize()}Jar", type: Jar) { Jar jar ->
-                jar.description = "Generate the sources jar for the $variant.name variant"
-                jar.group = "jar"
-
-                jar.classifier = "sources"
-                jar.appendix = variant.name;
-                jar.from variant.javaCompiler.source
-            } as Jar
-
-            allSourcesJarTask.dependsOn sourcesJarTask
+        androidVariants.all { variant ->
 
             Javadoc javadocTask = project.task("javadoc${variant.name.capitalize()}", type: Javadoc) { Javadoc javadoc ->
                 javadoc.description = "Generate Javadoc for the $variant.name variant"
@@ -116,14 +65,7 @@ class AndroidMavenPlugin implements Plugin<Project> {
 
             allJavadocJarTask.dependsOn javadocJarTask
 
-            boolean publishVariant = false;
-
-            if (isLibrary && (libraryExtension.publishNonDefault || libraryExtension.defaultPublishConfig.equals(variant.name))) publishVariant = true
-            if (isApp && variant.baseName.contains("release")) publishVariant = true
-
-            if (publishVariant) {
-                project.logger.info("Adding the $variant.name flavor to the 'archives' artifacts")
-                project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, sourcesJarTask)
+            if (publishVariant(variant)) {
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, javadocJarTask)
             }
 
