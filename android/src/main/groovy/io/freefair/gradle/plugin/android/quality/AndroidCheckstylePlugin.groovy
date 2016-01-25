@@ -1,4 +1,6 @@
-package io.freefair.gradle.plugin
+package io.freefair.gradle.plugin.android.quality
+
+import io.freefair.gradle.plugin.android.AndroidProjectPlugin
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.Task

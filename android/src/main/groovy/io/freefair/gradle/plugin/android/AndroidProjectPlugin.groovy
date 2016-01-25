@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugin
+package io.freefair.gradle.plugin.android
 
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
