@@ -32,7 +32,7 @@ class AndroidJavadocJarPlugin extends AndroidProjectPlugin {
                 javadoc.group = JavaBasePlugin.DOCUMENTATION_GROUP;
 
                 javadoc.source = variant.javaCompiler.source
-                javadoc.classpath = variant.javaCompiler.classpath + project.files(androidExt.getBootClasspath())
+                javadoc.classpath = variant.javaCompiler.classpath + project.files(androidExtension.getBootClasspath())
 
                 javadoc.exclude '**/BuildConfig.java'
                 javadoc.exclude '**/R.java'
@@ -41,7 +41,7 @@ class AndroidJavadocJarPlugin extends AndroidProjectPlugin {
                     StandardJavadocDocletOptions realOptions = javadoc.options as StandardJavadocDocletOptions
 
                     realOptions.links "http://docs.oracle.com/javase/7/docs/api/"
-                    realOptions.linksOffline "http://developer.android.com/reference/", "${androidExt.sdkDirectory}/docs/reference"
+                    realOptions.linksOffline "http://developer.android.com/reference/", "${androidExtension.sdkDirectory}/docs/reference"
                     realOptions.addStringOption('Xdoclint:none', '-quiet')
                 }
 
