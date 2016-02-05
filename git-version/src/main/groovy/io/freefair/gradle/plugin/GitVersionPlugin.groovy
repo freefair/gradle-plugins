@@ -16,8 +16,11 @@ public class GitVersionPlugin implements Plugin<Project> {
         extension = project.extensions.create("gitVersion", GitVersionExtension.class);
         gitUtil = new GitUtil(project);
 
-        if (!checkForOtherVersion())
-            useGitVersion()
+        project.afterEvaluate {
+            if (!checkForOtherVersion())
+                useGitVersion()
+        }
+
     }
 
     private boolean checkForOtherVersion() {
