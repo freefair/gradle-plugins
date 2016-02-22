@@ -48,10 +48,6 @@ abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin 
         return toolName.toLowerCase()
     }
 
-    protected Class<?> getBasePlugin() {
-        return BasePlugin
-    }
-
     protected void beforeApply() {
     }
 
@@ -76,13 +72,10 @@ abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin 
 
     private void configureExtensionRule() {
         extension.conventionMapping.with {
-            sourceSets = { [] }
             reportsDir = { project.extensions.getByType(ReportingExtension).file(reportName) }
         }
 
-        project.plugins.withType(basePlugin) {
-            extension.conventionMapping.sourceSets = { androidExtension.sourceSets }
-        }
+        extension.conventionMapping.sourceSets = { androidExtension.sourceSets }
     }
 
     private void configureTaskRule() {
@@ -97,20 +90,17 @@ abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin 
     }
 
     private void configureSourceSetRule() {
-        project.plugins.withType(basePlugin) {
-            androidExtension.sourceSets.all { AndroidSourceSet sourceSet ->
-                T task = project.tasks.create("${taskBaseName}${sourceSet.name}", taskType)
-                configureForSourceSet(sourceSet, task)
-            }
+        androidExtension.sourceSets.all { AndroidSourceSet sourceSet ->
+            T task = project.tasks.create("${taskBaseName}${sourceSet.name}", taskType)
+            configureForSourceSet(sourceSet, task)
         }
+
     }
 
     protected void configureForSourceSet(AndroidSourceSet sourceSet, T task) {
     }
 
     private void configureCheckTask() {
-        project.plugins.withType(basePlugin) {
-            project.tasks['check'].dependsOn { extension.sourceSets.collect { it.getTaskName(taskBaseName, null) } }
-        }
+        project.tasks['check'].dependsOn { extension.sourceSets.collect { it.getTaskName(taskBaseName, null) } }
     }
 }
