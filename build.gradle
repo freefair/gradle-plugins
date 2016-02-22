@@ -16,4 +16,8 @@ subprojects {
         compile gradleApi()
         compile localGroovy()
     }
+
+    groovydoc {
+        link ('https://docs.gradle.org/current/groovydoc/', 'org.gradle.api', 'org.gradle.api.internal')
+    }
 }

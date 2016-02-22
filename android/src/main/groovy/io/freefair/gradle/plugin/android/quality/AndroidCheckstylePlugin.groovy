@@ -1,90 +1,50 @@
 package io.freefair.gradle.plugin.android.quality
 
-import io.freefair.gradle.plugin.android.AndroidProjectPlugin
-import org.gradle.api.Incubating
-import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.plugins.JavaBasePlugin
+import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.plugins.quality.CheckstyleExtension
-import org.gradle.api.plugins.quality.CheckstylePlugin
-import org.gradle.api.reporting.ReportingExtension
+import org.gradle.api.plugins.quality.CodeQualityExtension
 
-@Incubating
-class AndroidCheckstylePlugin extends AndroidProjectPlugin {
+/**
+ * Copy of {@link org.gradle.api.plugins.quality.CheckstylePlugin} which
+ * <ul>
+ * <li>extends {@link AbstractAndroidCodeQualityPlugin} instead of {@link org.gradle.api.plugins.quality.internal.AbstractCodeQualityPlugin}</li>
+ * <li>uses {@link AndroidSourceSet AndroidSourceSets} instead of {@link org.gradle.api.tasks.SourceSet JavaSourceSets}</li>
+ * </ul>
+ *
+ * @see org.gradle.api.plugins.quality.CheckstylePlugin
+ * @see AbstractAndroidCodeQualityPlugin
+ */
+class AndroidCheckstylePlugin extends AbstractAndroidCodeQualityPlugin<Checkstyle> {
 
-    @Incubating
-    public static final String CONFIGURATION_NAME = "checkstyle"
-
-    private CheckstyleExtension extension;
-
-    private Project project
+    public static final String DEFAULT_CHECKSTYLE_VERSION = "5.9"
+    private CheckstyleExtension extension
 
     @Override
-    void apply(Project project) {
-        super.apply(project)
-
-        this.project = project;
-
-        createConfigurations()
-        createExtension()
-
-        Task allCheckstyleTask = project.task("checkstyle") { Task acTask ->
-            acTask.description = "Run checkstyle on all variants"
-            acTask.group = JavaBasePlugin.VERIFICATION_GROUP
-        }
-
-        project.tasks.findByPath("check").dependsOn allCheckstyleTask
-
-        androidVariants.all { variant ->
-
-            Checkstyle checkstyleTask = project.task("checkstyle${variant.name.capitalize()}", type: Checkstyle) { Checkstyle cs ->
-                cs.description = "Run Checkstyle analysis for ${variant.name} classes"
-                cs.group = JavaBasePlugin.VERIFICATION_GROUP
-
-                cs.source variant.javaCompiler.source - project.fileTree("${project.buildDir}/generated")
-                cs.classpath = variant.javaCompiler.outputs.files
-            } as Checkstyle
-
-            configureTaskDefaults(checkstyleTask, variant.baseName)
-
-            allCheckstyleTask.dependsOn checkstyleTask
-
-        }
+    protected String getToolName() {
+        return "Checkstyle"
     }
 
-    protected void createConfigurations() {
-        project.configurations.create(CONFIGURATION_NAME).with {
-            visible = false
-            transitive = true
-            description = "The checkstyle libraries to be used for this project."
-            // Don't need these things, they're provided by the runtime
-            exclude group: 'ant', module: 'ant'
-            exclude group: 'org.apache.ant', module: 'ant'
-            exclude group: 'org.apache.ant', module: 'ant-launcher'
-            exclude group: 'org.slf4j', module: 'slf4j-api'
-            exclude group: 'org.slf4j', module: 'jcl-over-slf4j'
-            exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
-            exclude group: 'commons-logging', module: 'commons-logging'
-            exclude group: 'log4j', module: 'log4j'
-        }
+    @Override
+    protected Class<Checkstyle> getTaskType() {
+        return Checkstyle
     }
 
-    private void createExtension() {
-        extension = project.extensions.create("checkstyle", CheckstyleExtension.class, project)
+    @Override
+    protected CodeQualityExtension createExtension() {
+        extension = project.extensions.create("checkstyle", CheckstyleExtension, project)
 
         extension.with {
+            toolVersion = DEFAULT_CHECKSTYLE_VERSION
             config = project.resources.text.fromFile("config/checkstyle/checkstyle.xml")
-            toolVersion = CheckstylePlugin.DEFAULT_CHECKSTYLE_VERSION
         }
 
-        extension.conventionMapping.with {
-            reportsDir = { project.extensions.getByType(ReportingExtension).file("checkstyle") }
-        }
+        return extension
     }
 
+    @Override
     protected void configureTaskDefaults(Checkstyle task, String baseName) {
-        def conf = project.configurations[CONFIGURATION_NAME]
+        def conf = project.configurations['checkstyle']
         conf.defaultDependencies { dependencies ->
             dependencies.add(this.project.dependencies.create("com.puppycrawl.tools:checkstyle:${this.extension.toolVersion}"))
         }
@@ -103,5 +63,14 @@ class AndroidCheckstylePlugin extends AndroidProjectPlugin {
                 destination = { new File(extension.reportsDir, "${baseName}.${report.name}") }
             }
         }
+    }
+
+    @Override
+    protected void configureForSourceSet(AndroidSourceSet sourceSet, Checkstyle task) {
+        task.with {
+            description = "Run Checkstyle analysis for ${sourceSet.name} classes"
+            classpath = sourceSet.java.sourceFiles
+        }
+        task.setSource(sourceSet.java.sourceFiles)
     }
 }
