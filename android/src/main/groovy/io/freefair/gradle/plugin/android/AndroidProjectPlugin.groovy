@@ -35,7 +35,7 @@ abstract class AndroidProjectPlugin implements Plugin<Project> {
         if (isLibrary)
             return libraryExtension;
         else
-            return androidExtension;
+            return appExtension;
     }
 
     protected DefaultDomainObjectSet<BaseVariant> getAndroidVariants() {
