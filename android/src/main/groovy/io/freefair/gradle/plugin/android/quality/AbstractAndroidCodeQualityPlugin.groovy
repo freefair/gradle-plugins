@@ -91,7 +91,7 @@ abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin 
 
     private void configureSourceSetRule() {
         androidExtension.sourceSets.all { AndroidSourceSet sourceSet ->
-            T task = project.tasks.create("${taskBaseName}${sourceSet.name}", taskType)
+            T task = project.tasks.create(getTaskName(sourceSet), taskType)
             configureForSourceSet(sourceSet, task)
         }
 
@@ -101,6 +101,10 @@ abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin 
     }
 
     private void configureCheckTask() {
-        project.tasks['check'].dependsOn { extension.sourceSets.collect { it.getTaskName(taskBaseName, null) } }
+        project.tasks['check'].dependsOn { androidExtension.sourceSets.collect { getTaskName(it) } }
+    }
+
+    protected String getTaskName(AndroidSourceSet sourceSet){
+        return "${taskBaseName}${sourceSet.name.capitalize()}"
     }
 }
