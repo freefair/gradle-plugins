@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugin.android.quality
 
 import com.android.build.gradle.api.AndroidSourceSet
+import org.gradle.api.Task
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.plugins.quality.CheckstyleExtension
 import org.gradle.api.plugins.quality.CodeQualityExtension
@@ -72,5 +73,10 @@ class AndroidCheckstylePlugin extends AbstractAndroidCodeQualityPlugin<Checkstyl
             classpath = sourceSet.java.sourceFiles
         }
         task.setSource(sourceSet.java.sourceFiles)
+    }
+
+    @Override
+    protected void configureBaseTask(Task task) {
+        task.description = "Run Checkstyle analysis for all classes"
     }
 }

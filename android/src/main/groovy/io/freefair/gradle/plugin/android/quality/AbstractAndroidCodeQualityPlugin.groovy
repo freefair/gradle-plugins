@@ -4,6 +4,8 @@ import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
 import io.freefair.gradle.plugin.android.AndroidProjectPlugin
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.plugins.quality.CodeQualityExtension
 import org.gradle.api.reporting.ReportingExtension
@@ -97,11 +99,16 @@ abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin 
 
     }
 
-    protected void configureForSourceSet(AndroidSourceSet sourceSet, T task) {
-    }
+    protected abstract void configureForSourceSet(AndroidSourceSet sourceSet, T task)
+
+    protected abstract void configureBaseTask(Task task)
 
     private void configureCheckTask() {
-        project.tasks['check'].dependsOn { androidExtension.sourceSets.collect { getTaskName(it) } }
+        Task baseTask = project.tasks.create(taskBaseName)
+        baseTask.group = JavaBasePlugin.VERIFICATION_GROUP
+        configureBaseTask(baseTask)
+        baseTask.dependsOn { androidExtension.sourceSets.collect { sourceSet -> getTaskName(sourceSet) } }
+        project.tasks['check'].dependsOn baseTask
     }
 
     protected String getTaskName(AndroidSourceSet sourceSet){
