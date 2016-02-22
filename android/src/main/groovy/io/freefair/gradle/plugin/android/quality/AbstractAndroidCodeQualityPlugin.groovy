@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugin.android.quality
 
-import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
 import io.freefair.gradle.plugin.android.AndroidProjectPlugin
 import org.gradle.api.Project
@@ -9,14 +8,13 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.plugins.quality.CodeQualityExtension
 import org.gradle.api.reporting.ReportingExtension
-
 /**
  * Copy of {@linke org.gradle.api.plugins.quality.internal.AbstractCodeQualityPlugin} which
  * uses {@link AndroidSourceSet AndroidSourceSets} instead of {@link org.gradle.api.tasks.SourceSet JavaSourceSets}
  *
  * @see org.gradle.api.plugins.quality.internal.AbstractCodeQualityPlugin
  */
-abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin {
+abstract class AbstractAndroidCodeQualityPlugin<T extends Task> extends AndroidProjectPlugin {
     protected Project project
     protected CodeQualityExtension extension
 
@@ -88,12 +86,12 @@ abstract class AbstractAndroidCodeQualityPlugin<T> extends AndroidProjectPlugin 
         }
     }
 
-    protected void configureTaskDefaults(T task, String baseName) {
-    }
+    protected abstract void configureTaskDefaults(T task, String baseName)
 
     private void configureSourceSetRule() {
         androidExtension.sourceSets.all { AndroidSourceSet sourceSet ->
             T task = project.tasks.create(getTaskName(sourceSet), taskType)
+            task.group = JavaBasePlugin.VERIFICATION_GROUP
             configureForSourceSet(sourceSet, task)
         }
 
