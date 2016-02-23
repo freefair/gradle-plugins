@@ -20,4 +20,25 @@ subprojects {
     groovydoc {
         link ('https://docs.gradle.org/current/groovydoc/', 'org.gradle.api', 'org.gradle.api.internal')
     }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        from sourceSets.main.allSource
+        classifier = "sources"
+    }
+
+    task groovydocJar(type: Jar, dependsOn: groovydoc) {
+        from groovydoc.getDestinationDir()
+        classifier = "groovydoc"
+    }
+
+    task javadocJar(type: Jar, dependsOn: groovydoc) {
+        from groovydoc.getDestinationDir()
+        classifier = "javadoc"
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+        archives groovydocJar
+    }
 }
