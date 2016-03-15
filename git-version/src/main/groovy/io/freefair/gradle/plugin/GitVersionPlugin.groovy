@@ -15,6 +15,7 @@ public class GitVersionPlugin implements Plugin<Project> {
 
         gitUtil = new GitUtil(project);
 
+        project.convention.plugins.put("gitVersion", new GitVersionConvention())
         convention = project.getConvention().getPlugin(GitVersionConvention)
 
         if (!checkForOtherVersion())
