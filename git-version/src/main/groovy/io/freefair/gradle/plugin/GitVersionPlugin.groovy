@@ -1,31 +1,21 @@
 package io.freefair.gradle.plugin
 
-import org.codehaus.groovy.runtime.NumberAwareComparator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-
 
 public class GitVersionPlugin implements Plugin<Project> {
 
     Project project;
     GitUtil gitUtil;
-
-    String tagPrefix = '';
-
-    Comparator<String> versionComparator = new NumberAwareComparator<>();
+    GitVersionConvention convention;
 
     @Override
     void apply(Project project) {
         this.project = project;
+
         gitUtil = new GitUtil(project);
 
-        if(project.hasProperty("gitTagPrefix")) {
-            tagPrefix = project.property("gitTagPrefix")
-        }
-
-        if(project.hasProperty("gitVersionComparator")) {
-            versionComparator = project.property("gitVersionComparator") as Comparator<String>
-        }
+        convention = project.getConvention().getPlugin(GitVersionConvention)
 
         if (!checkForOtherVersion())
             useGitVersion()
@@ -44,10 +34,10 @@ public class GitVersionPlugin implements Plugin<Project> {
 
     private void useGitVersion() {
         project.logger.debug("useGitVersion")
-        List<String> currentTags = gitUtil.getCurrentTags(tagPrefix);
+        List<String> currentTags = gitUtil.getCurrentTags(convention.gitTagPrefix);
 
         if (currentTags.isEmpty()) {
-            List<String> lastTags = gitUtil.getLastTags(tagPrefix);
+            List<String> lastTags = gitUtil.getLastTags(convention.gitTagPrefix);
 
             if (lastTags.isEmpty()) {
                 project.version = "-SNAPSHOT"
@@ -62,16 +52,16 @@ public class GitVersionPlugin implements Plugin<Project> {
 
 
     private String getVersion(String tag) {
-        if (tag.startsWith(tagPrefix)) {
-            return tag.substring(tagPrefix.length());
+        if (tag.startsWith(convention.gitTagPrefix)) {
+            return tag.substring(convention.gitTagPrefix.length());
         } else {
-            project.logger.warn("Internal Error, Tag {} doesn't match prefix {}", tag, tagPrefix);
+            project.logger.warn("Internal Error, Tag {} doesn't match prefix {}", tag, convention.gitTagPrefix);
             return tag;
         }
     }
 
     private String getVersion(List<String> tagList) {
-        String tag = tagList.toSorted(versionComparator).last();
+        String tag = tagList.toSorted(convention.gitVersionComparator).last();
         return getVersion(tag);
     }
 
