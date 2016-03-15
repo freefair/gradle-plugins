@@ -1,25 +1,34 @@
 package io.freefair.gradle.plugin
 
+import org.codehaus.groovy.runtime.NumberAwareComparator
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
 
 public class GitVersionPlugin implements Plugin<Project> {
 
-    GitVersionExtension extension;
     Project project;
     GitUtil gitUtil;
+
+    String tagPrefix = '';
+
+    Comparator<String> versionComparator = new NumberAwareComparator<>();
 
     @Override
     void apply(Project project) {
         this.project = project;
-        extension = project.extensions.create("gitVersion", GitVersionExtension.class);
         gitUtil = new GitUtil(project);
 
-        project.afterEvaluate {
-            if (!checkForOtherVersion())
-                useGitVersion()
+        if(project.hasProperty("gitTagPrefix")) {
+            tagPrefix = project.property("gitTagPrefix")
         }
+
+        if(project.hasProperty("gitVersionComparator")) {
+            versionComparator = project.property("gitVersionComparator") as Comparator<String>
+        }
+
+        if (!checkForOtherVersion())
+            useGitVersion()
 
     }
 
@@ -35,10 +44,10 @@ public class GitVersionPlugin implements Plugin<Project> {
 
     private void useGitVersion() {
         project.logger.debug("useGitVersion")
-        List<String> currentTags = gitUtil.getCurrentTags(extension.tagPrefix);
+        List<String> currentTags = gitUtil.getCurrentTags(tagPrefix);
 
         if (currentTags.isEmpty()) {
-            List<String> lastTags = gitUtil.getLastTags(extension.tagPrefix);
+            List<String> lastTags = gitUtil.getLastTags(tagPrefix);
 
             if (lastTags.isEmpty()) {
                 project.version = "-SNAPSHOT"
@@ -53,16 +62,16 @@ public class GitVersionPlugin implements Plugin<Project> {
 
 
     private String getVersion(String tag) {
-        if (tag.startsWith(extension.tagPrefix)) {
-            return tag.substring(extension.tagPrefix.length());
+        if (tag.startsWith(tagPrefix)) {
+            return tag.substring(tagPrefix.length());
         } else {
-            project.logger.warn("Internal Error, Tag {} doesn't match prefix {}", tag, extension.tagPrefix);
+            project.logger.warn("Internal Error, Tag {} doesn't match prefix {}", tag, tagPrefix);
             return tag;
         }
     }
 
     private String getVersion(List<String> tagList) {
-        String tag = tagList.toSorted(extension.versionComparator).last();
+        String tag = tagList.toSorted(versionComparator).last();
         return getVersion(tag);
     }
 
