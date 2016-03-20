@@ -35,6 +35,9 @@ public class GitVersionPlugin implements Plugin<Project> {
 
     private void useGitVersion() {
         project.logger.debug("useGitVersion")
+
+        gitUtil.fetchTags()
+
         List<String> currentTags = gitUtil.getCurrentTags(convention.gitTagPrefix);
 
         if (currentTags.isEmpty()) {

@@ -41,4 +41,8 @@ class GitUtil {
             throw e;
         }
     }
+
+    public void fetchTags() {
+       exec("git fetch --all -v")
+    }
 }
