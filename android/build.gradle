@@ -1,9 +1,0 @@
-apply plugin: 'groovy'
-
-dependencies {
-    compile 'com.android.tools.build:gradle:1.5.0'
-}
-
-groovydoc {
-    link ('https://docs.gradle.org/current/groovydoc/', 'org.gradle.api.plugins.quality', 'org.gradle.api.plugins.quality.internal')
-}
