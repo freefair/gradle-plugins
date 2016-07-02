@@ -1,12 +1,11 @@
 # javadoc.io gradle plugin
 [![Build Status](https://travis-ci.org/freefair/javadoc-io-gradle-plugin.svg?branch=master)](https://travis-ci.org/freefair/javadoc-io-gradle-plugin) [![](https://jitpack.io/v/io.freefair/javadoc-io-gradle-plugin.svg)](https://jitpack.io/#io.freefair/javadoc-io-gradle-plugin)
 
-Let your Javadoc-Tasks in Gradle link against javadoc.io
+Let your Javadoc-Tasks in Gradle link against http://javadoc.io
 
 ## How to use
 
-1. Include the plugin via jitpack: [![](https://jitpack.io/v/io.freefair/javadoc-io-gradle-plugin.svg)](https://jitpack.io/#io.freefair/javadoc-io-gradle-plugin)
-
+### 1. Include the plugin via jitpack: [![](https://jitpack.io/v/io.freefair/javadoc-io-gradle-plugin.svg)](https://jitpack.io/#io.freefair/javadoc-io-gradle-plugin)
 ```gradle
 buildscript {
     repositories {
@@ -20,15 +19,12 @@ buildscript {
 }
 ```
 
-2. Apply the plugin: 
-
+### 2. Apply the plugin:
 ```gradle
 apply plugin: 'io.freefair.javadoc-io'
-
 ```
 
-3. Add javadoc dependencies to the `javadocIo` configuration:
-
+### 3. Add javadoc dependencies to the `javadocIo` configuration:
 ```gradle
 dependencies {
     // ...
