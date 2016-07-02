@@ -19,9 +19,9 @@ class JavadocIoPlugin implements Plugin<Project> {
             cp.description = "Download and extract all javadocs, so the javadoc-tasks can link against them"
         } as Copy
 
-        project.tasks.withType(Javadoc) { jdTask ->
-            jdTask.dependsOn prepareJavadocTask;
-            jdTask.inputs.file(prepareJavadocTask.destinationDir)
+        project.tasks.withType(Javadoc) { javadocTask ->
+            javadocTask.dependsOn prepareJavadocTask;
+            javadocTask.inputs.file(prepareJavadocTask.destinationDir)
         }
 
         project.afterEvaluate {
