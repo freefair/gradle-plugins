@@ -1,4 +1,4 @@
-# javadoc.io gradle plugin
+# javadoc.io Gradle plugin
 [![Build Status](https://travis-ci.org/freefair/javadoc-io-gradle-plugin.svg?branch=master)](https://travis-ci.org/freefair/javadoc-io-gradle-plugin) [![](https://jitpack.io/v/io.freefair/javadoc-io-gradle-plugin.svg)](https://jitpack.io/#io.freefair/javadoc-io-gradle-plugin)
 
 Let your Javadoc-Tasks in Gradle link against http://javadoc.io
