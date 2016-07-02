@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         // ...
-        classpath 'io.freefair:javadoc-io-gradle-plugin:$currentVersion'
+        classpath "io.freefair:javadoc-io-gradle-plugin:$currentVersion"
     }
 }
 ```
