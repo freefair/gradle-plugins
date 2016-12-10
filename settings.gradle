@@ -16,4 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'war-overlay-gradle-plugin'
+rootProject.name = 'war-gradle-plugins'

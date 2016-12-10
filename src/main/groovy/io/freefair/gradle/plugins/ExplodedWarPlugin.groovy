@@ -5,6 +5,9 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.War
 
+/**
+ * @author Lars Grefer
+ */
 @SuppressWarnings("GroovyUnusedDeclaration")
 class ExplodedWarPlugin implements Plugin<Project> {
     @Override
