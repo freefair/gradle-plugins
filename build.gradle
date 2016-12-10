@@ -1,0 +1,27 @@
+plugins {
+    id "groovy"
+    id "maven-publish"
+    id "java-gradle-plugin"
+}
+
+repositories {
+    jcenter()
+}
+
+gradlePlugin {
+    plugins {
+        warOverlay {
+            id = "io.freefair.war-overlay"
+            implementationClass = "io.freefair.gradle.plugins.WarOverlayPlugin"
+        }
+
+        explodedWar {
+            id = "io.freefair.exploded-war"
+            implementationClass = "io.freefair.gradle.plugins.ExplodedWarPlugin"
+        }
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}

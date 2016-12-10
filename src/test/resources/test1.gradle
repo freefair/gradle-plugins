@@ -1,0 +1,11 @@
+plugins {
+    id "io.freefair.war-overlay"
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    overlay "org.jasig.cas:cas-server-webapp:4.2.7"
+}
