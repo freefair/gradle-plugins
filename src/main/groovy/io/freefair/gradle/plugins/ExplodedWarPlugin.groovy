@@ -16,9 +16,9 @@ class ExplodedWarPlugin implements Plugin<Project> {
         project.tasks.withType(War) { War war ->
             Sync explodedWarTask = project.tasks.create("exploded${war.name.capitalize()}", Sync)
             explodedWarTask.dependsOn war
-            explodedWarTask.group = war.group
-            explodedWarTask.from(project.zipTree(war.getArchivePath()))
-            explodedWarTask.into(project.file("${war.getDestinationDir()}/exploded/${(war.getArchiveName() - ".war")}"))
+            explodedWarTask.group = {war.group}
+            explodedWarTask.from({project.zipTree(war.getArchivePath())})
+            explodedWarTask.into({project.file("${war.getDestinationDir()}/exploded/${(war.getArchiveName() - ".war")}")})
 
         }
     }

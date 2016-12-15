@@ -31,12 +31,12 @@ public class WarOverlayPluginTest {
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
-                .withArguments("eO")
+                .withArguments("eW", "--stacktrace")
                 .withPluginClasspath()
                 .withDebug(true)
                 .build();
 
-        assertEquals(result.task(":explodedOverlay").getOutcome(), SUCCESS);
+        assertEquals(result.task(":war").getOutcome(), SUCCESS);
 
     }
 

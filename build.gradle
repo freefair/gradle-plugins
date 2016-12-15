@@ -2,7 +2,11 @@ plugins {
     id "groovy"
     id "maven-publish"
     id "java-gradle-plugin"
+    id "com.gradle.plugin-publish" version "0.9.7"
 }
+
+group = "io.freefair.gradle"
+version = "0.9.0"
 
 repositories {
     jcenter()
@@ -18,6 +22,29 @@ gradlePlugin {
         explodedWar {
             id = "io.freefair.exploded-war"
             implementationClass = "io.freefair.gradle.plugins.ExplodedWarPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/freefair/war-gradle-plugins"
+    vcsUrl = 'https://github.com/freefair/war-gradle-plugins'
+    tags = ['war']
+
+    plugins {
+        warOverlay {
+            id = "io.freefair.war-overlay"
+            displayName = "War Overlay Plugin"
+            description = "War Overlay Plugin"
+
+            tags = ['war', 'overlay']
+        }
+
+        explodedWar {
+            id = "io.freefair.exploded-war"
+            displayName = "Exploded War Plugin"
+            description = "Exploded War Plugin"
+            tags = ['war', 'exploded']
         }
     }
 }

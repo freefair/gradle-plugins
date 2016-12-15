@@ -2,12 +2,9 @@ package io.freefair.gradle.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.file.CopySpec
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.WarPlugin
-import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.War
 
 /**
@@ -16,33 +13,30 @@ import org.gradle.api.tasks.bundling.War
 @SuppressWarnings("GroovyUnusedDeclaration")
 class WarOverlayPlugin implements Plugin<Project> {
 
+    OverlayExtension overlayExt;
+
     @Override
     void apply(Project project) {
         project.pluginManager.apply(WarPlugin)
 
-        def overlayConfiguration = project.configurations.create("overlay")
+        overlayExt = project.extensions.create("overlay", OverlayExtension)
 
-        project.configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).extendsFrom(overlayConfiguration)
+        project.tasks.withType(War) { War w ->
 
-        def explodedOverlayTask = project.tasks.create("explodedOverlay")
-        explodedOverlayTask.group = "overlay"
+            def configTask = project.tasks.create("configureOverlayFor${w.name.capitalize()}")
 
-        project.afterEvaluate {
-            overlayConfiguration.resolvedConfiguration.firstLevelModuleDependencies.each { ResolvedDependency resolvedDependency ->
-                resolvedDependency.moduleArtifacts.each { ResolvedArtifact resolvedArtifact ->
-                    project.tasks.withType(War) { War w ->
-                        w.from(project.zipTree(resolvedArtifact.file)) {
-                            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-                            exclude "WEB-INF/lib/*.jar"
+            w.dependsOn configTask
+
+            configTask.doFirst {
+                project.configurations.getByName("runtime").each {
+                    if (it.name.endsWith(".war")) {
+                        w.from(project.zipTree(it)) { CopySpec css ->
+                            css.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                            css.exclude overlayExt.excludes
                         }
-                        w.rootSpec.exclude("**/${resolvedArtifact.file.name}")
-                    }
 
-                    Sync overlaySyncTask = project.tasks.create("exploded${resolvedArtifact.name.capitalize()}", Sync)
-                    explodedOverlayTask.dependsOn overlaySyncTask
-                    overlaySyncTask.group = "overlay"
-                    overlaySyncTask.from(project.zipTree(resolvedArtifact.file))
-                    overlaySyncTask.into(project.file("$project.buildDir/overlay/exploded/${resolvedArtifact.file.name - ".war"}"))
+                        w.rootSpec.exclude "**/$it.name"
+                    }
                 }
             }
         }
