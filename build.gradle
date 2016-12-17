@@ -18,33 +18,39 @@ gradlePlugin {
             id = "io.freefair.war-overlay"
             implementationClass = "io.freefair.gradle.plugins.WarOverlayPlugin"
         }
-
         explodedWar {
-            id = "io.freefair.exploded-war"
-            implementationClass = "io.freefair.gradle.plugins.ExplodedWarPlugin"
+            id = "io.freefair.exploded-archives"
+            implementationClass = "io.freefair.gradle.plugins.ExplodedArchivesPlugin"
+        }
+        gitVersion {
+            id = "io.freefair.git-version"
+            implementationClass = "io.freefair.gradle.plugins.GitVersionPlugin"
         }
     }
 }
 
 pluginBundle {
-    website = "https://github.com/freefair/war-gradle-plugins"
-    vcsUrl = 'https://github.com/freefair/war-gradle-plugins'
-    tags = ['war']
+    website = "https://github.com/freefair/gradle-plugins"
+    vcsUrl = 'https://github.com/freefair/gradle-plugins'
 
     plugins {
         warOverlay {
             id = "io.freefair.war-overlay"
             displayName = "War Overlay Plugin"
             description = "War Overlay Plugin"
-
             tags = ['war', 'overlay']
         }
-
         explodedWar {
             id = "io.freefair.exploded-war"
-            displayName = "Exploded War Plugin"
-            description = "Exploded War Plugin"
-            tags = ['war', 'exploded']
+            displayName = "Exploded Archives Plugin"
+            description = "Exploded Archives Plugin"
+            tags = ['war', 'exploded', 'jar', 'ear', 'zip']
+        }
+        gitVersion {
+            id = "io.freefair.git-version"
+            displayName = "Git Version Plugin"
+            description = "Git Version Plugin"
+            tags = ['git', 'version']
         }
     }
 }

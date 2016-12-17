@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugin
+package io.freefair.gradle.plugins
 
 import org.gradle.api.Project
 
