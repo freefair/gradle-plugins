@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins
 
+import io.freefair.gradle.plugins.overlay.OverlayExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec

@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.War
@@ -19,13 +20,13 @@ class ExplodedArchivesPlugin implements Plugin<Project> {
 
             def explodedArchivesTask = project.tasks.create("explodedArchives")
 
-            explodedArchivesTask.group = "exploded"
+            explodedArchivesTask.group = BasePlugin.BUILD_GROUP;
 
             project.tasks.withType(AbstractArchiveTask) { AbstractArchiveTask aat ->
                 Sync explodedArchiveTask = project.tasks.create("exploded${aat.name.capitalize()}", Sync)
                 explodedArchivesTask.dependsOn explodedArchiveTask;
                 explodedArchiveTask.dependsOn aat
-                explodedArchiveTask.group = "exploded"
+                explodedArchiveTask.group = {aat.group}
                 explodedArchiveTask.from({ project.zipTree(aat.getArchivePath()) })
                 explodedArchiveTask.into({
                     project.file("${aat.getDestinationDir()}/exploded/${(aat.getArchiveName() - ".$aat.extension")}")

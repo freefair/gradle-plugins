@@ -1,6 +1,6 @@
 plugins {
     id "io.freefair.war-overlay"
-    id "io.freefair.exploded-war"
+    id "io.freefair.exploded-archives"
 }
 
 repositories {

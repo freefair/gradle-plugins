@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugins
+package io.freefair.gradle.plugins.overlay
 
 /**
  * @author Lars Grefer

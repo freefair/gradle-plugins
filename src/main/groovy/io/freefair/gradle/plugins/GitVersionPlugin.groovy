@@ -1,5 +1,7 @@
 package io.freefair.gradle.plugins
 
+import io.freefair.gradle.plugins.git.GitUtil
+import io.freefair.gradle.plugins.git.GitVersionConvention
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
