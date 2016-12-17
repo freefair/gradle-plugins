@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.freefair.gradle"
-version = "0.9.1"
+version = "0.9.2"
 
 repositories {
     jcenter()
@@ -52,6 +52,10 @@ pluginBundle {
             description = "Git Version Plugin"
             tags = ['git', 'version']
         }
+    }
+
+    mavenCoordinates {
+        groupId = project.group
     }
 }
 
