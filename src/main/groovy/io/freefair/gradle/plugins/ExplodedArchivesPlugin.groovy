@@ -24,13 +24,16 @@ class ExplodedArchivesPlugin implements Plugin<Project> {
 
             project.tasks.withType(AbstractArchiveTask) { AbstractArchiveTask aat ->
                 Sync explodedArchiveTask = project.tasks.create("exploded${aat.name.capitalize()}", Sync)
+
                 explodedArchivesTask.dependsOn explodedArchiveTask;
                 explodedArchiveTask.dependsOn aat
-                explodedArchiveTask.group = {aat.group}
-                explodedArchiveTask.from({ project.zipTree(aat.getArchivePath()) })
-                explodedArchiveTask.into({
-                    project.file("${aat.getDestinationDir()}/exploded/${(aat.getArchiveName() - ".$aat.extension")}")
+
+                explodedArchiveTask.group = aat.group
+                explodedArchiveTask.destinationDir = project.file({
+                    project.file("${aat.destinationDir}/exploded")
                 })
+                explodedArchiveTask.from({ project.zipTree(aat.getArchivePath()) })
+                explodedArchiveTask.into({ aat.archiveName - ".$aat.extension" })
 
             }
         }
