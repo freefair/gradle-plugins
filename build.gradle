@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.freefair.gradle"
-version = "1.0.0"
+version = "0.9.1"
 
 repositories {
     jcenter()
@@ -41,7 +41,7 @@ pluginBundle {
             tags = ['war', 'overlay']
         }
         explodedWar {
-            id = "io.freefair.exploded-war"
+            id = "io.freefair.exploded-archives"
             displayName = "Exploded Archives Plugin"
             description = "Exploded Archives Plugin"
             tags = ['war', 'exploded', 'jar', 'ear', 'zip']
