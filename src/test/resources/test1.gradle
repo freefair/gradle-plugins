@@ -1,0 +1,12 @@
+plugins {
+    id "io.freefair.war-overlay"
+    id "io.freefair.exploded-war"
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.jasig.cas:cas-server-webapp:4.2.7"
+}

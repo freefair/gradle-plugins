@@ -1,44 +1,54 @@
-allprojects {
-    repositories {
-        jcenter()
+plugins {
+    id "groovy"
+    id "maven-publish"
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish" version "0.9.7"
+}
+
+group = "io.freefair.gradle"
+version = "1.0.0"
+
+repositories {
+    jcenter()
+}
+
+gradlePlugin {
+    plugins {
+        warOverlay {
+            id = "io.freefair.war-overlay"
+            implementationClass = "io.freefair.gradle.plugins.WarOverlayPlugin"
+        }
+
+        explodedWar {
+            id = "io.freefair.exploded-war"
+            implementationClass = "io.freefair.gradle.plugins.ExplodedWarPlugin"
+        }
     }
 }
 
-group = 'io.freefair'
+pluginBundle {
+    website = "https://github.com/freefair/war-gradle-plugins"
+    vcsUrl = 'https://github.com/freefair/war-gradle-plugins'
+    tags = ['war']
 
-subprojects {
-    apply plugin: 'groovy'
-    apply plugin: 'maven'
+    plugins {
+        warOverlay {
+            id = "io.freefair.war-overlay"
+            displayName = "War Overlay Plugin"
+            description = "War Overlay Plugin"
 
-    sourceCompatibility = JavaVersion.VERSION_1_7
+            tags = ['war', 'overlay']
+        }
 
-    dependencies {
-        compile gradleApi()
-        compile localGroovy()
+        explodedWar {
+            id = "io.freefair.exploded-war"
+            displayName = "Exploded War Plugin"
+            description = "Exploded War Plugin"
+            tags = ['war', 'exploded']
+        }
     }
+}
 
-    groovydoc {
-        link ('https://docs.gradle.org/current/groovydoc/', 'org.gradle.api', 'org.gradle.api.internal')
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        from sourceSets.main.allSource
-        classifier = "sources"
-    }
-
-    task groovydocJar(type: Jar, dependsOn: groovydoc) {
-        from groovydoc.getDestinationDir()
-        classifier = "groovydoc"
-    }
-
-    task javadocJar(type: Jar, dependsOn: groovydoc) {
-        from groovydoc.getDestinationDir()
-        classifier = "javadoc"
-    }
-
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-        archives groovydocJar
-    }
+dependencies {
+    testCompile 'junit:junit:4.12'
 }
