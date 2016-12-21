@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins
 
-import io.freefair.gradle.plugins.overlay.OverlayExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.CopySpec
@@ -14,29 +13,32 @@ import org.gradle.api.tasks.bundling.War
 @SuppressWarnings("GroovyUnusedDeclaration")
 class WarOverlayPlugin implements Plugin<Project> {
 
-    OverlayExtension overlayExt;
+    WarOverlayExtension overlayExt;
 
     @Override
     void apply(Project project) {
         project.pluginManager.apply(WarPlugin)
 
-        overlayExt = project.extensions.create("overlay", OverlayExtension)
+        overlayExt = project.extensions.create("warOverlay", WarOverlayExtension)
 
-        project.tasks.withType(War) { War w ->
+        project.tasks.withType(War) { War warTask ->
 
-            def configTask = project.tasks.create("configureOverlayFor${w.name.capitalize()}")
+            def configTask = project.tasks.create("configureOverlayFor${warTask.name.capitalize()}")
 
-            w.dependsOn configTask
+            warTask.dependsOn configTask
 
             configTask.doFirst {
-                project.configurations.getByName("runtime").each {
-                    if (it.name.endsWith(".war")) {
-                        w.from(project.zipTree(it)) { CopySpec css ->
-                            css.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-                            css.exclude overlayExt.excludes
+                project.configurations.getByName("runtime").each { File file ->
+                    if (file.name.endsWith(".war")) {
+
+                        configTask.logger.info("Using {} as overlay", file.name)
+
+                        warTask.from(project.zipTree(file)) { CopySpec cs ->
+                            cs.duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+                            cs.exclude overlayExt.excludes
                         }
 
-                        w.rootSpec.exclude "**/$it.name"
+                        warTask.rootSpec.exclude "**/$file.name"
                     }
                 }
             }

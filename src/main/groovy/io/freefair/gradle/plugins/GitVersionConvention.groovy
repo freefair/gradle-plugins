@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugins.git
+package io.freefair.gradle.plugins
 
 import org.codehaus.groovy.runtime.NumberAwareComparator
 

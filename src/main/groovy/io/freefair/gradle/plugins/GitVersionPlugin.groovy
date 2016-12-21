@@ -1,21 +1,19 @@
 package io.freefair.gradle.plugins
 
-import io.freefair.gradle.plugins.git.GitUtil
-import io.freefair.gradle.plugins.git.GitVersionConvention
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-public class GitVersionPlugin implements Plugin<Project> {
+class GitVersionPlugin implements Plugin<Project> {
 
-    Project project;
-    GitUtil gitUtil;
-    GitVersionConvention convention;
+    Project project
+    GitUtil gitUtil
+    GitVersionConvention convention
 
     @Override
     void apply(Project project) {
-        this.project = project;
+        this.project = project
 
-        gitUtil = new GitUtil(project);
+        gitUtil = new GitUtil(project)
 
         project.convention.plugins.put("gitVersion", new GitVersionConvention())
         convention = project.getConvention().getPlugin(GitVersionConvention)
@@ -26,13 +24,13 @@ public class GitVersionPlugin implements Plugin<Project> {
     }
 
     private boolean checkForOtherVersion() {
-        if (project.hasProperty("version") && !project.properties.get("version").equals("unspecified")) {
+        if (project.hasProperty("version") && project.properties.get("version") != "unspecified") {
             def propertiesVersion = project.properties.get("version")
             project.logger.lifecycle("using the non-git version {}", propertiesVersion)
             project.version = propertiesVersion
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
     private void useGitVersion() {
@@ -40,10 +38,10 @@ public class GitVersionPlugin implements Plugin<Project> {
 
         gitUtil.fetchTags()
 
-        List<String> currentTags = gitUtil.getCurrentTags(convention.gitTagPrefix);
+        List<String> currentTags = gitUtil.getCurrentTags(convention.gitTagPrefix)
 
         if (currentTags.isEmpty()) {
-            List<String> lastTags = gitUtil.getLastTags(convention.gitTagPrefix);
+            List<String> lastTags = gitUtil.getLastTags(convention.gitTagPrefix)
 
             if (lastTags.isEmpty()) {
                 project.version = "-SNAPSHOT"
@@ -52,23 +50,23 @@ public class GitVersionPlugin implements Plugin<Project> {
                 project.version = "${getVersion(lastTags)}-SNAPSHOT"
             }
         } else {
-            project.version = getVersion(currentTags);
+            project.version = getVersion(currentTags)
         }
     }
 
 
     private String getVersion(String tag) {
         if (tag.startsWith(convention.gitTagPrefix)) {
-            return tag.substring(convention.gitTagPrefix.length());
+            return tag.substring(convention.gitTagPrefix.length())
         } else {
-            project.logger.warn("Internal Error, Tag {} doesn't match prefix {}", tag, convention.gitTagPrefix);
-            return tag;
+            project.logger.warn("Internal Error, Tag {} doesn't match prefix {}", tag, convention.gitTagPrefix)
+            return tag
         }
     }
 
     private String getVersion(List<String> tagList) {
-        String tag = tagList.toSorted(convention.gitVersionComparator).last();
-        return getVersion(tag);
+        String tag = tagList.toSorted(convention.gitVersionComparator).last()
+        return getVersion(tag)
     }
 
 }

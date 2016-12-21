@@ -1,48 +1,49 @@
-package io.freefair.gradle.plugins.git
+package io.freefair.gradle.plugins
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 
 class GitUtil {
 
-    private Project project;
-    private def log;
+    private Project project
+    private Logger log
 
-    public GitUtil(Project project) {
-        this.project = project;
+    GitUtil(Project project) {
+        this.project = project
         log = project.logger
     }
 
-    public List<String> getCurrentTags(String prefix) {
+    List<String> getCurrentTags(String prefix) {
         return getTagsPointingAt("HEAD", prefix)
     }
 
-    public List<String> getLastTags(String prefix) {
+    List<String> getLastTags(String prefix) {
         def cmd = "git describe --abbrev=0 --tags --match $prefix*"
         String lastTag = exec(cmd)
         return getTagsPointingAt(lastTag, prefix)
     }
 
-    public List<String> getTagsPointingAt(String refspec, String prefix) {
+    List<String> getTagsPointingAt(String refspec, String prefix) {
         def cmd = "git tag --points-at ${refspec} -l $prefix*"
-        String trim = exec(cmd);
+        String trim = exec(cmd)
         return trim.readLines()
     }
 
     private String exec(String command) {
-        log.info("Executing: '{}'", command);
+        log.info("Executing: '{}'", command)
 
         try {
             String output = command.execute([], project.getProjectDir()).text.trim()
             log.info("Got: '{}'", output)
-            return output;
+            return output
         } catch (Exception e) {
             log.error("Failed to execute: '{}'", command)
             log.error(e.getMessage())
-            throw e;
+            throw e
         }
     }
 
-    public void fetchTags() {
-       exec("git fetch --all -v")
+    void fetchTags() {
+        exec("git fetch --all -v")
     }
 }

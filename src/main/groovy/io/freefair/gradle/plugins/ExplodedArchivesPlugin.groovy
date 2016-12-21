@@ -2,30 +2,33 @@ package io.freefair.gradle.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.api.tasks.bundling.War
 
 /**
  * @author Lars Grefer
  */
 @SuppressWarnings("GroovyUnusedDeclaration")
 class ExplodedArchivesPlugin implements Plugin<Project> {
+
+    private ExplodedArchivesExtension extension
+
     @Override
     void apply(Project project) {
+
+        extension = project.extensions.add("explodedArchives", ExplodedArchivesExtension)
 
         project.afterEvaluate {
 
             def explodedArchivesTask = project.tasks.create("explodedArchives")
 
-            explodedArchivesTask.group = BasePlugin.BUILD_GROUP;
+            explodedArchivesTask.group = BasePlugin.BUILD_GROUP
 
             project.tasks.withType(AbstractArchiveTask) { AbstractArchiveTask aat ->
                 Sync explodedArchiveTask = project.tasks.create("exploded${aat.name.capitalize()}", Sync)
 
-                explodedArchivesTask.dependsOn explodedArchiveTask;
+                explodedArchivesTask.dependsOn explodedArchiveTask
                 explodedArchiveTask.dependsOn aat
 
                 explodedArchiveTask.group = aat.group
@@ -33,7 +36,9 @@ class ExplodedArchivesPlugin implements Plugin<Project> {
                     project.file("${aat.destinationDir}/exploded")
                 })
                 explodedArchiveTask.from({ project.zipTree(aat.getArchivePath()) })
-                explodedArchiveTask.into({ aat.archiveName - ".$aat.extension" })
+                explodedArchiveTask.into({
+                    extension.includeExtension ? aat.archiveName : aat.archiveName - ".$aat.extension"
+                })
 
             }
         }
