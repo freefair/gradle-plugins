@@ -12,12 +12,12 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 @SuppressWarnings("GroovyUnusedDeclaration")
 class ExplodedArchivesPlugin implements Plugin<Project> {
 
-    private ExplodedArchivesExtension extension
+    private ExplodedArchivesExtension explodedArchivesExtension
 
     @Override
     void apply(Project project) {
 
-        extension = project.extensions.create("explodedArchives", ExplodedArchivesExtension)
+        explodedArchivesExtension = project.extensions.create("explodedArchives", ExplodedArchivesExtension)
 
         project.afterEvaluate {
 
@@ -37,7 +37,7 @@ class ExplodedArchivesPlugin implements Plugin<Project> {
                 })
                 explodedArchiveTask.from({ project.zipTree(aat.getArchivePath()) })
                 explodedArchiveTask.into({
-                    extension.includeExtension ? aat.archiveName : aat.archiveName - ".$aat.extension"
+                    explodedArchivesExtension.includeExtension ? aat.archiveName : aat.archiveName - ".$aat.extension"
                 })
 
             }
