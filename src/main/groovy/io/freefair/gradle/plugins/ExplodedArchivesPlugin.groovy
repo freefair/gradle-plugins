@@ -21,12 +21,12 @@ class ExplodedArchivesPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
 
-            def explodedArchivesTask = project.tasks.create("explodedArchives")
+            def explodedArchivesTask = project.tasks.create("explode")
 
             explodedArchivesTask.group = BasePlugin.BUILD_GROUP
 
             project.tasks.withType(AbstractArchiveTask) { AbstractArchiveTask aat ->
-                Sync explodedArchiveTask = project.tasks.create("exploded${aat.name.capitalize()}", Sync)
+                Sync explodedArchiveTask = project.tasks.create("explode${aat.name.capitalize()}", Sync)
 
                 explodedArchivesTask.dependsOn explodedArchiveTask
                 explodedArchiveTask.dependsOn aat
