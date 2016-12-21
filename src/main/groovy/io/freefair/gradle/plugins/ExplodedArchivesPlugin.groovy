@@ -37,7 +37,7 @@ class ExplodedArchivesPlugin implements Plugin<Project> {
                 })
                 explodedArchiveTask.from({ project.zipTree(aat.getArchivePath()) })
                 explodedArchiveTask.into({
-                    explodedArchivesExtension.includeExtension ? aat.archiveName : aat.archiveName - ".$aat.extension"
+                    project.file("${aat.destinationDir}/exploded/${explodedArchivesExtension.includeExtension ? aat.archiveName : aat.archiveName - ".$aat.extension"}")
                 })
 
             }
