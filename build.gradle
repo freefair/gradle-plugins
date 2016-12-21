@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.freefair.gradle"
-version = "0.9.5"
+version = "0.9.6"
 
 repositories {
     jcenter()
