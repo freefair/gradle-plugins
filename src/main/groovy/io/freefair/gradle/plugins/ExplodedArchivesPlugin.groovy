@@ -17,7 +17,7 @@ class ExplodedArchivesPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
 
-        extension = project.extensions.add("explodedArchives", ExplodedArchivesExtension)
+        extension = project.extensions.create("explodedArchives", ExplodedArchivesExtension)
 
         project.afterEvaluate {
 
