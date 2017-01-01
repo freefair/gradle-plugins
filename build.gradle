@@ -1,44 +1,65 @@
-allprojects {
-    repositories {
-        jcenter()
+plugins {
+    id "groovy"
+    id "maven-publish"
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish" version "0.9.7"
+}
+
+group = "io.freefair.gradle"
+version = "0.9.7"
+
+repositories {
+    jcenter()
+}
+
+gradlePlugin {
+    plugins {
+        warOverlay {
+            id = "io.freefair.war-overlay"
+            implementationClass = "io.freefair.gradle.plugins.WarOverlayPlugin"
+        }
+        explodedWar {
+            id = "io.freefair.exploded-archives"
+            implementationClass = "io.freefair.gradle.plugins.ExplodedArchivesPlugin"
+        }
+        gitVersion {
+            id = "io.freefair.git-version"
+            implementationClass = "io.freefair.gradle.plugins.GitVersionPlugin"
+        }
     }
 }
 
-group = 'io.freefair'
+pluginBundle {
+    website = "https://github.com/freefair/gradle-plugins"
+    vcsUrl = 'https://github.com/freefair/gradle-plugins'
 
-subprojects {
-    apply plugin: 'groovy'
-    apply plugin: 'maven'
-
-    sourceCompatibility = JavaVersion.VERSION_1_7
-
-    dependencies {
-        compile gradleApi()
-        compile localGroovy()
+    plugins {
+        warOverlay {
+            id = "io.freefair.war-overlay"
+            displayName = "War Overlay Plugin"
+            description = "War Overlay Plugin"
+            tags = ['war', 'overlay']
+        }
+        explodedWar {
+            id = "io.freefair.exploded-archives"
+            displayName = "Exploded Archives Plugin"
+            description = "Exploded Archives Plugin"
+            tags = ['war', 'exploded', 'jar', 'ear', 'zip']
+        }
+        gitVersion {
+            id = "io.freefair.git-version"
+            displayName = "Git Version Plugin"
+            description = "Git Version Plugin"
+            tags = ['git', 'version']
+        }
     }
 
-    groovydoc {
-        link ('https://docs.gradle.org/current/groovydoc/', 'org.gradle.api', 'org.gradle.api.internal')
+    mavenCoordinates {
+        groupId = project.group
     }
+}
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        from sourceSets.main.allSource
-        classifier = "sources"
-    }
-
-    task groovydocJar(type: Jar, dependsOn: groovydoc) {
-        from groovydoc.getDestinationDir()
-        classifier = "groovydoc"
-    }
-
-    task javadocJar(type: Jar, dependsOn: groovydoc) {
-        from groovydoc.getDestinationDir()
-        classifier = "javadoc"
-    }
-
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-        archives groovydocJar
-    }
+dependencies {
+    compileOnly "org.projectlombok:lombok:1.16.12"
+    testCompile 'junit:junit:4.12'
 }
