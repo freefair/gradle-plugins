@@ -3,6 +3,10 @@ package io.freefair.gradle.plugins
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+/**
+ * @author Lars Grefer
+ */
+@SuppressWarnings("GroovyUnusedDeclaration")
 class GitVersionPlugin implements Plugin<Project> {
 
     Project project

@@ -3,7 +3,7 @@ package io.freefair.gradle.plugins
 import org.codehaus.groovy.runtime.NumberAwareComparator
 
 /**
- * Created by larsgrefer on 15.03.16.
+ * @author Lars Grefer
  */
 class GitVersionConvention {
 

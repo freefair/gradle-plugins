@@ -17,7 +17,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.junit.Assert.*;
 
 /**
- * Created by larsgrefer on 21.12.16.
+ * @author Lars Grefer
  */
 public class ExplodedArchivesPluginTest {
     @Rule

@@ -14,6 +14,9 @@ import java.nio.file.StandardCopyOption;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.junit.Assert.*;
 
+/**
+ * @author Lars Grefer
+ */
 public class WarOverlayPluginTest {
     @Rule
     public final TemporaryFolder testProjectDir = new TemporaryFolder();
