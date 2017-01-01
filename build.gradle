@@ -26,6 +26,18 @@ gradlePlugin {
             id = "io.freefair.git-version"
             implementationClass = "io.freefair.gradle.plugins.GitVersionPlugin"
         }
+        sourcesJar {
+            id = "io.freefair.sources-jar"
+            implementationClass = "io.freefair.gradle.plugins.SourcesJarPlugin"
+        }
+        javadocJar {
+            id = "io.freefair.javadoc-jar"
+            implementationClass = "io.freefair.gradle.plugins.JavadocJarPlugin"
+        }
+        mavenJars {
+            id = "io.freefair.maven-jars"
+            implementationClass = "io.freefair.gradle.plugins.MavenJarsPlugin"
+        }
     }
 }
 
@@ -51,6 +63,24 @@ pluginBundle {
             displayName = "Git Version Plugin"
             description = "Git Version Plugin"
             tags = ['git', 'version']
+        }
+        sourcesJar {
+            id = "io.freefair.sources-jar"
+            displayName = "Sources Jar Plugin"
+            description = 'This plugin adds a sourcesJar task'
+            tags = ['maven', 'sources', 'jar']
+        }
+        javadocJar {
+            id = "io.freefair.javadoc-jar"
+            displayName = "Javadoc Jar Plugin"
+            description = 'This plugin adds a javadocJar task'
+            tags = ['maven', 'javadoc', 'jar']
+        }
+        mavenJars {
+            id = "io.freefair.maven-jars"
+            displayName = "Maven Jars Plugin"
+            description = 'This plugin adds a sourcesJar and a javadocJar task'
+            tags = ['maven', 'javadoc', 'sources', 'jar']
         }
     }
 
