@@ -55,13 +55,13 @@ pluginBundle {
         explodedWar {
             id = "io.freefair.exploded-archives"
             displayName = "Exploded Archives Plugin"
-            description = "Exploded Archives Plugin"
+            description = 'This plugin adds a explode*-task for every archive task (jar, zip, ...) in your project'
             tags = ['war', 'exploded', 'jar', 'ear', 'zip']
         }
         gitVersion {
             id = "io.freefair.git-version"
             displayName = "Git Version Plugin"
-            description = "Git Version Plugin"
+            description = 'This plugin sets your latest git tag as project version'
             tags = ['git', 'version']
         }
         sourcesJar {
