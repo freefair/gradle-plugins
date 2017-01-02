@@ -1,12 +1,8 @@
 package io.freefair.gradle.plugins.javadoc;
 
-import io.freefair.gradle.plugins.base.AbstractGroupingPlugin;
+import io.freefair.gradle.plugins.base.AbstractPlugin;
 import io.freefair.gradle.plugins.maven.JavadocJarPlugin;
-import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author Lars Grefer
@@ -15,14 +11,13 @@ import java.util.List;
  * @see JavadocJarPlugin
  */
 @SuppressWarnings("unused")
-public class JavadocPlugin extends AbstractGroupingPlugin {
+public class JavadocPlugin extends AbstractPlugin {
 
     @Override
-    protected List<Class<? extends Plugin<Project>>> getPlugins() {
-        return Arrays.asList(
-                (Class<? extends Plugin<Project>>) JavadocLinksPlugin.class,
-                JavadocIoPlugin.class,
-                JavadocJarPlugin.class
-        );
+    public void apply(Project project) {
+        super.apply(project);
+        project.getPluginManager().apply(JavadocLinksPlugin.class);
+        project.getPluginManager().apply(JavadocIoPlugin.class);
+        project.getPluginManager().apply(JavadocJarPlugin.class);
     }
 }
