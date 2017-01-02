@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugins.javadoc;
 
-import io.freefair.gradle.plugins.base.AbstractPlugin;
 import io.freefair.gradle.plugins.maven.JavadocJarPlugin;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 /**
@@ -11,11 +11,10 @@ import org.gradle.api.Project;
  * @see JavadocJarPlugin
  */
 @SuppressWarnings("unused")
-public class JavadocPlugin extends AbstractPlugin {
+public class JavadocPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        super.apply(project);
         project.getPluginManager().apply(JavadocLinksPlugin.class);
         project.getPluginManager().apply(JavadocIoPlugin.class);
         project.getPluginManager().apply(JavadocJarPlugin.class);
