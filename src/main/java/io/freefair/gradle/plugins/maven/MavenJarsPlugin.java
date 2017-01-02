@@ -1,5 +1,6 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.maven;
 
+import io.freefair.gradle.plugins.base.AbstractGroupingPlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 

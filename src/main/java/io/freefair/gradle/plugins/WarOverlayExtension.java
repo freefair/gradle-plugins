@@ -18,6 +18,7 @@ import java.util.Set;
 @EqualsAndHashCode
 public class WarOverlayExtension {
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private Set<String> excludes = new HashSet<>();
 
     public WarOverlayExtension() {
@@ -26,10 +27,12 @@ public class WarOverlayExtension {
         excludes.add("META-INF/MANIFEST.MF");
     }
 
+    @SuppressWarnings("unused")
     public void exclude(String pattern) {
         excludes.add(pattern);
     }
 
+    @SuppressWarnings("unused")
     public void exclude(String... pattern) {
         Collections.addAll(excludes, pattern);
     }

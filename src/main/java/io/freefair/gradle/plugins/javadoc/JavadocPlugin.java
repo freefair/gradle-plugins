@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugins.javadoc;
 
-import io.freefair.gradle.plugins.AbstractGroupingPlugin;
-import io.freefair.gradle.plugins.JavadocJarPlugin;
+import io.freefair.gradle.plugins.base.AbstractGroupingPlugin;
+import io.freefair.gradle.plugins.maven.JavadocJarPlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 

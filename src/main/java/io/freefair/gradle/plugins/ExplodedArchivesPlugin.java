@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins;
 
+import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;

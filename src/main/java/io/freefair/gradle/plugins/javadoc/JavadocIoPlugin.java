@@ -1,9 +1,8 @@
 package io.freefair.gradle.plugins.javadoc;
 
-import io.freefair.gradle.plugins.AbstractPlugin;
+import io.freefair.gradle.plugins.base.AbstractPlugin;
 import lombok.Getter;
 import org.gradle.api.Action;
-import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;

@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins;
 
+import io.freefair.gradle.plugins.base.AbstractPlugin;
 import org.gradle.api.Project;
 
 import java.util.ArrayList;

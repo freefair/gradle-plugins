@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.base;
 
 import lombok.Getter;
 import org.gradle.api.Project;
@@ -6,6 +6,8 @@ import org.gradle.api.Project;
 import java.beans.Introspector;
 
 /**
+ * Base class for {@link org.gradle.api.Plugin plugins} which use an {@link org.gradle.api.plugins.ExtensionContainer extension}.
+ *
  * @param <E> the type of the extension
  * @author Lars Grefer
  */

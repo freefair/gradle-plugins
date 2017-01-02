@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.base;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -6,6 +6,8 @@ import org.gradle.api.Project;
 import java.util.List;
 
 /**
+ * Base class for {@link org.gradle.api.Plugin plugins} which are just {@link org.gradle.api.plugins.PluginManager#apply(Class) applying} other plugins.
+ *
  * @author Lars Grefer
  */
 public abstract class AbstractGroupingPlugin extends AbstractPlugin {

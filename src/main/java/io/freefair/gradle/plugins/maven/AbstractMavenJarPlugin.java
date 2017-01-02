@@ -1,9 +1,7 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.maven;
 
+import io.freefair.gradle.plugins.base.AbstractPlugin;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.gradle.api.Action;
-import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.tasks.bundling.Jar;

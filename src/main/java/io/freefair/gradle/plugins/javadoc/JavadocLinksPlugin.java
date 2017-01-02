@@ -1,6 +1,6 @@
 package io.freefair.gradle.plugins.javadoc;
 
-import io.freefair.gradle.plugins.AbstractExtensionPlugin;
+import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.gradle.api.*;

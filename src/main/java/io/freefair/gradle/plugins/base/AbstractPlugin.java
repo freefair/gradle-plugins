@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.base;
 
 import lombok.Getter;
 import org.gradle.api.Action;

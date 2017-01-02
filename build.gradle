@@ -30,15 +30,15 @@ gradlePlugin {
         }
         sourcesJar {
             id = "io.freefair.sources-jar"
-            implementationClass = "io.freefair.gradle.plugins.SourcesJarPlugin"
+            implementationClass = "io.freefair.gradle.plugins.maven.SourcesJarPlugin"
         }
         javadocJar {
             id = "io.freefair.javadoc-jar"
-            implementationClass = "io.freefair.gradle.plugins.JavadocJarPlugin"
+            implementationClass = "io.freefair.gradle.plugins.maven.JavadocJarPlugin"
         }
         mavenJars {
             id = "io.freefair.maven-jars"
-            implementationClass = "io.freefair.gradle.plugins.MavenJarsPlugin"
+            implementationClass = "io.freefair.gradle.plugins.maven.MavenJarsPlugin"
         }
         javadocIo {
             id = "io.freefair.javadoc-io"
