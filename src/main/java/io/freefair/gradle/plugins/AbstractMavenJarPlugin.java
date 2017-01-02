@@ -12,23 +12,22 @@ import org.gradle.api.tasks.bundling.Jar;
  * @author Lars Grefer
  */
 @Getter
-@RequiredArgsConstructor
-abstract class AbstractMavenJarPlugin implements Plugin<Project> {
-
-    final String taskName;
-    final String classifier;
+abstract class AbstractMavenJarPlugin extends AbstractPlugin {
 
     private Jar jarTask;
 
     @Override
     public void apply(Project project) {
-        jarTask = project.getTasks().create(taskName, Jar.class, new Action<Jar>() {
-            @Override
-            public void execute(Jar jar) {
-                jar.setClassifier(classifier);
-            }
-        });
+        super.apply(project);
+        jarTask = project.getTasks().create(getTaskName(), Jar.class);
+        jarTask.setClassifier(getClassifier());
 
         project.getArtifacts().add(Dependency.ARCHIVES_CONFIGURATION, getJarTask());
+    }
+
+    protected abstract String getClassifier();
+
+    protected String getTaskName() {
+        return getClassifier() + "Jar";
     }
 }

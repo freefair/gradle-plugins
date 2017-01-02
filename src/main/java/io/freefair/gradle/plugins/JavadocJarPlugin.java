@@ -5,17 +5,14 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.AppliedPlugin;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.publish.maven.MavenArtifact;
 import org.gradle.api.tasks.javadoc.Javadoc;
 
 /**
  * @author Lars Grefer
  * @see <a href="http://stackoverflow.com/a/11475089">http://stackoverflow.com/a/11475089</a>
  */
-public class JavadocJarPlugin extends AbstractMavenJarPlugin implements Plugin<Project> {
-
-    public JavadocJarPlugin() {
-        super("javadocJar", "javadoc");
-    }
+public class JavadocJarPlugin extends AbstractMavenJarPlugin {
 
     @Override
     public void apply(final Project project) {
@@ -30,5 +27,10 @@ public class JavadocJarPlugin extends AbstractMavenJarPlugin implements Plugin<P
                 getJarTask().from(javadocTask.getDestinationDir());
             }
         });
+    }
+
+    @Override
+    protected String getClassifier() {
+        return "javadoc";
     }
 }

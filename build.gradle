@@ -1,5 +1,4 @@
 plugins {
-    id "groovy"
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.7"
