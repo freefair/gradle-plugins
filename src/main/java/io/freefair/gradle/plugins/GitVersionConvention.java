@@ -1,0 +1,23 @@
+package io.freefair.gradle.plugins;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.codehaus.groovy.runtime.NumberAwareComparator;
+
+import java.util.Comparator;
+
+/**
+ * @author Lars Grefer
+ */
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
+class GitVersionConvention {
+
+    String gitTagPrefix = "";
+
+    Comparator<String> gitVersionComparator = new NumberAwareComparator<>();
+}
