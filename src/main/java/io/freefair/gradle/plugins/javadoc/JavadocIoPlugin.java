@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.javadoc;
 
+import io.freefair.gradle.plugins.AbstractPlugin;
 import lombok.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
@@ -20,7 +21,7 @@ import java.io.File;
  */
 @SuppressWarnings("unused")
 @Getter
-public class JavadocIoPlugin implements Plugin<Project> {
+public class JavadocIoPlugin extends AbstractPlugin {
 
     private Configuration javadocIoConfiguration;
 
@@ -29,6 +30,7 @@ public class JavadocIoPlugin implements Plugin<Project> {
 
     @Override
     public void apply(final Project project) {
+        super.apply(project);
 
         javadocIoConfiguration = project.getConfigurations().create("javadocIo");
 

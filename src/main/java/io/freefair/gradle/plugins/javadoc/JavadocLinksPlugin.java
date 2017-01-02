@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.javadoc;
 
+import io.freefair.gradle.plugins.AbstractExtensionPlugin;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.gradle.api.*;
@@ -12,23 +13,29 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 @SuppressWarnings("unused")
 @Getter
 @NoArgsConstructor
-public class JavadocLinksPlugin implements Plugin<Project> {
-
-    private JavadocLinksExtension extension;
+public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExtension> {
 
     private Task configureJavadocLinks;
-    private Project project;
 
     @Override
     public void apply(final Project project) {
-        this.project = project;
+        super.apply(project);
 
         setupBase();
 
-        setupDocsOracleLink();
-
         setupDependencyGuesses();
+    }
 
+    @Override
+    protected void afterEvaluate(Project project) {
+        super.afterEvaluate(project);
+
+        setupDocsOracleLink();
+    }
+
+    @Override
+    protected Class<JavadocLinksExtension> getExtensionClass() {
+        return JavadocLinksExtension.class;
     }
 
     private void setupDependencyGuesses() {
@@ -49,7 +56,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
                     String version = resolvedArtifact.getModuleVersion().getId().getVersion();
 
                     String majorVersion;
-                    if(version.contains(".")) {
+                    if (version.contains(".")) {
                         majorVersion = version.substring(0, version.indexOf("."));
                     } else {
                         majorVersion = version;
@@ -79,8 +86,6 @@ public class JavadocLinksPlugin implements Plugin<Project> {
 
     private void setupBase() {
 
-        extension = project.getExtensions().create("javadocLinks", JavadocLinksExtension.class);
-
         configureJavadocLinks = project.getTasks().create("configureJavadocLinks");
         configureJavadocLinks.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
 
@@ -109,33 +114,28 @@ public class JavadocLinksPlugin implements Plugin<Project> {
     }
 
     private void setupDocsOracleLink() {
-        project.afterEvaluate(new Action<Project>() {
-            @Override
-            public void execute(Project project) {
 
-                JavaVersion javaVersion = extension.getJavaVersion();
-                if(javaVersion == null) {
-                    project.getLogger().debug("Not adding Oracle Java Docs link because javaVersion is null");
-                    return;
-                }
+        JavaVersion javaVersion = extension.getJavaVersion();
+        if (javaVersion == null) {
+            project.getLogger().debug("Not adding Oracle Java Docs link because javaVersion is null");
+            return;
+        }
 
-                switch (javaVersion) {
-                    case VERSION_1_5:
-                        extension.links("http://docs.oracle.com/javase/5/docs/api/");
-                        break;
-                    case VERSION_1_6:
-                        extension.links("http://docs.oracle.com/javase/6/docs/api/");
-                        break;
-                    case VERSION_1_7:
-                        extension.links("http://docs.oracle.com/javase/7/docs/api/");
-                        break;
-                    default:
-                        project.getLogger().warn("Unknown java version {}", javaVersion);
-                    case VERSION_1_8:
-                        extension.links("http://docs.oracle.com/javase/8/docs/api/");
-                        break;
-                }
-            }
-        });
+        switch (javaVersion) {
+            case VERSION_1_5:
+                extension.links("http://docs.oracle.com/javase/5/docs/api/");
+                break;
+            case VERSION_1_6:
+                extension.links("http://docs.oracle.com/javase/6/docs/api/");
+                break;
+            case VERSION_1_7:
+                extension.links("http://docs.oracle.com/javase/7/docs/api/");
+                break;
+            default:
+                project.getLogger().warn("Unknown java version {}", javaVersion);
+            case VERSION_1_8:
+                extension.links("http://docs.oracle.com/javase/8/docs/api/");
+                break;
+        }
     }
 }
