@@ -109,7 +109,7 @@ pluginBundle {
             tags = ['javadoc', 'links', 'javadoc.io']
         }
         javadocs {
-            id = "io.freefar.javadocs"
+            id = "io.freefair.javadocs"
             displayName = "Javadoc Plugin"
             description = 'Bundle of all our javadoc plugins'
             tags = ['javadoc']
