@@ -10,21 +10,20 @@ import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.War;
+import org.gradle.internal.impldep.org.bouncycastle.crypto.params.AEADParameters;
 
 import java.io.File;
 
 /**
  * @author Lars Grefer
  */
-public class WarOverlayPlugin implements Plugin<Project> {
-
-    private WarOverlayExtension overlayExt;
+@SuppressWarnings("unused")
+public class WarOverlayPlugin extends AbstractExtensionPlugin<WarOverlayExtension> {
 
     @Override
     public void apply(final Project project) {
+        super.apply(project);
         project.getPluginManager().apply(WarPlugin.class);
-
-        overlayExt = project.getExtensions().create("warOverlay", WarOverlayExtension.class);
 
         project.getTasks().withType(War.class, new Action<War>() {
             @Override
@@ -43,9 +42,9 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
                                 warTask.from(project.zipTree(file), new Action<CopySpec>() {
                                     @Override
-                                    public void execute(CopySpec copySpec) {
-                                        copySpec.setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE);
-                                        copySpec.exclude(overlayExt.getExcludes());
+                                    public void execute(CopySpec overlayCopySpec) {
+                                        overlayCopySpec.setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE);
+                                        overlayCopySpec.exclude(extension.getExcludes());
                                     }
                                 });
 
@@ -56,5 +55,10 @@ public class WarOverlayPlugin implements Plugin<Project> {
                 });
             }
         });
+    }
+
+    @Override
+    protected Class<WarOverlayExtension> getExtensionClass() {
+        return WarOverlayExtension.class;
     }
 }

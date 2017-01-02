@@ -15,9 +15,9 @@ import java.util.Comparator;
 @Setter
 @EqualsAndHashCode
 @ToString
-class GitVersionConvention {
+public class GitVersionConvention {
 
-    String gitTagPrefix = "";
+    private String gitTagPrefix = "";
 
-    Comparator<String> gitVersionComparator = new NumberAwareComparator<>();
+    private Comparator<String> gitVersionComparator = new NumberAwareComparator<>();
 }

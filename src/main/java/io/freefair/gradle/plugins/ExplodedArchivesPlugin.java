@@ -17,26 +17,27 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.minus;
 /**
  * @author Lars Grefer
  */
-@SuppressWarnings("GroovyUnusedDeclaration")
-public class ExplodedArchivesPlugin extends AbstractPlugin {
+@SuppressWarnings("unused")
+public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArchivesExtension> {
 
-    private ExplodedArchivesExtension explodedArchivesExtension;
     private Task explodedArchivesTask;
 
     @Override
     public void apply(Project project) {
         super.apply(project);
 
-        explodedArchivesExtension = project.getExtensions().create("explodedArchives", ExplodedArchivesExtension.class);
+        explodedArchivesTask = project.getTasks().create("explode");
+        explodedArchivesTask.setGroup(BasePlugin.BUILD_GROUP);
+    }
+
+    @Override
+    protected Class<ExplodedArchivesExtension> getExtensionClass() {
+        return ExplodedArchivesExtension.class;
     }
 
     @Override
     protected void afterEvaluate(final Project project) {
         super.afterEvaluate(project);
-
-        explodedArchivesTask = project.getTasks().create("explode");
-
-        this.explodedArchivesTask.setGroup(BasePlugin.BUILD_GROUP);
 
         project.getTasks().withType(AbstractArchiveTask.class, new Action<AbstractArchiveTask>() {
             @Override
@@ -67,7 +68,7 @@ public class ExplodedArchivesPlugin extends AbstractPlugin {
                     public File call() throws Exception {
 
                         File explodedDir = new File(aat.getDestinationDir(), "exploded");
-                        if (explodedArchivesExtension.includeExtension) {
+                        if (extension.includeExtension) {
                             return new File(explodedDir, aat.getArchiveName());
                         } else {
                             return new File(explodedDir, minus(aat.getArchiveName(), "." + aat.getExtension()));

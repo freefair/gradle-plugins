@@ -3,15 +3,20 @@ package io.freefair.gradle.plugins;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Lars Grefer
  */
 @SuppressWarnings("unused")
-public class MavenJarsPlugin implements Plugin<Project> {
+public class MavenJarsPlugin extends AbstractGroupingPlugin {
 
     @Override
-    public void apply(Project project) {
-        project.getPluginManager().apply(SourcesJarPlugin.class);
-        project.getPluginManager().apply(JavadocJarPlugin.class);
+    protected List<Class<? extends Plugin<Project>>> getPlugins() {
+        return Arrays.asList(
+                (Class<? extends Plugin<Project>>) SourcesJarPlugin.class,
+                JavadocJarPlugin.class
+        );
     }
 }

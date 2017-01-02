@@ -13,11 +13,7 @@ import org.gradle.api.tasks.SourceSet;
  * @author Lars Grefer
  * @see <a href="http://stackoverflow.com/a/11475089">http://stackoverflow.com/a/11475089</a>
  */
-public class SourcesJarPlugin extends AbstractMavenJarPlugin implements Plugin<Project> {
-
-    public SourcesJarPlugin() {
-        super("sourcesJar", "sources");
-    }
+public class SourcesJarPlugin extends AbstractMavenJarPlugin{
 
     @Override
     public void apply(final Project project) {
@@ -33,5 +29,10 @@ public class SourcesJarPlugin extends AbstractMavenJarPlugin implements Plugin<P
                 getJarTask().from(mainSourceSet.getAllSource());
             }
         });
+    }
+
+    @Override
+    protected String getClassifier() {
+        return "sources";
     }
 }

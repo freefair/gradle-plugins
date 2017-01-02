@@ -12,14 +12,12 @@ import java.util.Set;
 /**
  * @author Lars Grefer
  */
-@SuppressWarnings("unused")
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 public class WarOverlayExtension {
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private Set<String> excludes = new HashSet<>();
 
     public WarOverlayExtension() {

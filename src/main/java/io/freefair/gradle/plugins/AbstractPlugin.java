@@ -5,6 +5,9 @@ import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
+/**
+ * @author Lars Grefer
+ */
 @Getter
 public abstract class AbstractPlugin implements Plugin<Project> {
 
