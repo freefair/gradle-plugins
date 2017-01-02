@@ -21,14 +21,14 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.minus;
 @SuppressWarnings("unused")
 public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArchivesExtension> {
 
-    private Task explodedArchivesTask;
+    private Task explodeAll;
 
     @Override
     public void apply(Project project) {
         super.apply(project);
 
-        explodedArchivesTask = project.getTasks().create("explode");
-        explodedArchivesTask.setGroup(BasePlugin.BUILD_GROUP);
+        explodeAll = project.getTasks().create("explode");
+        explodeAll.setGroup(BasePlugin.BUILD_GROUP);
     }
 
     @Override
@@ -42,37 +42,37 @@ public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArch
 
         project.getTasks().withType(AbstractArchiveTask.class, new Action<AbstractArchiveTask>() {
             @Override
-            public void execute(final AbstractArchiveTask aat) {
-                Sync explodedArchiveTask = project.getTasks().create("explode" + capitalize(aat.getName()), Sync.class);
+            public void execute(final AbstractArchiveTask archiveTask) {
+                Sync explodeArchive = project.getTasks().create("explode" + capitalize((CharSequence) archiveTask.getName()), Sync.class);
 
-                explodedArchivesTask.dependsOn(explodedArchiveTask);
-                explodedArchiveTask.dependsOn(aat);
+                explodeAll.dependsOn(explodeArchive);
+                explodeArchive.dependsOn(archiveTask);
 
-                explodedArchiveTask.setGroup(aat.getGroup());
+                explodeArchive.setGroup(archiveTask.getGroup());
 
-                explodedArchiveTask.setDestinationDir(project.file(new Callable<File>() {
+                explodeArchive.setDestinationDir(project.file(new Callable<File>() {
                     @Override
                     public File call() throws Exception {
-                        return new File(aat.getDestinationDir(), "exploded");
+                        return new File(archiveTask.getDestinationDir(), "exploded");
                     }
                 }));
 
-                explodedArchiveTask.from(new Callable<FileTree>() {
+                explodeArchive.from(new Callable<FileTree>() {
                     @Override
                     public FileTree call() throws Exception {
-                        return project.zipTree(aat.getArchivePath());
+                        return project.zipTree(archiveTask.getArchivePath());
                     }
                 });
 
-                explodedArchiveTask.into(new Callable<File>() {
+                explodeArchive.into(new Callable<File>() {
                     @Override
                     public File call() throws Exception {
 
-                        File explodedDir = new File(aat.getDestinationDir(), "exploded");
+                        File explodedDir = new File(archiveTask.getDestinationDir(), "exploded");
                         if (extension.includeExtension) {
-                            return new File(explodedDir, aat.getArchiveName());
+                            return new File(explodedDir, archiveTask.getArchiveName());
                         } else {
-                            return new File(explodedDir, minus(aat.getArchiveName(), "." + aat.getExtension()));
+                            return new File(explodedDir, minus((CharSequence) archiveTask.getArchiveName(), "." + archiveTask.getExtension()));
                         }
                     }
                 });

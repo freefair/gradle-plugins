@@ -11,6 +11,7 @@ import java.util.Comparator;
 /**
  * @author Lars Grefer
  */
+@SuppressWarnings("WeakerAccess")
 @Getter
 @Setter
 @EqualsAndHashCode

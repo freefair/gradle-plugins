@@ -34,7 +34,7 @@ class GitUtil {
     private List<String> getTagsPointingAt(String refspec, String prefix) {
         String cmd = "git tag --points-at " + refspec + " -l " + prefix + "*";
         String trim = exec(cmd);
-        return readLines(trim);
+        return readLines((CharSequence)trim);
     }
 
     private String exec(String command) {

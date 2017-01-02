@@ -25,6 +25,7 @@ abstract class AbstractMavenJarPlugin extends AbstractPlugin {
 
     protected abstract String getClassifier();
 
+    @SuppressWarnings("WeakerAccess")
     protected String getTaskName() {
         return getClassifier() + "Jar";
     }

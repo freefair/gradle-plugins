@@ -5,6 +5,7 @@ import lombok.*;
 /**
  * @author Lars Grefer
  */
+@SuppressWarnings("WeakerAccess")
 @Getter
 @Setter
 @ToString
