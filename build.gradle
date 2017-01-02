@@ -48,9 +48,9 @@ gradlePlugin {
             id = "io.freefair.javadoc-links"
             implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocLinksPlugin"
         }
-        javadoc {
-            id = "io.freefair.javadoc"
-            implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocPlugin"
+        javadocs {
+            id = "io.freefair.javadocs"
+            implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocsPlugin"
         }
     }
 }
@@ -108,8 +108,8 @@ pluginBundle {
             description = 'Link your javadoc against your dependencies'
             tags = ['javadoc', 'links', 'javadoc.io']
         }
-        javadoc {
-            id = "io.freefar.javadoc"
+        javadocs {
+            id = "io.freefar.javadocs"
             displayName = "Javadoc Plugin"
             description = 'Bundle of all our javadoc plugins'
             tags = ['javadoc']

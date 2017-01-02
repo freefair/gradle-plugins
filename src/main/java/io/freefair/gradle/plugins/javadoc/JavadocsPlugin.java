@@ -11,7 +11,7 @@ import org.gradle.api.Project;
  * @see JavadocJarPlugin
  */
 @SuppressWarnings("unused")
-public class JavadocPlugin implements Plugin<Project> {
+public class JavadocsPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
