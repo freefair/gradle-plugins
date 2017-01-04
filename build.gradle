@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.freefair.gradle"
-version = "0.9.9"
+version = "0.9.10"
 
 javadoc.options.links "http://docs.oracle.com/javase/7/docs/api/"
 javadoc.options.links "https://docs.gradle.org/current/javadoc/"
