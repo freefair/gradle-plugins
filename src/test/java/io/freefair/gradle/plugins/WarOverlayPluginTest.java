@@ -2,10 +2,7 @@ package io.freefair.gradle.plugins;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -17,20 +14,11 @@ import static org.junit.Assert.*;
 /**
  * @author Lars Grefer
  */
-public class WarOverlayPluginTest {
-    @Rule
-    public final TemporaryFolder testProjectDir = new TemporaryFolder();
-    private File buildFile;
-
-    @Before
-    public void setup() throws IOException {
-        buildFile = testProjectDir.newFile("build.gradle");
-    }
+public class WarOverlayPluginTest extends AbstractPluginTest {
 
     @Test
     public void testHelloWorldTask() throws IOException {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/test1.gradle");
-        Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        loadBuildFileFromClasspath("/test1.gradle");
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())

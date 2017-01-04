@@ -19,21 +19,11 @@ import static org.junit.Assert.*;
 /**
  * @author Lars Grefer
  */
-public class SourcesJarPluginTest {
-
-    @Rule
-    public final TemporaryFolder testProjectDir = new TemporaryFolder();
-    private File buildFile;
-
-    @Before
-    public void setup() throws IOException {
-        buildFile = testProjectDir.newFile("build.gradle");
-    }
+public class SourcesJarPluginTest extends AbstractPluginTest {
 
     @Test
     public void apply() throws Exception {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/sources-jar.gradle");
-        Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        loadBuildFileFromClasspath("/sources-jar.gradle");
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())

@@ -1,0 +1,17 @@
+plugins {
+    id "java"
+    id "maven"
+    id "io.freefair.maven-jars" version "0.9.9"
+}
+
+repositories {
+    jcenter()
+}
+
+group = "io.freefair"
+
+archivesBaseName = "okhttp-spring-boot-starter"
+
+dependencies {
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
+}

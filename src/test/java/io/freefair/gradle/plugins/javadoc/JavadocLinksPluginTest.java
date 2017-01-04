@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.javadoc;
 
+import io.freefair.gradle.plugins.AbstractPluginTest;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
@@ -18,21 +19,11 @@ import java.nio.file.StandardCopyOption;
 import static org.junit.Assert.*;
 
 
-public class JavadocLinksPluginTest {
-
-    @Rule
-    public final TemporaryFolder testProjectDir = new TemporaryFolder();
-    private File buildFile;
-
-    @Before
-    public void setup() throws IOException {
-        buildFile = testProjectDir.newFile("build.gradle");
-    }
+public class JavadocLinksPluginTest extends AbstractPluginTest {
 
     @Test
     public void apply() throws Exception {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/javadoc-links.gradle");
-        Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        loadBuildFileFromClasspath("/javadoc-links.gradle");
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())

@@ -19,20 +19,11 @@ import static org.junit.Assert.*;
 /**
  * @author Lars Grefer
  */
-public class ExplodedArchivesPluginTest {
-    @Rule
-    public final TemporaryFolder testProjectDir = new TemporaryFolder();
-    private File buildFile;
-
-    @Before
-    public void setup() throws IOException {
-        buildFile = testProjectDir.newFile("build.gradle");
-    }
+public class ExplodedArchivesPluginTest extends AbstractPluginTest {
 
     @Test
     public void testHelloWorldTask() throws IOException {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/exploded-archives.gradle");
-        Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        loadBuildFileFromClasspath("/exploded-archives.gradle");
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
