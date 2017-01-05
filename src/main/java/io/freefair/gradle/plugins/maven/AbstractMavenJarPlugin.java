@@ -20,6 +20,7 @@ abstract class AbstractMavenJarPlugin extends AbstractPlugin {
         super.apply(project);
         jarTask = project.getTasks().create(getTaskName(), Jar.class);
         jarTask.setClassifier(getClassifier());
+        jarTask.setGroup(BasePlugin.BUILD_GROUP);
 
         project.getPluginManager().apply(BasePlugin.class);
         project.getArtifacts().add(Dependency.ARCHIVES_CONFIGURATION, getJarTask());

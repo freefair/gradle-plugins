@@ -16,6 +16,8 @@ public class JavadocJarPlugin extends AbstractMavenJarPlugin {
     public void apply(final Project project) {
         super.apply(project);
 
+        getJarTask().setDescription("Assembles a jar archive containing the javadocs.");
+
         project.getPluginManager().withPlugin("java", new Action<AppliedPlugin>() {
             @Override
             public void execute(AppliedPlugin appliedPlugin) {

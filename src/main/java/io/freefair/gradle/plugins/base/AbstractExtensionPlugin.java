@@ -23,10 +23,12 @@ public abstract class AbstractExtensionPlugin<E> extends AbstractPlugin {
         createExtension();
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected void createExtension() {
         extension = project.getExtensions().create(getExtensionName(), getExtensionClass());
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected String getExtensionName() {
         String extensionName = Introspector.decapitalize(getExtensionClass().getSimpleName());
 

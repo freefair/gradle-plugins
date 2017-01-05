@@ -18,6 +18,8 @@ public class SourcesJarPlugin extends AbstractMavenJarPlugin{
     public void apply(final Project project) {
         super.apply(project);
 
+        getJarTask().setDescription("Assembles a jar archive containing the sources.");
+
         project.getPluginManager().withPlugin("java", new Action<AppliedPlugin>() {
             @Override
             public void execute(AppliedPlugin appliedPlugin) {

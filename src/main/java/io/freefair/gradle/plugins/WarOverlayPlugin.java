@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins;
 
 import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
-import org.codehaus.groovy.runtime.StringGroovyMethods;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -12,6 +11,8 @@ import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.War;
 
 import java.io.File;
+
+import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
 /**
  * @author Lars Grefer
@@ -27,7 +28,7 @@ public class WarOverlayPlugin extends AbstractExtensionPlugin<WarOverlayExtensio
         project.getTasks().withType(War.class, new Action<War>() {
             @Override
             public void execute(final War warTask) {
-                Task configTask = project.getTasks().create("configureOverlayFor" + StringGroovyMethods.capitalize(warTask.getName()));
+                Task configTask = project.getTasks().create("configureOverlayFor" + capitalize((CharSequence) warTask.getName()));
 
                 warTask.dependsOn(configTask);
 

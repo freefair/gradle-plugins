@@ -13,8 +13,8 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.readLines;
  */
 class GitUtil {
 
-    private Project project;
-    private Logger log;
+    private final Project project;
+    private final Logger log;
 
     GitUtil(Project project) {
         this.project = project;
