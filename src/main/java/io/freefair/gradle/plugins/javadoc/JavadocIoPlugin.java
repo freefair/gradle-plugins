@@ -18,7 +18,6 @@ import java.io.File;
 /**
  * @author Lars Grefer
  */
-@SuppressWarnings("unused")
 @Getter
 public class JavadocIoPlugin extends AbstractPlugin {
 

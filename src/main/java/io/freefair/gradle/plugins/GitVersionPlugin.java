@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * @author Lars Grefer
  */
-@SuppressWarnings("unused")
 public class GitVersionPlugin extends AbstractPlugin {
 
     private GitUtil gitUtil;

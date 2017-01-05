@@ -18,7 +18,6 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.minus;
 /**
  * @author Lars Grefer
  */
-@SuppressWarnings("unused")
 public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArchivesExtension> {
 
     private Task explodeAll;

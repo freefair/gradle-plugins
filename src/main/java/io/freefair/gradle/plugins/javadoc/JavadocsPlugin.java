@@ -10,7 +10,6 @@ import org.gradle.api.Project;
  * @see JavadocIoPlugin
  * @see JavadocJarPlugin
  */
-@SuppressWarnings("unused")
 public class JavadocsPlugin implements Plugin<Project> {
 
     @Override

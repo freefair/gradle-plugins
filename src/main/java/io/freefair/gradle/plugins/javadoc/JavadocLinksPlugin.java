@@ -2,7 +2,6 @@ package io.freefair.gradle.plugins.javadoc;
 
 import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.gradle.api.*;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.plugins.JavaBasePlugin;
@@ -10,9 +9,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
-@SuppressWarnings("unused")
 @Getter
-@NoArgsConstructor
 public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExtension> {
 
     private Task configureJavadocLinks;

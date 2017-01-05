@@ -17,7 +17,6 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 /**
  * @author Lars Grefer
  */
-@SuppressWarnings("unused")
 public class WarOverlayPlugin extends AbstractExtensionPlugin<WarOverlayExtension> {
 
     @Override

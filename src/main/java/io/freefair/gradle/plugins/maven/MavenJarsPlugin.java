@@ -6,7 +6,6 @@ import org.gradle.api.Project;
 /**
  * @author Lars Grefer
  */
-@SuppressWarnings("unused")
 public class MavenJarsPlugin implements Plugin<Project> {
 
     @Override
