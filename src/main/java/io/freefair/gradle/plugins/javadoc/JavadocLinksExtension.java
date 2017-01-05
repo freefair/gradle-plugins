@@ -19,13 +19,9 @@ import java.util.List;
 @ToString
 public class JavadocLinksExtension {
 
-    private JavaVersion javaVersion;
+    private JavaVersion javaVersion = Jvm.current().getJavaVersion();
 
     private List<String> links = new LinkedList<>();
-
-    public  JavadocLinksExtension() {
-        javaVersion = Jvm.current().getJavaVersion();
-    }
 
     public void links(String... links) {
         for (String link : links) {
