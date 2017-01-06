@@ -2,3 +2,10 @@ language: java
 jdk:
 - oraclejdk8
 - oraclejdk7
+
+deploy:
+  provider: script
+  script: ./gradlew clean publishPlugins -Pversion=$TRAVIS_TAG
+  on:
+    jdk: oraclejdk7
+    tags: true
