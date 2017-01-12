@@ -47,6 +47,10 @@ gradlePlugin {
             id = "io.freefair.javadoc-links"
             implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocLinksPlugin"
         }
+        javadocUtf8 {
+            id = "io.freefair.javadoc-utf-8"
+            implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocUtf8Plugin"
+        }
         javadocs {
             id = "io.freefair.javadocs"
             implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocsPlugin"
@@ -106,6 +110,12 @@ pluginBundle {
             displayName = "Maven Jars Plugin"
             description = 'Link your javadoc against your dependencies'
             tags = ['javadoc', 'links', 'javadoc.io']
+        }
+        javadocUtf8 {
+            id = "io.freefair.javadoc-utf-8"
+            displayName = "Javadoc UTF-8 Plugin"
+            description = "Set the output encoding of your javadoc tasks to 'UTF-8'"
+            tags = ['javadoc', 'utf-8']
         }
         javadocs {
             id = "io.freefair.javadocs"
