@@ -114,25 +114,38 @@ public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExte
 
         JavaVersion javaVersion = extension.getJavaVersion();
         if (javaVersion == null) {
-            project.getLogger().debug("Not adding Oracle Java Docs link because javaVersion is null");
-            return;
+            project.getLogger().debug("Not adding Oracle JavaSE Docs link because javaVersion is null");
+        } else {
+            switch (javaVersion) {
+                case VERSION_1_5:
+                    extension.links("http://docs.oracle.com/javase/5/docs/api/");
+                    break;
+                case VERSION_1_6:
+                    extension.links("http://docs.oracle.com/javase/6/docs/api/");
+                    break;
+                case VERSION_1_7:
+                    extension.links("http://docs.oracle.com/javase/7/docs/api/");
+                    break;
+                default:
+                    project.getLogger().warn("Unknown Java version {}", javaVersion);
+                case VERSION_1_8:
+                    extension.links("http://docs.oracle.com/javase/8/docs/api/");
+                    break;
+            }
         }
 
-        switch (javaVersion) {
-            case VERSION_1_5:
-                extension.links("http://docs.oracle.com/javase/5/docs/api/");
-                break;
-            case VERSION_1_6:
-                extension.links("http://docs.oracle.com/javase/6/docs/api/");
-                break;
-            case VERSION_1_7:
-                extension.links("http://docs.oracle.com/javase/7/docs/api/");
-                break;
-            default:
-                project.getLogger().warn("Unknown java version {}", javaVersion);
-            case VERSION_1_8:
-                extension.links("http://docs.oracle.com/javase/8/docs/api/");
-                break;
+        Integer javaEEVersion = extension.getJavaEEVersion();
+        if(javaEEVersion == null) {
+            project.getLogger().debug("Not adding Oracle JavaEE Docs link because javaEEVersion is null");
+        } else {
+            switch (javaEEVersion) {
+                case 6:
+                case 7:
+                    extension.links("https://docs.oracle.com/javaee/"+javaEEVersion+"/api/");
+                default:
+                    project.getLogger().warn("Unkown JavaEE version {}", javaEEVersion);
+                    extension.links("https://docs.oracle.com/javaee/7/api/");
+            }
         }
     }
 }
