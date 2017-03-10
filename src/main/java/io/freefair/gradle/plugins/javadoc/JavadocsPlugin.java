@@ -17,5 +17,6 @@ public class JavadocsPlugin implements Plugin<Project> {
         project.getPluginManager().apply(JavadocLinksPlugin.class);
         project.getPluginManager().apply(JavadocIoPlugin.class);
         project.getPluginManager().apply(JavadocJarPlugin.class);
+        project.getPluginManager().apply(JavadocUtf8Plugin.class);
     }
 }
