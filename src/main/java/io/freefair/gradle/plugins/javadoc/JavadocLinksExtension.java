@@ -20,6 +20,7 @@ import java.util.List;
 public class JavadocLinksExtension {
 
     private JavaVersion javaVersion = Jvm.current().getJavaVersion();
+    private Integer JavaEEVersion = 7;
 
     private List<String> links = new LinkedList<>();
 

@@ -3,10 +3,6 @@ plugins {
     id "io.freefair.javadoc-links"
 }
 
-dependencies {
-    compile 'com.squareup.retrofit2:retrofit:2+'
-}
-
 repositories {
     jcenter()
 }
