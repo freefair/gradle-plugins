@@ -21,13 +21,13 @@ public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExte
         setupBase();
 
         setupDependencyGuesses();
-    }
 
-    @Override
-    protected void afterEvaluate(Project project) {
-        super.afterEvaluate(project);
-
-        setupDocsOracleLink();
+        project.afterEvaluate(new Action<Project>() {
+            @Override
+            public void execute(Project project) {
+                setupDocsOracleLink();
+            }
+        });
     }
 
     @Override

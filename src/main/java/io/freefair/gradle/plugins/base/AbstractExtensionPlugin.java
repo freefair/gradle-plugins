@@ -20,19 +20,19 @@ public abstract class AbstractExtensionPlugin<E> extends AbstractPlugin {
     public void apply(Project project) {
         super.apply(project);
 
-        createExtension();
+        extension = createExtension();
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected void createExtension() {
-        extension = project.getExtensions().create(getExtensionName(), getExtensionClass());
+    protected E createExtension() {
+        return project.getExtensions().create(getExtensionName(), getExtensionClass());
     }
 
     @SuppressWarnings("WeakerAccess")
     protected String getExtensionName() {
         String extensionName = Introspector.decapitalize(getExtensionClass().getSimpleName());
 
-        if(extensionName.endsWith("Extension")) {
+        if (extensionName.endsWith("Extension")) {
             extensionName = extensionName.replace("Extension", "");
         }
 

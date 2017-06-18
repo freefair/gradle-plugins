@@ -47,7 +47,7 @@ public class WarOverlayPlugin extends AbstractExtensionPlugin<WarOverlayExtensio
                                     }
                                 });
 
-                                warTask.getRootSpec().exclude("**/"+file.getName());
+                                warTask.getRootSpec().exclude("**/" + file.getName());
                             }
                         }
                     }
