@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.base;
 
 import lombok.Getter;
-import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
@@ -16,16 +15,5 @@ public abstract class AbstractPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         this.project = project;
-
-        project.afterEvaluate(new Action<Project>() {
-            @Override
-            public void execute(Project project) {
-                afterEvaluate(project);
-            }
-        });
-    }
-
-    protected void afterEvaluate(Project project) {
-
     }
 }

@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "maven"
-    id "io.freefair.maven-jars" version "0.9.9"
+    id "io.freefair.maven-jars"
 }
 
 repositories {

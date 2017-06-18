@@ -23,21 +23,11 @@ public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArch
     private Task explodeAll;
 
     @Override
-    public void apply(Project project) {
+    public void apply(final Project project) {
         super.apply(project);
 
         explodeAll = project.getTasks().create("explode");
         explodeAll.setGroup(BasePlugin.BUILD_GROUP);
-    }
-
-    @Override
-    protected Class<ExplodedArchivesExtension> getExtensionClass() {
-        return ExplodedArchivesExtension.class;
-    }
-
-    @Override
-    protected void afterEvaluate(final Project project) {
-        super.afterEvaluate(project);
 
         project.getTasks().withType(AbstractArchiveTask.class, new Action<AbstractArchiveTask>() {
             @Override
@@ -47,14 +37,26 @@ public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArch
                 explodeAll.dependsOn(explodeArchive);
                 explodeArchive.dependsOn(archiveTask);
 
-                explodeArchive.setGroup(archiveTask.getGroup());
+                explodeArchive.getConventionMapping()
+                        .map("group", new Callable<String>() {
+                            @Override
+                            public String call() throws Exception {
+                                return archiveTask.getGroup();
+                            }
+                        });
 
-                explodeArchive.setDestinationDir(project.file(new Callable<File>() {
-                    @Override
-                    public File call() throws Exception {
-                        return new File(archiveTask.getDestinationDir(), "exploded");
-                    }
-                }));
+                explodeArchive.getConventionMapping()
+                        .map("destinationDir", new Callable<File>() {
+                            @Override
+                            public File call() throws Exception {
+                                File explodedDir = new File(archiveTask.getDestinationDir(), "exploded");
+                                if (extension.includeExtension) {
+                                    return new File(explodedDir, archiveTask.getArchiveName());
+                                } else {
+                                    return new File(explodedDir, minus((CharSequence) archiveTask.getArchiveName(), "." + archiveTask.getExtension()));
+                                }
+                            }
+                        });
 
                 explodeArchive.from(new Callable<FileTree>() {
                     @Override
@@ -62,20 +64,12 @@ public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArch
                         return project.zipTree(archiveTask.getArchivePath());
                     }
                 });
-
-                explodeArchive.into(new Callable<File>() {
-                    @Override
-                    public File call() throws Exception {
-
-                        File explodedDir = new File(archiveTask.getDestinationDir(), "exploded");
-                        if (extension.includeExtension) {
-                            return new File(explodedDir, archiveTask.getArchiveName());
-                        } else {
-                            return new File(explodedDir, minus((CharSequence) archiveTask.getArchiveName(), "." + archiveTask.getExtension()));
-                        }
-                    }
-                });
             }
         });
+    }
+
+    @Override
+    protected Class<ExplodedArchivesExtension> getExtensionClass() {
+        return ExplodedArchivesExtension.class;
     }
 }

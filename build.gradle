@@ -133,4 +133,5 @@ pluginBundle {
 dependencies {
     compileOnly "org.projectlombok:lombok:1.16.12"
     testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:2.6.0'
 }

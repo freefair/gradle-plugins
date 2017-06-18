@@ -1,10 +1,14 @@
 plugins {
-    id "io.freefair.war-overlay"
+    id "war"
     id "io.freefair.exploded-archives"
 }
 
 repositories {
     jcenter()
+}
+
+explodedArchives {
+    includeExtension = false
 }
 
 dependencies {
