@@ -6,7 +6,7 @@ plugins {
 
 group = "io.freefair.gradle"
 
-javadoc.options.links "http://docs.oracle.com/javase/7/docs/api/"
+javadoc.options.links "https://docs.oracle.com/javase/7/docs/api/"
 javadoc.options.links "https://docs.gradle.org/current/javadoc/"
 
 repositories {
@@ -59,7 +59,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/freefair/gradle-plugins"
+    website = 'https://github.com/freefair/gradle-plugins'
     vcsUrl = 'https://github.com/freefair/gradle-plugins'
 
     plugins {
@@ -131,7 +131,8 @@ pluginBundle {
 }
 
 dependencies {
-    compileOnly "org.projectlombok:lombok:1.16.12"
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:2.6.0'
+    compileOnly "org.projectlombok:lombok:1.16.16"
+
+    testCompile "junit:junit:4.12"
+    testCompile "org.assertj:assertj-core:2.6.0"
 }
