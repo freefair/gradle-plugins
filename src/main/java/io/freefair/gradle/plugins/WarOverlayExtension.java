@@ -1,9 +1,6 @@
 package io.freefair.gradle.plugins;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,13 +9,9 @@ import java.util.Set;
 /**
  * @author Lars Grefer
  */
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
 public class WarOverlayExtension {
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private Set<String> excludes = new HashSet<>();
 
     public WarOverlayExtension() {

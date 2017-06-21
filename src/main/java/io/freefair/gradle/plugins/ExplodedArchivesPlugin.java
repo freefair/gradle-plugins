@@ -50,7 +50,7 @@ public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArch
                             @Override
                             public File call() throws Exception {
                                 File explodedDir = new File(archiveTask.getDestinationDir(), "exploded");
-                                if (extension.includeExtension) {
+                                if (extension.isIncludeExtension()) {
                                     return new File(explodedDir, archiveTask.getArchiveName());
                                 } else {
                                     return new File(explodedDir, minus((CharSequence) archiveTask.getArchiveName(), "." + archiveTask.getExtension()));

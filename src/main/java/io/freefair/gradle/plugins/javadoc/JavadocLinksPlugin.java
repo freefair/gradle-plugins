@@ -2,12 +2,20 @@ package io.freefair.gradle.plugins.javadoc;
 
 import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
 import lombok.Getter;
-import org.gradle.api.*;
-import org.gradle.api.artifacts.ResolvedArtifact;
+import org.gradle.api.Action;
+import org.gradle.api.Nullable;
+import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.internal.file.UnionFileCollection;
 import org.gradle.api.plugins.JavaBasePlugin;
-import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
+
+import java.util.concurrent.Callable;
+
+import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
 @Getter
 public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExtension> {
@@ -18,80 +26,38 @@ public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExte
     public void apply(final Project project) {
         super.apply(project);
 
-        setupBase();
-
-        setupDependencyGuesses();
-
-        project.afterEvaluate(new Action<Project>() {
+        project.getTasks().withType(Javadoc.class, new Action<Javadoc>() {
             @Override
-            public void execute(Project project) {
-                setupDocsOracleLink();
+            public void execute(final Javadoc javadoc) {
+                configure(javadoc);
             }
         });
+
     }
 
     @Override
-    protected Class<JavadocLinksExtension> getExtensionClass() {
-        return JavadocLinksExtension.class;
+    protected JavadocLinksExtension createExtension() {
+        return project.getExtensions().create(getExtensionName(), getExtensionClass(), getProject());
     }
 
-    private void setupDependencyGuesses() {
+    private void configure(final Javadoc javadoc) {
+        String taskName = "configure" + capitalize((CharSequence) javadoc.getName()) + "Links";
 
-        project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
+        ConfigureJavadocLinks configureJavadocLinks = project.getTasks().create(taskName, ConfigureJavadocLinks.class);
+        configureJavadocLinks.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
+        configureJavadocLinks.setJavadoc(javadoc);
+        javadoc.dependsOn(configureJavadocLinks);
 
-        Task guessJavadocLinks = project.getTasks().create("guessJavadocLinks");
-        guessJavadocLinks.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
-
-        getConfigureJavadocLinks().dependsOn(guessJavadocLinks);
-
-        guessJavadocLinks.doFirst(new Action<Task>() {
-            @Override
-            public void execute(Task guessJavadocLinks) {
-                for (ResolvedArtifact resolvedArtifact : project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME).getResolvedConfiguration().getResolvedArtifacts()) {
-
-                    String name = resolvedArtifact.getName();
-                    String version = resolvedArtifact.getModuleVersion().getId().getVersion();
-
-                    String majorVersion;
-                    if (version.contains(".")) {
-                        majorVersion = version.substring(0, version.indexOf("."));
-                    } else {
-                        majorVersion = version;
-                    }
-
-                    switch (name) {
-                        case "spring-boot":
-                            extension.links("http://docs.spring.io/spring-boot/docs/" + version + "/api/");
-                            break;
-                        case "spring-core":
-                        case "spring-context":
-                        case "spring-beans":
-                        case "spring-web":
-                            extension.links("http://docs.spring.io/spring/docs/" + version + "/javadoc-api/");
-                            break;
-                        case "okio":
-                        case "okhttp":
-                        case "retrofit":
-                            extension.links("http://square.github.io/" + name + "/" + majorVersion + ".x/" + name + "/");
-                            break;
+        configureJavadocLinks.setConfiguration(project.provider(
+                new Callable<Configuration>() {
+                    @Override
+                    public Configuration call() throws Exception {
+                        return findConfiguraion(javadoc.getClasspath());
                     }
                 }
-            }
-        });
+        ));
 
-    }
-
-    private void setupBase() {
-
-        configureJavadocLinks = project.getTasks().create("configureJavadocLinks");
-        configureJavadocLinks.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
-
-        project.getTasks().withType(Javadoc.class, new Action<Javadoc>() {
-            @Override
-            public void execute(Javadoc javadoc) {
-                javadoc.dependsOn(configureJavadocLinks);
-            }
-        });
+        configureJavadocLinks.setJavaVersion(extension.getJavaVersionProvider());
 
         configureJavadocLinks.doFirst(new Action<Task>() {
             @Override
@@ -110,29 +76,22 @@ public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExte
         });
     }
 
-    private void setupDocsOracleLink() {
+    @Override
+    protected Class<JavadocLinksExtension> getExtensionClass() {
+        return JavadocLinksExtension.class;
+    }
 
-        JavaVersion javaVersion = extension.getJavaVersion();
-        if (javaVersion == null) {
-            project.getLogger().debug("Not adding Oracle Java Docs link because javaVersion is null");
-            return;
+    @Nullable
+    private Configuration findConfiguraion(FileCollection classpath) {
+        if (classpath instanceof Configuration) {
+            return (Configuration) classpath;
+        } else if (classpath instanceof UnionFileCollection) {
+            for (FileCollection files : ((UnionFileCollection) classpath).getSources()) {
+                Configuration configuraion = findConfiguraion(files);
+                if (configuraion != null) return configuraion;
+            }
         }
 
-        switch (javaVersion) {
-            case VERSION_1_5:
-                extension.links("http://docs.oracle.com/javase/5/docs/api/");
-                break;
-            case VERSION_1_6:
-                extension.links("http://docs.oracle.com/javase/6/docs/api/");
-                break;
-            case VERSION_1_7:
-                extension.links("http://docs.oracle.com/javase/7/docs/api/");
-                break;
-            default:
-                project.getLogger().warn("Unknown java version {}", javaVersion);
-            case VERSION_1_8:
-                extension.links("http://docs.oracle.com/javase/8/docs/api/");
-                break;
-        }
+        return null;
     }
 }

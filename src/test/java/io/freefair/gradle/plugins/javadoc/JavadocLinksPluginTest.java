@@ -22,7 +22,7 @@ public class JavadocLinksPluginTest extends AbstractPluginTest {
                 .withDebug(true)
                 .build();
 
-        assertThat(result.getOutput(), CoreMatchers.containsString("http://square.github.io/okio/1.x/okio/"));
+        assertThat(result.getOutput(), CoreMatchers.containsString("Using javadoc.io link for 'com.squareup.okio:okio:1.13.0'"));
     }
 
 }

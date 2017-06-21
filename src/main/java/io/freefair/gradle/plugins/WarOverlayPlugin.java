@@ -6,7 +6,6 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DuplicatesStrategy;
-import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.War;
 
@@ -34,8 +33,9 @@ public class WarOverlayPlugin extends AbstractExtensionPlugin<WarOverlayExtensio
                 configTask.doFirst(new Action<Task>() {
                     @Override
                     public void execute(Task configTask) {
-                        for (File file : project.getConfigurations().getByName(JavaPlugin.RUNTIME_CONFIGURATION_NAME)) {
-                            if (file.getName().endsWith(".war")) {
+
+                        for (File file : warTask.getClasspath().getFiles()) {
+                            if (file.isFile() && file.getName().endsWith(".war")) {
 
                                 configTask.getLogger().info("Using {} as overlay", file.getName());
 

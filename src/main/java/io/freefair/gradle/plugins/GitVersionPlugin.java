@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins;
 
 import io.freefair.gradle.plugins.base.AbstractPlugin;
+import org.gradle.api.Incubating;
 import org.gradle.api.Project;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * @author Lars Grefer
  */
+@Incubating
 public class GitVersionPlugin extends AbstractPlugin {
 
     private GitUtil gitUtil;

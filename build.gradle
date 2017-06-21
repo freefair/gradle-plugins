@@ -11,6 +11,7 @@ javadoc.options.links "https://docs.gradle.org/current/javadoc/"
 
 repositories {
     jcenter()
+    mavenCentral()
 }
 
 gradlePlugin {
@@ -38,10 +39,6 @@ gradlePlugin {
         mavenJars {
             id = "io.freefair.maven-jars"
             implementationClass = "io.freefair.gradle.plugins.maven.MavenJarsPlugin"
-        }
-        javadocIo {
-            id = "io.freefair.javadoc-io"
-            implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocIoPlugin"
         }
         javadocLinks {
             id = "io.freefair.javadoc-links"
@@ -98,12 +95,6 @@ pluginBundle {
             displayName = "Maven Jars Plugin"
             description = 'This plugin adds a sourcesJar and a javadocJar task'
             tags = ['maven', 'javadoc', 'sources', 'jar']
-        }
-        javadocIo {
-            id = "io.freefair.javadoc-io"
-            displayName = "Maven Jars Plugin"
-            description = 'Link your javadoc against javadoc.io'
-            tags = ['javadoc', 'links']
         }
         javadocLinks {
             id = "io.freefair.javadoc-links"

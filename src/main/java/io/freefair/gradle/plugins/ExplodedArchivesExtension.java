@@ -1,14 +1,12 @@
 package io.freefair.gradle.plugins;
 
-import lombok.*;
+import lombok.Data;
 
 /**
  * @author Lars Grefer
  */
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
+@SuppressWarnings("WeakerAccess")
 public class ExplodedArchivesExtension {
-    boolean includeExtension = true;
+    private boolean includeExtension = true;
 }
