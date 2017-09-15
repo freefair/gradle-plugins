@@ -9,6 +9,9 @@ group = "io.freefair.gradle"
 javadoc.options.links "https://docs.oracle.com/javase/7/docs/api/"
 javadoc.options.links "https://docs.gradle.org/current/javadoc/"
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 repositories {
     jcenter()
     mavenCentral()
