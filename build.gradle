@@ -6,8 +6,8 @@ plugins {
 
 group = "io.freefair.gradle"
 
-javadoc.options.links "https://docs.oracle.com/javase/7/docs/api/"
-javadoc.options.links "https://docs.gradle.org/current/javadoc/"
+javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
+javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
@@ -125,8 +125,8 @@ pluginBundle {
 }
 
 dependencies {
-    compileOnly "org.projectlombok:lombok:1.16.16"
+    compileOnly "org.projectlombok:lombok:1.16.18"
 
     testCompile "junit:junit:4.12"
-    testCompile "org.assertj:assertj-core:2.6.0"
+    testCompile "org.assertj:assertj-core:2.8.0"
 }

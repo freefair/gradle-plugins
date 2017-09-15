@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.javadoc;
 import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
 import lombok.Getter;
 import org.gradle.api.Action;
-import org.gradle.api.Nullable;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -13,6 +12,7 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 
 import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
