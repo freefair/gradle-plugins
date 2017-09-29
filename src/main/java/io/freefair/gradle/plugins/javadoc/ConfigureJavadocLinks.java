@@ -26,30 +26,29 @@ public class ConfigureJavadocLinks extends DefaultTask {
 
     private final PropertyState<Configuration> configuration = getProject().property(Configuration.class);
 
-    private final PropertyState<Boolean> useHttps = getProject().property(Boolean.class);
-
     private final PropertyState<JavaVersion> javaVersion = getProject().property(JavaVersion.class);
 
     @TaskAction
     public void configureJavadocLinks() {
 
-        String protocol = isUseHttps() ? "https" : "http";
-
         switch (getJavaVersion()) {
             case VERSION_1_5:
-                addLink(protocol + "://docs.oracle.com/javase/5/docs/api/");
+                addLink("https://docs.oracle.com/javase/5/docs/api/");
                 break;
             case VERSION_1_6:
-                addLink(protocol + "://docs.oracle.com/javase/6/docs/api/");
+                addLink("https://docs.oracle.com/javase/6/docs/api/");
                 break;
             case VERSION_1_7:
-                addLink(protocol + "://docs.oracle.com/javase/7/docs/api/");
+                addLink("https://docs.oracle.com/javase/7/docs/api/");
+                break;
+            case VERSION_1_8:
+                addLink("https://docs.oracle.com/javase/8/docs/api/");
+                break;
+            case VERSION_1_9:
+                addLink("https://docs.oracle.com/javase/9/docs/api/");
                 break;
             default:
                 getLogger().warn("Unknown java version {}", javaVersion);
-            case VERSION_1_8:
-                addLink(protocol + "://docs.oracle.com/javase/8/docs/api/");
-                break;
         }
 
         for (ResolvedArtifact resolvedArtifact : getConfiguration().getResolvedConfiguration().getResolvedArtifacts()) {
@@ -68,7 +67,7 @@ public class ConfigureJavadocLinks extends DefaultTask {
                     break;
                 } else {
                     getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
-                    String javadocIoLink = String.format("%s://static.javadoc.io/%s/%s/%s/", protocol, group, artifact, version);
+                    String javadocIoLink = String.format("https://static.javadoc.io/%s/%s/%s/", group, artifact, version);
                     addLink(javadocIoLink);
                 }
             }
@@ -77,9 +76,9 @@ public class ConfigureJavadocLinks extends DefaultTask {
 
     private String findWellKnownLink(String group, String artifact, String version) {
         if (group.equals("org.springframework") && artifact.startsWith("spring-")) {
-            return "http://docs.spring.io/spring/docs/" + version + "/javadoc-api/";
+            return "https://docs.spring.io/spring/docs/" + version + "/javadoc-api/";
         } else if (group.equals("org.springframework.boot")) {
-            return "http://docs.spring.io/spring-boot/docs/" + version + "/api/";
+            return "https://docs.spring.io/spring-boot/docs/" + version + "/api/";
         }
         return null;
     }
@@ -96,19 +95,6 @@ public class ConfigureJavadocLinks extends DefaultTask {
                 getLogger().info("Not adding '{}' to {} because it's already present", baseUrl, javadoc);
             }
         }
-    }
-
-    @Input
-    public boolean isUseHttps() {
-        return useHttps.get();
-    }
-
-    public void setUseHttps(Provider<Boolean> useHttps) {
-        this.useHttps.set(useHttps);
-    }
-
-    public void setUseHttps(boolean useHttps) {
-        this.useHttps.set(useHttps);
     }
 
     @InputFiles
