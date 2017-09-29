@@ -68,7 +68,7 @@ public class ConfigureJavadocLinks extends DefaultTask {
                     break;
                 } else {
                     getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
-                    String javadocIoLink = String.format("%s://static.javadoc.io/%s/%s/%s/", protocol, group, artifact, version);
+                    String javadocIoLink = String.format("%s://www.javadoc.io/doc/%s/%s/%s/", protocol, group, artifact, version);
                     addLink(javadocIoLink);
                 }
             }
