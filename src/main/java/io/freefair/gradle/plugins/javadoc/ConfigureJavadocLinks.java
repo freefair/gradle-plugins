@@ -51,6 +51,8 @@ public class ConfigureJavadocLinks extends DefaultTask {
                 getLogger().warn("Unknown java version {}", javaVersion);
         }
 
+        boolean usedJavadocIo = false;
+
         for (ResolvedArtifact resolvedArtifact : getConfiguration().getResolvedConfiguration().getResolvedArtifacts()) {
             ComponentIdentifier componentIdentifier = resolvedArtifact.getId().getComponentIdentifier();
 
@@ -69,8 +71,13 @@ public class ConfigureJavadocLinks extends DefaultTask {
                     getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
                     String javadocIoLink = String.format("https://static.javadoc.io/%s/%s/%s/", group, artifact, version);
                     addLink(javadocIoLink);
+                    usedJavadocIo = true;
                 }
             }
+        }
+
+        if(usedJavadocIo) {
+            javadoc.getOptions().jFlags("-Dhttp.agent=" + System.currentTimeMillis());
         }
     }
 
