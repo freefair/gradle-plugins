@@ -6,7 +6,6 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.plugins.WarPlugin;
@@ -97,9 +96,9 @@ public class WarOverlayPlugin extends AbstractPlugin {
     }
 
     private void attachWebInfClasses(Project project, Configuration source, Configuration target) {
-        for (final ResolvedArtifact resolvedArtifact : source.getResolvedConfiguration().getResolvedArtifacts()) {
-            if (resolvedArtifact.getExtension().equals("war")) {
-                Jar classesJar = getClassesJarTask(project, resolvedArtifact);
+        for (File resolvedFile : source.getResolvedConfiguration().getFiles()) {
+            if (resolvedFile.getName().endsWith(".war")) {
+                Jar classesJar = getClassesJarTask(project, resolvedFile);
 
                 project.getDependencies().add(target.getName(), project.files(classesJar));
             }
@@ -107,21 +106,19 @@ public class WarOverlayPlugin extends AbstractPlugin {
     }
 
     @Getter
-    private Map<ResolvedArtifact, Jar> classesJarTasks = new HashMap<>();
+    private Map<File, Jar> classesJarTasks = new HashMap<>();
 
-    private Jar getClassesJarTask(Project project, ResolvedArtifact warArtefact) {
+    private Jar getClassesJarTask(Project project, File warFile) {
 
-        if(classesJarTasks.containsKey(warArtefact)) {
-            return classesJarTasks.get(warArtefact);
+        if(classesJarTasks.containsKey(warFile)) {
+            return classesJarTasks.get(warFile);
         }
 
-        String name = warArtefact.getModuleVersion().getId().getName();
-        String group = warArtefact.getModuleVersion().getId().getGroup();
-        String version = warArtefact.getModuleVersion().getId().getVersion();
+        String name = warFile.getName().replace(".war", "");
 
-        Jar classesJar = project.getTasks().create(group + name + version + "classesJar", Jar.class);
+        Jar classesJar = project.getTasks().create( name + "ClassesJar", Jar.class);
 
-        Callable<FileTree> classFiles = () -> project.zipTree(warArtefact.getFile())
+        Callable<FileTree> classFiles = () -> project.zipTree(warFile)
                 .matching(patternFilterable -> patternFilterable.include("WEB-INF/classes/**"));
 
         classesJar.onlyIf(t -> {
@@ -139,22 +136,21 @@ public class WarOverlayPlugin extends AbstractPlugin {
 
         classesJar.setClassifier("classes");
 
-        classesJar.setBaseName(group + "-" + name);
-        classesJar.setVersion(version);
+        classesJar.setBaseName(name);
         classesJar.setGroup("war");
-        classesJar.setDescription("Packages a jar containing the WEB-INF/classes directory of '" + warArtefact.getId().getComponentIdentifier().getDisplayName() + "'");
+        classesJar.setDescription("Packages a jar containing the WEB-INF/classes directory of '" + warFile + "'");
 
-        classesJarTasks.put(warArtefact, classesJar);
+        classesJarTasks.put(warFile, classesJar);
 
         return classesJar;
     }
 
     private void attachWebInfLib(Project project, Configuration source, Configuration target) {
-        for (ResolvedArtifact resolvedArtifact : source.getResolvedConfiguration().getResolvedArtifacts()) {
-            if (resolvedArtifact.getExtension().equals("war")) {
+        for (File resolvedFile : source.getResolvedConfiguration().getFiles()) {
+            if (resolvedFile.getName().endsWith(".war")) {
                 project.getDependencies().add(
                         target.getName(),
-                        project.zipTree(resolvedArtifact.getFile())
+                        project.zipTree(resolvedFile)
                                 .matching(patternFilterable -> patternFilterable.include("WEB-INF/lib/**"))
                 );
             }
