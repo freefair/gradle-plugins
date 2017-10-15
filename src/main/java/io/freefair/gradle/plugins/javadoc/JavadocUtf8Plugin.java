@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.javadoc;
 
 import io.freefair.gradle.plugins.base.AbstractPlugin;
-import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
@@ -15,15 +14,12 @@ public class JavadocUtf8Plugin extends AbstractPlugin {
     public void apply(Project project) {
         super.apply(project);
 
-        project.getTasks().withType(Javadoc.class, new Action<Javadoc>() {
-            @Override
-            public void execute(Javadoc javadoc) {
+        project.getTasks().withType(Javadoc.class, javadoc -> {
 
-                StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
+            StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
 
-                options.charSet("UTF-8");
-                options.docEncoding("UTF-8");
-            }
+            options.charSet("UTF-8");
+            options.docEncoding("UTF-8");
         });
     }
 }

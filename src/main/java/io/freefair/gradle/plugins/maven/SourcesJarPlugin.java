@@ -1,9 +1,7 @@
 package io.freefair.gradle.plugins.maven;
 
-import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.internal.tasks.DefaultSourceSet;
-import org.gradle.api.plugins.AppliedPlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
@@ -20,15 +18,12 @@ public class SourcesJarPlugin extends AbstractMavenJarPlugin{
 
         getJarTask().setDescription("Assembles a jar archive containing the sources.");
 
-        project.getPluginManager().withPlugin("java", new Action<AppliedPlugin>() {
-            @Override
-            public void execute(AppliedPlugin appliedPlugin) {
-                getJarTask().dependsOn(project.getTasks().getByName(JavaPlugin.CLASSES_TASK_NAME));
+        project.getPluginManager().withPlugin("java", appliedPlugin -> {
+            getJarTask().dependsOn(project.getTasks().getByName(JavaPlugin.CLASSES_TASK_NAME));
 
-                JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
-                DefaultSourceSet mainSourceSet = (DefaultSourceSet) javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-                getJarTask().from(mainSourceSet.getAllSource());
-            }
+            JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+            DefaultSourceSet mainSourceSet = (DefaultSourceSet) javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            getJarTask().from(mainSourceSet.getAllSource());
         });
     }
 

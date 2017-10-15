@@ -8,7 +8,6 @@ import org.gradle.api.provider.Provider;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * @author Lars Grefer;
@@ -22,12 +21,7 @@ public class JavadocLinksExtension {
 
     public JavadocLinksExtension(Project project) {
         javaVersion = project.property(JavaVersion.class);
-        javaVersion.set(project.provider(new Callable<JavaVersion>() {
-            @Override
-            public JavaVersion call() throws Exception {
-                return JavaVersion.current();
-            }
-        }));
+        javaVersion.set(project.provider(() -> JavaVersion.current()));
     }
 
     public void setJavaVersion(JavaVersion javaVersion) {

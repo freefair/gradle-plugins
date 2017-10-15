@@ -1,8 +1,6 @@
 package io.freefair.gradle.plugins.maven;
 
-import org.gradle.api.Action;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.AppliedPlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.javadoc.Javadoc;
 
@@ -18,14 +16,11 @@ public class JavadocJarPlugin extends AbstractMavenJarPlugin {
 
         getJarTask().setDescription("Assembles a jar archive containing the javadocs.");
 
-        project.getPluginManager().withPlugin("java", new Action<AppliedPlugin>() {
-            @Override
-            public void execute(AppliedPlugin appliedPlugin) {
-                Javadoc javadocTask = (Javadoc) project.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME);
+        project.getPluginManager().withPlugin("java", appliedPlugin -> {
+            Javadoc javadocTask = (Javadoc) project.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME);
 
-                getJarTask().dependsOn(javadocTask);
-                getJarTask().from(javadocTask.getDestinationDir());
-            }
+            getJarTask().dependsOn(javadocTask);
+            getJarTask().from(javadocTask.getDestinationDir());
         });
     }
 
