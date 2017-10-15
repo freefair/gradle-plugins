@@ -1,9 +1,6 @@
 package io.freefair.gradle.plugins;
 
 import lombok.Data;
-import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.plugins.JavaPlugin;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,44 +32,18 @@ public class WarOverlayExtension {
     private String classesClassifier = "classes";
 
     /**
-     * The {@link Configuration} which contains war files whose {@code WEB-INF/classes} directory should be added to the dependencies of the {@link #webInfClassesTarget} configuration
-     *
-     * @see #webInfClassesTarget
+     * Allow compilation against the classes contained in war dependencies
      */
-    private Configuration webInfClassesSource;
+    private boolean attachWebInfClasses = true;
 
     /**
-     * The {@link Configuration} where the war's classes should be added to.
-     *
-     * @see #webInfClassesSource
+     * Allow compilation against the libs contained in war dependencies
      */
-    private Configuration webInfClassesTarget;
+    private boolean attachWebInfLib = false;
 
-    /**
-     * The {@link Configuration} which contains war files whose {@code WEB-INF/lib} directory should be added to the dependencies of the {@link #webInfLibTarget} configuration
-     *
-     * @see #webInfLibTarget
-     */
-    private Configuration webInfLibSource;
-
-    /**
-     * The {@link Configuration} where the war's libs should be added to.
-     *
-     * @see #webInfLibSource
-     */
-    private Configuration webInfLibTarget;
-
-    /**
-     * Set this to false to not perform the actual overlay.
-     */
-    private boolean enabled = true;
-
-    public WarOverlayExtension(Project project) {
-        excludes.add("WEB-INF/lib/*.jar");
+    public WarOverlayExtension() {
         excludes.add("META-INF/maven/**");
         excludes.add("META-INF/MANIFEST.MF");
-
-        webInfClassesTarget = project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
     }
 
     public void exclude(String pattern) {

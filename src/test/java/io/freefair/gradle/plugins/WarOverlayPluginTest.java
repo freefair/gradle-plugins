@@ -46,20 +46,4 @@ public class WarOverlayPluginTest extends AbstractPluginTest {
         assertThat(result.task(":war").getOutcome()).isEqualTo(SUCCESS);
     }
 
-    @Test
-    public void testAttatchClassesMavenPublish() throws IOException {
-        loadBuildFileFromClasspath("war-overlay-ac-m.gradle");
-
-        BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir.getRoot())
-                .withArguments("publishToMavenLocal")
-                .withPluginClasspath()
-                .build();
-
-        assertThat(result.task(":publishToMavenLocal").getOutcome()).isEqualTo(SUCCESS);
-
-        assertThat(result.task(":jar").getOutcome()).isEqualTo(SUCCESS);
-        assertThat(result.task(":war").getOutcome()).isEqualTo(SUCCESS);
-    }
-
 }
