@@ -9,8 +9,8 @@ group = "io.freefair.gradle"
 javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
 javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     jcenter()

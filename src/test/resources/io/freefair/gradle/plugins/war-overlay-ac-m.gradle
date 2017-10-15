@@ -1,0 +1,17 @@
+plugins {
+    id "io.freefair.war-overlay"
+    id "maven"
+    id "maven-publish"
+}
+
+warOverlay {
+    attachClasses = true
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.jasig.cas:cas-server-webapp:4.2.7"
+}

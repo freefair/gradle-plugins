@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.junit.Assert.assertEquals;
 
@@ -27,6 +28,38 @@ public class WarOverlayPluginTest extends AbstractPluginTest {
 
         assertEquals(result.task(":war").getOutcome(), SUCCESS);
 
+    }
+
+    @Test
+    public void testAttatchClassesMaven() throws IOException {
+        loadBuildFileFromClasspath("war-overlay-ac-m.gradle");
+
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(testProjectDir.getRoot())
+                .withArguments("assemble")
+                .withPluginClasspath()
+                .build();
+
+        assertThat(result.task(":assemble").getOutcome()).isEqualTo(SUCCESS);
+
+        assertThat(result.task(":jar").getOutcome()).isEqualTo(SUCCESS);
+        assertThat(result.task(":war").getOutcome()).isEqualTo(SUCCESS);
+    }
+
+    @Test
+    public void testAttatchClassesMavenPublish() throws IOException {
+        loadBuildFileFromClasspath("war-overlay-ac-m.gradle");
+
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(testProjectDir.getRoot())
+                .withArguments("publishToMavenLocal")
+                .withPluginClasspath()
+                .build();
+
+        assertThat(result.task(":publishToMavenLocal").getOutcome()).isEqualTo(SUCCESS);
+
+        assertThat(result.task(":jar").getOutcome()).isEqualTo(SUCCESS);
+        assertThat(result.task(":war").getOutcome()).isEqualTo(SUCCESS);
     }
 
 }
