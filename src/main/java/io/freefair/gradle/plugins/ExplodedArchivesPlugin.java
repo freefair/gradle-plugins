@@ -39,7 +39,7 @@ public class ExplodedArchivesPlugin implements Plugin<Project> {
             explodeArchive.dependsOn(archiveTask);
 
             explodeArchive.getConventionMapping()
-                    .map("group", (Callable<String>) () -> archiveTask.getGroup());
+                    .map("group", (Callable<String>) archiveTask::getGroup);
 
             explodeArchive.getConventionMapping()
                     .map("destinationDir", (Callable<File>) () -> {

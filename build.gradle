@@ -2,6 +2,7 @@ plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.8"
+    id "findbugs"
 }
 
 group = "io.freefair.gradle"
@@ -129,6 +130,7 @@ dependencies {
 
     testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:2.8.0"
+    testCompileOnly configurations.findbugs
 }
 
 task wrapper(type: Wrapper) {

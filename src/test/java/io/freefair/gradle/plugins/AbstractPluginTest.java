@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
@@ -21,6 +22,7 @@ public class AbstractPluginTest {
         buildFile = testProjectDir.newFile("build.gradle");
     }
 
+    @SuppressFBWarnings("UI_INHERITANCE_UNSAFE_GETRESOURCE")
     protected void loadBuildFileFromClasspath(String name) throws IOException {
         InputStream resourceAsStream = getClass().getResourceAsStream(name);
         Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
