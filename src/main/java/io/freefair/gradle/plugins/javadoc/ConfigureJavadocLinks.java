@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.javadoc;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.JavaVersion;
@@ -7,8 +8,6 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
-import org.gradle.api.provider.PropertyState;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.TaskAction;
@@ -19,14 +18,17 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 /**
  * @author Lars Grefer
  */
+@Getter
+@Setter
 public class ConfigureJavadocLinks extends DefaultTask {
 
-    @Setter
     private Javadoc javadoc;
 
-    private final PropertyState<Configuration> configuration = getProject().property(Configuration.class);
+    @InputFiles
+    private Configuration configuration;
 
-    private final PropertyState<JavaVersion> javaVersion = getProject().property(JavaVersion.class);
+    @Input
+    private JavaVersion javaVersion;
 
     @TaskAction
     public void configureJavadocLinks() {
@@ -102,31 +104,5 @@ public class ConfigureJavadocLinks extends DefaultTask {
                 getLogger().info("Not adding '{}' to {} because it's already present", baseUrl, javadoc);
             }
         }
-    }
-
-    @InputFiles
-    public Configuration getConfiguration() {
-        return configuration.get();
-    }
-
-    public void setConfiguration(Provider<Configuration> configuration) {
-        this.configuration.set(configuration);
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration.set(configuration);
-    }
-
-    @Input
-    public JavaVersion getJavaVersion() {
-        return javaVersion.get();
-    }
-
-    public void setJavaVersion(Provider<JavaVersion> javaVersion) {
-        this.javaVersion.set(javaVersion);
-    }
-
-    public void setJavaVersion(JavaVersion javaVersion) {
-        this.javaVersion.set(javaVersion);
     }
 }

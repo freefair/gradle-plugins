@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.javadoc;
 import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
 import lombok.Getter;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.UnionFileCollection;
@@ -11,21 +10,16 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
-import javax.annotation.Nullable;
-
 import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
 @Getter
 public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExtension> {
 
-    private Task configureJavadocLinks;
-
     @Override
     public void apply(final Project project) {
         super.apply(project);
 
-        project.getTasks().withType(Javadoc.class, javadoc -> configure(javadoc));
-
+        project.getTasks().withType(Javadoc.class, this::configure);
     }
 
     @Override
@@ -41,11 +35,10 @@ public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExte
         configureJavadocLinks.setJavadoc(javadoc);
         javadoc.dependsOn(configureJavadocLinks);
 
-        configureJavadocLinks.setConfiguration(project.provider(
-                () -> findConfiguraion(javadoc.getClasspath())
-        ));
-
-        configureJavadocLinks.setJavaVersion(extension.getJavaVersionProvider());
+        project.afterEvaluate(p -> {
+            configureJavadocLinks.setJavaVersion(extension.getJavaVersion());
+            configureJavadocLinks.setConfiguration(findConfiguraion(javadoc.getClasspath()));
+        });
 
         configureJavadocLinks.doFirst(configureJavadocLinks1 ->
                 project.getTasks().withType(Javadoc.class, javadoc1 -> {
@@ -62,7 +55,6 @@ public class JavadocLinksPlugin extends AbstractExtensionPlugin<JavadocLinksExte
         return JavadocLinksExtension.class;
     }
 
-    @Nullable
     private Configuration findConfiguraion(FileCollection classpath) {
         if (classpath instanceof Configuration) {
             return (Configuration) classpath;

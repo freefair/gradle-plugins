@@ -130,3 +130,8 @@ dependencies {
     testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:2.8.0"
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5.1'
+    distributionType = Wrapper.DistributionType.ALL
+}

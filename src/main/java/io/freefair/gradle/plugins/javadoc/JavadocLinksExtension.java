@@ -2,9 +2,6 @@ package io.freefair.gradle.plugins.javadoc;
 
 import lombok.Data;
 import org.gradle.api.JavaVersion;
-import org.gradle.api.Project;
-import org.gradle.api.provider.PropertyState;
-import org.gradle.api.provider.Provider;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,21 +12,12 @@ import java.util.List;
 @Data
 public class JavadocLinksExtension {
 
-    private final PropertyState<JavaVersion> javaVersion;
+    private JavaVersion javaVersion;
 
     private List<String> links = new LinkedList<>();
 
-    public JavadocLinksExtension(Project project) {
-        javaVersion = project.property(JavaVersion.class);
-        javaVersion.set(project.provider(() -> JavaVersion.current()));
-    }
-
-    public void setJavaVersion(JavaVersion javaVersion) {
-        this.javaVersion.set(javaVersion);
-    }
-
-    public Provider<JavaVersion> getJavaVersionProvider() {
-        return javaVersion;
+    public JavadocLinksExtension() {
+        javaVersion = JavaVersion.current();
     }
 
     public void links(String... links) {
