@@ -137,9 +137,14 @@ public class WarOverlayPlugin implements Plugin<Project> {
                 classesCopySpec -> classesCopySpec.eachFile(f -> f.setPath(f.getPath().replace("WEB-INF/classes/", "")))
         );
 
-        classesJar.setClassifier("classes");
+        classesJar.setIncludeEmptyDirs(false);
+
+        classesJar.setDestinationDir(new File(project.getBuildDir(), "war-overlays"));
 
         classesJar.setBaseName(name);
+        classesJar.setClassifier("classes");
+        classesJar.setVersion(null);
+
         classesJar.setGroup("war");
         classesJar.setDescription("Packages a jar containing the WEB-INF/classes directory of '" + warFile + "'");
 
