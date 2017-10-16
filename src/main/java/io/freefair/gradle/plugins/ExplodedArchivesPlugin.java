@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins;
 
-import io.freefair.gradle.plugins.base.AbstractExtensionPlugin;
+import lombok.Getter;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.FileTree;
@@ -17,13 +18,16 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.minus;
 /**
  * @author Lars Grefer
  */
-public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArchivesExtension> {
+@Getter
+public class ExplodedArchivesPlugin implements Plugin<Project> {
 
     private Task explodeAll;
+    private ExplodedArchivesExtension explodedArchives;
 
     @Override
     public void apply(final Project project) {
-        super.apply(project);
+
+        explodedArchives = project.getExtensions().create("explodedArchives", ExplodedArchivesExtension.class);
 
         explodeAll = project.getTasks().create("explode");
         explodeAll.setGroup(BasePlugin.BUILD_GROUP);
@@ -40,7 +44,7 @@ public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArch
             explodeArchive.getConventionMapping()
                     .map("destinationDir", (Callable<File>) () -> {
                         File explodedDir = new File(archiveTask.getDestinationDir(), "exploded");
-                        if (extension.isIncludeExtension()) {
+                        if (explodedArchives.isIncludeExtension()) {
                             return new File(explodedDir, archiveTask.getArchiveName());
                         } else {
                             return new File(explodedDir, minus((CharSequence) archiveTask.getArchiveName(), "." + archiveTask.getExtension()));
@@ -49,10 +53,5 @@ public class ExplodedArchivesPlugin extends AbstractExtensionPlugin<ExplodedArch
 
             explodeArchive.from((Callable<FileTree>) () -> project.zipTree(archiveTask.getArchivePath()));
         });
-    }
-
-    @Override
-    protected Class<ExplodedArchivesExtension> getExtensionClass() {
-        return ExplodedArchivesExtension.class;
     }
 }

@@ -1,25 +1,26 @@
 package io.freefair.gradle.plugins;
 
-import io.freefair.gradle.plugins.base.AbstractPlugin;
 import org.gradle.api.Incubating;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Lars Grefer
  */
 @Incubating
-public class GitVersionPlugin extends AbstractPlugin {
+public class GitVersionPlugin implements Plugin<Project> {
 
     private GitUtil gitUtil;
     private GitVersionConvention convention;
 
+    private Project project;
+
     @Override
     public void apply(Project project) {
-        super.apply(project);
+        this.project = project;
 
         gitUtil = new GitUtil(project);
 
@@ -78,7 +79,7 @@ public class GitVersionPlugin extends AbstractPlugin {
 
         List<String> newList = new ArrayList<>(tagList);
 
-        Collections.sort(newList, convention.getGitVersionComparator());
+        newList.sort(convention.getGitVersionComparator());
 
         String tag = newList.get(newList.size() - 1);
         return getVersion(tag);

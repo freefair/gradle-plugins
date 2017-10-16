@@ -1,6 +1,6 @@
 package io.freefair.gradle.plugins.javadoc;
 
-import io.freefair.gradle.plugins.base.AbstractPlugin;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
@@ -8,12 +8,10 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 /**
  * @author Lars Grefer
  */
-public class JavadocUtf8Plugin extends AbstractPlugin {
+public class JavadocUtf8Plugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        super.apply(project);
-
         project.getTasks().withType(Javadoc.class, javadoc -> {
 
             StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();

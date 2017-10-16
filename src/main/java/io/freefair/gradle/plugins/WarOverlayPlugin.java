@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugins;
 
-import io.freefair.gradle.plugins.base.AbstractPlugin;
 import lombok.Getter;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
@@ -26,14 +26,13 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 /**
  * @author Lars Grefer
  */
-public class WarOverlayPlugin extends AbstractPlugin {
+public class WarOverlayPlugin implements Plugin<Project> {
 
     @Getter
     private WarOverlayExtension warOverlay;
 
     @Override
-    public void apply(final Project project) {
-        super.apply(project);
+    public void apply(Project project) {
         project.getPluginManager().apply(WarPlugin.class);
 
         warOverlay = new WarOverlayExtension();
@@ -65,7 +64,7 @@ public class WarOverlayPlugin extends AbstractPlugin {
 
                 if (!warFiles.isEmpty()) {
                     FileCollection newClasspath = warTask.getClasspath().minus(project.files(warFiles));
-                    warTask.setClasspath((Object) newClasspath);
+                    warTask.setClasspath(newClasspath);
                 }
             });
         });

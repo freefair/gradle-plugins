@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugins.maven;
 
-import io.freefair.gradle.plugins.base.AbstractPlugin;
 import lombok.Getter;
+import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.plugins.BasePlugin;
@@ -11,13 +11,15 @@ import org.gradle.api.tasks.bundling.Jar;
  * @author Lars Grefer
  */
 @Getter
-abstract class AbstractMavenJarPlugin extends AbstractPlugin {
+abstract class AbstractMavenJarPlugin implements Plugin<Project> {
 
     private Jar jarTask;
 
+    private Project project;
+
     @Override
     public void apply(Project project) {
-        super.apply(project);
+        this.project = project;
         jarTask = project.getTasks().create(getTaskName(), Jar.class);
         jarTask.setClassifier(getClassifier());
         jarTask.setGroup(BasePlugin.BUILD_GROUP);
