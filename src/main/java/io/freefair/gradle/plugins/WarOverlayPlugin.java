@@ -7,6 +7,7 @@ import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.DuplicatesStrategy;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
@@ -62,7 +63,10 @@ public class WarOverlayPlugin extends AbstractPlugin {
                     }
                 }
 
-                warTask.setClasspath(warTask.getClasspath().minus(project.files(warFiles)));
+                if (!warFiles.isEmpty()) {
+                    FileCollection newClasspath = warTask.getClasspath().minus(project.files(warFiles));
+                    warTask.setClasspath((Object) newClasspath);
+                }
             });
         });
 
