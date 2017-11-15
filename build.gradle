@@ -9,6 +9,7 @@ group = "io.freefair.gradle"
 
 javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
 javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+javadoc.options.showFromPrivate()
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -20,9 +21,21 @@ repositories {
 
 gradlePlugin {
     plugins {
+        war {
+            id = "io.freefair.war"
+            implementationClass = "io.freefair.gradle.plugins.war.WarPlugin"
+        }
         warOverlay {
             id = "io.freefair.war-overlay"
-            implementationClass = "io.freefair.gradle.plugins.WarOverlayPlugin"
+            implementationClass = "io.freefair.gradle.plugins.war.WarOverlayPlugin"
+        }
+        warAttachClasses {
+            id = "io.freefair.war-attach-classes"
+            implementationClass = "io.freefair.gradle.plugins.war.WarAttachClassesPlugin"
+        }
+        warAttachClasses {
+            id = "io.freefair.war-archive-classes"
+            implementationClass = "io.freefair.gradle.plugins.war.WarArchiveClassesPlugin"
         }
         explodedWar {
             id = "io.freefair.exploded-archives"
@@ -64,11 +77,29 @@ pluginBundle {
     vcsUrl = 'https://github.com/freefair/gradle-plugins'
 
     plugins {
+        war {
+            id = "io.freefair.war"
+            displayName = "War Plugin"
+            description = "Maven-like extensions for the normal war plugin"
+            tags = ['war']
+        }
         warOverlay {
             id = "io.freefair.war-overlay"
             displayName = "War Overlay Plugin"
-            description = "War Overlay Plugin"
-            tags = ['war', 'overlay']
+            description = "Maven-like overlays for war tasks."
+            tags = ['war', 'maven', 'overlay']
+        }
+        warAttachClasses {
+            id = "io.freefair.war-attach-classes"
+            displayName = "War Attach Classes Plugin"
+            description = "Maven-like attachClasses option for the war task."
+            tags = ['war', 'maven', 'attachClasses']
+        }
+        warAttachClasses {
+            id = "io.freefair.war-archive-classes"
+            displayName = "War Archive Classes Plugin"
+            description = "Maven-like archiveClasses options for war tasks."
+            tags = ['war', 'maven', 'archiveClasses']
         }
         explodedWar {
             id = "io.freefair.exploded-archives"

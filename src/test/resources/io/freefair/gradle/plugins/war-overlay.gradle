@@ -7,6 +7,10 @@ repositories {
     jcenter()
 }
 
-dependencies {
-    compile "org.jasig.cas:cas-server-webapp:4.2.7"
+war {
+    overlays {
+        cas {
+            from "org.jasig.cas:cas-server-webapp:4.2.7"
+        }
+    }
 }
