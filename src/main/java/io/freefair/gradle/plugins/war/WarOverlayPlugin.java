@@ -85,14 +85,16 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
         dependency.setTransitive(false);
 
-        Configuration detachedConfiguration = project.getConfigurations().detachedConfiguration(dependency);
+        Configuration configuration = project.getConfigurations().create(warTask.getName() + capitalizedOverlayName + "Overlay");
+        configuration.setDescription(String.format("Contents of the overlay '%s' for the task '%s'.", overlay.getName(), warTask.getName()));
+        configuration.getDependencies().add(dependency);
 
         Sync extractOverlay = project.getTasks().create("extract" + capitalizedWarTaskName + capitalizedOverlayName + "Overlay", Sync.class);
 
         File destinationDir = new File(project.getBuildDir(), String.format("overlays/%s/%s", warTask.getName(), overlay.getName()));
         extractOverlay.setDestinationDir(destinationDir);
 
-        extractOverlay.from((Callable<FileTree>) () -> project.zipTree(detachedConfiguration.getSingleFile()));
+        extractOverlay.from((Callable<FileTree>) () -> project.zipTree(configuration.getSingleFile()));
 
         warTask.into(overlay.getInto(), copySpec -> {
             copySpec.from(extractOverlay);
@@ -103,7 +105,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
             project.getTasks().create(extractOverlay.getName() + "Internal", Sync.class, t -> {
                 t.setDestinationDir(extractOverlay.getDestinationDir());
-                t.from(project.zipTree(detachedConfiguration.getSingleFile()));
+                t.from(project.zipTree(configuration.getSingleFile()));
             }).execute();
 
             project.getTasks().getByName("clean").finalizedBy(extractOverlay);
