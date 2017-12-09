@@ -14,7 +14,6 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileTree;
-import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.tasks.Sync;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
@@ -22,6 +21,11 @@ import org.gradle.api.tasks.bundling.War;
 
 import java.io.File;
 import java.util.concurrent.Callable;
+
+import static org.gradle.api.plugins.BasePlugin.CLEAN_TASK_NAME;
+import static org.gradle.api.plugins.JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME;
+import static org.gradle.api.plugins.JavaPlugin.TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME;
+import static org.gradle.api.plugins.WarPlugin.WAR_TASK_NAME;
 
 /**
  * @author Lars Grefer
@@ -37,8 +41,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
         project.getTasks().withType(War.class, warTask -> {
 
-            NamedDomainObjectContainer<WarOverlay> warOverlays = project.container(WarOverlay.class);
-
+            NamedDomainObjectContainer<WarOverlay> warOverlays = project.container(WarOverlay.class, name -> new WarOverlay(name, warTask));
             warTask.getExtensions().add("overlays", warOverlays);
 
             project.afterEvaluate(p -> warOverlays.all(overlay -> {
@@ -85,11 +88,11 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
         dependency.setTransitive(false);
 
-        Configuration configuration = project.getConfigurations().create(warTask.getName() + capitalizedOverlayName + "Overlay");
+        Configuration configuration = project.getConfigurations().create(overlay.getConfigurationName());
         configuration.setDescription(String.format("Contents of the overlay '%s' for the task '%s'.", overlay.getName(), warTask.getName()));
         configuration.getDependencies().add(dependency);
 
-        Sync extractOverlay = project.getTasks().create("extract" + capitalizedWarTaskName + capitalizedOverlayName + "Overlay", Sync.class);
+        Sync extractOverlay = project.getTasks().create(String.format("extract%s%sOverlay", capitalizedOverlayName, capitalizedWarTaskName), Sync.class);
 
         File destinationDir = new File(project.getBuildDir(), String.format("overlays/%s/%s", warTask.getName(), overlay.getName()));
         extractOverlay.setDestinationDir(destinationDir);
@@ -108,21 +111,21 @@ public class WarOverlayPlugin implements Plugin<Project> {
                 t.from(project.zipTree(configuration.getSingleFile()));
             }).execute();
 
-            project.getTasks().getByName("clean").finalizedBy(extractOverlay);
+            project.getTasks().getByName(CLEAN_TASK_NAME).finalizedBy(extractOverlay);
 
             ConfigurableFileCollection classes = project.files(
                     (Callable<File>) () -> new File(extractOverlay.getDestinationDir(), "WEB-INF/classes")
             )
                     .builtBy(extractOverlay);
 
-            project.getDependencies().add(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME, classes);
-            project.getDependencies().add(JavaPlugin.TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME, classes);
+            project.getDependencies().add(COMPILE_CLASSPATH_CONFIGURATION_NAME, classes);
+            project.getDependencies().add(TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME, classes);
 
             FileTree libs = project.files(extractOverlay).builtBy(extractOverlay).getAsFileTree()
                     .matching(patternFilterable -> patternFilterable.include("WEB-INF/lib/**"));
 
-            project.getDependencies().add(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME, libs);
-            project.getDependencies().add(JavaPlugin.TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME, libs);
+            project.getDependencies().add(COMPILE_CLASSPATH_CONFIGURATION_NAME, libs);
+            project.getDependencies().add(TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME, libs);
         }
     }
 
@@ -136,13 +139,13 @@ public class WarOverlayPlugin implements Plugin<Project> {
     private void configureOverlay(War warTask, WarOverlay overlay, Project otherProject) {
         project.evaluationDependsOn(otherProject.getPath());
 
-        War otherWar = (War) otherProject.getTasks().getByName("war");
+        War otherWar = (War) otherProject.getTasks().getByName(WAR_TASK_NAME);
 
         configureOverlay(warTask, overlay, otherWar);
 
         if (overlay.isEnableCompilation()) {
-            project.getDependencies().add("compileClasspath", otherProject);
-            project.getDependencies().add("testCompileClasspath", otherProject);
+            project.getDependencies().add(COMPILE_CLASSPATH_CONFIGURATION_NAME, otherProject);
+            project.getDependencies().add(TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME, otherProject);
         }
     }
 

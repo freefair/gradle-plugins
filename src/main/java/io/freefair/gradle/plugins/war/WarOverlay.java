@@ -3,16 +3,20 @@ package io.freefair.gradle.plugins.war;
 import groovy.lang.Closure;
 import lombok.Getter;
 import lombok.Setter;
+import org.gradle.api.tasks.bundling.War;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
 @Getter
 @Setter
 public class WarOverlay {
 
     private final String name;
+    private final War warTask;
 
     /**
      * The source of the overlay, this can be:
@@ -59,8 +63,9 @@ public class WarOverlay {
      */
     private boolean enableCompilation = true;
 
-    public WarOverlay(String name) {
+    public WarOverlay(String name, War warTask) {
         this.name = name;
+        this.warTask = warTask;
         excludes.add("META-INF/maven/**");
         excludes.add("META-INF/MANIFEST.MF");
     }
@@ -120,5 +125,9 @@ public class WarOverlay {
      */
     public boolean isSkip() {
         return !isEnabled();
+    }
+
+    public String getConfigurationName() {
+        return String.format("%s%sOverlay", getName(), capitalize((CharSequence) getWarTask().getName()));
     }
 }
