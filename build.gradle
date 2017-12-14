@@ -74,7 +74,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishJavaPlugin"
         }
         mavenPublishWar {
-            id = "io.freefair.maven-publish-java"
+            id = "io.freefair.maven-publish-war"
             implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishWarPlugin"
         }
     }
@@ -156,6 +156,16 @@ pluginBundle {
             displayName = "Javadoc Plugin"
             description = 'Bundle of all our javadoc plugins'
             tags = ['javadoc']
+        }
+        mavenPublishJava {
+            id = "io.freefair.maven-publish-java"
+            displayName = "maven-publish Java"
+            tags = ["maven-publish", "java"]
+        }
+        mavenPublishWar {
+            id = "io.freefair.maven-publish-war"
+            displayName = "maven-publish War"
+            tags = ["maven-publish", "war"]
         }
     }
 
