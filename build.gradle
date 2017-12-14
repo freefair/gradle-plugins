@@ -69,6 +69,14 @@ gradlePlugin {
             id = "io.freefair.javadocs"
             implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocsPlugin"
         }
+        mavenPublishJava {
+            id = "io.freefair.maven-publish-java"
+            implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishJavaPlugin"
+        }
+        mavenPublishWar {
+            id = "io.freefair.maven-publish-java"
+            implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishWarPlugin"
+        }
     }
 }
 
