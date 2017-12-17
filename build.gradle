@@ -160,11 +160,13 @@ pluginBundle {
         mavenPublishJava {
             id = "io.freefair.maven-publish-java"
             displayName = "maven-publish Java"
+            description = "Creates a mavenJava publication"
             tags = ["maven-publish", "java"]
         }
         mavenPublishWar {
             id = "io.freefair.maven-publish-war"
             displayName = "maven-publish War"
+            description = "Creates a mavenWeb publication"
             tags = ["maven-publish", "war"]
         }
     }
