@@ -3,10 +3,12 @@ package io.freefair.gradle.plugins.war;
 import groovy.lang.Closure;
 import lombok.Getter;
 import lombok.Setter;
+import org.gradle.api.file.DuplicatesStrategy;
+import org.gradle.api.file.FileTreeElement;
+import org.gradle.api.internal.file.copy.CopySpecInternal;
+import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.bundling.War;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
@@ -17,6 +19,7 @@ public class WarOverlay {
 
     private final String name;
     private final War warTask;
+    private CopySpecInternal warCopySpec;
 
     /**
      * The source of the overlay, this can be:
@@ -36,10 +39,6 @@ public class WarOverlay {
      */
     private Closure configureClosure;
 
-    /**
-     * @see org.gradle.api.file.CopySpec#into(Object)
-     */
-    private String into = "";
     private boolean enabled = true;
 
     private boolean provided = false;
@@ -54,11 +53,6 @@ public class WarOverlay {
     private boolean deferProvidedConfiguration = true;
 
     /**
-     * @see org.gradle.api.file.CopySpec#exclude(Iterable)
-     */
-    private Set<String> excludes = new HashSet<>();
-
-    /**
      * Enable (java-)compilation against the classes({@code WEB-INF/classes}) and jars({@code WEB-INF/lib}) of the overlay
      */
     private boolean enableCompilation = true;
@@ -66,8 +60,11 @@ public class WarOverlay {
     public WarOverlay(String name, War warTask) {
         this.name = name;
         this.warTask = warTask;
-        excludes.add("META-INF/maven/**");
-        excludes.add("META-INF/MANIFEST.MF");
+        this.warCopySpec = warTask.getRootSpec().addChild();
+
+        warCopySpec.setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE);
+        exclude("META-INF/maven/**");
+        exclude("META-INF/MANIFEST.MF");
     }
 
     public void from(Object object) {
@@ -82,13 +79,6 @@ public class WarOverlay {
     public void from(Object object, Closure configureClosure) {
         source = object;
         this.configureClosure = configureClosure;
-    }
-
-    /**
-     * @see org.gradle.api.file.CopySpec#exclude(String...)
-     */
-    public void exclude(String... pattern) {
-        Collections.addAll(excludes, pattern);
     }
 
     public void provided() {
@@ -107,13 +97,6 @@ public class WarOverlay {
     }
 
     /**
-     * @see #into
-     */
-    public String getTargetPath() {
-        return getInto();
-    }
-
-    /**
      * @see #enabled
      */
     public void setSkip(boolean skip) {
@@ -129,5 +112,37 @@ public class WarOverlay {
 
     public String getConfigurationName() {
         return String.format("%s%sOverlay", getName(), capitalize((CharSequence) getWarTask().getName()));
+    }
+
+    public void setInto(String destPath) {
+        into(destPath);
+    }
+
+    public void into(Object destPath) {
+        getWarCopySpec().into(destPath);
+    }
+
+    public void setExcludes(Iterable<String> excludes) {
+        getWarCopySpec().setExcludes(excludes);
+    }
+
+    public void exclude(String... excludes) {
+        getWarCopySpec().exclude(excludes);
+    }
+
+    public void exclude(Iterable<String> excludes) {
+        getWarCopySpec().exclude(excludes);
+    }
+
+    public void exclude(Spec<FileTreeElement> excludeSpec) {
+        getWarCopySpec().exclude(excludeSpec);
+    }
+
+    public void exclude(Closure excludeSpec) {
+        getWarCopySpec().exclude(excludeSpec);
+    }
+
+    public Set<String> getExcludes() {
+        return getWarCopySpec().getExcludes();
     }
 }
