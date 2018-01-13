@@ -18,6 +18,7 @@ public class JavadocUtf8Plugin implements Plugin<Project> {
 
             options.charSet("UTF-8");
             options.docEncoding("UTF-8");
+            options.setEncoding("UTF-8");
         });
     }
 }

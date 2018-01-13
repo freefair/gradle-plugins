@@ -1,5 +1,11 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.war;
 
+import io.freefair.gradle.plugins.AbstractPluginTest;
+import org.gradle.api.DomainObjectCollection;
+import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.plugins.WarPlugin;
+import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Test;
@@ -14,6 +20,19 @@ import static org.junit.Assert.assertEquals;
  * @author Lars Grefer
  */
 public class WarOverlayPluginTest extends AbstractPluginTest {
+
+    @Test
+    public void testProperties() {
+        Project project = ProjectBuilder.builder().build();
+
+        project.getPlugins().apply(WarPlugin.class);
+        project.getPlugins().apply(WarOverlayPlugin.class);
+
+        Task warTask = project.getTasks().getByName(WarPlugin.WAR_TASK_NAME);
+
+        assertThat(warTask.hasProperty("overlays")).isTrue();
+        assertThat(warTask.property("overlays")).isInstanceOf(DomainObjectCollection.class);
+    }
 
     @Test
     public void testHelloWorldTask() throws IOException {

@@ -3,6 +3,7 @@ plugins {
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.8"
     id "findbugs"
+    id "jacoco"
 }
 
 group = "io.freefair.gradle"
@@ -177,10 +178,10 @@ pluginBundle {
 }
 
 dependencies {
-    compileOnly "org.projectlombok:lombok:1.16.18"
+    compileOnly "org.projectlombok:lombok:1.16.20"
 
     testCompile "junit:junit:4.12"
-    testCompile "org.assertj:assertj-core:2.8.0"
+    testCompile "org.assertj:assertj-core:3.9.0"
     testCompileOnly configurations.findbugs
 }
 

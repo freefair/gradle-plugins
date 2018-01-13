@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.Collections;
 
 public class WarArchiveClassesPlugin implements Plugin<Project> {
+
     @Override
     public void apply(Project project) {
 
