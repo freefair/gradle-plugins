@@ -115,7 +115,9 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
         if (overlay.isEnableCompilation()) {
 
-            project.sync(extractOverlay);
+            if (!destinationDir.exists() || isEmpty(destinationDir)) {
+                project.sync(extractOverlay);
+            }
 
             project.getTasks().getByName(CLEAN_TASK_NAME).finalizedBy(extractOverlayTask);
 
@@ -131,6 +133,11 @@ public class WarOverlayPlugin implements Plugin<Project> {
             project.getDependencies().add(COMPILE_CLASSPATH_CONFIGURATION_NAME, libs);
             project.getDependencies().add(TEST_COMPILE_CLASSPATH_CONFIGURATION_NAME, libs);
         }
+    }
+
+    private boolean isEmpty(File destinationDir) {
+        String[] list = destinationDir.list();
+        return list == null || list.length == 0;
     }
 
     private void configureOverlay(WarOverlay overlay, Project otherProject) {
