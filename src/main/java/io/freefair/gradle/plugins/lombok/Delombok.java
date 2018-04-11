@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.lombok;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.file.FileCollection;
@@ -21,6 +22,7 @@ public class Delombok extends JavaExec {
     @InputFiles
     private FileCollection input;
 
+    @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", justification = "setMain() and args()")
     public Delombok() {
         setMain("lombok.launch.Main");
         args("delombok");

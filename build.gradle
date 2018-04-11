@@ -191,7 +191,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.16.20"
     annotationProcessor "org.projectlombok:lombok:1.16.20"
 
-    compile 'com.squareup.okio:okio:1.14.0'
+    compileOnly "com.google.code.findbugs:findbugs:$findbugs.toolVersion"
 
     testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:3.9.0"
