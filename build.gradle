@@ -202,6 +202,8 @@ jacoco {
     toolVersion = "0.8.0"
 }
 
+jacocoTestReport.reports.xml.enabled = true
+
 task wrapper(type: Wrapper) {
     gradleVersion = '4.6'
     distributionType = Wrapper.DistributionType.ALL
