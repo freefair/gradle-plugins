@@ -78,6 +78,10 @@ gradlePlugin {
             id = "io.freefair.maven-publish-war"
             implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishWarPlugin"
         }
+        lombok {
+            id = "io.freefair.lombok"
+            implementationClass = "io.freefair.gradle.plugins.lombok.LombokPlugin"
+        }
     }
 }
 
@@ -170,6 +174,12 @@ pluginBundle {
             description = "Creates a mavenWeb publication"
             tags = ["maven-publish", "war"]
         }
+        lombok {
+            id = "io.freefair.lombok"
+            displayName = "Lombok Plugin"
+            description "Automatic lombok and delombok configuration"
+            tags = ["lombok"]
+        }
     }
 
     mavenCoordinates {
@@ -181,6 +191,8 @@ dependencies {
     compileOnly "org.projectlombok:lombok:1.16.20"
     annotationProcessor "org.projectlombok:lombok:1.16.20"
 
+    compile 'com.squareup.okio:okio:1.14.0'
+
     testCompile "junit:junit:4.12"
     testCompile "org.assertj:assertj-core:3.9.0"
     testCompileOnly configurations.findbugs
@@ -191,6 +203,6 @@ jacoco {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
+    gradleVersion = '4.6'
     distributionType = Wrapper.DistributionType.ALL
 }
