@@ -58,12 +58,15 @@ public class LombokPlugin implements Plugin<Project> {
                 ((ExtensionAware) sourceSet).getExtensions().add("delombokTask", delombok);
 
                 JavaCompile compileJava = (JavaCompile) project.getTasks().getByName(sourceSet.getCompileJavaTaskName());
-                delombok.getOptions().setEncoding(compileJava.getOptions().getEncoding());
-                compileJava.getOptions().getCompilerArgs().add("-Xlint:-processing");
                 compileJava.dependsOn(generateLombokConfig);
-                compileJava.getInputs().file(generateLombokConfig.getOutputFile());
+                compileJava.getOptions().getCompilerArgs().add("-Xlint:-processing");
+                project.afterEvaluate(p -> {
+                    delombok.getOptions().setEncoding(compileJava.getOptions().getEncoding());
+                    delombok.getOptions().setClasspath(compileJava.getClasspath());
+                    compileJava.getInputs().file(generateLombokConfig.getOutputFile());
+                    delombok.setInput(sourceSet.getAllJava().getSourceDirectories());
+                });
 
-                delombok.setInput(sourceSet.getAllJava().getSourceDirectories());
                 delombok.getOptions().setTarget(new File(delombokBaseDir, sourceSet.getName()));
             });
 
