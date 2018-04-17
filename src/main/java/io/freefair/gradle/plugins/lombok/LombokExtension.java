@@ -2,14 +2,14 @@ package io.freefair.gradle.plugins.lombok;
 
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Data
 public class LombokExtension {
 
     private String version = "1.16.20";
 
-    private Map<String, String> config = new HashMap<>();
+    private Map<String, String> config = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
 }
