@@ -26,16 +26,17 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
                 .getPublications()
                 .create(getPublicationName(), MavenPublication.class);
 
-        publication.from(getSoftwareComponent());
+        project.afterEvaluate(p -> {
+            publication.from(getSoftwareComponent());
 
-        project.getPlugins().withType(SourcesJarPlugin.class, sourcesJarPlugin ->
-                publication.artifact(sourcesJarPlugin.getJarTask(), a -> a.setClassifier(sourcesJarPlugin.getClassifier()))
-        );
+            project.getPlugins().withType(SourcesJarPlugin.class, sourcesJarPlugin ->
+                    publication.artifact(sourcesJarPlugin.getJarTask(), a -> a.setClassifier(sourcesJarPlugin.getClassifier()))
+            );
 
-        project.getPlugins().withType(JavadocJarPlugin.class, javadocJarPlugin ->
-                publication.artifact(javadocJarPlugin.getJarTask(), a -> a.setClassifier(javadocJarPlugin.getClassifier()))
-        );
-
+            project.getPlugins().withType(JavadocJarPlugin.class, javadocJarPlugin ->
+                    publication.artifact(javadocJarPlugin.getJarTask(), a -> a.setClassifier(javadocJarPlugin.getClassifier()))
+            );
+        });
     }
 
     protected abstract Class<? extends Plugin> getPluginClass();
