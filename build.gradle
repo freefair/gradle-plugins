@@ -4,13 +4,13 @@ plugins {
     id "com.gradle.plugin-publish" version "0.9.8"
     id "findbugs"
     id "jacoco"
+    id "io.freefair.lombok" version "2.4.3"
 }
 
 group = "io.freefair.gradle"
 
 javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
 javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
-javadoc.options.showFromPrivate()
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -188,8 +188,6 @@ pluginBundle {
 }
 
 dependencies {
-    compileOnly "org.projectlombok:lombok:1.16.20"
-    annotationProcessor "org.projectlombok:lombok:1.16.20"
 
     compileOnly "com.google.code.findbugs:findbugs:$findbugs.toolVersion"
 
@@ -198,13 +196,9 @@ dependencies {
     testCompileOnly configurations.findbugs
 }
 
-jacoco {
-    toolVersion = "0.8.0"
-}
-
 jacocoTestReport.reports.xml.enabled = true
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
+    gradleVersion = '4.7'
     distributionType = Wrapper.DistributionType.ALL
 }
