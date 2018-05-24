@@ -113,6 +113,8 @@ public class JavadocLinksPlugin implements Plugin<Project> {
                 return "https://docs.oracle.com/javase/8/docs/api/";
             case VERSION_1_9:
                 return "https://docs.oracle.com/javase/9/docs/api/";
+            case VERSION_1_10:
+                return "https://docs.oracle.com/javase/10/docs/api/";
             default:
                 project.getLogger().warn("Unknown java version {}", javaVersion);
                 return null;
