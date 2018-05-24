@@ -44,7 +44,7 @@ public class LombokPlugin implements Plugin<Project> {
         });
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
-            JavaPluginConvention javaPluginConvention = project.getConvention().findPlugin(JavaPluginConvention.class);
+            JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 
             File delombokBaseDir = new File(project.getBuildDir(), "delombok");
 

@@ -27,7 +27,10 @@ public class Delombok extends JavaExec {
         setMain("lombok.launch.Main");
         args("delombok");
         getArgumentProviders().add(getOptions());
-        getArgumentProviders().add(() -> getInput().getFiles().stream().map(File::getPath).collect(Collectors.toList()));
+        getArgumentProviders().add(() -> getInput().getFiles().stream()
+                .filter(File::isDirectory)
+                .map(File::getPath)
+                .collect(Collectors.toList()));
     }
 
     @Override
