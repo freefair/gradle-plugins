@@ -1,0 +1,49 @@
+plugins {
+    id "maven-publish"
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish"
+    id "findbugs"
+    id "jacoco"
+    id "io.freefair.lombok"
+}
+
+group = "io.freefair.gradle"
+
+javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
+javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+
+gradlePlugin {
+    plugins {
+        lombok {
+            id = "io.freefair.lombok"
+            implementationClass = "io.freefair.gradle.plugins.lombok.LombokPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/freefair/gradle-plugins'
+    vcsUrl = 'https://github.com/freefair/gradle-plugins'
+
+    plugins {
+        lombok {
+            id = "io.freefair.lombok"
+            displayName = "Lombok Plugin"
+            description = "Automatic lombok and delombok configuration"
+            tags = ["lombok"]
+        }
+    }
+
+    mavenCoordinates {
+        groupId = project.group
+    }
+}

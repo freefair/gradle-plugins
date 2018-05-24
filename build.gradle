@@ -78,10 +78,6 @@ gradlePlugin {
             id = "io.freefair.maven-publish-war"
             implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishWarPlugin"
         }
-        lombok {
-            id = "io.freefair.lombok"
-            implementationClass = "io.freefair.gradle.plugins.lombok.LombokPlugin"
-        }
     }
 }
 
@@ -173,12 +169,6 @@ pluginBundle {
             displayName = "maven-publish War"
             description = "Creates a mavenWeb publication"
             tags = ["maven-publish", "war"]
-        }
-        lombok {
-            id = "io.freefair.lombok"
-            displayName = "Lombok Plugin"
-            description = "Automatic lombok and delombok configuration"
-            tags = ["lombok"]
         }
     }
 
