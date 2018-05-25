@@ -1,0 +1,8 @@
+plugins {
+    id "java"
+}
+
+dependencies {
+    compile "junit:junit:4.12"
+    compile "org.assertj:assertj-core:3.9.0"
+}

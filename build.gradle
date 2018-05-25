@@ -2,42 +2,44 @@ plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.8"
-    id "findbugs"
-    id "jacoco"
     id "io.freefair.lombok" version "2.4.3"
 }
 
-group = "io.freefair.gradle"
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
 
-javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
-javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+    group = "io.freefair.gradle"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+    plugins.withId("java") {
+        javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
+        javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
 
-repositories {
-    jcenter()
-    mavenCentral()
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+
+        plugins.apply "jacoco"
+        plugins.apply "findbugs"
+
+        jacocoTestReport.reports.xml.enabled = true
+    }
+
+    plugins.withId("com.gradle.plugin-publish") {
+        pluginBundle {
+            website = 'https://github.com/freefair/gradle-plugins'
+            vcsUrl = 'https://github.com/freefair/gradle-plugins'
+
+            mavenCoordinates {
+                groupId = project.group
+            }
+        }
+    }
 }
 
 gradlePlugin {
     plugins {
-        war {
-            id = "io.freefair.war"
-            implementationClass = "io.freefair.gradle.plugins.war.WarPlugin"
-        }
-        warOverlay {
-            id = "io.freefair.war-overlay"
-            implementationClass = "io.freefair.gradle.plugins.war.WarOverlayPlugin"
-        }
-        warAttachClasses {
-            id = "io.freefair.war-attach-classes"
-            implementationClass = "io.freefair.gradle.plugins.war.WarAttachClassesPlugin"
-        }
-        warAttachClasses {
-            id = "io.freefair.war-archive-classes"
-            implementationClass = "io.freefair.gradle.plugins.war.WarArchiveClassesPlugin"
-        }
         explodedWar {
             id = "io.freefair.exploded-archives"
             implementationClass = "io.freefair.gradle.plugins.ExplodedArchivesPlugin"
@@ -82,34 +84,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = 'https://github.com/freefair/gradle-plugins'
-    vcsUrl = 'https://github.com/freefair/gradle-plugins'
-
     plugins {
-        war {
-            id = "io.freefair.war"
-            displayName = "War Plugin"
-            description = "Maven-like extensions for the normal war plugin"
-            tags = ['war']
-        }
-        warOverlay {
-            id = "io.freefair.war-overlay"
-            displayName = "War Overlay Plugin"
-            description = "Maven-like overlays for war tasks."
-            tags = ['war', 'maven', 'overlay']
-        }
-        warAttachClasses {
-            id = "io.freefair.war-attach-classes"
-            displayName = "War Attach Classes Plugin"
-            description = "Maven-like attachClasses option for the war task."
-            tags = ['war', 'maven', 'attachClasses']
-        }
-        warAttachClasses {
-            id = "io.freefair.war-archive-classes"
-            displayName = "War Archive Classes Plugin"
-            description = "Maven-like archiveClasses options for war tasks."
-            tags = ['war', 'maven', 'archiveClasses']
-        }
         explodedWar {
             id = "io.freefair.exploded-archives"
             displayName = "Exploded Archives Plugin"
@@ -171,22 +146,14 @@ pluginBundle {
             tags = ["maven-publish", "war"]
         }
     }
-
-    mavenCoordinates {
-        groupId = project.group
-    }
 }
 
 dependencies {
-
     compileOnly "com.google.code.findbugs:findbugs:$findbugs.toolVersion"
 
-    testCompile "junit:junit:4.12"
-    testCompile "org.assertj:assertj-core:3.9.0"
+    testCompile project(":test-common")
     testCompileOnly configurations.findbugs
 }
-
-jacocoTestReport.reports.xml.enabled = true
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.7'

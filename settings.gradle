@@ -1,3 +1,5 @@
 rootProject.name = 'gradle-plugins'
 
+include "test-common"
+include "war-plugin"
 include "lombok-plugin"

@@ -40,7 +40,7 @@ public class WarOverlayPluginTest extends AbstractPluginTest {
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
-                .withArguments("eW", "--stacktrace")
+                .withArguments("war", "--stacktrace")
                 .withPluginClasspath()
                 .withDebug(true)
                 .build();
