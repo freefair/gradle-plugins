@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.lombok;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -95,6 +96,7 @@ public class LombokPlugin implements Plugin<Project> {
         return lombokExtension.getConfig().put("lombok.addLombokGeneratedAnnotation", "true");
     }
 
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     private void configureDelombokDefaults(Delombok delombok) {
         delombok.setClasspath(lombokConfiguration);
         delombok.setGroup("lombok");
