@@ -1,0 +1,57 @@
+plugins {
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish"
+    id "io.freefair.lombok"
+}
+
+tasks.withType(FindBugs) {
+    reports.xml.enabled false
+    reports.html.enabled true
+}
+
+gradlePlugin {
+    plugins {
+        jSassBase {
+            id = "io.freefair.jsass-base"
+            implementationClass = "io.freefair.gradle.plugins.jsass.JSassBasePlugin"
+        }
+        jSassJava {
+            id = "io.freefair.jsass-java"
+            implementationClass = "io.freefair.gradle.plugins.jsass.JSassJavaPlugin"
+        }
+        jSassWar {
+            id = "io.freefair.jsass-war"
+            implementationClass = "io.freefair.gradle.plugins.jsass.JSassWarPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    tags = ['jSass', 'sass', 'scss']
+
+    plugins {
+        jSassBase {
+            id = "io.freefair.jsass-base"
+            displayName = "jSass Base Plugin"
+            description = "jSass Base Plugin"
+        }
+        jSassJava {
+            id = "io.freefair.jsass-java"
+            displayName = "jSass Java Plugin"
+            description = "Compiles SASS and SCSS in your java resources (src/*/resources)"
+        }
+        jSassWar {
+            id = "io.freefair.jsass-war"
+            displayName = "jSass War Plugin"
+            description = "Compiles SASS and SCSS in your webapp resources (src/main/webapp)"
+        }
+    }
+}
+
+dependencies {
+    compile "io.bit3:jsass:5.7.3"
+    compile 'com.google.code.gson:gson:2.8.5'
+
+    testCompile "junit:junit:4.12"
+    testCompile 'org.assertj:assertj-core:3.10.0'
+}
