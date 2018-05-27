@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.war;
 import groovy.lang.Closure;
 import lombok.Getter;
 import lombok.Setter;
+import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileTreeElement;
 import org.gradle.api.internal.file.copy.CopySpecInternal;
@@ -126,6 +127,22 @@ public class WarOverlay {
         getWarCopySpec().setExcludes(excludes);
     }
 
+    public CopySpec include(String... includes) {
+        return getWarCopySpec().include(includes);
+    }
+
+    public CopySpec include(Iterable<String> includes) {
+        return getWarCopySpec().include(includes);
+    }
+
+    public CopySpec include(Spec<FileTreeElement> includeSpec) {
+        return getWarCopySpec().include(includeSpec);
+    }
+
+    public CopySpec include(Closure includeSpec) {
+        return getWarCopySpec().include(includeSpec);
+    }
+
     public void exclude(String... excludes) {
         getWarCopySpec().exclude(excludes);
     }
@@ -142,7 +159,15 @@ public class WarOverlay {
         getWarCopySpec().exclude(excludeSpec);
     }
 
+    public Set<String> getIncludes() {
+        return getWarCopySpec().getIncludes();
+    }
+
     public Set<String> getExcludes() {
         return getWarCopySpec().getExcludes();
+    }
+
+    public CopySpec setIncludes(Iterable<String> includes) {
+        return getWarCopySpec().setIncludes(includes);
     }
 }
