@@ -3,11 +3,9 @@ package io.freefair.gradle.plugins.lombok;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.Setter;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.JavaExec;
-import org.gradle.api.tasks.Nested;
-import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.*;
 
 import java.io.File;
 import java.util.stream.Collectors;
@@ -19,16 +17,25 @@ public class Delombok extends JavaExec {
     @Nested
     private DelombokOptions options = new DelombokOptions();
 
+    @Internal
+    private final ConfigurableFileCollection input = getProject().files();
+
     @InputFiles
-    private FileCollection input;
+    @SkipWhenEmpty
+    protected FileCollection getNonEmptySourceRoots() {
+        return getProject().files(
+                getInput().getFiles().stream()
+                        .filter(File::isDirectory)
+                        .collect(Collectors.toList())
+        );
+    }
 
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", justification = "setMain() and args()")
     public Delombok() {
         setMain("lombok.launch.Main");
         args("delombok");
         getArgumentProviders().add(getOptions());
-        getArgumentProviders().add(() -> getInput().getFiles().stream()
-                .filter(File::isDirectory)
+        getArgumentProviders().add(() -> getNonEmptySourceRoots().getFiles().stream()
                 .map(File::getPath)
                 .collect(Collectors.toList()));
     }
