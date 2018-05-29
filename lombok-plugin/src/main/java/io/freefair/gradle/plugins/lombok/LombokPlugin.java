@@ -15,8 +15,6 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 
-import java.io.File;
-
 @Getter
 public class LombokPlugin implements Plugin<Project> {
 
@@ -48,8 +46,6 @@ public class LombokPlugin implements Plugin<Project> {
     private void configureJavaPluginDefaults() {
         JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 
-        File delombokBaseDir = new File(project.getBuildDir(), "delombok");
-
         javaPluginConvention.getSourceSets().all(sourceSet -> {
             project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(lombokConfiguration);
             project.getConfigurations().getByName(sourceSet.getAnnotationProcessorConfigurationName()).extendsFrom(lombokConfiguration);
@@ -63,13 +59,13 @@ public class LombokPlugin implements Plugin<Project> {
             compileJava.dependsOn(generateLombokConfig);
             compileJava.getOptions().getCompilerArgs().add("-Xlint:-processing");
             project.afterEvaluate(p -> {
-                delombok.getOptions().setEncoding(compileJava.getOptions().getEncoding());
-                delombok.getOptions().setClasspath(compileJava.getClasspath());
+                delombok.getEncoding().set(compileJava.getOptions().getEncoding());
+                delombok.getClasspath().from(sourceSet.getCompileClasspath());
                 compileJava.getInputs().file(generateLombokConfig.getOutputFile());
-                delombok.getInput().from(sourceSet.getAllJava().getSourceDirectories());
+                delombok.setInput(sourceSet.getAllJava());
             });
 
-            delombok.getOptions().setTarget(new File(delombokBaseDir, sourceSet.getName()));
+            delombok.getTarget().set(project.getLayout().getBuildDirectory().dir("delombok/" + sourceSet.getName()));
         });
 
         Javadoc javadoc = (Javadoc) project.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME);
@@ -98,8 +94,8 @@ public class LombokPlugin implements Plugin<Project> {
 
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     private void configureDelombokDefaults(Delombok delombok) {
-        delombok.setClasspath(lombokConfiguration);
+        delombok.getLombokClasspath().from(lombokConfiguration);
         delombok.setGroup("lombok");
-        delombok.getOptions().getFormat().put("pretty", null);
+        delombok.getFormat().put("pretty", null);
     }
 }

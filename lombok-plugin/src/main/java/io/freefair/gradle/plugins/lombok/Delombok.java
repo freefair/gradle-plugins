@@ -4,55 +4,148 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.util.CollectionUtils;
+import org.gradle.util.GUtil;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class Delombok extends JavaExec {
+public class Delombok extends SourceTask {
 
-    @Nested
-    private DelombokOptions options = new DelombokOptions();
+    /**
+     * Print the name of each file as it is being delombok-ed.
+     */
+    @Input
+    private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class);
 
-    @Internal
-    private final ConfigurableFileCollection input = getProject().files();
+    /**
+     * Sets formatting rules.
+     * Use --format-help to list all available rules.
+     * Unset format rules are inferred by scanning the source for usages.
+     */
+    @Input
+    private Map<String, String> format = new HashMap<>();
 
+    /**
+     * No warnings or errors will be emitted to standard error.
+     */
+    @Input
+    private final Property<Boolean> quiet = getProject().getObjects().property(Boolean.class);
+
+    /**
+     * Sets the encoding of your source files.
+     * Defaults to the system default charset.
+     * Example: "UTF-8"
+     */
+    @Input
+    @Optional
+    private final Property<String> encoding = getProject().getObjects().property(String.class);
+
+    /**
+     * Print delombok-ed code to standard output instead of saving it in target directory.
+     */
+    @Input
+    private final Property<Boolean> print = getProject().getObjects().property(Boolean.class);
+
+    /**
+     * Directory to save delomboked files to.
+     */
+    @OutputDirectory
+    private final DirectoryProperty target = newOutputDirectory();
+
+    /**
+     * Classpath (analogous to javac -cp option).
+     */
+    @Classpath
+    @Optional
+    private final ConfigurableFileCollection classpath = getProject().files();
+
+    /**
+     * Sourcepath (analogous to javac -sourcepath option).
+     */
     @InputFiles
+    @Optional
+    private final ConfigurableFileCollection sourcepath = getProject().files();
+
+    /**
+     * override Bootclasspath (analogous to javac -bootclasspath option)
+     */
+    @Classpath
+    @Optional
+    private final ConfigurableFileCollection bootclasspath = getProject().files();
+
+    /**
+     * Lombok will only delombok source files.
+     * Without this option, non-java, non-class files are copied to the target directory.
+     */
+    @Input
+    private final Property<Boolean> nocopy = getProject().getObjects().property(Boolean.class);
+
+    @Classpath
+    private final ConfigurableFileCollection lombokClasspath = getProject().files();
+
     @SkipWhenEmpty
-    protected FileCollection getNonEmptySourceRoots() {
-        return getProject().files(
-                getInput().getFiles().stream()
-                        .filter(File::isDirectory)
-                        .collect(Collectors.toList())
-        );
-    }
+    @InputFiles
+    private SourceDirectorySet input;
 
     @SuppressFBWarnings(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", justification = "setMain() and args()")
-    public Delombok() {
-        setMain("lombok.launch.Main");
-        args("delombok");
-        getArgumentProviders().add(getOptions());
-        getArgumentProviders().add(() -> getNonEmptySourceRoots().getFiles().stream()
-                .map(File::getPath)
-                .collect(Collectors.toList()));
-    }
+    @TaskAction
+    public void delombok() {
+        getProject().delete(getTarget().getAsFile().get());
 
-    @Override
-    public void exec() {
-        getProject().delete(getDestinationDir());
-        super.exec();
-    }
+        getProject().javaexec(delombok -> {
+            delombok.setClasspath(getLombokClasspath());
+            delombok.setMain("lombok.launch.Main");
+            delombok.args("delombok");
 
-    @OutputDirectory
-    public File getDestinationDir() {
-        return getOptions().getTarget();
-    }
+            if (verbose.getOrElse(false)) {
+                delombok.args("--verbose");
+            }
+            getFormat().forEach((key, value) -> {
+                String formatValue = key + (GUtil.isTrue(value) ? ":" + value : "");
+                delombok.args("--format=" + formatValue);
+            });
+            if (quiet.getOrElse(false)) {
+                delombok.args("--quiet");
+            }
+            if (getEncoding().isPresent()) {
+                delombok.args("--encoding=" + getEncoding().get());
+            }
 
-    public void setDestinationDir(File destinationDir) {
-        getOptions().setTarget(destinationDir);
-    }
+            if (print.getOrElse(false)) {
+                delombok.args("--print");
+            }
 
+            if (target.isPresent()) {
+                delombok.args("--target=" + target.getAsFile().get());
+            }
+
+            if (!classpath.isEmpty()) {
+                delombok.args("--classpath=" + CollectionUtils.join(File.pathSeparator, getClasspath().getFiles()));
+            }
+            if (!sourcepath.isEmpty()) {
+                delombok.args("--sourcepath=" + CollectionUtils.join(File.pathSeparator, getSourcepath().getFiles()));
+            }
+            if (!bootclasspath.isEmpty()) {
+                delombok.args("--bootclasspath=" + CollectionUtils.join(File.pathSeparator, getBootclasspath().getFiles()));
+            }
+
+            if (nocopy.getOrElse(false)) {
+                delombok.args("--nocopy");
+            }
+
+            delombok.args(input.getSrcDirs().stream()
+                    .filter(File::isDirectory)
+                    .collect(Collectors.toList())
+            );
+        });
+    }
 }

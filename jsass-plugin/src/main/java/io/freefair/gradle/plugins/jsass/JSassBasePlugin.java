@@ -14,7 +14,7 @@ public class JSassBasePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        this.extension = project.getExtensions().create("jSass", JSassExtension.class, project);
+        this.extension = project.getExtensions().create("jsass", JSassExtension.class, project);
 
         project.getTasks().withType(SassCompile.class, compileSass -> {
             compileSass.getIndent().set(extension.getIndent());
