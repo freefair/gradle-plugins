@@ -8,7 +8,7 @@ import java.util.TreeMap;
 @Data
 public class LombokExtension {
 
-    private String version = "1.16.20";
+    private String version = "1.18.0";
 
     private Map<String, String> config = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
