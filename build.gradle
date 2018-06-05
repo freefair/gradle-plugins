@@ -2,7 +2,7 @@ plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.8"
-    id "io.freefair.lombok" version "2.4.3"
+    id "io.freefair.lombok" version "2.5.0-rc3"
 }
 
 allprojects {
@@ -155,7 +155,7 @@ dependencies {
     testCompileOnly configurations.findbugs
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
+wrapper {
+    gradleVersion = '4.8'
     distributionType = Wrapper.DistributionType.ALL
 }
