@@ -4,3 +4,5 @@ include "test-common"
 include "war-plugin"
 include "lombok-plugin"
 include "jsass-plugin"
+
+enableFeaturePreview('STABLE_PUBLISHING')
