@@ -1,15 +1,9 @@
-buildscript {
-    dependencies {
-        classpath "io.freefair.gradle-plugins:lombok-plugin:master-SNAPSHOT"
-    }
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
-}
 plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.8"
+    id "io.freefair.lombok" version "2.5.0"
+    id "com.github.spotbugs" version "1.6.2"
 }
 
 allprojects {
@@ -29,9 +23,16 @@ allprojects {
 
         plugins.apply "jacoco"
         plugins.apply "io.freefair.lombok"
-        plugins.apply "findbugs"
+        plugins.apply "com.github.spotbugs"
 
         jacocoTestReport.reports.xml.enabled = true
+
+        lombok.version = "1.18.0"
+
+        dependencies {
+            compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.3'
+            testCompileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.3'
+        }
     }
 
     plugins.withId("com.gradle.plugin-publish") {
@@ -43,10 +44,6 @@ allprojects {
                 groupId = project.group
             }
         }
-    }
-
-    plugins.withId("io.freefair.lombok") {
-        lombok.version = "1.18.0"
     }
 }
 

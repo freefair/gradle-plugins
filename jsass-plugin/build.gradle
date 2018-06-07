@@ -5,11 +5,6 @@ plugins {
     id "io.freefair.lombok"
 }
 
-tasks.withType(FindBugs) {
-    reports.xml.enabled false
-    reports.html.enabled true
-}
-
 gradlePlugin {
     plugins {
         jSassBase {
