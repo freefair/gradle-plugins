@@ -8,6 +8,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.quality.CodeQualityExtension;
 import org.gradle.api.plugins.quality.FindBugsExtension;
 import org.gradle.api.plugins.quality.FindBugsPlugin;
 import org.gradle.api.tasks.SourceSet;
@@ -75,6 +76,19 @@ public class LombokPlugin implements Plugin<Project> {
         project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> configureForJacoco());
 
         project.getPlugins().withType(FindBugsPlugin.class, findBugsPlugin -> configureForFindbugs(javaPluginConvention));
+
+        project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginConvention));
+    }
+
+    private void configureForSpotbugs(JavaPluginConvention javaPluginConvention) {
+        lombokExtension.getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
+
+        CodeQualityExtension spotbugsExtension = (CodeQualityExtension) project.getExtensions().getByName("spotbugs");
+        javaPluginConvention.getSourceSets().all(sourceSet ->
+                project.getDependencies().add(
+                        sourceSet.getCompileOnlyConfigurationName(),
+                        "com.github.spotbugs:spotbugs-annotations:" + spotbugsExtension.getToolVersion()
+                ));
     }
 
     private void configureForFindbugs(JavaPluginConvention javaPluginConvention) {

@@ -6,11 +6,7 @@ plugins {
 }
 
 dependencies {
-
-    compileOnly "com.google.code.findbugs:findbugs:$findbugs.toolVersion"
-
     testCompile project(":test-common")
-    testCompileOnly configurations.findbugs
 }
 
 gradlePlugin {

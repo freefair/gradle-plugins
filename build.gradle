@@ -1,8 +1,15 @@
+buildscript {
+    dependencies {
+        classpath "io.freefair.gradle-plugins:lombok-plugin:master-SNAPSHOT"
+    }
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
 plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.8"
-    id "io.freefair.lombok" version "2.5.0-rc3"
 }
 
 allprojects {
@@ -21,6 +28,7 @@ allprojects {
         targetCompatibility = 1.8
 
         plugins.apply "jacoco"
+        plugins.apply "io.freefair.lombok"
         plugins.apply "findbugs"
 
         jacocoTestReport.reports.xml.enabled = true
@@ -153,10 +161,7 @@ pluginBundle {
 }
 
 dependencies {
-    compileOnly "com.google.code.findbugs:findbugs:$findbugs.toolVersion"
-
     testCompile project(":test-common")
-    testCompileOnly configurations.findbugs
 }
 
 wrapper {
