@@ -15,7 +15,9 @@ allprojects {
     group = "io.freefair.gradle"
 
     plugins.withId("java") {
-        javadoc.options.links "https://docs.oracle.com/javase/8/docs/api/"
+        def jvm = org.gradle.internal.jvm.Jvm.current()
+
+        javadoc.options.links "https://docs.oracle.com/javase/$jvm.javaVersion.majorVersion/docs/api/"
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
 
         sourceCompatibility = 1.8
