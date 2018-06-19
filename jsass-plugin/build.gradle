@@ -2,7 +2,6 @@ plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish"
-    id "io.freefair.lombok"
 }
 
 gradlePlugin {

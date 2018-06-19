@@ -1,5 +1,0 @@
-plugins {
-    id "java"
-    id "maven"
-    id "io.freefair.sources-jar"
-}

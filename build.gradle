@@ -2,7 +2,6 @@ plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish" version "0.9.8"
-    id "io.freefair.lombok" version "2.5.0"
     id "com.github.spotbugs" version "1.6.2"
 }
 
@@ -15,25 +14,27 @@ allprojects {
     group = "io.freefair.gradle"
 
     plugins.withId("java") {
-        def jvm = org.gradle.internal.jvm.Jvm.current()
+        def javaVersion = JavaVersion.current()
 
-        javadoc.options.links "https://docs.oracle.com/javase/$jvm.javaVersion.majorVersion/docs/api/"
+        javadoc.options.links "https://docs.oracle.com/javase/$javaVersion.majorVersion/docs/api/"
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
 
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
 
         plugins.apply "jacoco"
-        plugins.apply "io.freefair.lombok"
         plugins.apply "com.github.spotbugs"
 
         jacocoTestReport.reports.xml.enabled = true
 
-        lombok.version = "1.18.0"
-
         dependencies {
             compileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.3'
+            compileOnly 'org.projectlombok:lombok:1.18.0'
+            annotationProcessor 'org.projectlombok:lombok:1.18.0'
+
             testCompileOnly 'com.github.spotbugs:spotbugs-annotations:3.1.3'
+            testCompileOnly 'org.projectlombok:lombok:1.18.0'
+            testAnnotationProcessor 'org.projectlombok:lombok:1.18.0'
         }
     }
 
@@ -59,38 +60,6 @@ gradlePlugin {
             id = "io.freefair.git-version"
             implementationClass = "io.freefair.gradle.plugins.GitVersionPlugin"
         }
-        sourcesJar {
-            id = "io.freefair.sources-jar"
-            implementationClass = "io.freefair.gradle.plugins.maven.SourcesJarPlugin"
-        }
-        javadocJar {
-            id = "io.freefair.javadoc-jar"
-            implementationClass = "io.freefair.gradle.plugins.maven.JavadocJarPlugin"
-        }
-        mavenJars {
-            id = "io.freefair.maven-jars"
-            implementationClass = "io.freefair.gradle.plugins.maven.MavenJarsPlugin"
-        }
-        javadocLinks {
-            id = "io.freefair.javadoc-links"
-            implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocLinksPlugin"
-        }
-        javadocUtf8 {
-            id = "io.freefair.javadoc-utf-8"
-            implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocUtf8Plugin"
-        }
-        javadocs {
-            id = "io.freefair.javadocs"
-            implementationClass = "io.freefair.gradle.plugins.javadoc.JavadocsPlugin"
-        }
-        mavenPublishJava {
-            id = "io.freefair.maven-publish-java"
-            implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishJavaPlugin"
-        }
-        mavenPublishWar {
-            id = "io.freefair.maven-publish-war"
-            implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishWarPlugin"
-        }
     }
 }
 
@@ -107,54 +76,6 @@ pluginBundle {
             displayName = "Git Version Plugin"
             description = 'This plugin sets your latest git tag as project version'
             tags = ['git', 'version']
-        }
-        sourcesJar {
-            id = "io.freefair.sources-jar"
-            displayName = "Sources Jar Plugin"
-            description = 'This plugin adds a sourcesJar task'
-            tags = ['maven', 'sources', 'jar']
-        }
-        javadocJar {
-            id = "io.freefair.javadoc-jar"
-            displayName = "Javadoc Jar Plugin"
-            description = 'This plugin adds a javadocJar task'
-            tags = ['maven', 'javadoc', 'jar']
-        }
-        mavenJars {
-            id = "io.freefair.maven-jars"
-            displayName = "Maven Jars Plugin"
-            description = 'This plugin adds a sourcesJar and a javadocJar task'
-            tags = ['maven', 'javadoc', 'sources', 'jar']
-        }
-        javadocLinks {
-            id = "io.freefair.javadoc-links"
-            displayName = "Maven Jars Plugin"
-            description = 'Link your javadoc against your dependencies'
-            tags = ['javadoc', 'links', 'javadoc.io']
-        }
-        javadocUtf8 {
-            id = "io.freefair.javadoc-utf-8"
-            displayName = "Javadoc UTF-8 Plugin"
-            description = "Set the output encoding of your javadoc tasks to 'UTF-8'"
-            tags = ['javadoc', 'utf-8']
-        }
-        javadocs {
-            id = "io.freefair.javadocs"
-            displayName = "Javadoc Plugin"
-            description = 'Bundle of all our javadoc plugins'
-            tags = ['javadoc']
-        }
-        mavenPublishJava {
-            id = "io.freefair.maven-publish-java"
-            displayName = "maven-publish Java"
-            description = "Creates a mavenJava publication"
-            tags = ["maven-publish", "java"]
-        }
-        mavenPublishWar {
-            id = "io.freefair.maven-publish-war"
-            displayName = "maven-publish War"
-            description = "Creates a mavenWeb publication"
-            tags = ["maven-publish", "war"]
         }
     }
 }
