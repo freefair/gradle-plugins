@@ -16,11 +16,9 @@ import java.io.File;
 @Getter
 public class JSassJavaPlugin implements Plugin<Project> {
 
-    private JSassBasePlugin jSassBasePlugin;
-
     @Override
     public void apply(Project project) {
-        jSassBasePlugin = project.getPlugins().apply(JSassBasePlugin.class);
+        project.getPlugins().apply(JSassWebjarsPlugin.class);
 
         project.getPlugins().apply(JavaPlugin.class);
 

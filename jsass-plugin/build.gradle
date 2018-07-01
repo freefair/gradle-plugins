@@ -18,6 +18,10 @@ gradlePlugin {
             id = "io.freefair.jsass-war"
             implementationClass = "io.freefair.gradle.plugins.jsass.JSassWarPlugin"
         }
+        jSassWebjars {
+            id = "io.freefair.jsass-webjars"
+            implementationClass = "io.freefair.gradle.plugins.jsass.JSassWebjarsPlugin"
+        }
     }
 }
 

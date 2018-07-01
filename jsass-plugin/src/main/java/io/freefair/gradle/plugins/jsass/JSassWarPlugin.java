@@ -14,7 +14,7 @@ public class JSassWarPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
 
-        project.getPlugins().apply(JSassBasePlugin.class);
+        project.getPlugins().apply(JSassWebjarsPlugin.class);
         project.getPlugins().apply(WarPlugin.class);
 
         SassCompile compileWebappSass = project.getTasks().create("compileWebappSass", SassCompile.class);
