@@ -8,6 +8,10 @@ Available from plugins.gradle.org: https://plugins.gradle.org/search?term=io.fre
 
 Adds the `jSass` extension and some Conventions to the project.
 
+### `io.freefair.jsass-webjars`
+
+Add webjars support for all `SassCompile` tasks.
+
 ### `io.freefair.jsass-java`
 
 Compiles SASS/SCSS in java source set resources (e.g. `src/*/resources`)
@@ -15,3 +19,7 @@ Compiles SASS/SCSS in java source set resources (e.g. `src/*/resources`)
 ### `io.freefair.jsass-war`
 
 Compiles SASS/SCSS in web resources (`src/main/webapp`)
+
+## Examples
+
+Example projects can be found here: https://github.com/freefair/gradle-plugin-examples/tree/master/jsass

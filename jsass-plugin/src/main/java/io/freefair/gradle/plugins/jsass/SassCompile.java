@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.gradle.api.GradleException;
+import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.*;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
@@ -98,7 +99,7 @@ public class SassCompile extends SourceTask {
 
                     options.setIsIndentedSyntaxSrc(name.endsWith(".sass"));
 
-                    if(sourceMapEnabled.get()) {
+                    if (sourceMapEnabled.get()) {
                         options.setSourceMapFile(fakeMap.toURI());
                     } else {
                         options.setSourceMapFile(null);
@@ -129,10 +130,10 @@ public class SassCompile extends SourceTask {
                         getLogger().error("{}:{}:{}", sassError.getFile(), sassError.getLine(), sassError.getColumn());
                         getLogger().error(e.getErrorMessage());
 
-                        throw new TaskExecutionException(SassCompile.this, e);
+                        throw new RuntimeException(e);
                     } catch (IOException e) {
                         getLogger().error(e.getLocalizedMessage());
-                        throw new TaskExecutionException(SassCompile.this, e);
+                        throw new UncheckedIOException(e);
                     }
                 }
             }

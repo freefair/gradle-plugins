@@ -10,17 +10,17 @@ public class JSassWebjarsPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         project.getPlugins().apply(JSassBasePlugin.class);
-        Configuration jsass = project.getConfigurations().create("jsass");
+        Configuration webjars = project.getConfigurations().create("webjars");
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin ->
-                jsass.extendsFrom(project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME))
+                webjars.extendsFrom(project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME))
         );
 
         PrepareWebjars prepareWebjars = project.getTasks().create("prepareWebjars", PrepareWebjars.class);
 
-        prepareWebjars.setConfiguration(jsass);
+        prepareWebjars.getWebjars().from(webjars);
         prepareWebjars.getOutputDirectory().set(project.getLayout().getBuildDirectory().dir("jsass/webjars"));
 
-        project.getTasks().withType(SassCompile.class, sassCompile -> sassCompile.getIncludePaths().from(prepareWebjars.getOutputDirectory()));
+        project.getTasks().withType(SassCompile.class, sassCompile -> sassCompile.getIncludePaths().from(prepareWebjars));
     }
 }
