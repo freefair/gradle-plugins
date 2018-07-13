@@ -4,5 +4,6 @@ include "test-common"
 include "maven-plugin"
 include "lombok-plugin"
 include "jsass-plugin"
+include "aspectj-plugin"
 
 enableFeaturePreview('STABLE_PUBLISHING')

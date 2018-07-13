@@ -1,0 +1,50 @@
+plugins {
+    id "maven-publish"
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish"
+}
+
+gradlePlugin {
+    plugins {
+        aspectjBase {
+            id = "io.freefair.aspectj-base"
+            implementationClass = "io.freefair.gradle.plugins.AspectJBasePlugin"
+        }
+        aspectjPostCompileWeaving {
+            id = "io.freefair.aspectj.post-compile-weaving"
+            implementationClass = "io.freefair.gradle.plugins.AspectJPostCompileWeavingPlugin"
+        }
+        aspectjCompileTimeWeaving {
+            id = "io.freefair.aspectj.post-compile-weaving"
+            implementationClass = "io.freefair.gradle.plugins.AspectJCompileTimeWeavingPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    tags = ['aspectj']
+
+    plugins {
+        aspectjBase {
+            id = "io.freefair.aspectj.base"
+            displayName = "AspectJ Base Plugin"
+            description = "AspectJ Base Plugin"
+        }
+        aspectjPostCompileWeaving {
+            id = "io.freefair.aspectj.post-compile-weaving"
+            displayName = "AspectJ Weaving Plugin"
+            description = "AspectJ Weaving Plugin"
+        }
+        aspectjCompileTimeWeaving {
+            id = "io.freefair.aspectj.compile-time-weaving"
+            displayName = "AspectJ Weaving Plugin"
+            description = "AspectJ Weaving Plugin"
+        }
+    }
+}
+
+dependencies {
+    testCompileOnly "org.aspectj:aspectjtools:1.9.1"
+    testCompileOnly "org.aspectj:aspectjrt:1.9.1"
+    testCompileOnly "org.aspectj:aspectjweaver:1.9.1"
+}
