@@ -162,6 +162,7 @@ public class Ajc extends DefaultTask {
     /**
      * Specify default source encoding format.
      */
+    @Optional
     @Input
     private final Property<String> encoding = getProject().getObjects().property(String.class);
 

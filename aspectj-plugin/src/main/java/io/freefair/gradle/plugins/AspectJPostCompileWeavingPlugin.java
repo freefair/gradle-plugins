@@ -38,6 +38,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
             ajc.getAspectpath().from(aspects);
             ajc.getInpath().from(compileJava.getDestinationDir()).builtBy(compileJava);
             ajc.getDestinationDir().set(sourceSet.getJava().getOutputDir());
+            ajc.getEncoding().set(project.provider(() -> compileJava.getOptions().getEncoding()));
 
             project.getTasks().getByName(sourceSet.getClassesTaskName()).dependsOn(ajc);
         });
