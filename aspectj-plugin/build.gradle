@@ -7,7 +7,7 @@ plugins {
 gradlePlugin {
     plugins {
         aspectjBase {
-            id = "io.freefair.aspectj-base"
+            id = "io.freefair.aspectj.base"
             implementationClass = "io.freefair.gradle.plugins.AspectJBasePlugin"
         }
         aspectjPostCompileWeaving {
