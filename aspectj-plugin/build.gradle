@@ -35,6 +35,8 @@ pluginBundle {
 }
 
 dependencies {
+    testCompile "junit:junit:4.12"
+
     testCompileOnly "org.aspectj:aspectjtools:1.9.1"
     testCompileOnly "org.aspectj:aspectjrt:1.9.1"
     testCompileOnly "org.aspectj:aspectjweaver:1.9.1"
