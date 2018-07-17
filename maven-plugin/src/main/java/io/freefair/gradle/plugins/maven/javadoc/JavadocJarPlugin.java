@@ -29,7 +29,7 @@ public class JavadocJarPlugin implements Plugin<Project> {
             javadocJar.setDescription("Assembles a jar archive containing the javadocs.");
             javadocJar.setGroup(BasePlugin.BUILD_GROUP);
 
-            project.getArtifacts().add(Dependency.ARCHIVES_CONFIGURATION, javadoc);
+            project.getArtifacts().add(Dependency.ARCHIVES_CONFIGURATION, javadocJar);
         });
 
         project.getPlugins().withType(AggregateJavadocPlugin.class, aggregateJavadocPlugin -> {
