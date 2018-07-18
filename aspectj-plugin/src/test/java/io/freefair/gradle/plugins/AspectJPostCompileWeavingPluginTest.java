@@ -22,13 +22,25 @@ public class AspectJPostCompileWeavingPluginTest {
     }
 
     @Test
-    public void apply_java() {
+    public void applyJava_before() {
+        project.getPlugins().apply(JavaPlugin.class);
+        project.getPlugins().apply(AspectJPostCompileWeavingPlugin.class);
+    }
+
+    @Test
+    public void applyJava_after() {
         project.getPlugins().apply(AspectJPostCompileWeavingPlugin.class);
         project.getPlugins().apply(JavaPlugin.class);
     }
 
     @Test
-    public void apply_groovy() {
+    public void applyGroovy_before() {
+        project.getPlugins().apply(GroovyPlugin.class);
+        project.getPlugins().apply(AspectJPostCompileWeavingPlugin.class);
+    }
+
+    @Test
+    public void applyGroovy_after() {
         project.getPlugins().apply(AspectJPostCompileWeavingPlugin.class);
         project.getPlugins().apply(GroovyPlugin.class);
     }
