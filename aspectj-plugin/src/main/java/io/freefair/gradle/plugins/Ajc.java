@@ -76,9 +76,25 @@ public class Ajc extends DefaultTask {
      * Specify where to find user class files.
      * Path is a single argument containing a list of paths to zip files or directories, delimited by the platform-specific path delimiter.
      */
-    @Classpath
+    @CompileClasspath
     @InputFiles
     private final ConfigurableFileCollection classpath = getProject().getLayout().configurableFiles();
+
+    /**
+     * Override location of VM's bootclasspath for purposes of evaluating types when compiling.
+     * Path is a single argument containing a list of paths to zip files or directories, delimited by the platform-specific path delimiter.
+     */
+    @Optional
+    @CompileClasspath
+    @InputFiles
+    private final ConfigurableFileCollection bootclasspath = getProject().getLayout().configurableFiles();
+
+    /**
+     * Override location of VM's extension directories for purposes of evaluating types when compiling.
+     * Path is a single argument containing a list of paths to directories, delimited by the platform-specific path delimiter.
+     */
+    @InputFiles
+    private final ConfigurableFileCollection extdirs = getProject().getLayout().configurableFiles();
 
     /**
      * Specify where to place generated .class files.
@@ -265,6 +281,14 @@ public class Ajc extends DefaultTask {
 
             if (!classpath.isEmpty()) {
                 ajc.args("-classpath", classpath.getAsPath());
+            }
+
+            if (!bootclasspath.isEmpty()) {
+                ajc.args("-bootclasspath", bootclasspath.getAsPath());
+            }
+
+            if (!extdirs.isEmpty()) {
+                ajc.args("-extdirs", extdirs.getAsPath());
             }
 
             if (destinationDir.isPresent()) {
