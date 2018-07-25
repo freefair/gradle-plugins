@@ -8,7 +8,7 @@ import org.gradle.api.file.FileCollection;
 @Setter
 public class AspectJSourceSet {
 
-    private String aspectpathConfigurationName;
+    private String aspectConfigurationName;
 
-    private FileCollection aspectpath;
+    private FileCollection aspectPath;
 }
