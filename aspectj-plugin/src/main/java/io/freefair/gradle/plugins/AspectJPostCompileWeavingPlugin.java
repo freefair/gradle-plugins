@@ -3,10 +3,7 @@ package io.freefair.gradle.plugins;
 import org.gradle.api.*;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.plugins.GroovyBasePlugin;
-import org.gradle.api.plugins.JavaBasePlugin;
-import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.*;
 import org.gradle.api.plugins.scala.ScalaBasePlugin;
 import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.compile.AbstractCompile;
@@ -45,7 +42,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
                 enhanceWithWeavingAction(compileJava, aspectpath, aspectjBasePlugin.getAspectjConfiguration());
             });
 
-            project.getPlugins().withType(GroovyBasePlugin.class, groovyPlugin -> {
+            project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
                 GroovyCompile compileGroovy = (GroovyCompile) project.getTasks().getByName(sourceSet.getCompileTaskName("groovy"));
 
                 enhanceWithWeavingAction(compileGroovy, aspectpath, aspectjBasePlugin.getAspectjConfiguration());

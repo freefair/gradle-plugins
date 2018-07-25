@@ -63,7 +63,7 @@ public class AjcAction implements Action<Task> {
 
                 String classpath = abstractCompile.getClasspath().getAsPath();
 
-                if (System.getProperty("os.name").toLowerCase().contains("windows") && classpath.length() > 20_000) {
+                if (System.getProperty("os.name").toLowerCase().contains("windows") && classpath.length() > 10_000) {
                     File file = new File(task.getTemporaryDir(), "ajc/classpath.arg");
 
                     try {
