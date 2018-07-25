@@ -10,7 +10,12 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
@@ -246,142 +251,164 @@ public class Ajc extends DefaultTask {
     private final ConfigurableFileCollection files = getProject().getLayout().configurableFiles();
 
     @TaskAction
-    public void ajc() {
+    public void ajc() throws IOException {
+
+        List<String> ajcArgs = new LinkedList<>();
+        File argfile = new File(getTemporaryDir(), "ajc.options");
+
+        if (!inpath.isEmpty()) {
+            ajcArgs.add("-inpath");
+            ajcArgs.add(inpath.getAsPath());
+        }
+
+        if (!aspectpath.isEmpty()) {
+            ajcArgs.add("-aspectpath");
+            ajcArgs.add(aspectpath.getAsPath());
+        }
+
+        if (outjar.isPresent()) {
+            ajcArgs.add("-outjar");
+            ajcArgs.add(outjar.get().getAsFile().getAbsolutePath());
+        }
+
+        if (outxml.getOrElse(false)) {
+            ajcArgs.add("-outxml");
+        }
+
+        if (outxmlfile.isPresent()) {
+            ajcArgs.add("-outxmlfile");
+            ajcArgs.add(outxmlfile.get().getAsFile().getAbsolutePath());
+        }
+
+        if (crossrefs.getOrElse(false)) {
+            ajcArgs.add("-crossrefs");
+        }
+
+        if (version.getOrElse(false)) {
+            ajcArgs.add("-version");
+        }
+
+        if (!classpath.isEmpty()) {
+            ajcArgs.add("-classpath");
+            ajcArgs.add(classpath.getAsPath());
+        }
+
+        if (!bootclasspath.isEmpty()) {
+            ajcArgs.add("-bootclasspath");
+            ajcArgs.add(bootclasspath.getAsPath());
+        }
+
+        if (!extdirs.isEmpty()) {
+            ajcArgs.add("-extdirs");
+            ajcArgs.add(extdirs.getAsPath());
+        }
+
+        if (destinationDir.isPresent()) {
+            ajcArgs.add("-d");
+            ajcArgs.add(destinationDir.get().getAsFile().getAbsolutePath());
+        }
+
+        if (target.isPresent()) {
+            ajcArgs.add("-target");
+            ajcArgs.add(target.get());
+        }
+
+        if (source.isPresent()) {
+            ajcArgs.add("-source");
+            ajcArgs.add(source.get());
+        }
+
+        if (nowarn.getOrElse(false)) {
+            ajcArgs.add("-nowarn");
+        }
+
+        if (!warn.getOrElse(Collections.emptyList()).isEmpty()) {
+            ajcArgs.add("-warn:" + warn.get().stream().collect(Collectors.joining(",")));
+        }
+
+        if (deprecation.getOrElse(false)) {
+            ajcArgs.add("-deprecation");
+        }
+
+        if (noImportError.getOrElse(false)) {
+            ajcArgs.add("-noImportError");
+        }
+
+        if (proceedOnError.getOrElse(false)) {
+            ajcArgs.add("-proceedOnError");
+        }
+
+        if (!g.getOrElse(Collections.emptyList()).isEmpty()) {
+            ajcArgs.add("-g:" + g.get().stream().collect(Collectors.joining(",")));
+        }
+
+        if (preserveAllLocals.getOrElse(false)) {
+            ajcArgs.add("-preserveAllLocals");
+        }
+
+        if (referenceInfo.getOrElse(false)) {
+            ajcArgs.add("-referenceInfo");
+        }
+
+        if (encoding.isPresent()) {
+            ajcArgs.add("-encoding");
+            ajcArgs.add(encoding.get());
+        }
+
+        if (verbose.getOrElse(false)) {
+            ajcArgs.add("-verbose");
+        }
+
+        if (showWeaveInfo.getOrElse(false)) {
+            ajcArgs.add("-showWeaveInfo");
+        }
+
+        if (log.isPresent()) {
+            ajcArgs.add("-log");
+            ajcArgs.add(log.get().getAsFile().getAbsolutePath());
+        }
+
+        if (progress.getOrElse(false)) {
+            ajcArgs.add("-progress");
+        }
+
+        if (time.getOrElse(false)) {
+            ajcArgs.add("-time");
+        }
+
+        if (XterminateAfterCompilation.getOrElse(false)) {
+            ajcArgs.add("-XterminateAfterCompilation");
+        }
+
+        if (XaddSerialVersionUID.getOrElse(false)) {
+            ajcArgs.add("-XaddSerialVersionUID");
+        }
+
+        if (XnoInline.getOrElse(false)) {
+            ajcArgs.add("-XnoInline");
+        }
+
+        if (XserializableAspects.getOrElse(false)) {
+            ajcArgs.add("-XserializableAspects");
+        }
+
+        if (XnotReweavable.getOrElse(false)) {
+            ajcArgs.add("-XnotReweavable");
+        }
+
+        if (!files.isEmpty()) {
+            for (File file : files.getFiles()) {
+                ajcArgs.add(file.getAbsolutePath());
+            }
+        }
+
+        Files.write(argfile.toPath(), ajcArgs);
+
         getProject().javaexec(ajc -> {
             ajc.setClasspath(aspectjClasspath);
             ajc.setMain("org.aspectj.tools.ajc.Main");
 
-            if (!inpath.isEmpty()) {
-                ajc.args("-inpath", inpath.getAsPath());
-            }
-
-            if (!aspectpath.isEmpty()) {
-                ajc.args("-aspectpath", aspectpath.getAsPath());
-            }
-
-            if (outjar.isPresent()) {
-                ajc.args("-outjar", outjar.get().getAsFile().getAbsolutePath());
-            }
-
-            if (outxml.getOrElse(false)) {
-                ajc.args("-outxml");
-            }
-
-            if (outxmlfile.isPresent()) {
-                ajc.args("-outxmlfile", outxmlfile.get().getAsFile().getAbsolutePath());
-            }
-
-            if (crossrefs.getOrElse(false)) {
-                ajc.args("-crossrefs");
-            }
-
-            if (version.getOrElse(false)) {
-                ajc.args("-version");
-            }
-
-            if (!classpath.isEmpty()) {
-                ajc.args("-classpath", classpath.getAsPath());
-            }
-
-            if (!bootclasspath.isEmpty()) {
-                ajc.args("-bootclasspath", bootclasspath.getAsPath());
-            }
-
-            if (!extdirs.isEmpty()) {
-                ajc.args("-extdirs", extdirs.getAsPath());
-            }
-
-            if (destinationDir.isPresent()) {
-                ajc.args("-d", destinationDir.get().getAsFile().getAbsolutePath());
-            }
-
-            if (target.isPresent()) {
-                ajc.args("-target", target.get());
-            }
-
-            if (source.isPresent()) {
-                ajc.args("-source", source.get());
-            }
-
-            if (nowarn.getOrElse(false)) {
-                ajc.args("-nowarn");
-            }
-
-            if (!warn.getOrElse(Collections.emptyList()).isEmpty()) {
-                ajc.args("-warn:" + warn.get().stream().collect(Collectors.joining(",")));
-            }
-
-            if (deprecation.getOrElse(false)) {
-                ajc.args("-deprecation");
-            }
-
-            if (noImportError.getOrElse(false)) {
-                ajc.args("-noImportError");
-            }
-
-            if (proceedOnError.getOrElse(false)) {
-                ajc.args("-proceedOnError");
-            }
-
-            if (!g.getOrElse(Collections.emptyList()).isEmpty()) {
-                ajc.args("-g:" + g.get().stream().collect(Collectors.joining(",")));
-            }
-
-            if (preserveAllLocals.getOrElse(false)) {
-                ajc.args("-preserveAllLocals");
-            }
-
-            if (referenceInfo.getOrElse(false)) {
-                ajc.args("-referenceInfo");
-            }
-
-            if (encoding.isPresent()) {
-                ajc.args("-encoding", encoding.get());
-            }
-
-            if (verbose.getOrElse(false)) {
-                ajc.args("-verbose");
-            }
-
-            if (showWeaveInfo.getOrElse(false)) {
-                ajc.args("-showWeaveInfo");
-            }
-
-            if (log.isPresent()) {
-                ajc.args("-log", log.get().getAsFile().getAbsolutePath());
-            }
-
-            if (progress.getOrElse(false)) {
-                ajc.args("-progress");
-            }
-
-            if (time.getOrElse(false)) {
-                ajc.args("-time");
-            }
-
-            if (XterminateAfterCompilation.getOrElse(false)) {
-                ajc.args("-XterminateAfterCompilation");
-            }
-
-            if (XaddSerialVersionUID.getOrElse(false)) {
-                ajc.args("-XaddSerialVersionUID");
-            }
-
-            if (XnoInline.getOrElse(false)) {
-                ajc.args("-XnoInline");
-            }
-
-            if (XserializableAspects.getOrElse(false)) {
-                ajc.args("-XserializableAspects");
-            }
-
-            if (XnotReweavable.getOrElse(false)) {
-                ajc.args("-XnotReweavable");
-            }
-
-            if (!files.isEmpty()) {
-                ajc.args(files.getFiles());
-            }
+            ajc.args("-argfile", argfile);
         });
     }
 }

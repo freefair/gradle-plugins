@@ -1,11 +1,10 @@
 package io.freefair.gradle.plugins;
 
 import lombok.Getter;
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
+import lombok.SneakyThrows;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
-import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.ProjectLayout;
@@ -22,6 +21,9 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.LinkedList;
+import java.util.List;
 
 @Getter
 @NonNullApi
@@ -41,68 +43,76 @@ public class AjcAction implements Action<Task> {
         aspectpath = projectLayout.configurableFiles();
         compilerArgs = providerFactory.listProperty(String.class);
         enabled = providerFactory.property(Boolean.class);
+        enabled.set(true);
     }
 
     @Override
+    @SneakyThrows(IOException.class)
     public void execute(Task task) {
-        AbstractCompile abstractCompile = (AbstractCompile) task;
-
         if (!enabled.getOrElse(true)) {
             return;
         }
+
+        AbstractCompile abstractCompile = (AbstractCompile) task;
+        List<String> ajcArgs = new LinkedList<>();
+        File argfile = new File(abstractCompile.getTemporaryDir(), "ajc.options");
+
+        ajcArgs.add("-inpath");
+        ajcArgs.add(abstractCompile.getDestinationDir().getAbsolutePath());
+
+        if (!aspectpath.isEmpty()) {
+            ajcArgs.add("-aspectpath");
+            ajcArgs.add(aspectpath.getAsPath());
+        }
+
+        if (!abstractCompile.getClasspath().isEmpty()) {
+            ajcArgs.add("-classpath");
+            ajcArgs.add(abstractCompile.getClasspath().getAsPath());
+        }
+
+        ajcArgs.add("-d");
+        ajcArgs.add(abstractCompile.getDestinationDir().getAbsolutePath());
+
+        ajcArgs.add("-source");
+        ajcArgs.add(abstractCompile.getSourceCompatibility());
+
+        ajcArgs.add("-target");
+        ajcArgs.add(abstractCompile.getTargetCompatibility());
+
+        CompileOptions compileOptions = findCompileOptions(abstractCompile);
+        if (compileOptions != null) {
+            String encoding = compileOptions.getEncoding();
+            if (encoding != null && !encoding.isEmpty()) {
+                ajcArgs.add("-encoding");
+                ajcArgs.add(encoding);
+            }
+            if (compileOptions.isVerbose()) {
+                ajcArgs.add("-verbose");
+            }
+            if (compileOptions.isDeprecation()) {
+                ajcArgs.add("-deprecation");
+            }
+            FileCollection bootstrapClasspath = compileOptions.getBootstrapClasspath();
+            if (bootstrapClasspath != null && !bootstrapClasspath.isEmpty()) {
+                ajcArgs.add("-bootclasspath");
+                ajcArgs.add(bootstrapClasspath.getAsPath());
+            }
+            String extensionDirs = compileOptions.getExtensionDirs();
+            if (extensionDirs != null && !extensionDirs.isEmpty()) {
+                ajcArgs.add("-extdirs");
+                ajcArgs.add(extensionDirs);
+            }
+        }
+
+        Files.write(argfile.toPath(), ajcArgs);
 
         abstractCompile.getProject().javaexec(ajc -> {
             ajc.setClasspath(classpath);
             ajc.setMain("org.aspectj.tools.ajc.Main");
 
-            ajc.args("-inpath", abstractCompile.getDestinationDir());
-            if (!aspectpath.isEmpty()) {
-                ajc.args("-aspectpath", aspectpath.getAsPath());
-            }
-            if (!abstractCompile.getClasspath().isEmpty()) {
-
-                String classpath = abstractCompile.getClasspath().getAsPath();
-
-                if (System.getProperty("os.name").toLowerCase().contains("windows") && classpath.length() > 10_000) {
-                    File file = new File(task.getTemporaryDir(), "ajc/classpath.arg");
-
-                    try {
-                        ResourceGroovyMethods.setText(file, "-classpath " + classpath);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-
-                    ajc.args("-argfile", file);
-                } else {
-                    ajc.args("-classpath", classpath);
-                }
-            }
-            ajc.args("-d", abstractCompile.getDestinationDir());
-            ajc.args("-source", abstractCompile.getSourceCompatibility());
-            ajc.args("-target", abstractCompile.getTargetCompatibility());
-
-            CompileOptions compileOptions = findCompileOptions(abstractCompile);
+            ajc.args("-argfile", argfile);
 
             if (compileOptions != null) {
-                String encoding = compileOptions.getEncoding();
-                if (encoding != null && !encoding.isEmpty()) {
-                    ajc.args("-encoding", encoding);
-                }
-                if (compileOptions.isVerbose()) {
-                    ajc.args("-verbose");
-                }
-                if (compileOptions.isDeprecation()) {
-                    ajc.args("-deprecation");
-                }
-                FileCollection bootstrapClasspath = compileOptions.getBootstrapClasspath();
-                if (bootstrapClasspath != null && !bootstrapClasspath.isEmpty()) {
-                    ajc.args("-bootclasspath", bootstrapClasspath.getAsPath());
-                }
-                String extensionDirs = compileOptions.getExtensionDirs();
-                if (extensionDirs != null && !extensionDirs.isEmpty()) {
-                    ajc.args("-extdirs", extensionDirs);
-                }
-
                 ajc.setIgnoreExitValue(!compileOptions.isFailOnError());
             }
         });
