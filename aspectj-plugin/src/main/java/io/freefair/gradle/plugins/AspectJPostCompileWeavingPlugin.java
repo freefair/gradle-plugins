@@ -57,6 +57,26 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
                 enhanceWithWeavingAction(compileScala, aspectpath, aspectjBasePlugin.getAspectjConfiguration());
             });
         });
+
+        project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet -> {
+            project.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get());
+
+            Configuration aspects = project.getConfigurations().create(sourceSet.getTaskName(null, "aspects"));
+
+            project.getConfigurations().getByName(sourceSet.getCompileConfigurationName()).extendsFrom(aspects);
+
+            project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
+                ConfigurableFileCollection aspectpath = (ConfigurableFileCollection) project.getTasks().getByName(sourceSet.getCompileJavaTaskName())
+                        .getExtensions().getByName("aspectpath");
+                aspectpath.from(aspects);
+            });
+            project.getPlugins().withType(GroovyPlugin.class, javaPlugin -> {
+                ConfigurableFileCollection aspectpath = (ConfigurableFileCollection) project.getTasks().getByName(sourceSet.getCompileTaskName("groovy"))
+                        .getExtensions().getByName("aspectpath");
+                aspectpath.from(aspects);
+            });
+
+        });
     }
 
     private void enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration aspectjConfiguration) {
