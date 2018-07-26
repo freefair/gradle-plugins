@@ -7,7 +7,6 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.util.CollectionUtils;
 import org.gradle.util.GUtil;
 
 import java.io.File;
@@ -99,9 +98,13 @@ public class Delombok extends SourceTask {
     public void delombok() {
         getProject().delete(getTarget().getAsFile().get());
 
+        File gradleDependencyDir = new File(getProject().getGradle().getGradleUserHomeDir(), "caches/modules-2/files-2.1");
+
         getProject().javaexec(delombok -> {
             delombok.setClasspath(getLombokClasspath());
+            delombok.setWorkingDir(gradleDependencyDir);
             delombok.setMain("lombok.launch.Main");
+            delombok.systemProperty("java.io.tmpdir", getTemporaryDir());
             delombok.args("delombok");
 
             if (verbose.getOrElse(false)) {
@@ -127,13 +130,13 @@ public class Delombok extends SourceTask {
             }
 
             if (!classpath.isEmpty()) {
-                delombok.args("--classpath=" + CollectionUtils.join(File.pathSeparator, getClasspath().getFiles()));
+                delombok.args("--classpath=" + getClasspath().getAsPath().replace(gradleDependencyDir.getAbsolutePath(), "."));
             }
             if (!sourcepath.isEmpty()) {
-                delombok.args("--sourcepath=" + CollectionUtils.join(File.pathSeparator, getSourcepath().getFiles()));
+                delombok.args("--sourcepath=" + getSourcepath().getAsPath().replace(gradleDependencyDir.getAbsolutePath(), "."));
             }
             if (!bootclasspath.isEmpty()) {
-                delombok.args("--bootclasspath=" + CollectionUtils.join(File.pathSeparator, getBootclasspath().getFiles()));
+                delombok.args("--bootclasspath=" + getBootclasspath().getAsPath().replace(gradleDependencyDir.getAbsolutePath(), "."));
             }
 
             if (nocopy.getOrElse(false)) {
