@@ -207,6 +207,7 @@ public class Ajc extends DefaultTask {
     /**
      * Show progress (requires -log mode).
      */
+    @Input
     private final Property<Boolean> progress = getProject().getObjects().property(Boolean.class);
 
     /**
@@ -219,6 +220,7 @@ public class Ajc extends DefaultTask {
      * Causes compiler to terminate before weaving
      */
     @Input
+    @Getter(onMethod = @__(@Input))
     private final Property<Boolean> XterminateAfterCompilation = getProject().getObjects().property(Boolean.class);
 
     /**
@@ -226,24 +228,28 @@ public class Ajc extends DefaultTask {
      * The field is calculated based on the class before weaving has taken place.
      */
     @Input
+    @Getter(onMethod = @__(@Input))
     private final Property<Boolean> XaddSerialVersionUID = getProject().getObjects().property(Boolean.class);
 
     /**
      * (Experimental) do not inline around advice
      */
     @Input
+    @Getter(onMethod = @__(@Input))
     private final Property<Boolean> XnoInline = getProject().getObjects().property(Boolean.class);
 
     /**
      * (Experimental) Normally it is an error to declare aspects Serializable. This option removes that restriction.
      */
     @Input
+    @Getter(onMethod = @__(@Input))
     private final Property<Boolean> XserializableAspects = getProject().getObjects().property(Boolean.class);
 
     /**
      * (Experimental) Create class files that can't be subsequently rewoven by AspectJ.
      */
     @Input
+    @Getter(onMethod = @__(@Input))
     private final Property<Boolean> XnotReweavable = getProject().getObjects().property(Boolean.class);
 
     @Optional

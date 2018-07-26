@@ -110,7 +110,7 @@ public class AjcAction implements Action<Task> {
             ajc.setClasspath(classpath);
             ajc.setMain("org.aspectj.tools.ajc.Main");
 
-            ajc.args("-argfile", argfile);
+            ajc.args("-argfile", argfile.getAbsolutePath());
 
             if (compileOptions != null) {
                 ajc.setIgnoreExitValue(!compileOptions.isFailOnError());

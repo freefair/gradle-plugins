@@ -63,12 +63,12 @@ public class SassCompile extends SourceTask {
         options.setLinefeed(linefeed.get());
         options.setOmitSourceMapUrl(omitSourceMapUrl.get());
         options.setOutputStyle(outputStyle.get());
-        options.setPluginPath(getPluginPath());
+        options.setPluginPath(pluginPath.getOrNull());
         options.setPrecision(precision.get());
         options.setSourceComments(sourceComments.get());
         options.setSourceMapContents(sourceMapContents.get());
         options.setSourceMapEmbed(sourceMapEmbed.get());
-        options.setSourceMapRoot(getSourceMapRoot());
+        options.setSourceMapRoot(sourceMapRoot.getOrNull());
 
         getSource().visit(new FileVisitor() {
             @Override
@@ -185,7 +185,7 @@ public class SassCompile extends SourceTask {
 
     @Input
     @Optional
-    private String pluginPath;
+    private final Property<String> pluginPath = getProject().getObjects().property(String.class);
 
     /**
      * Precision for outputting fractional numbers.
@@ -216,7 +216,7 @@ public class SassCompile extends SourceTask {
 
     @Input
     @Optional
-    private URI sourceMapRoot;
+    private final Property<URI> sourceMapRoot = getProject().getObjects().property(URI.class);
 
     public class LoggingFunctionProvider {
 
