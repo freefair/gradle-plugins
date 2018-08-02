@@ -17,6 +17,7 @@ allprojects {
 
         javadoc.options.links "https://docs.oracle.com/javase/$javaVersion.majorVersion/docs/api/"
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+        javadoc.failOnError = false
 
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
