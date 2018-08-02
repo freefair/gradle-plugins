@@ -27,6 +27,7 @@ public class WarOverlay {
      * <ul>
      * <li>An arbitrary {@link org.gradle.api.tasks.bundling.AbstractArchiveTask AbstractArchiveTask}</li>
      * <li>An other Project which has the {@link org.gradle.api.plugins.WarPlugin 'war'-plugin} applied</li>
+     * <li>A {@link java.io.File} instance</li>
      * <li>Anything that can be used as Dependency. See {@link org.gradle.api.artifacts.dsl.DependencyHandler#create(Object)}</li>
      * </ul>
      */
