@@ -26,11 +26,11 @@ allprojects {
         jacocoTestReport.reports.xml.enabled = true
 
         dependencies {
-            compileOnly 'org.projectlombok:lombok:1.18.0'
-            annotationProcessor 'org.projectlombok:lombok:1.18.0'
+            compileOnly 'org.projectlombok:lombok:1.18.2'
+            annotationProcessor 'org.projectlombok:lombok:1.18.2'
 
-            testCompileOnly 'org.projectlombok:lombok:1.18.0'
-            testAnnotationProcessor 'org.projectlombok:lombok:1.18.0'
+            testCompileOnly 'org.projectlombok:lombok:1.18.2'
+            testAnnotationProcessor 'org.projectlombok:lombok:1.18.2'
         }
     }
 
