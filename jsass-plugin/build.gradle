@@ -43,6 +43,7 @@ pluginBundle {
         }
         jSassWebjars {
             displayName = "jSass webjars support"
+            description = "Webjars dependency support"
         }
     }
 }
