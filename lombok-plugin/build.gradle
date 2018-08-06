@@ -16,7 +16,6 @@ gradlePlugin {
 pluginBundle {
     plugins {
         lombok {
-            id = "io.freefair.lombok"
             displayName = "Lombok Plugin"
             description = "Automatic lombok and delombok configuration"
             tags = ["lombok"]

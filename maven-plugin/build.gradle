@@ -75,85 +75,71 @@ gradlePlugin {
 pluginBundle {
     plugins {
         war {
-            id = "io.freefair.war"
             displayName = "War Plugin"
             description = "Maven-like extensions for the normal war plugin"
             tags = ['war']
         }
         warOverlay {
-            id = "io.freefair.war-overlay"
             displayName = "War Overlay Plugin"
             description = "Maven-like overlays for war tasks."
             tags = ['war', 'maven', 'overlay']
         }
         warAttachClasses {
-            id = "io.freefair.war-attach-classes"
             displayName = "War Attach Classes Plugin"
             description = "Maven-like attachClasses option for the war task."
             tags = ['war', 'maven', 'attachClasses']
         }
         warAttachClasses {
-            id = "io.freefair.war-archive-classes"
             displayName = "War Archive Classes Plugin"
             description = "Maven-like archiveClasses options for war tasks."
             tags = ['war', 'maven', 'archiveClasses']
         }
         sourcesJar {
-            id = "io.freefair.sources-jar"
             displayName = "Sources Jar Plugin"
             description = 'This plugin adds a sourcesJar task'
             tags = ['maven', 'sources', 'jar']
         }
         aggregateJavadoc {
-            id = "io.freefair.aggregate-javadoc"
             displayName = "Aggregate Javadoc Plugin"
             description = "Generate Javadoc over multiple projects"
             tags = ['maven', 'javadoc', 'aggregate']
         }
         aggregateJavadocJar {
-            id = "io.freefair.aggregate-javadoc-jar"
             displayName = "Aggregate Javadoc Jar Plugin"
             description = "Generate Javadoc over multiple projects"
             tags = ['maven', 'javadoc', 'aggregate', "jar"]
         }
         javadocJar {
-            id = "io.freefair.javadoc-jar"
             displayName = "Javadoc Jar Plugin"
             description = 'This plugin adds a javadocJar task'
             tags = ['maven', 'javadoc', 'jar']
         }
         mavenJars {
-            id = "io.freefair.maven-jars"
             displayName = "Maven Jars Plugin"
             description = 'This plugin adds a sourcesJar and a javadocJar task'
             tags = ['maven', 'javadoc', 'sources', 'jar']
         }
         javadocLinks {
-            id = "io.freefair.javadoc-links"
             displayName = "Maven Jars Plugin"
             description = 'Link your javadoc against your dependencies'
             tags = ['javadoc', 'links', 'javadoc.io']
         }
         javadocUtf8 {
-            id = "io.freefair.javadoc-utf-8"
             displayName = "Javadoc UTF-8 Plugin"
             description = "Set the output encoding of your javadoc tasks to 'UTF-8'"
             tags = ['javadoc', 'utf-8']
         }
         javadocs {
-            id = "io.freefair.javadocs"
             displayName = "Javadoc Plugin"
             description = 'Bundle of all our javadoc plugins'
             tags = ['javadoc']
         }
         mavenPublishJava {
-            id = "io.freefair.maven-publish-java"
             displayName = "maven-publish Java"
             description = "Creates a mavenJava publication"
             tags = ["maven-publish", "java"]
         }
         mavenPublishWar {
-            id = "io.freefair.maven-publish-war"
             displayName = "maven-publish War"
             description = "Creates a mavenWeb publication"
             tags = ["maven-publish", "war"]

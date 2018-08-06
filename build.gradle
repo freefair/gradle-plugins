@@ -1,7 +1,7 @@
 plugins {
     id "maven-publish"
     id "java-gradle-plugin"
-    id "com.gradle.plugin-publish" version "0.9.8"
+    id "com.gradle.plugin-publish" version "0.10.0"
 }
 
 allprojects {
@@ -63,13 +63,11 @@ gradlePlugin {
 pluginBundle {
     plugins {
         explodedWar {
-            id = "io.freefair.exploded-archives"
             displayName = "Exploded Archives Plugin"
             description = 'This plugin adds a explode*-task for every archive task (jar, zip, ...) in your project'
             tags = ['war', 'exploded', 'jar', 'ear', 'zip']
         }
         gitVersion {
-            id = "io.freefair.git-version"
             displayName = "Git Version Plugin"
             description = 'This plugin sets your latest git tag as project version'
             tags = ['git', 'version']

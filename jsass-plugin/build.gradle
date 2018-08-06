@@ -30,19 +30,19 @@ pluginBundle {
 
     plugins {
         jSassBase {
-            id = "io.freefair.jsass-base"
             displayName = "jSass Base Plugin"
             description = "jSass Base Plugin"
         }
         jSassJava {
-            id = "io.freefair.jsass-java"
             displayName = "jSass Java Plugin"
             description = "Compiles SASS and SCSS in your java resources (src/*/resources)"
         }
         jSassWar {
-            id = "io.freefair.jsass-war"
             displayName = "jSass War Plugin"
             description = "Compiles SASS and SCSS in your webapp resources (src/main/webapp)"
+        }
+        jSassWebjars {
+            displayName = "jSass webjars support"
         }
     }
 }

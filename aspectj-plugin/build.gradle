@@ -26,17 +26,14 @@ pluginBundle {
 
     plugins {
         aspectjBase {
-            id = "io.freefair.aspectj.base"
             displayName = "AspectJ Base Plugin"
             description = "AspectJ Base Plugin"
         }
         aspectjPostCompileWeaving {
-            id = "io.freefair.aspectj.post-compile-weaving"
             displayName = "AspectJ Post-Compile Weaving Plugin"
             description = "AspectJ Weaving Plugin"
         }
         aspectjCompileTimeWeaving {
-            id = "io.freefair.aspectj.compile-time-weaving"
             displayName = "AspectJ Compile-Time Weaving Plugin"
             description = "AspectJ Weaving Plugin"
         }
