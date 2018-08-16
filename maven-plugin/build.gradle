@@ -69,6 +69,10 @@ gradlePlugin {
             id = "io.freefair.maven-publish-war"
             implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishWarPlugin"
         }
+        optional {
+            id = "io.freefair.maven-optional"
+            implementationClass = "io.freefair.gradle.plugins.maven.OptionalPlugin"
+        }
     }
 }
 
@@ -143,6 +147,11 @@ pluginBundle {
             displayName = "maven-publish War"
             description = "Creates a mavenWeb publication"
             tags = ["maven-publish", "war"]
+        }
+        optional {
+            displayName = "Maven optional Plugin"
+            description = "Adds a maven-like 'optional' configuration to your gradle build"
+            tags = ["maven", "optional"]
         }
     }
 }
