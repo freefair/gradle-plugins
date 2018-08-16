@@ -37,7 +37,7 @@ allprojects {
 
     plugins.withId("com.gradle.plugin-publish") {
         pluginBundle {
-            website = 'https://github.com/freefair/gradle-plugins'
+            website = "https://github.com/freefair/gradle-plugins/tree/${version == 'unspecified' ? 'master' : version}${projectDir.toString() - rootDir.toString()}"
             vcsUrl = 'https://github.com/freefair/gradle-plugins'
 
             mavenCoordinates {
