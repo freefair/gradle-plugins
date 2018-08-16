@@ -7,7 +7,6 @@ plugins {
 allprojects {
     repositories {
         jcenter()
-        mavenCentral()
     }
 
     group = "io.freefair.gradle"

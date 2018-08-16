@@ -52,6 +52,5 @@ dependencies {
     compile "io.bit3:jsass:5.7.3"
     compile 'com.google.code.gson:gson:2.8.5'
 
-    testCompile "junit:junit:4.12"
-    testCompile 'org.assertj:assertj-core:3.10.0'
+    testCompile project(":test-common")
 }
