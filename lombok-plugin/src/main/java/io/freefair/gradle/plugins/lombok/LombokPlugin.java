@@ -27,8 +27,9 @@ public class LombokPlugin implements Plugin<Project> {
     public void apply(Project project) {
         this.project = project;
         lombokExtension = project.getExtensions().create("lombok", LombokExtension.class);
-        lombokConfiguration = project.getConfigurations().create("lombok");
+        lombokExtension.getConfig().put("config.stopBubbling", "true");
 
+        lombokConfiguration = project.getConfigurations().create("lombok");
         lombokConfiguration.defaultDependencies(dependencySet -> dependencySet.add(
                 project.getDependencies().create("org.projectlombok:lombok:" + lombokExtension.getVersion())
         ));
