@@ -67,7 +67,7 @@ public class AjcAction implements Action<Task> {
 
         if (!abstractCompile.getClasspath().isEmpty()) {
             ajcArgs.add("-classpath");
-            ajcArgs.add(abstractCompile.getClasspath().getAsPath());
+            ajcArgs.add(abstractCompile.getClasspath().filter(File::exists).getAsPath());
         }
 
         ajcArgs.add("-d");
