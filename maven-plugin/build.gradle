@@ -1,8 +1,6 @@
-plugins {
-    id "maven-publish"
-    id "java-gradle-plugin"
-    id "com.gradle.plugin-publish"
-}
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
     compile "com.squareup.okhttp3:okhttp:3.10.0"

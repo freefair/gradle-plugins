@@ -102,8 +102,8 @@ public class LombokPlugin implements Plugin<Project> {
                 ));
     }
 
-    private String configureForJacoco() {
-        return lombokExtension.getConfig().put("lombok.addLombokGeneratedAnnotation", "true");
+    private void configureForJacoco() {
+        lombokExtension.getConfig().put("lombok.addLombokGeneratedAnnotation", "true");
     }
 
     private void configureDelombokDefaults(Delombok delombok) {

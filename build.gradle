@@ -1,7 +1,12 @@
-plugins {
-    id "maven-publish"
-    id "java-gradle-plugin"
-    id "com.gradle.plugin-publish" version "0.10.0"
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
+    }
 }
 
 allprojects {
@@ -44,27 +49,4 @@ allprojects {
             }
         }
     }
-}
-
-gradlePlugin {
-    plugins {
-        explodedWar {
-            id = "io.freefair.exploded-archives"
-            implementationClass = "io.freefair.gradle.plugins.ExplodedArchivesPlugin"
-        }
-    }
-}
-
-pluginBundle {
-    plugins {
-        explodedWar {
-            displayName = "Exploded Archives Plugin"
-            description = 'This plugin adds a explode*-task for every archive task (jar, zip, ...) in your project'
-            tags = ['war', 'exploded', 'jar', 'ear', 'zip']
-        }
-    }
-}
-
-dependencies {
-    testCompile project(":test-common")
 }
