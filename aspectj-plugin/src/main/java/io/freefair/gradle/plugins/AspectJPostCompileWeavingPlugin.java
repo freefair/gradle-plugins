@@ -24,7 +24,9 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         project.getPlugins().apply(JavaBasePlugin.class);
 
         project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet -> {
-            project.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get());
+            project.afterEvaluate(p ->
+                    p.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
+            );
 
             AspectJSourceSet aspectJSourceSet = project.getObjects().newInstance(AspectJSourceSet.class);
             new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectJSourceSet);

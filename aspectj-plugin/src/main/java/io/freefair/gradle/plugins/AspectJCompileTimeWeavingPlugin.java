@@ -18,7 +18,9 @@ public class AspectJCompileTimeWeavingPlugin implements Plugin<Project> {
         JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 
         javaPluginConvention.getSourceSets().all(sourceSet -> {
-            project.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get());
+            project.afterEvaluate(p ->
+                    p.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
+            );
 
             Configuration aspects = project.getConfigurations().create(sourceSet.getTaskName(null, "aspects"));
 
