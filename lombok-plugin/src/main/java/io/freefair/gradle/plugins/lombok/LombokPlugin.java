@@ -63,7 +63,7 @@ public class LombokPlugin implements Plugin<Project> {
                 delombok.getEncoding().set(compileJava.getOptions().getEncoding());
                 delombok.getClasspath().from(sourceSet.getCompileClasspath());
                 compileJava.getInputs().file(generateLombokConfig.getOutputFile());
-                delombok.setInput(sourceSet.getAllJava());
+                delombok.getInput().from(sourceSet.getAllJava().getSourceDirectories());
             });
 
             delombok.getTarget().set(project.getLayout().getBuildDirectory().dir("delombok/" + sourceSet.getName()));

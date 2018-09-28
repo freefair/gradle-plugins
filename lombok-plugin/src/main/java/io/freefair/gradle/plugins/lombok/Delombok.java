@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.util.GUtil;
@@ -92,7 +91,7 @@ public class Delombok extends SourceTask {
 
     @SkipWhenEmpty
     @InputFiles
-    private SourceDirectorySet input;
+    private ConfigurableFileCollection input = getProject().files();
 
     @TaskAction
     public void delombok() {
@@ -143,7 +142,7 @@ public class Delombok extends SourceTask {
                 delombok.args("--nocopy");
             }
 
-            delombok.args(input.getSrcDirs().stream()
+            delombok.args(input.getFiles().stream()
                     .filter(File::isDirectory)
                     .collect(Collectors.toList())
             );
