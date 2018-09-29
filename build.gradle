@@ -19,7 +19,11 @@ allprojects {
     plugins.withId("java") {
         def javaVersion = JavaVersion.current()
 
-        javadoc.options.links "https://docs.oracle.com/javase/$javaVersion.majorVersion/docs/api/"
+        if (javaVersion.isJava11Compatible()) {
+            javadoc.options.links "https://docs.oracle.com/en/java/javase/$javaVersion.majorVersion/docs/api/"
+        } else {
+            javadoc.options.links "https://docs.oracle.com/javase/$javaVersion.majorVersion/docs/api/"
+        }
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
         javadoc.failOnError = false
 

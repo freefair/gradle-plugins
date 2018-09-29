@@ -191,11 +191,10 @@ public class JavadocLinksPlugin implements Plugin<Project> {
     }
 
     private String getJavaSeLink(JavaVersion javaVersion) {
-        switch (javaVersion) {
-            case VERSION_11:
-                return "https://download.java.net/java/early_access/jdk11/docs/api/";
-            default:
-                return "https://docs.oracle.com/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
+        if (javaVersion.isJava11Compatible()) {
+            return "https://docs.oracle.com/en/java/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
+        } else {
+            return "https://docs.oracle.com/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
         }
     }
 }
