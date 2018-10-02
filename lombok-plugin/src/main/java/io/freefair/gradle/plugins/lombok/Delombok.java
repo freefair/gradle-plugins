@@ -4,12 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileTree;
+import org.gradle.api.internal.file.FileTreeInternal;
+import org.gradle.api.internal.file.UnionFileTree;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.util.GUtil;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -89,9 +93,20 @@ public class Delombok extends SourceTask {
     @Classpath
     private final ConfigurableFileCollection lombokClasspath = getProject().files();
 
-    @SkipWhenEmpty
-    @InputFiles
+    @Internal
     private ConfigurableFileCollection input = getProject().files();
+
+    @InputFiles
+    @SkipWhenEmpty
+    protected FileTree getFilteredInput() {
+        List<FileTreeInternal> collect = input.getFiles().stream()
+                .filter(File::isDirectory)
+                .map(dir -> getProject().fileTree(dir))
+                .map(FileTreeInternal.class::cast)
+                .collect(Collectors.toList());
+
+        return new UnionFileTree("actual " + getName() + " input", collect);
+    }
 
     @TaskAction
     public void delombok() {

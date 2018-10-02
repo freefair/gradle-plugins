@@ -2,6 +2,10 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+dependencies {
+    testCompile project(":test-common")
+}
+
 gradlePlugin {
     plugins {
         lombok {
