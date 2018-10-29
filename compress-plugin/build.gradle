@@ -1,0 +1,42 @@
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+apply plugin: "groovy"
+
+gradlePlugin {
+    plugins {
+        sevenZip {
+            id = "io.freefair.compress.7z"
+            implementationClass = "io.freefair.gradle.plugins.compress.SevenZipPlugin"
+        }
+        ar {
+            id = "io.freefair.compress.ar"
+            implementationClass = "io.freefair.gradle.plugins.compress.ArPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    tags = ['jSass', 'sass', 'scss']
+
+    plugins {
+        sevenZip {
+            displayName = "7zip Plugin"
+            description = "7zip Plugin"
+        }
+        ar {
+            displayName = "ar Plugin"
+            description = "ar Plugin"
+        }
+    }
+}
+
+dependencies {
+    compile 'org.apache.commons:commons-compress:1.18'
+    compile 'org.tukaani:xz:1.8'
+
+    testCompile project(":test-common")
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy'
+    }
+}
