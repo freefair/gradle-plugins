@@ -1,5 +1,11 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
+import java.io.File;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -12,10 +18,6 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
-import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Getter
 public class AggregateJavadocPlugin implements Plugin<Project> {
 
@@ -26,17 +28,21 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
         aggregateJavadoc = project.getTasks().create("aggregateJavadoc", Javadoc.class);
         aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
 
-        project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
-            aggregateJavadoc.setDestinationDir(new File(
-                    project.getConvention().getPlugin(JavaPluginConvention.class).getDocsDir(),
-                    "aggregateJavadoc"
-            ));
-        });
-
         project.afterEvaluate(p -> {
 
-            List<Javadoc> javadocTasks = project.getAllprojects().stream()
-                    .peek(sub -> project.evaluationDependsOn(sub.getPath()))
+            if (aggregateJavadoc.getDestinationDir() == null) {
+                File docsDir = Optional.ofNullable(project.getConvention().findPlugin(JavaPluginConvention.class))
+                        .map(JavaPluginConvention::getDocsDir)
+                        .orElse(new File(project.getBuildDir(), "docs"));
+
+                aggregateJavadoc.setDestinationDir(new File(docsDir, "aggregateJavadoc"));
+            }
+
+            List<Javadoc> javadocTasks = Stream.concat(
+                    Stream.of(project),
+                    project.getSubprojects().stream()
+                            .peek(sub -> project.evaluationDependsOn(sub.getPath()))
+            )
                     .filter(sub -> sub.getPlugins().hasPlugin(JavaPlugin.class))
                     .map(sub -> (Javadoc) sub.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME))
                     .collect(Collectors.toList());
@@ -70,8 +76,9 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
                 });
 
                 javadocOptions.getJFlags().forEach(jFlag -> {
-                    if (!aggregateJavadocOptions.getJFlags().contains(jFlag))
+                    if (!aggregateJavadocOptions.getJFlags().contains(jFlag)) {
                         aggregateJavadocOptions.jFlags(jFlag);
+                    }
                 });
             });
         });
