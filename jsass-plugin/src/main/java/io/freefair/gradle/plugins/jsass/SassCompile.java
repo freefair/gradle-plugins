@@ -13,6 +13,8 @@ import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.gradle.api.GradleException;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.*;
+import org.gradle.api.internal.plugins.DslObject;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 
@@ -34,6 +36,11 @@ public class SassCompile extends SourceTask {
     public SassCompile() {
         include("**/*.scss");
         include("**/*.sass");
+
+        ExtraPropertiesExtension extraProperties = new DslObject(this).getExtensions().getExtraProperties();
+        for (OutputStyle value : OutputStyle.values()) {
+            extraProperties.set(value.name(), value);
+        }
     }
 
     @OutputFiles
@@ -217,6 +224,10 @@ public class SassCompile extends SourceTask {
     @Input
     @Optional
     private final Property<URI> sourceMapRoot = getProject().getObjects().property(URI.class);
+
+    public void setOutputStyle(String outputStyle) {
+        this.outputStyle.set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
+    }
 
     public class LoggingFunctionProvider {
 
