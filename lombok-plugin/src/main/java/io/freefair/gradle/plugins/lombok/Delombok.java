@@ -12,7 +12,10 @@ import org.gradle.api.tasks.*;
 import org.gradle.util.GUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,7 +27,7 @@ public class Delombok extends SourceTask {
     /**
      * Print the name of each file as it is being delombok-ed.
      */
-    @Input
+    @Console
     private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class);
 
     /**
@@ -38,7 +41,7 @@ public class Delombok extends SourceTask {
     /**
      * No warnings or errors will be emitted to standard error.
      */
-    @Input
+    @Console
     private final Property<Boolean> quiet = getProject().getObjects().property(Boolean.class);
 
     /**
@@ -94,7 +97,7 @@ public class Delombok extends SourceTask {
     private final ConfigurableFileCollection lombokClasspath = getProject().files();
 
     @Internal
-    private ConfigurableFileCollection input = getProject().files();
+    private final ConfigurableFileCollection input = getProject().files();
 
     @InputFiles
     @SkipWhenEmpty
@@ -109,53 +112,57 @@ public class Delombok extends SourceTask {
     }
 
     @TaskAction
-    public void delombok() {
+    public void delombok() throws IOException {
         getProject().delete(getTarget().getAsFile().get());
 
-        File gradleDependencyDir = new File(getProject().getGradle().getGradleUserHomeDir(), "caches/modules-2/files-2.1");
+        List<String> args = new LinkedList<>();
+
+        if (verbose.getOrElse(false)) {
+            args.add("--verbose");
+        }
+        getFormat().forEach((key, value) -> {
+            String formatValue = key + (GUtil.isTrue(value) ? ":" + value : "");
+            args.add("--format=" + formatValue);
+        });
+        if (quiet.getOrElse(false)) {
+            args.add("--quiet");
+        }
+        if (getEncoding().isPresent()) {
+            args.add("--encoding=" + getEncoding().get());
+        }
+
+        if (print.getOrElse(false)) {
+            args.add("--print");
+        }
+
+        if (target.isPresent()) {
+            args.add("--target=" + target.getAsFile().get());
+        }
+
+        if (!classpath.isEmpty()) {
+            args.add("--classpath=" + getClasspath().getAsPath());
+        }
+        if (!sourcepath.isEmpty()) {
+            args.add("--sourcepath=" + getSourcepath().getAsPath());
+        }
+        if (!bootclasspath.isEmpty()) {
+            args.add("--bootclasspath=" + getBootclasspath().getAsPath());
+        }
+
+        if (nocopy.getOrElse(false)) {
+            args.add("--nocopy");
+        }
+
+        File optionsFile = new File(getTemporaryDir(), "delombok.options");
+
+        Files.write(optionsFile.toPath(), args);
 
         getProject().javaexec(delombok -> {
             delombok.setClasspath(getLombokClasspath());
-            delombok.setWorkingDir(gradleDependencyDir);
             delombok.setMain("lombok.launch.Main");
-            delombok.systemProperty("java.io.tmpdir", getTemporaryDir());
             delombok.args("delombok");
 
-            if (verbose.getOrElse(false)) {
-                delombok.args("--verbose");
-            }
-            getFormat().forEach((key, value) -> {
-                String formatValue = key + (GUtil.isTrue(value) ? ":" + value : "");
-                delombok.args("--format=" + formatValue);
-            });
-            if (quiet.getOrElse(false)) {
-                delombok.args("--quiet");
-            }
-            if (getEncoding().isPresent()) {
-                delombok.args("--encoding=" + getEncoding().get());
-            }
-
-            if (print.getOrElse(false)) {
-                delombok.args("--print");
-            }
-
-            if (target.isPresent()) {
-                delombok.args("--target=" + target.getAsFile().get());
-            }
-
-            if (!classpath.isEmpty()) {
-                delombok.args("--classpath=" + getClasspath().getAsPath().replace(gradleDependencyDir.getAbsolutePath(), "."));
-            }
-            if (!sourcepath.isEmpty()) {
-                delombok.args("--sourcepath=" + getSourcepath().getAsPath().replace(gradleDependencyDir.getAbsolutePath(), "."));
-            }
-            if (!bootclasspath.isEmpty()) {
-                delombok.args("--bootclasspath=" + getBootclasspath().getAsPath().replace(gradleDependencyDir.getAbsolutePath(), "."));
-            }
-
-            if (nocopy.getOrElse(false)) {
-                delombok.args("--nocopy");
-            }
+            delombok.args("@" + optionsFile);
 
             delombok.args(input.getFiles().stream()
                     .filter(File::isDirectory)
