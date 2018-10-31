@@ -4,6 +4,8 @@ import io.bit3.jsass.OutputStyle;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.Project;
+import org.gradle.api.internal.plugins.DslObject;
+import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Property;
 
 @Getter
@@ -70,5 +72,14 @@ public class JSassExtension {
 
         sourceMapEnabled = project.getObjects().property(Boolean.class);
         sourceMapEnabled.set(true);
+
+        ExtraPropertiesExtension extraProperties = new DslObject(this).getExtensions().getExtraProperties();
+        for (OutputStyle value : OutputStyle.values()) {
+            extraProperties.set(value.name(), value);
+        }
+    }
+
+    public void setOutputStyle(String outputStyle) {
+        this.outputStyle.set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
     }
 }
