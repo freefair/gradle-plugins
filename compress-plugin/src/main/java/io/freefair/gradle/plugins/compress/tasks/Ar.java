@@ -12,6 +12,7 @@ import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 import org.gradle.api.internal.file.copy.FileCopyDetailsInternal;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
@@ -27,6 +28,7 @@ import java.io.IOException;
 @Slf4j
 public class Ar extends AbstractArchiveTask {
 
+    @Input
     private final Property<Integer> longFileMode = getProject().getObjects().property(Integer.class);
 
     public Ar() {

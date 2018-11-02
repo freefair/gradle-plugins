@@ -12,6 +12,7 @@ import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 import org.gradle.api.internal.file.copy.FileCopyDetailsInternal;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
@@ -26,6 +27,7 @@ import java.io.OutputStream;
 @Setter
 public class SevenZip extends AbstractArchiveTask {
 
+    @Input
     private final Property<SevenZMethod> contentCompression = getProject().getObjects().property(SevenZMethod.class);
 
     public SevenZip() {

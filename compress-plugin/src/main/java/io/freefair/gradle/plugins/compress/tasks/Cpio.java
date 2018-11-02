@@ -14,6 +14,7 @@ import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 import org.gradle.api.internal.file.copy.FileCopyDetailsInternal;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
@@ -29,8 +30,13 @@ import java.io.IOException;
 @Slf4j
 public class Cpio extends AbstractArchiveTask {
 
+    @Input
     private final Property<Short> format = getProject().getObjects().property(Short.class);
+
+    @Input
     private final Property<Integer> blockSize = getProject().getObjects().property(Integer.class);
+
+    @Input
     private final Property<String> encoding = getProject().getObjects().property(String.class);
 
     public Cpio() {
