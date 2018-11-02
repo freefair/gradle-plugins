@@ -26,6 +26,7 @@ class ArTest extends Specification {
             task foo(type: Ar) {
                 from rootDir
                 longFileMode = 1
+                exclude '**/*.ar'
             }
         """
 

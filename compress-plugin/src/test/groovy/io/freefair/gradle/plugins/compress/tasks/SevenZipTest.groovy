@@ -25,6 +25,7 @@ class SevenZipTest extends Specification {
         buildFile << """
             task foo(type: SevenZip) {
                 from rootDir
+                exclude '**/*.7z'
             }
         """
 
