@@ -1,9 +1,7 @@
-package io.freefair.gradle.plugins.compress;
+package io.freefair.gradle.plugins.compress.internal;
 
+import io.freefair.gradle.plugins.compress.CompressFileOperations;
 import io.freefair.gradle.plugins.compress.tree.*;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ar.ArArchiveInputStream;
 import org.apache.commons.compress.archivers.arj.ArjArchiveInputStream;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
@@ -23,7 +21,6 @@ import org.gradle.internal.nativeintegration.filesystem.FileSystem;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  * @author Lars Grefer
@@ -65,7 +62,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         return arjTree(arjFile, f -> new ArjArchiveInputStream(new FileInputStream(f), charsetName));
     }
 
-    private FileTree arjTree(Object arjFile, ArchiveFileTree.ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider) {
+    private FileTree arjTree(Object arjFile, ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(arjFile);
         ArjFileTree arjFileTree = new ArjFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(arjFileTree, fileResolver.getPatternSetFactory());
@@ -91,7 +88,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         return cpioTree(cpioFile, f -> new CpioArchiveInputStream(new FileInputStream(f), blockSize, encoding));
     }
 
-    private FileTree cpioTree(Object arPath, ArchiveFileTree.ArchiveInputStreamProvider<CpioArchiveInputStream> inputStreamProvider) {
+    private FileTree cpioTree(Object arPath, ArchiveInputStreamProvider<CpioArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(arPath);
         ArchiveFileTree<CpioArchiveInputStream, CpioArchiveEntry> cpioFileTree = new ArchiveFileTree<>(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(cpioFileTree, fileResolver.getPatternSetFactory());
@@ -107,7 +104,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         return sevenZipTree(sevenZipFile, f -> new SevenZipArchiveInputStream(new SevenZFile(f, password)));
     }
 
-    private FileTree sevenZipTree(Object sevenZipFile, ArchiveFileTree.ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {
+    private FileTree sevenZipTree(Object sevenZipFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(sevenZipFile);
         ArchiveFileTree<SevenZipArchiveInputStream, SevenZArchiveEntry> sevenZipFileTree = new ArchiveFileTree<>(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(sevenZipFileTree, fileResolver.getPatternSetFactory());
@@ -123,7 +120,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         return dumpTree(dumpFile, f -> new DumpArchiveInputStream(new FileInputStream(f), encoding));
     }
 
-    private FileTree dumpTree(Object dumpFile, ArchiveFileTree.ArchiveInputStreamProvider<DumpArchiveInputStream> inputStreamProvider) {
+    private FileTree dumpTree(Object dumpFile, ArchiveInputStreamProvider<DumpArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(dumpFile);
         DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(dumpFileTree, fileResolver.getPatternSetFactory());
@@ -133,34 +130,4 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         return temporaryFileProvider.newTemporaryFile("expandedArchives");
     }
 
-    @RequiredArgsConstructor
-    static class SevenZipArchiveInputStream extends ArchiveInputStream {
-
-        private final SevenZFile sevenZFile;
-
-        @Override
-        public ArchiveEntry getNextEntry() throws IOException {
-            return sevenZFile.getNextEntry();
-        }
-
-        @Override
-        public int read() throws IOException {
-            return sevenZFile.read();
-        }
-
-        @Override
-        public int read(byte[] b) throws IOException {
-            return sevenZFile.read(b);
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            return sevenZFile.read(b, off, len);
-        }
-
-        @Override
-        public void close() throws IOException {
-            sevenZFile.close();
-        }
-    }
 }

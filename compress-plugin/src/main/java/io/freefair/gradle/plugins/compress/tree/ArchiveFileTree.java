@@ -259,9 +259,4 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
         public void close() {
         }
     }
-
-    @FunctionalInterface
-    public interface ArchiveInputStreamProvider<IS extends ArchiveInputStream> {
-        IS openFile(File file) throws IOException, ArchiveException;
-    }
 }

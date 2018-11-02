@@ -1,12 +1,10 @@
 package io.freefair.gradle.plugins.compress;
 
+import io.freefair.gradle.plugins.compress.internal.CompressFileOperationsImpl;
 import org.gradle.api.Project;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class CompressFileOperationsImplTest {
 

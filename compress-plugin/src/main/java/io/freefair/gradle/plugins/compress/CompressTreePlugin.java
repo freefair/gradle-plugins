@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.compress;
 
+import io.freefair.gradle.plugins.compress.internal.CompressFileOperationsImpl;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
