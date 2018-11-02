@@ -7,7 +7,6 @@ import org.apache.commons.compress.archivers.arj.ArjArchiveInputStream;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.dump.DumpArchiveInputStream;
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.internal.file.FileOperations;
@@ -106,7 +105,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree sevenZipTree(Object sevenZipFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(sevenZipFile);
-        ArchiveFileTree<SevenZipArchiveInputStream, SevenZArchiveEntry> sevenZipFileTree = new ArchiveFileTree<>(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
+        SevenZipFileTree sevenZipFileTree = new SevenZipFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(sevenZipFileTree, fileResolver.getPatternSetFactory());
     }
 

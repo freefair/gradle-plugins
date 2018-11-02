@@ -19,6 +19,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 
 /**
  * @author Lars Grefer
@@ -64,7 +65,7 @@ public class SevenZip extends AbstractArchiveTask {
         @SneakyThrows
         public void processFile(FileCopyDetailsInternal details) {
             SevenZArchiveEntry archiveEntry = new SevenZArchiveEntry();
-            archiveEntry.setLastModifiedDate(details.getLastModified());
+            archiveEntry.setLastModifiedDate(new Date(details.getLastModified()));
             archiveEntry.setName(details.getPath());
 
             if (details.isDirectory()) {

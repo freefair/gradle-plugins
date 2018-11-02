@@ -8,7 +8,7 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-class SevenZipArchiveInputStream extends ArchiveInputStream {
+public class SevenZipArchiveInputStream extends ArchiveInputStream {
 
     private final SevenZFile sevenZFile;
 
