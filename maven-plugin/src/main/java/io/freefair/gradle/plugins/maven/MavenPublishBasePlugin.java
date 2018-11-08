@@ -8,6 +8,8 @@ import org.gradle.api.component.SoftwareComponent;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.plugins.signing.SigningExtension;
+import org.gradle.plugins.signing.SigningPlugin;
 
 import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
@@ -42,6 +44,11 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
                     publication.artifact(javadocJarPlugin.getAggregateJavadocJar());
                 }
             });
+
+            project.getPlugins().withType(SigningPlugin.class, signingPlugin -> project.getExtensions()
+                    .getByType(SigningExtension.class)
+                    .sign(publication)
+            );
         });
     }
 
