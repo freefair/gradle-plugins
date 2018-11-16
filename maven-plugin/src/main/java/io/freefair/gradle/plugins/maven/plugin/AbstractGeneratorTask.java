@@ -30,10 +30,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +58,7 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
     private final RegularFileProperty pomFile = newInputFile();
 
     @Optional
+    @Input
     private final Property<String> goalPrefix = getProject().getObjects().property(String.class);
 
     @TaskAction
@@ -96,7 +94,7 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
 
     protected abstract File getBaseDir();
 
-    protected MojoScanner getMojoScanner() {
+    private MojoScanner getMojoScanner() {
         Map<String, MojoDescriptorExtractor> extractors = new TreeMap<>();
         JavaAnnotationsMojoDescriptorExtractor mojoDescriptorExtractor = new JavaAnnotationsMojoDescriptorExtractor();
 
