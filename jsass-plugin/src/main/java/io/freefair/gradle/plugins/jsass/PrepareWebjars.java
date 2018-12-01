@@ -10,6 +10,8 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
+import java.io.File;
+
 @Getter
 @Setter
 public class PrepareWebjars extends DefaultTask {
@@ -27,7 +29,7 @@ public class PrepareWebjars extends DefaultTask {
 
             sync.setDuplicatesStrategy(DuplicatesStrategy.WARN);
 
-            webjars.getFiles().forEach(file ->
+            webjars.filter(File::isFile).getFiles().forEach(file ->
                     sync.from(getProject().zipTree(file), jarSpec -> {
                         jarSpec.include("META-INF/resources/webjars/**");
                         jarSpec.setIncludeEmptyDirs(false);
