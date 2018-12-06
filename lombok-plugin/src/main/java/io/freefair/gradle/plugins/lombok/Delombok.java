@@ -57,6 +57,7 @@ public class Delombok extends SourceTask {
      * Print delombok-ed code to standard output instead of saving it in target directory.
      */
     @Input
+    @Optional
     private final Property<Boolean> print = getProject().getObjects().property(Boolean.class);
 
     /**
@@ -91,6 +92,7 @@ public class Delombok extends SourceTask {
      * Without this option, non-java, non-class files are copied to the target directory.
      */
     @Input
+    @Optional
     private final Property<Boolean> nocopy = getProject().getObjects().property(Boolean.class);
 
     @Classpath
