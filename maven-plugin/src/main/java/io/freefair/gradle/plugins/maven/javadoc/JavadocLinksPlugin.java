@@ -64,7 +64,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
                                 return wellKnownLink;
                             } else {
                                 String javadocIoLink = String.format("https://static.javadoc.io/%s/%s/%s/", group, artifact, version);
-                                if (checkLink(javadocIoLink)) {
+                                if (getLinks(javadoc).contains(javadocIoLink) || checkLink(javadocIoLink)) {
                                     javadoc.getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
                                     return javadocIoLink;
                                 } else {
@@ -90,7 +90,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         Request request = new Request.Builder()
                 .url(link + "package-list")
                 .head()
-                .header("User-Agent", String.valueOf(System.currentTimeMillis()))
+                .header("User-Agent", String.valueOf(System.nanoTime()))
                 .build();
 
         Response response = okHttpClient.newCall(request).execute();
