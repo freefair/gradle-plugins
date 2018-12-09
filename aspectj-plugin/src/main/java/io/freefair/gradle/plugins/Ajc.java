@@ -49,7 +49,7 @@ public class Ajc extends DefaultTask {
      */
     @Optional
     @OutputFile
-    private final RegularFileProperty outjar = newOutputFile();
+    private final RegularFileProperty outjar = getProject().getObjects().fileProperty();
 
     /**
      * Generate aop xml file for load-time weaving with default name (META-INF/aop-ajc.xml).
@@ -62,7 +62,7 @@ public class Ajc extends DefaultTask {
      */
     @Optional
     @OutputFile
-    private final RegularFileProperty outxmlfile = newOutputFile();
+    private final RegularFileProperty outxmlfile = getProject().getObjects().fileProperty();
 
     /**
      * Generate a build .ajsym file into the output directory.
@@ -105,7 +105,7 @@ public class Ajc extends DefaultTask {
      * Specify where to place generated .class files.
      */
     @OutputDirectory
-    private final DirectoryProperty destinationDir = newOutputDirectory();
+    private final DirectoryProperty destinationDir = getProject().getObjects().directoryProperty();
 
     @Input
     private final Property<String> target = getProject().getObjects().property(String.class);
@@ -202,7 +202,7 @@ public class Ajc extends DefaultTask {
      */
     @OutputFile
     @Optional
-    private final RegularFileProperty log = newOutputFile();
+    private final RegularFileProperty log = getProject().getObjects().fileProperty();
 
     /**
      * Show progress (requires -log mode).

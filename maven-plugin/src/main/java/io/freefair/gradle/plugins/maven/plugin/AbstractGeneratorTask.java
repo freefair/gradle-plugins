@@ -55,7 +55,7 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
     private final ConfigurableFileCollection classesDirectories = getProject().files();
 
     @InputFile
-    private final RegularFileProperty pomFile = newInputFile();
+    private final RegularFileProperty pomFile = getProject().getObjects().fileProperty();
 
     @Optional
     @Input

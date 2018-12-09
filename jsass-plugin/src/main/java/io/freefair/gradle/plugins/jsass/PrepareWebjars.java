@@ -17,7 +17,7 @@ import java.io.File;
 public class PrepareWebjars extends DefaultTask {
 
     @OutputDirectory
-    private final DirectoryProperty outputDirectory= newOutputDirectory();
+    private final DirectoryProperty outputDirectory= getProject().getObjects().directoryProperty();
 
     @InputFiles
     private final ConfigurableFileCollection webjars = getProject().files();

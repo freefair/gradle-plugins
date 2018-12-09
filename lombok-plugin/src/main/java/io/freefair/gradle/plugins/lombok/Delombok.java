@@ -64,7 +64,7 @@ public class Delombok extends SourceTask {
      * Directory to save delomboked files to.
      */
     @OutputDirectory
-    private final DirectoryProperty target = newOutputDirectory();
+    private final DirectoryProperty target = getProject().getObjects().directoryProperty();
 
     /**
      * Classpath (analogous to javac -cp option).

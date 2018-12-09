@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
@@ -54,7 +53,7 @@ public class LombokPlugin implements Plugin<Project> {
             Delombok delombok = project.getTasks().create(sourceSet.getTaskName("delombok", ""), Delombok.class);
             delombok.setDescription("Runs delombok on the " + sourceSet.getName() + " source-set");
 
-            ((ExtensionAware) sourceSet).getExtensions().add("delombokTask", delombok);
+            sourceSet.getExtensions().add("delombokTask", delombok);
 
             JavaCompile compileJava = (JavaCompile) project.getTasks().getByName(sourceSet.getCompileJavaTaskName());
             compileJava.dependsOn(generateLombokConfig);
@@ -71,7 +70,7 @@ public class LombokPlugin implements Plugin<Project> {
 
         Javadoc javadoc = (Javadoc) project.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME);
         SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-        javadoc.setSource(((ExtensionAware) mainSourceSet).getExtensions().getByName("delombokTask"));
+        javadoc.setSource(mainSourceSet.getExtensions().getByName("delombokTask"));
 
         project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> configureForJacoco());
 

@@ -21,7 +21,7 @@ public class ValidateMavenPom extends DefaultTask implements VerificationTask {
 
     @InputFile
     @Getter
-    private final RegularFileProperty pomFile = newInputFile();
+    private final RegularFileProperty pomFile = getProject().getObjects().fileProperty();
 
     @Input
     private final Property<Boolean> ignoreFailures = getProject().getObjects().property(Boolean.class);

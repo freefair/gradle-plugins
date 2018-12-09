@@ -52,7 +52,7 @@ public class SassCompile extends SourceTask {
     }
 
     @Internal
-    private final DirectoryProperty destinationDir = newOutputDirectory();
+    private final DirectoryProperty destinationDir = getProject().getObjects().directoryProperty();
 
     @TaskAction
     public void compileSass() {

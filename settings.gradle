@@ -6,5 +6,3 @@ include "lombok-plugin"
 include "jsass-plugin"
 include "aspectj-plugin"
 include "compress-plugin"
-
-enableFeaturePreview('STABLE_PUBLISHING')

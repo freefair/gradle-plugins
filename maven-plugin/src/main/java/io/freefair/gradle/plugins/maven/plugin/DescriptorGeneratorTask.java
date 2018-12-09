@@ -18,7 +18,7 @@ import java.io.File;
 public class DescriptorGeneratorTask extends AbstractGeneratorTask {
 
     @OutputDirectory
-    private final DirectoryProperty outputDirectory = newOutputDirectory();
+    private final DirectoryProperty outputDirectory = getProject().getObjects().directoryProperty();
 
     @Override
     @Internal
