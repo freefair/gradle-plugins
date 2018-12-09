@@ -40,7 +40,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
         okHttpClient = new OkHttpClient.Builder()
-                .addNetworkInterceptor(loggingInterceptor)
+                .addInterceptor(loggingInterceptor)
                 .build();
 
         project.getTasks().withType(Javadoc.class, javadoc -> {
