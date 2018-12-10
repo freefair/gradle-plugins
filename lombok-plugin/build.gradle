@@ -3,24 +3,24 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-	testCompile project(":test-common")
+    testCompile project(":test-common")
 }
 
 gradlePlugin {
-	plugins {
-		lombok {
-			id = "io.freefair.lombok"
-			implementationClass = "io.freefair.gradle.plugins.lombok.LombokPlugin"
-		}
-	}
+    plugins {
+        lombok {
+            id = "io.freefair.lombok"
+            implementationClass = "io.freefair.gradle.plugins.lombok.LombokPlugin"
+        }
+    }
 }
 
 pluginBundle {
-	plugins {
-		lombok {
-			displayName = "Lombok Plugin"
-			description = "Automatic lombok and delombok configuration"
-			tags = ["lombok"]
-		}
-	}
+    plugins {
+        lombok {
+            displayName = "Lombok Plugin"
+            description = "Automatic lombok and delombok configuration"
+            tags = ["lombok"]
+        }
+    }
 }
