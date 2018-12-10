@@ -3,9 +3,9 @@ apply plugin: "java"
 dependencies {
 	compile "junit:junit:4.12"
 	compile "org.assertj:assertj-core:3.10.0"
-	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile 'commons-io:commons-io:2.6'
 	// https://mvnrepository.com/artifact/name.remal.gradle-api/gradle-api
-	compile group: 'name.remal.gradle-api', name: 'gradle-api', version: '5.0'
+	compile 'name.remal.gradle-api:gradle-api:5.0'
 	// https://mvnrepository.com/artifact/name.remal.gradle-api/gradle-test-kit
-	compile group: 'name.remal.gradle-api', name: 'gradle-test-kit', version: '5.0'
+	compile 'name.remal.gradle-api:gradle-test-kit:5.0'
 }
