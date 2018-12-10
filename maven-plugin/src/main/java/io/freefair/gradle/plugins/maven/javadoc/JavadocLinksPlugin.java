@@ -19,7 +19,9 @@ import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -85,17 +87,25 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         });
     }
 
+    private static final Map<String, Boolean> javadocIoLinkCache = new HashMap<>();
+
     @SneakyThrows
     private boolean checkLink(String link) {
+        if (javadocIoLinkCache.containsKey(link)) {
+            return javadocIoLinkCache.get(link);
+        }
+
         Request request = new Request.Builder()
                 .url(link + "package-list")
                 .head()
-                .header("User-Agent", String.valueOf(System.currentTimeMillis()))
+                .header("User-Agent", String.valueOf(System.nanoTime()))
                 .build();
 
-        Response response = okHttpClient.newCall(request).execute();
-
-        return response.isSuccessful();
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            boolean successful = response.isSuccessful();
+            javadocIoLinkCache.put(link, successful);
+            return successful;
+        }
     }
 
     private void addLink(Javadoc javadoc, String link) {
@@ -176,6 +186,22 @@ public class JavadocLinksPlugin implements Plugin<Project> {
             return "https://docs.jboss.org/hibernate/validator/" + version.substring(0, 3) + "/api/";
         }
 
+        if (group.equals("org.primefaces") && artifact.equals("primefaces")) {
+            return "https://www.primefaces.org/docs/api/" + version + "/";
+        }
+
+        if (group.equals("org.eclipse.jetty")) {
+            return "https://www.eclipse.org/jetty/javadoc/" + version + "/";
+        }
+
+        if (group.equals("org.ow2.asm")) {
+            return "https://asm.ow2.io/javadoc/";
+        }
+
+        if (group.equals("org.joinfaces")) {
+            return "https://docs.joinfaces.org/" + version + "/api/";
+        }
+
         return null;
     }
 
@@ -192,7 +218,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
 
     private String getJavaSeLink(JavaVersion javaVersion) {
         if (javaVersion.isJava11Compatible()) {
-            return "https://docs.oracle.com/en/java/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
+            return "https://docs.oracle.com/javase/10/docs/api/";
         } else {
             return "https://docs.oracle.com/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
         }
