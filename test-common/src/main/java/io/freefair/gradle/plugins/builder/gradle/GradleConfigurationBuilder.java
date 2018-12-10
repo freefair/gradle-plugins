@@ -1,4 +1,6 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.builder.gradle;
+
+import io.freefair.gradle.plugins.builder.io.FileBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;

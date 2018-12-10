@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.builder.io;
 
 import org.apache.commons.io.FileUtils;
 

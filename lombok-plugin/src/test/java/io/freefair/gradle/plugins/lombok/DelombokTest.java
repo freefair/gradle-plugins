@@ -2,11 +2,13 @@ package io.freefair.gradle.plugins.lombok;
 
 
 import io.freefair.gradle.plugins.AbstractPluginTest;
-import io.freefair.gradle.plugins.FileBuilder;
-import org.gradle.api.Project;
-import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.Before;
+import io.freefair.gradle.plugins.builder.io.FileBuilder;
+import io.freefair.gradle.plugins.builder.java.JavaClassBuilder;
+import org.gradle.testkit.runner.BuildResult;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 public class DelombokTest extends AbstractPluginTest {
 
@@ -15,20 +17,22 @@ public class DelombokTest extends AbstractPluginTest {
 		createGradleConfiguration()
 				.applyPlugin("java")
 				.applyPlugin("io.freefair.lombok")
+				.addCustomConfigurationBlock("delombok.target = file('src/main-delombok/java/')")
 				.write();
 
-		FileBuilder file =
-				createFile("src/main/java/io/freefair/gradle/plugins/lombok/test", "SimpleLombokFile.java")
-				.append("package io.freefair.gradle.plugins.lombok.test;").appendNewLine()
-				.append("@Data").appendNewLine()
-				.append("class SimpleLombokFile {").indent().appendNewLine()
-				.append("private String name;").appendNewLine()
-				.append("private String firstName;").appendNewLine()
-				.append("private int age;").unindent()
-				.appendNewLine().append("}");
+		JavaClassBuilder javaClass = createJavaClass("main", "io.freefair.gradle.plugins.lombok.test", "SimpleLombokFile");
+		javaClass.addAnnotation()
+				.setName("lombok.Data");
+		javaClass.addField()
+				.setName("name").setType("String");
+		javaClass.addField()
+				.setName("firstName").setType("String");
+		javaClass.addField()
+				.setName("age").setType("int");
+		javaClass.write();
 
-		file.write();
-
-		executeTask("delombok");
+		executeTask("build", "delombok", "--debug");
+		String simpleLombokFile = readJavaClass("main-delombok", "io.freefair.gradle.plugins.lombok.test", "SimpleLombokFile");
+		assertThat(simpleLombokFile, not(containsString("lombok.Data")));
 	}
 }
