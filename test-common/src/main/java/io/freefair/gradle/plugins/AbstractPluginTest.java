@@ -35,6 +35,10 @@ public class AbstractPluginTest {
         Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
+    protected File getTemporaryDirectory() {
+        return testProjectDir.getRoot();
+    }
+
     protected FileBuilder createFile(String fileName) {
         try {
             return new FileBuilder(testProjectDir.newFile(fileName));
@@ -69,6 +73,17 @@ public class AbstractPluginTest {
             String replace = "src/" + sourceSet + "/java/" + packageName.replace(".", "/");
             FileBuilder file = createFile(replace, typeSpec.name + ".java");
             file.append(JavaFile.builder(packageName, typeSpec).build().toString());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    protected String readJavaClassFromDirectory(String direcotry, String packageName, String className) {
+        try {
+            if(!direcotry.endsWith("/"))
+                direcotry += "/";
+            String path = direcotry + packageName.replace(".", "/");
+            return FileUtils.readFileToString(getFile(path, className + ".java"), Charset.defaultCharset());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
