@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugin.codegenerator;
 
 import io.freefair.gradle.codegenerator.api.ProjectContext;
-import io.freefair.gradle.plugin.codegenerator.annotations.CodeGenerator;
+import io.freefair.gradle.codegenerator.api.annotations.CodeGenerator;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
@@ -79,8 +79,10 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
                     Thread.currentThread().setContextClassLoader(loader);
 
                     ScanResult scan = new ClassGraph()
-                                            .addClassLoader(loader)
-                                            .enableAllInfo()
+                                            .overrideClassLoaders(loader)
+                                            .enableClassInfo()
+                                            .enableAnnotationInfo()
+                                            .blacklistPackages("org.gradle")
                                             .scan();
                     ClassInfoList classesWithAnnotation = scan.getClassesWithAnnotation(CodeGenerator.class.getCanonicalName());
 
@@ -94,7 +96,7 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
                     classesWithAnnotation.forEach(c -> {
                         try {
                             log.debug("Executing " + c.getName() + " ...");
-                            new CodeGeneratorExecutor(Class.forName(c.getName())).execute(context);
+                            new CodeGeneratorExecutor(loader.loadClass(c.getName())).execute(context);
                             log.debug("... Success");
                         } catch (Exception ex) {
                             throw new RuntimeException(ex);

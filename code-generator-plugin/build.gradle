@@ -1,7 +1,35 @@
-apply plugin: 'java-gradle-plugin'
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
     compile 'io.github.classgraph:classgraph:4.4.7'
     compile 'commons-io:commons-io:2.6'
     compile project(':code-generator-api')
+    testCompile project(':test-common')
+
+}
+
+task copyTestGenerator(type: Copy, dependsOn: ':test-code-generator:jar'){
+    from  tasks.getByPath(':test-code-generator:jar').outputs
+    into 'src/main/resources/'
+}
+
+gradlePlugin {
+    plugins {
+        codeGenerator {
+            id = "io.freefair.code-generator"
+            implementationClass = "io.freefair.gradle.plugin.codegenerator.CodeGeneratorPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    plugins {
+        jSassBase {
+            displayName = "Code Generator Plugin"
+            description = "A plugin for executing specified code generators"
+            tags = ['code', 'generation', 'codegeneration', 'generate']
+        }
+    }
 }

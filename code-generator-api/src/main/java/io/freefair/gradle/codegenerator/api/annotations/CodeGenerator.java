@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugin.codegenerator.annotations;
+package io.freefair.gradle.codegenerator.api.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
