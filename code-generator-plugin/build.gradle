@@ -12,7 +12,7 @@ dependencies {
 
 task copyTestGenerator(type: Copy, dependsOn: ':test-code-generator:jar'){
     from  tasks.getByPath(':test-code-generator:jar').outputs
-    into 'src/main/resources/'
+    into 'src/test/resources/'
 }
 
 test.dependsOn(copyTestGenerator)
