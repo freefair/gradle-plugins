@@ -1,9 +1,14 @@
 package io.freefair.gradle.plugins.lombok;
 
 
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.FieldSpec;
+import com.squareup.javapoet.TypeName;
+import com.squareup.javapoet.TypeSpec;
 import io.freefair.gradle.plugins.AbstractPluginTest;
-import io.freefair.gradle.plugins.builder.java.JavaClassBuilder;
 import org.junit.Test;
+
+import javax.lang.model.element.Modifier;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
@@ -19,16 +24,13 @@ public class DelombokTest extends AbstractPluginTest {
                 .addCustomConfigurationBlock("delombok.target = file('src/main-delombok/java/')")
                 .write();
 
-        JavaClassBuilder javaClass = createJavaClass("main", "io.freefair.gradle.plugins.lombok.test", "SimpleLombokFile");
-        javaClass.addAnnotation()
-                .setName("lombok.Data");
-        javaClass.addField()
-                .setName("name").setType("String");
-        javaClass.addField()
-                .setName("firstName").setType("String");
-        javaClass.addField()
-                .setName("age").setType("int");
-        javaClass.write();
+        TypeSpec.Builder builder = TypeSpec.classBuilder("SimpleLombokFile");
+        builder.addField(FieldSpec.builder(String.class, "name", Modifier.PRIVATE).build());
+        builder.addField(FieldSpec.builder(String.class, "firstName", Modifier.PRIVATE).build());
+        builder.addField(FieldSpec.builder(TypeName.INT, "age", Modifier.PRIVATE).build());
+        builder.addAnnotation(AnnotationSpec.builder(lombok.Data.class).build());
+
+        createJavaClass("main", "io.freefair.gradle.plugins.lombok.test", builder.build());
 
         executeTask("build", "delombok", "--debug");
         String simpleLombokFile = readJavaClass("main-delombok", "io.freefair.gradle.plugins.lombok.test", "SimpleLombokFile");

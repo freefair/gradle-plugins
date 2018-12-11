@@ -1,9 +1,10 @@
 apply plugin: "java"
 
 dependencies {
-	compile "junit:junit:4.12"
-	compile "org.assertj:assertj-core:3.10.0"
-	compile 'commons-io:commons-io:2.6'
-	compile gradleApi()
-	compile gradleTestKit()
+    compile "junit:junit:4.12"
+    compile "org.assertj:assertj-core:3.10.0"
+    compile 'commons-io:commons-io:2.6'
+    compile gradleApi()
+    compile gradleTestKit()
+    compile 'com.squareup:javapoet:1.11.1'
 }

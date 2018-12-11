@@ -1,8 +1,9 @@
 package io.freefair.gradle.plugins;
 
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.TypeSpec;
 import io.freefair.gradle.plugins.builder.gradle.GradleConfigurationBuilder;
 import io.freefair.gradle.plugins.builder.io.FileBuilder;
-import io.freefair.gradle.plugins.builder.java.JavaClassBuilder;
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -62,11 +63,12 @@ public class AbstractPluginTest {
         return file;
     }
 
-    protected JavaClassBuilder createJavaClass(String sourceSet, String packageName, String className) {
+    protected void createJavaClass(String sourceSet, String packageName, TypeSpec typeSpec) {
         try {
+
             String replace = "src/" + sourceSet + "/java/" + packageName.replace(".", "/");
-            FileBuilder file = createFile(replace, className + ".java");
-            return new JavaClassBuilder(file).setClassName(className).setPackageName(packageName);
+            FileBuilder file = createFile(replace, typeSpec.name + ".java");
+            file.append(JavaFile.builder(packageName, typeSpec).build().toString());
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
