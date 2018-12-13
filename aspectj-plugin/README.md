@@ -14,4 +14,4 @@ Replaces the `compileJava` task (javac) of each source set with `ajcJava`.
 
 ## Examples
 
-Example projects can be found here: https://github.com/freefair/gradle-plugin-examples/tree/master/aspectj
+Example projects can be found [here](../examples/aspectj)

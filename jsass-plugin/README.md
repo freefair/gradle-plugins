@@ -22,4 +22,4 @@ Compiles SASS/SCSS in web resources (`src/main/webapp`)
 
 ## Examples
 
-Example projects can be found here: https://github.com/freefair/gradle-plugin-examples/tree/master/jsass
+Example projects can be found [here](../examples/jsass).

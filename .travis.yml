@@ -11,6 +11,10 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+script:
+  - ./gradlew check
+  - cd examples && ./gradlew check
+
 after_success:
   - ./gradlew jacocoTestReport
   - bash <(curl -s https://codecov.io/bash)

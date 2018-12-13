@@ -1,0 +1,9 @@
+apply plugin: "io.freefair.war-overlay"
+
+war {
+    overlays {
+        overlay {
+            from project(":war:overlay")
+        }
+    }
+}

@@ -1,0 +1,15 @@
+rootProject.name = 'gradle-plugins-examples'
+
+includeBuild '..'
+
+include ":war:overlay"
+include ":war:overlay2"
+
+include ":jsass:java"
+include ":jsass:web"
+include ":jsass:webjars"
+
+include ":aspectj:aspect"
+include ":aspectj:weaving"
+
+include ":lombok"

@@ -1,0 +1,13 @@
+apply plugin: "io.freefair.war-overlay"
+
+war {
+    overlays {
+        cas {
+            from "org.apereo.cas:cas-server-webapp-tomcat:5.3.2@war"
+        }
+    }
+}
+
+dependencies {
+    providedCompile group: 'javax.faces', name: 'javax.faces-api', version: '2.3'
+}
