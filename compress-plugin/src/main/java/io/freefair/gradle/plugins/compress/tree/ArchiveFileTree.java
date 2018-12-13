@@ -14,20 +14,26 @@ import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.file.AbstractFileTreeElement;
 import org.gradle.api.internal.file.FileSystemSubset;
 import org.gradle.api.internal.file.archive.ZipFileTree;
+import org.gradle.api.internal.file.collections.DefaultSingletonFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.FileSystemMirroringFileTree;
-import org.gradle.api.internal.file.collections.SingletonFileTree;
 import org.gradle.internal.hash.FileHasher;
 import org.gradle.internal.nativeintegration.filesystem.Chmod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Lars Grefer
+ * @see ZipFileTree
  */
 @RequiredArgsConstructor
 public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEntry> implements FileSystemMirroringFileTree {
@@ -89,7 +95,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
 
     @Override
     public String getDisplayName() {
-        return null;
+        return String.format("archive '%s'", archiveFile);
     }
 
     @Override
@@ -97,11 +103,14 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
         builder.add(archiveFile);
     }
 
+    /**
+     * @see ZipFileTree#visitTreeOrBackingFile(FileVisitor)
+     */
     @Override
     public void visitTreeOrBackingFile(FileVisitor visitor) {
         File backingFile = archiveFile;
         if (backingFile != null) {
-            new SingletonFileTree(backingFile).visit(visitor);
+            new DefaultSingletonFileTree(backingFile).visit(visitor);
         } else {
             visit(visitor);
         }
