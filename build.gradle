@@ -6,7 +6,17 @@ buildscript {
     }
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.12.0"
+        classpath "io.freefair.gradle:maven-plugin:3.0.0-rc.3"
     }
+}
+
+apply plugin: "io.codearte.nexus-staging"
+
+nexusStaging {
+    stagingProfileId = '7e6204597a774f'
+    username = findProperty('ossrhUser')
+    password = findProperty('ossrhPass')
 }
 
 allprojects {
@@ -32,7 +42,6 @@ allprojects {
 
         plugins.apply "jacoco"
 
-        jacoco.toolVersion = "0.8.2"
         jacocoTestReport.reports.xml.enabled = true
 
         dependencies {
@@ -51,6 +60,56 @@ allprojects {
 
             mavenCoordinates {
                 groupId = project.group
+            }
+        }
+    }
+
+    plugins.withId("maven-publish") {
+        publishing {
+            publications.withType(MavenPublication) {
+                pom {
+                    url = 'https://github.com/freefair/gradle-plugins'
+                    name = provider { project.description }
+                    description = provider { project.description }
+                    inceptionYear = '2016'
+                    licenses {
+                        license {
+                            name = 'MIT'
+                            url = 'https://github.com/freefair/gradle-plugins/blob/master/LICENSE'
+                        }
+                    }
+                    organization {
+                        name = 'FreeFair'
+                        url = 'http://joinfaces.org'
+                    }
+                    developers {
+                        developer {
+                            id = 'larsgrefer'
+                            name = 'Lars Grefer'
+                            email = 'github@larsgrefer.de'
+                            timezone = 'Europe/Berlin'
+                        }
+                        developer {
+                            id = 'frisch12'
+                            name = 'Dennis Fricke'
+                            email = 'dennis.fricke@freefair.io'
+                            timezone = 'Europe/Berlin'
+                        }
+                    }
+                    ciManagement {
+                        system = 'Travis CI'
+                        url = 'https://travis-ci.org/freefair/gradle-plugins/'
+                    }
+                    issueManagement {
+                        system = 'Github'
+                        url = 'https://github.com/freefair/gradle-plugins/issues'
+                    }
+                    scm {
+                        connection = 'scm:git:https://github.com/freefair/gradle-plugins.git'
+                        developerConnection = 'scm:git:git@github.com:freefair/gradle-plugins.git'
+                        url = 'https://github.com/freefair/gradle-plugins/'
+                    }
+                }
             }
         }
     }

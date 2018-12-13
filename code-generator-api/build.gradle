@@ -1,75 +1,20 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+plugins {
+    id "de.marcphilipp.nexus-publish" version "0.1.1"
+}
+apply plugin: "io.freefair.maven-publish-java"
+apply plugin: "io.freefair.maven-jars"
+apply plugin: "io.freefair.maven-central.validate-poms"
 apply plugin: 'signing'
+
+description = "Code Generator API"
+
+validatePomFileForMavenJavaPublication.ignoreFailures = false
 
 dependencies {
     compile 'commons-io:commons-io:2.6'
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
 signing {
-    sign configurations.archives
+    required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask("publish") }
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.project {
-                name 'Code Generator API'
-                packaging 'jar'
-                // optionally artifactId can be defined here
-                description 'API for code generation plugin.'
-                url 'https://github.com/freefair/gradle-plugins'
-
-                scm {
-                    connection 'git:https://github.com/freefair/gradle-plugins'
-                    developerConnection 'git:https://github.com/freefair/gradle-plugins'
-                    url 'https://github.com/freefair/gradle-plugins'
-                }
-
-                licenses {
-                    license {
-                        name 'MIT'
-                        url 'https://github.com/freefair/gradle-plugins/blob/master/LICENSE'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'frisch12'
-                        name 'Dennis Fricke'
-                        email 'dennis.fricke@freefair.io'
-                    }
-                    developer {
-                        id 'larsgrefer'
-                        name 'Lars Grefer'
-                        email 'lars.grefer@freefair.io'
-                    }
-                }
-            }
-        }
-    }
-}
