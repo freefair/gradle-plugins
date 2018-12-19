@@ -28,7 +28,7 @@ gradlePlugin {
 
 pluginBundle {
     plugins {
-        jSassBase {
+        codeGenerator {
             displayName = "Code Generator Plugin"
             description = "A plugin for executing specified code generators"
             tags = ['code', 'generation', 'codegeneration', 'generate']
