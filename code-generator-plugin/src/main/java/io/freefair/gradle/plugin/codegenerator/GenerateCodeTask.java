@@ -8,7 +8,10 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
@@ -20,20 +23,18 @@ import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.workers.IsolationMode;
+import org.gradle.workers.WorkerExecutor;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import javax.inject.Inject;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
 public class GenerateCodeTask extends DefaultTask {
+
+    private final WorkerExecutor workerExecutor;
 
     @InputDirectory
     private final DirectoryProperty inputDir = getProject().getObjects().directoryProperty();
@@ -49,38 +50,16 @@ public class GenerateCodeTask extends DefaultTask {
     @Classpath
     private final ConfigurableFileCollection codeGeneratorClasspath = getProject().files();
 
+    @Inject
+    public GenerateCodeTask(WorkerExecutor workerExecutor) {
+        this.workerExecutor = workerExecutor;
+    }
+
     @TaskAction
-    public void generate() throws Exception {
+    public void generate() {
 
-        Set<File> resolve = codeGeneratorClasspath.getFiles();
-
-        getLogger().debug("Resolved files: {} ({})", resolve.size(), resolve.stream().map(File::getName).collect(Collectors.joining(", ")));
-
-        List<URL> urls = resolve.stream().map(c -> {
-            try {
-                getLogger().debug("File: {}", c.getPath());
-                File file;
-                if (!c.getPath().startsWith("/"))
-                    file = new File(getProject().getProjectDir().getAbsolutePath(), c.getPath());
-                else
-                    file = c;
-                if (file.exists())
-                    return file.toURI().toURL();
-                getLogger().debug("... File does not exist");
-                return null;
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
-
-        if (getLogger().isDebugEnabled()) {
-            getLogger().debug("Found {} urls to scan: ", urls.size());
-            getLogger().debug(urls.stream().map(URL::getPath).collect(Collectors.joining(",")));
-        }
-
-        ClassLoader loader = new URLClassLoader(urls.toArray(new URL[0]), Thread.currentThread().getContextClassLoader());
         ScanResult scan = new ClassGraph()
-                .overrideClasspath(urls)
+                .overrideClasspath(codeGeneratorClasspath)
                 .enableClassInfo()
                 .enableAnnotationInfo()
                 .scan();
@@ -96,10 +75,28 @@ public class GenerateCodeTask extends DefaultTask {
 
         ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().get(), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()));
 
-        for (ClassInfo c : classesWithAnnotation) {
-            getLogger().info("Executing {} ...", c.getName());
-            new CodeGeneratorExecutor(loader.loadClass(c.getName())).execute(context);
-            getLogger().debug("... Success");
+        for (ClassInfo classInfo : classesWithAnnotation) {
+            workerExecutor.submit(UnitOfWork.class, workerConfiguration -> {
+                workerConfiguration.setDisplayName(classInfo.getName());
+                workerConfiguration.setIsolationMode(IsolationMode.CLASSLOADER);
+                workerConfiguration.classpath(codeGeneratorClasspath);
+                workerConfiguration.params(classInfo.getName(), context);
+            });
+        }
+    }
+
+    @Slf4j
+    @RequiredArgsConstructor(onConstructor_ = @Inject)
+    static class UnitOfWork implements Runnable {
+        private final String className;
+        private final ProjectContext projectContext;
+
+        @Override
+        @SneakyThrows
+        public void run() {
+            log.info("Executing {} ...", className);
+            new CodeGeneratorExecutor(Class.forName(className)).execute(projectContext);
+            log.debug("... Success");
         }
     }
 }

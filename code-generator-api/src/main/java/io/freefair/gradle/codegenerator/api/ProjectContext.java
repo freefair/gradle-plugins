@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @AllArgsConstructor
-public class ProjectContext {
+public class ProjectContext implements Serializable {
 	private File rootDir;
 	private File inputDir;
 	private File outputDir;

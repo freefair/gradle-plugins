@@ -20,7 +20,7 @@ class CodeGeneratorExecutor {
 
 	public void execute(ProjectContext context) throws Exception {
 		Object o = constructor.newInstance();
-		Generator gen = null;
+		Generator gen;
 		if(isCodeGeneratorInterface(o))
 			gen = (Generator) o;
 		else
