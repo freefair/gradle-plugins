@@ -76,10 +76,11 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
                     }
 
                     ClassLoader loader = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
+                    ClassLoader scanningLoader = new URLClassLoader(urls);
                     Thread.currentThread().setContextClassLoader(loader);
 
                     ScanResult scan = new ClassGraph()
-                                            .overrideClassLoaders(loader)
+                                            .overrideClassLoaders(scanningLoader)
                                             .enableClassInfo()
                                             .enableAnnotationInfo()
                                             .blacklistPackages("org.gradle")
