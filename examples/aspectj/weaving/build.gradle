@@ -9,7 +9,7 @@ repositories {
     mavenLocal()
 }
 
-jacoco.toolVersion = "0.8.2-SNAPSHOT"
+jacoco.toolVersion = "0.8.2"
 
 dependencies {
     aspect project(":aspectj:aspect")
