@@ -13,7 +13,7 @@ cache:
 
 script:
   - ./gradlew check
-  - cd examples && ./gradlew check
+  - cd examples && ./gradlew check && cd ..
 
 after_success:
   - ./gradlew jacocoTestReport
