@@ -17,6 +17,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
@@ -76,14 +77,11 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
                     }
 
                     ClassLoader loader = new URLClassLoader(urls, Thread.currentThread().getContextClassLoader());
-                    ClassLoader scanningLoader = new URLClassLoader(urls);
                     Thread.currentThread().setContextClassLoader(loader);
 
                     ScanResult scan = new ClassGraph()
-                                            .overrideClassLoaders(scanningLoader)
-                                            .enableClassInfo()
+                                            .overrideClasspath(Arrays.asList(urls))
                                             .enableAnnotationInfo()
-                                            .blacklistPackages("org.gradle")
                                             .scan();
                     ClassInfoList classesWithAnnotation = scan.getClassesWithAnnotation(CodeGenerator.class.getCanonicalName());
 
