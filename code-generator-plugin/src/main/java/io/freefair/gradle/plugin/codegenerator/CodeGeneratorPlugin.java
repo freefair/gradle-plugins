@@ -35,14 +35,14 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
         for (SourceSet sourceSet : plugin.getSourceSets()) {
             String outputDir = project.getBuildDir() + "/generated-src/generator/" + sourceSet.getName();
             File outputDirFile = new File(outputDir);
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("Using output dir " + outputDir);
             }
 
             File inputDir = new File(project.getProjectDir() + "/src/code-generator/" + sourceSet.getName());
             sourceSet.getJava().srcDir(inputDir);
 
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("Using input dir " + inputDir);
             }
 
@@ -72,7 +72,7 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
                         }
                     }).filter(Objects::nonNull).toArray(URL[]::new);
 
-                    if(log.isDebugEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Found " + urls.length + " urls to scan");
                     }
 
@@ -80,12 +80,12 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
                     Thread.currentThread().setContextClassLoader(loader);
 
                     ScanResult scan = new ClassGraph()
-                                            .overrideClasspath(Arrays.asList(urls))
-                                            .enableAnnotationInfo()
-                                            .scan();
+                            .overrideClasspath(Arrays.asList(urls))
+                            .enableAnnotationInfo()
+                            .scan();
                     ClassInfoList classesWithAnnotation = scan.getClassesWithAnnotation(CodeGenerator.class.getCanonicalName());
 
-                    if(log.isDebugEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Found " + classesWithAnnotation.size() + " with code generator annotation: ");
                         log.debug(classesWithAnnotation.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
                     }
