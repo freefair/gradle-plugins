@@ -8,7 +8,6 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.BuildResult;
-import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +15,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Objects;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class SimpleCodeGenerationTest extends AbstractPluginTest {
 
@@ -51,10 +50,11 @@ public class SimpleCodeGenerationTest extends AbstractPluginTest {
             createGradleConfiguration()
                     .applyPlugin("java")
                     .applyPlugin("io.freefair.code-generator")
-                    .addCustomConfigurationBlock("codeGenerator {\n" +
-                            "   generatorJar 'test-code-generator.jar'\n" +
-                            "}")
+                    .addDependency("codeGenerator", "files('test-code-generator.jar')")
                     .write();
+
+            new File(getTemporaryDirectory(), "src/code-generator/main").mkdirs();
+            new File(getTemporaryDirectory(), "build").mkdirs();
 
         } catch (Exception e) {
             throw new RuntimeException(e);

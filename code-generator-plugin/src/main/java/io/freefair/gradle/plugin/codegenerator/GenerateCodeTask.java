@@ -18,6 +18,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class GenerateCodeTask extends DefaultTask {
     @InputDirectory
     private final DirectoryProperty inputDir = getProject().getObjects().directoryProperty();
 
-    @InputDirectory
+    @OutputDirectory
     private final DirectoryProperty outputDir = getProject().getObjects().directoryProperty();
 
     @Input
@@ -77,7 +78,7 @@ public class GenerateCodeTask extends DefaultTask {
             getLogger().debug(urls.stream().map(URL::getPath).collect(Collectors.joining(",")));
         }
 
-        ClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
+        ClassLoader loader = new URLClassLoader(urls.toArray(new URL[0]), Thread.currentThread().getContextClassLoader());
         ScanResult scan = new ClassGraph()
                 .overrideClasspath(urls)
                 .enableClassInfo()

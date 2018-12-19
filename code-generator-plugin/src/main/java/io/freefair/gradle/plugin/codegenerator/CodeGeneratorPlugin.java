@@ -12,7 +12,7 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        CodeGeneratorConfiguration codeGenerator = project.getExtensions().create("codeGenerator", CodeGeneratorConfiguration.class);
+        CodeGeneratorConfiguration codeGenerator = project.getExtensions().create("codeGenerator", CodeGeneratorConfiguration.class, project.getObjects());
         Configuration codeGeneratorConfiguration = project.getConfigurations().create("codeGenerator");
 
         JavaPluginConvention plugin = project.getConvention().getPlugin(JavaPluginConvention.class);
