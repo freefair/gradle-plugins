@@ -7,12 +7,17 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.ResolvedArtifact;
-import org.gradle.api.artifacts.ResolvedConfiguration;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.provider.MapProperty;
+import org.gradle.api.tasks.Classpath;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -20,50 +25,39 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@Slf4j
+@Getter
+@Setter
 public class GenerateCodeTask extends DefaultTask {
 
-    @Setter
-    private File inputDir;
+    @InputDirectory
+    private final DirectoryProperty inputDir = getProject().getObjects().directoryProperty();
 
-    @Setter
-    private File outputDir;
+    @InputDirectory
+    private final DirectoryProperty outputDir = getProject().getObjects().directoryProperty();
 
-    @Setter
-    private CodeGeneratorConfiguration extension;
+    @Input
+    @Optional
+    private final MapProperty<String, Object> configurationValues = getProject().getObjects().mapProperty(String.class, Object.class);
 
-    @Setter
-    private Configuration codeGeneratorConfiguration;
+    @InputFiles
+    @Classpath
+    private final ConfigurableFileCollection codeGeneratorClasspath = getProject().files();
 
     @TaskAction
-    public void generate() {
+    public void generate() throws Exception {
 
-        Set<File> resolve = Collections.singleton(null);
-        try {
-            Set<File> resolve1 = codeGeneratorConfiguration.resolve();
-            log.debug("Resolved files: " + resolve1.size() + " (" + resolve1.stream().map(File::getName).collect(Collectors.joining(", ")) + ")");
-            ResolvedConfiguration resolvedConfiguration = codeGeneratorConfiguration.getResolvedConfiguration();
+        Set<File> resolve = codeGeneratorClasspath.getFiles();
 
-            resolve = new HashSet<>(resolvedConfiguration.getFiles());
-            log.debug("Found files: " + resolve.size() + " (" + resolve.stream().map(File::getName).collect(Collectors.joining(", ")) + ")");
-            Set<ResolvedArtifact> resolvedArtifacts = resolvedConfiguration.getResolvedArtifacts();
+        getLogger().debug("Resolved files: {} ({})", resolve.size(), resolve.stream().map(File::getName).collect(Collectors.joining(", ")));
 
-            resolve.addAll(resolvedArtifacts.stream().map(ResolvedArtifact::getFile).collect(Collectors.toList()));
-            log.debug("Found artifacts: " + resolvedArtifacts.size() + " (" + resolvedArtifacts.stream().map(a -> a.getName() + ":" + a.getType()).collect(Collectors.joining(", ")) + ")");
-        } catch (Exception ex) {
-            log.debug("Error while resolving compileOnly", ex);
-        }
-        List<URL> urls = Stream.concat(extension.getGeneratorJars().stream(), resolve.stream()).map(c -> {
+        List<URL> urls = resolve.stream().map(c -> {
             try {
-                if(log.isDebugEnabled())
-                    log.debug("File: " + c.getPath());
+                getLogger().debug("File: {}", c.getPath());
                 File file;
                 if (!c.getPath().startsWith("/"))
                     file = new File(getProject().getProjectDir().getAbsolutePath(), c.getPath());
@@ -71,18 +65,16 @@ public class GenerateCodeTask extends DefaultTask {
                     file = c;
                 if (file.exists())
                     return file.toURI().toURL();
-                if(log.isDebugEnabled())
-                    log.debug("... File does not exist");
+                getLogger().debug("... File does not exist");
                 return null;
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
-
-        if(log.isDebugEnabled()) {
-            log.debug("Found " + urls.size() + " urls to scan: ");
-            log.debug(urls.stream().map(URL::getPath).collect(Collectors.joining(",")));
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Found {} urls to scan: ", urls.size());
+            getLogger().debug(urls.stream().map(URL::getPath).collect(Collectors.joining(",")));
         }
 
         ClassLoader loader = new URLClassLoader(urls.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
@@ -94,23 +86,19 @@ public class GenerateCodeTask extends DefaultTask {
         ClassInfoList classesWithAnnotation = scan.getClassesWithAnnotation(CodeGenerator.class.getCanonicalName());
         ClassInfoList classesImplementing = scan.getClassesImplementing(Generator.class.getCanonicalName());
 
-        if(log.isDebugEnabled()) {
-            log.debug("Found " + classesWithAnnotation.size() + " with code generator annotation (" + CodeGenerator.class.getCanonicalName() +  "): ");
-            log.debug(classesWithAnnotation.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
-            log.debug("Found " + classesImplementing.size() + " implementing " + Generator.class.getCanonicalName() + ": ");
-            log.debug(classesImplementing.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Found {} with code generator annotation ({}): ", classesWithAnnotation.size(), CodeGenerator.class.getCanonicalName());
+            getLogger().debug(classesWithAnnotation.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
+            getLogger().debug("Found {} implementing {}: ", classesImplementing.size(), Generator.class.getCanonicalName());
+            getLogger().debug(classesImplementing.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
         }
 
-        ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir, outputDir, extension.getConfigurationValues());
+        ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().get(), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()));
 
-        classesWithAnnotation.forEach(c -> {
-            try {
-                log.debug("Executing " + c.getName() + " ...");
-                new CodeGeneratorExecutor(loader.loadClass(c.getName())).execute(context);
-                log.debug("... Success");
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        });
+        for (ClassInfo c : classesWithAnnotation) {
+            getLogger().info("Executing {} ...", c.getName());
+            new CodeGeneratorExecutor(loader.loadClass(c.getName())).execute(context);
+            getLogger().debug("... Success");
+        }
     }
 }
