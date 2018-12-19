@@ -42,14 +42,14 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
         for (SourceSet sourceSet : plugin.getSourceSets()) {
             String outputDir = project.getBuildDir() + "/generated-src/generator/" + sourceSet.getName();
             File outputDirFile = new File(outputDir);
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("Using output dir " + outputDir);
             }
 
             File inputDir = new File(project.getProjectDir() + "/src/code-generator/" + sourceSet.getName());
             sourceSet.getJava().srcDir(inputDir);
 
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("Using input dir " + inputDir);
             }
 
