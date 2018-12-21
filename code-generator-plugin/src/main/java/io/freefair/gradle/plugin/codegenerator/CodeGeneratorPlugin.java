@@ -23,6 +23,7 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
 
             File inputDir = new File(project.getProjectDir() + "/src/code-generator/" + sourceSet.getName());
             sourceSet.getJava().srcDir(inputDir);
+            sourceSet.getJava().srcDir(outputDirFile);
 
             project.getLogger().debug("Using input dir {}", inputDir);
 
