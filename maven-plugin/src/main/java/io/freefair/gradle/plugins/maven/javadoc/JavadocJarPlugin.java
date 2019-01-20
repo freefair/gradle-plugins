@@ -24,9 +24,7 @@ public class JavadocJarPlugin implements Plugin<Project> {
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
 
             javadocJar = project.getTasks().register("javadocJar", Jar.class, javadocJar -> {
-                TaskProvider<Javadoc> javadoc = project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class);
-
-                javadocJar.from(javadoc);
+                javadocJar.from(project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME));
                 javadocJar.getArchiveClassifier().convention("javadoc");
                 javadocJar.setDescription("Assembles a jar archive containing the javadocs.");
                 javadocJar.setGroup(BasePlugin.BUILD_GROUP);
@@ -36,10 +34,8 @@ public class JavadocJarPlugin implements Plugin<Project> {
         });
 
         project.getPlugins().withType(AggregateJavadocPlugin.class, aggregateJavadocPlugin -> {
-            Javadoc aggregateJavadoc = aggregateJavadocPlugin.getAggregateJavadoc();
-
             aggregateJavadocJar = project.getTasks().named("aggregateJavadocJar", Jar.class, aggregateJavadocJar -> {
-                aggregateJavadocJar.from(aggregateJavadoc);
+                aggregateJavadocJar.from(aggregateJavadocPlugin.getAggregateJavadoc());
                 aggregateJavadocJar.getArchiveClassifier().convention("javadoc");
                 aggregateJavadocJar.setGroup(BasePlugin.BUILD_GROUP);
             });
