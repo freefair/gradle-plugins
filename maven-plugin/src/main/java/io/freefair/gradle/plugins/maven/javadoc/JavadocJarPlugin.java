@@ -34,7 +34,7 @@ public class JavadocJarPlugin implements Plugin<Project> {
         });
 
         project.getPlugins().withType(AggregateJavadocPlugin.class, aggregateJavadocPlugin -> {
-            aggregateJavadocJar = project.getTasks().named("aggregateJavadocJar", Jar.class, aggregateJavadocJar -> {
+            aggregateJavadocJar = project.getTasks().register("aggregateJavadocJar", Jar.class, aggregateJavadocJar -> {
                 aggregateJavadocJar.from(aggregateJavadocPlugin.getAggregateJavadoc());
                 aggregateJavadocJar.getArchiveClassifier().convention("javadoc");
                 aggregateJavadocJar.setGroup(BasePlugin.BUILD_GROUP);
