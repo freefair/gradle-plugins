@@ -40,10 +40,10 @@ public class Cpio extends AbstractArchiveTask {
     private final Property<String> encoding = getProject().getObjects().property(String.class);
 
     public Cpio() {
-        setExtension("cpio");
-        format.set(CpioConstants.FORMAT_NEW);
-        blockSize.set(CpioConstants.BLOCK_SIZE);
-        encoding.set(CharsetNames.US_ASCII);
+        getArchiveExtension().convention("cpio");
+        format.convention(CpioConstants.FORMAT_NEW);
+        blockSize.convention(CpioConstants.BLOCK_SIZE);
+        encoding.convention(CharsetNames.US_ASCII);
     }
 
     public void setFormat(String format) {

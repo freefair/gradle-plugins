@@ -32,8 +32,8 @@ public class Ar extends AbstractArchiveTask {
     private final Property<Integer> longFileMode = getProject().getObjects().property(Integer.class);
 
     public Ar() {
-        setExtension("ar");
-        longFileMode.set(ArArchiveOutputStream.LONGFILE_ERROR);
+        getArchiveExtension().convention("ar");
+        longFileMode.convention(ArArchiveOutputStream.LONGFILE_ERROR);
     }
 
     public void setLongFileMode(String longFileMode) {

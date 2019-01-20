@@ -32,7 +32,7 @@ public class SevenZip extends AbstractArchiveTask {
     private final Property<SevenZMethod> contentCompression = getProject().getObjects().property(SevenZMethod.class);
 
     public SevenZip() {
-        setExtension("7z");
+        getArchiveExtension().convention("7z");
         contentCompression.set(SevenZMethod.LZMA2);
     }
 

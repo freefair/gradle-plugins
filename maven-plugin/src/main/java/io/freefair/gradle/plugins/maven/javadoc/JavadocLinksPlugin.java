@@ -45,11 +45,11 @@ public class JavadocLinksPlugin implements Plugin<Project> {
                 .addInterceptor(loggingInterceptor)
                 .build();
 
-        project.getTasks().withType(Javadoc.class, javadoc -> {
+        project.afterEvaluate(p -> {
+            project.getTasks().withType(Javadoc.class).configureEach(javadoc -> {
 
-            addLink(javadoc, getJavaSeLink(JavaVersion.current()));
+                addLink(javadoc, getJavaSeLink(JavaVersion.current()));
 
-            javadoc.doFirst(task -> {
                 findConfigurations(javadoc.getClasspath())
                         .flatMap(files -> files.getResolvedConfiguration().getResolvedArtifacts().stream())
                         .map(resolvedArtifact -> resolvedArtifact.getId().getComponentIdentifier())

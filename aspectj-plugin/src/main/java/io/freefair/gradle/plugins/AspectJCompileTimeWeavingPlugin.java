@@ -5,6 +5,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 
 public class AspectJCompileTimeWeavingPlugin implements Plugin<Project> {
@@ -28,18 +29,18 @@ public class AspectJCompileTimeWeavingPlugin implements Plugin<Project> {
 
             String taskName = sourceSet.getTaskName("ajc", "Java");
 
-            Ajc ajc = project.getTasks().create(taskName, Ajc.class);
+            TaskProvider<Ajc> ajcTaskProvider = project.getTasks().register(taskName, Ajc.class, ajc -> {
+                ajc.getFiles().from(sourceSet.getJava());
+                ajc.getDestinationDir().set(sourceSet.getJava().getOutputDir());
+                ajc.getClasspath().from(sourceSet.getCompileClasspath());
+                ajc.getAspectpath().from(aspects);
+            });
 
-            JavaCompile compileJava = (JavaCompile) project.getTasks().getByName(sourceSet.getCompileJavaTaskName());
+            project.getTasks().named(sourceSet.getCompileJavaTaskName())
+                    .configure(compileJava -> compileJava.setEnabled(false));
 
-            compileJava.setEnabled(false);
-
-            ajc.getFiles().from(sourceSet.getJava());
-            ajc.getDestinationDir().set(sourceSet.getJava().getOutputDir());
-            ajc.getClasspath().from(sourceSet.getCompileClasspath());
-            ajc.getAspectpath().from(aspects);
-
-            project.getTasks().getByName(sourceSet.getClassesTaskName()).dependsOn(ajc);
+            project.getTasks().named(sourceSet.getClassesTaskName())
+                    .configure(classes -> classes.dependsOn(ajcTaskProvider));
         });
 
     }

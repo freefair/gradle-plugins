@@ -5,6 +5,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 
 import java.io.File;
 
@@ -29,15 +30,15 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
 
             String taskName = sourceSet.getTaskName("generate", "Code");
 
-            project.getTasks().create(taskName, GenerateCodeTask.class, s -> {
+            TaskProvider<GenerateCodeTask> generate = project.getTasks().register(taskName, GenerateCodeTask.class, s -> {
                 s.setGroup("generate");
                 s.getOutputDir().set(outputDirFile);
                 s.getInputDir().set(inputDir);
                 s.getCodeGeneratorClasspath().from(codeGeneratorConfiguration);
                 s.getConfigurationValues().set(codeGenerator.getConfigurationValues());
                 s.dependsOn(codeGeneratorConfiguration);
-                project.getTasks().getByName(sourceSet.getCompileJavaTaskName()).dependsOn(s.getPath());
             });
+            project.getTasks().named(sourceSet.getCompileJavaTaskName(), t -> t.dependsOn(generate));
         }
     }
 }

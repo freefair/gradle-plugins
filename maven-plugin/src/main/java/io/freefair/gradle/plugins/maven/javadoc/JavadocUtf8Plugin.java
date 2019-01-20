@@ -12,7 +12,7 @@ public class JavadocUtf8Plugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        project.getTasks().withType(Javadoc.class, javadoc -> {
+        project.getTasks().withType(Javadoc.class).configureEach(javadoc -> {
 
             StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
 
