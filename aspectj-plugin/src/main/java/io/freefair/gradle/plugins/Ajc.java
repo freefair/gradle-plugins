@@ -55,7 +55,7 @@ public class Ajc extends DefaultTask {
      * Generate aop xml file for load-time weaving with default name (META-INF/aop-ajc.xml).
      */
     @Input
-    private final Property<Boolean> outxml = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> outxml = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Generate aop.xml file for load-time weaving with custom name.
@@ -69,13 +69,13 @@ public class Ajc extends DefaultTask {
      * Used for viewing crosscutting references by tools like the AspectJ Browser.
      */
     @Input
-    private final Property<Boolean> crossrefs = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> crossrefs = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Emit the version of the AspectJ compiler.
      */
     @Input
-    private final Property<Boolean> version = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> version = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Specify where to find user class files.
@@ -118,7 +118,7 @@ public class Ajc extends DefaultTask {
      */
     @Optional
     @Input
-    private final Property<Boolean> nowarn = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> nowarn = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Emit warnings for any instances of the comma-delimited list of questionable code (eg '-warn:unusedLocals,deprecation'):
@@ -142,19 +142,19 @@ public class Ajc extends DefaultTask {
      * Same as -warn:deprecation
      */
     @Input
-    private final Property<Boolean> deprecation = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> deprecation = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Emit no errors for unresolved imports
      */
     @Input
-    private final Property<Boolean> noImportError = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> noImportError = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Keep compiling after error, dumping class files with problem methods
      */
     @Input
-    private final Property<Boolean> proceedOnError = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> proceedOnError = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * debug attributes level, that may take three forms:
@@ -172,13 +172,13 @@ public class Ajc extends DefaultTask {
      * Preserve all local variables during code generation (to facilitate debugging).
      */
     @Input
-    private final Property<Boolean> preserveAllLocals = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> preserveAllLocals = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Compute reference information.
      */
     @Input
-    private final Property<Boolean> referenceInfo = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> referenceInfo = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Specify default source encoding format.
@@ -189,13 +189,13 @@ public class Ajc extends DefaultTask {
 
 
     @Input
-    private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Emit messages about weaving
      */
     @Input
-    private final Property<Boolean> showWeaveInfo = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> showWeaveInfo = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Specify a log file for compiler messages.
@@ -208,20 +208,20 @@ public class Ajc extends DefaultTask {
      * Show progress (requires -log mode).
      */
     @Input
-    private final Property<Boolean> progress = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> progress = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Display speed information.
      */
     @Input
-    private final Property<Boolean> time = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> time = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Causes compiler to terminate before weaving
      */
     @Input
     @Getter(onMethod_ = @Input)
-    private final Property<Boolean> XterminateAfterCompilation = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> XterminateAfterCompilation = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * Causes the compiler to calculate and add the SerialVersionUID field to any type implementing Serializable that is affected by an aspect.
@@ -229,28 +229,28 @@ public class Ajc extends DefaultTask {
      */
     @Input
     @Getter(onMethod_ = @Input)
-    private final Property<Boolean> XaddSerialVersionUID = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> XaddSerialVersionUID = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * (Experimental) do not inline around advice
      */
     @Input
     @Getter(onMethod_ = @Input)
-    private final Property<Boolean> XnoInline = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> XnoInline = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * (Experimental) Normally it is an error to declare aspects Serializable. This option removes that restriction.
      */
     @Input
     @Getter(onMethod_ = @Input)
-    private final Property<Boolean> XserializableAspects = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> XserializableAspects = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * (Experimental) Create class files that can't be subsequently rewoven by AspectJ.
      */
     @Input
     @Getter(onMethod_ = @Input)
-    private final Property<Boolean> XnotReweavable = getProject().getObjects().property(Boolean.class).value(false);
+    private final Property<Boolean> XnotReweavable = getProject().getObjects().property(Boolean.class).convention(false);
 
     @Optional
     @InputFiles

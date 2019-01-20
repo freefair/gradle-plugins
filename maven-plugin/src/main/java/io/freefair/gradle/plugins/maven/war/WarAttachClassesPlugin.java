@@ -21,7 +21,7 @@ public class WarAttachClassesPlugin implements Plugin<Project> {
         project.afterEvaluate(p -> {
             if (attachClassesConvention.isAttachClasses()) {
                 Jar jar = (Jar) project.getTasks().getByName(JavaPlugin.JAR_TASK_NAME);
-                jar.setClassifier(attachClassesConvention.getClassesClassifier());
+                jar.getArchiveClassifier().convention(attachClassesConvention.getClassesClassifier());
 
                 project.getArtifacts().add(Dependency.ARCHIVES_CONFIGURATION, jar);
             }

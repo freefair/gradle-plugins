@@ -10,6 +10,7 @@ import org.gradle.api.plugins.quality.CodeQualityExtension;
 import org.gradle.api.plugins.quality.FindBugsExtension;
 import org.gradle.api.plugins.quality.FindBugsPlugin;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
@@ -20,7 +21,7 @@ public class LombokPlugin implements Plugin<Project> {
     private LombokExtension lombokExtension;
     private Configuration lombokConfiguration;
     private Project project;
-    private GenerateLombokConfig generateLombokConfig;
+    private TaskProvider<GenerateLombokConfig> generateLombokConfig;
 
     @Override
     public void apply(Project project) {
@@ -33,11 +34,12 @@ public class LombokPlugin implements Plugin<Project> {
                 project.getDependencies().create("org.projectlombok:lombok:" + lombokExtension.getVersion())
         ));
 
-        generateLombokConfig = project.getTasks().create("generateLombokConfig", GenerateLombokConfig.class);
-        generateLombokConfig.setProperties(lombokExtension.getConfig());
-        generateLombokConfig.setGroup("lombok");
+        generateLombokConfig = project.getTasks().register("generateLombokConfig", GenerateLombokConfig.class, genConfig -> {
+            genConfig.getProperties().convention(lombokExtension.getConfig());
+            genConfig.setGroup("lombok");
+        });
 
-        project.getTasks().withType(Delombok.class, this::configureDelombokDefaults);
+        project.getTasks().withType(Delombok.class).configureEach(this::configureDelombokDefaults);
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> configureJavaPluginDefaults());
 
@@ -50,27 +52,33 @@ public class LombokPlugin implements Plugin<Project> {
             project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(lombokConfiguration);
             project.getConfigurations().getByName(sourceSet.getAnnotationProcessorConfigurationName()).extendsFrom(lombokConfiguration);
 
-            Delombok delombok = project.getTasks().create(sourceSet.getTaskName("delombok", ""), Delombok.class);
-            delombok.setDescription("Runs delombok on the " + sourceSet.getName() + " source-set");
-
-            sourceSet.getExtensions().add("delombokTask", delombok);
-
-            JavaCompile compileJava = (JavaCompile) project.getTasks().getByName(sourceSet.getCompileJavaTaskName());
-            compileJava.dependsOn(generateLombokConfig);
-            compileJava.getOptions().getCompilerArgs().add("-Xlint:-processing");
-            project.afterEvaluate(p -> {
-                delombok.getEncoding().set(compileJava.getOptions().getEncoding());
-                delombok.getClasspath().from(sourceSet.getCompileClasspath());
-                compileJava.getInputs().file(generateLombokConfig.getOutputFile());
-                delombok.getInput().from(sourceSet.getAllJava().getSourceDirectories());
+            TaskProvider<Delombok> delombokTaskProvider = project.getTasks().register(sourceSet.getTaskName("delombok", ""), Delombok.class, delombok -> {
+                delombok.setDescription("Runs delombok on the " + sourceSet.getName() + " source-set");
+                delombok.getTarget().set(project.getLayout().getBuildDirectory().dir("delombok/" + sourceSet.getName()));
             });
 
-            delombok.getTarget().set(project.getLayout().getBuildDirectory().dir("delombok/" + sourceSet.getName()));
+            sourceSet.getExtensions().add("delombokTask", delombokTaskProvider);
+
+            TaskProvider<JavaCompile> compileTaskProvider = project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava -> {
+                compileJava.dependsOn(generateLombokConfig);
+                compileJava.getOptions().getCompilerArgs().add("-Xlint:-processing");
+                compileJava.getInputs().file(generateLombokConfig.get().getOutputFile());
+            });
+
+            project.afterEvaluate(p -> {
+                delombokTaskProvider.configure(delombok -> {
+                    delombok.getEncoding().set(compileTaskProvider.get().getOptions().getEncoding());
+                    delombok.getClasspath().from(sourceSet.getCompileClasspath());
+                    delombok.getInput().from(sourceSet.getAllJava().getSourceDirectories());
+                });
+            });
+
         });
 
-        Javadoc javadoc = (Javadoc) project.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME);
-        SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-        javadoc.setSource(mainSourceSet.getExtensions().getByName("delombokTask"));
+        project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class, javadoc -> {
+            SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            javadoc.setSource(mainSourceSet.getExtensions().getByName("delombokTask"));
+        });
 
         project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> configureForJacoco());
 

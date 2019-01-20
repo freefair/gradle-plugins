@@ -16,16 +16,17 @@ public class JSassBasePlugin implements Plugin<Project> {
     public void apply(Project project) {
         this.extension = project.getExtensions().create("jsass", JSassExtension.class, project);
 
-        project.getTasks().withType(SassCompile.class, compileSass -> {
-            compileSass.getIndent().set(extension.getIndent());
-            compileSass.getLinefeed().set(extension.getLinefeed());
-            compileSass.getOmitSourceMapUrl().set(extension.getOmitSourceMapUrl());
-            compileSass.getOutputStyle().set(extension.getOutputStyle());
-            compileSass.getPrecision().set(extension.getPrecision());
-            compileSass.getSourceComments().set(extension.getSourceComments());
-            compileSass.getSourceMapContents().set(extension.getSourceMapContents());
-            compileSass.getSourceMapEmbed().set(extension.getSourceMapEmbed());
-            compileSass.getSourceMapEnabled().set(extension.getSourceMapEnabled());
-        });
+        project.getTasks().withType(SassCompile.class)
+                .configureEach(compileSass -> {
+                    compileSass.getIndent().convention(extension.getIndent());
+                    compileSass.getLinefeed().convention(extension.getLinefeed());
+                    compileSass.getOmitSourceMapUrl().convention(extension.getOmitSourceMapUrl());
+                    compileSass.getOutputStyle().convention(extension.getOutputStyle());
+                    compileSass.getPrecision().convention(extension.getPrecision());
+                    compileSass.getSourceComments().convention(extension.getSourceComments());
+                    compileSass.getSourceMapContents().convention(extension.getSourceMapContents());
+                    compileSass.getSourceMapEmbed().convention(extension.getSourceMapEmbed());
+                    compileSass.getSourceMapEnabled().convention(extension.getSourceMapEnabled());
+                });
     }
 }

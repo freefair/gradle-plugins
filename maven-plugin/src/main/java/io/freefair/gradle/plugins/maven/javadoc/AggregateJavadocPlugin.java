@@ -15,21 +15,22 @@ import org.gradle.api.internal.file.UnionFileTree;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
 @Getter
 public class AggregateJavadocPlugin implements Plugin<Project> {
 
-    private Javadoc aggregateJavadoc;
+    private TaskProvider<Javadoc> aggregateJavadoc;
 
     @Override
     public void apply(Project project) {
-        aggregateJavadoc = project.getTasks().create("aggregateJavadoc", Javadoc.class);
-        aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
+        aggregateJavadoc = project.getTasks().register("aggregateJavadoc", Javadoc.class, aggregateJavadoc ->
+                aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP)
+        );
 
-        project.afterEvaluate(p -> {
-
+        project.afterEvaluate(p -> aggregateJavadoc.configure(aggregateJavadoc -> {
             if (aggregateJavadoc.getDestinationDir() == null) {
                 File docsDir = Optional.ofNullable(project.getConvention().findPlugin(JavaPluginConvention.class))
                         .map(JavaPluginConvention::getDocsDir)
@@ -37,6 +38,7 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
 
                 aggregateJavadoc.setDestinationDir(new File(docsDir, "aggregateJavadoc"));
             }
+
 
             List<Javadoc> javadocTasks = Stream.concat(
                     Stream.of(project),
@@ -81,8 +83,7 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
                     }
                 });
             });
-        });
-
+        }));
 
     }
 }

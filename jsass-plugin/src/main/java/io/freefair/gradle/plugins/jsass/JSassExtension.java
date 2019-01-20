@@ -47,31 +47,31 @@ public class JSassExtension {
 
     public JSassExtension(Project project) {
         indent = project.getObjects().property(String.class);
-        indent.set("  ");
+        indent.convention("  ");
 
         linefeed = project.getObjects().property(String.class);
-        linefeed.set(System.lineSeparator());
+        linefeed.convention(System.lineSeparator());
 
         omitSourceMapUrl = project.getObjects().property(Boolean.class);
-        omitSourceMapUrl.set(false);
+        omitSourceMapUrl.convention(false);
 
         outputStyle = project.getObjects().property(OutputStyle.class);
-        outputStyle.set(OutputStyle.NESTED);
+        outputStyle.convention(OutputStyle.NESTED);
 
         precision = project.getObjects().property(Integer.class);
-        precision.set(8);
+        precision.convention(8);
 
         sourceComments = project.getObjects().property(Boolean.class);
-        sourceComments.set(false);
+        sourceComments.convention(false);
 
         sourceMapContents = project.getObjects().property(Boolean.class);
-        sourceMapContents.set(false);
+        sourceMapContents.convention(false);
 
         sourceMapEmbed = project.getObjects().property(Boolean.class);
-        sourceMapEmbed.set(false);
+        sourceMapEmbed.convention(false);
 
         sourceMapEnabled = project.getObjects().property(Boolean.class);
-        sourceMapEnabled.set(true);
+        sourceMapEnabled.convention(true);
 
         ExtraPropertiesExtension extraProperties = new DslObject(this).getExtensions().getExtraProperties();
         for (OutputStyle value : OutputStyle.values()) {

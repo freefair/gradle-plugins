@@ -42,7 +42,7 @@ public class AjcAction implements Action<Task> {
         classpath = projectLayout.configurableFiles();
         aspectpath = projectLayout.configurableFiles();
         compilerArgs = providerFactory.listProperty(String.class);
-        enabled = providerFactory.property(Boolean.class).value(true);
+        enabled = providerFactory.property(Boolean.class).convention(true);
     }
 
     @Override

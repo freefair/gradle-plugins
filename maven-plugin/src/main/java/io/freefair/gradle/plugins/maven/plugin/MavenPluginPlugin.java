@@ -7,6 +7,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.language.jvm.tasks.ProcessResources;
 
@@ -24,24 +25,24 @@ public class MavenPluginPlugin implements Plugin<Project> {
 
         mavenPublishJavaPlugin.getPublication().getPom().setPackaging("maven-plugin");
 
-        GenerateMavenPom generateMavenPom = (GenerateMavenPom) project.getTasks().getByName("generatePomFileForMavenJavaPublication");
+        TaskProvider<GenerateMavenPom> generateMavenPom = project.getTasks().named("generatePomFileForMavenJavaPublication", GenerateMavenPom.class);
 
-        DescriptorGeneratorTask generateMavenPluginDescriptor = project.getTasks().create("generateMavenPluginDescriptor", DescriptorGeneratorTask.class);
+        TaskProvider<DescriptorGeneratorTask> descriptorGeneratorTaskProvider = project.getTasks().register("generateMavenPluginDescriptor", DescriptorGeneratorTask.class, generateMavenPluginDescriptor -> {
 
-        generateMavenPluginDescriptor.dependsOn(generateMavenPom);
-        generateMavenPluginDescriptor.getPomFile().set(generateMavenPom.getDestination());
+            generateMavenPluginDescriptor.dependsOn(generateMavenPom);
+            generateMavenPluginDescriptor.getPomFile().set(generateMavenPom.get().getDestination());
 
-        generateMavenPluginDescriptor.getOutputDirectory().set(
-                project.getLayout().getBuildDirectory().dir("maven-plugin")
-        );
+            generateMavenPluginDescriptor.getOutputDirectory().set(
+                    project.getLayout().getBuildDirectory().dir("maven-plugin")
+            );
 
-        SourceSet main = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName("main");
-        generateMavenPluginDescriptor.getSourceDirectories().from(main.getAllJava().getSourceDirectories());
-        JavaCompile javaCompile = (JavaCompile) project.getTasks().getByName(main.getCompileJavaTaskName());
-        generateMavenPluginDescriptor.getClassesDirectories().from(javaCompile);
+            SourceSet main = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName("main");
+            generateMavenPluginDescriptor.getSourceDirectories().from(main.getAllJava().getSourceDirectories());
+            JavaCompile javaCompile = (JavaCompile) project.getTasks().getByName(main.getCompileJavaTaskName());
+            generateMavenPluginDescriptor.getClassesDirectories().from(javaCompile);
+        });
 
-        ProcessResources processResources = (ProcessResources) project.getTasks().getByName(JavaPlugin.PROCESS_RESOURCES_TASK_NAME);
-        processResources.from(generateMavenPluginDescriptor);
-
+        project.getTasks().named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME, ProcessResources.class)
+                .configure(processResources -> processResources.from(descriptorGeneratorTaskProvider));
     }
 }

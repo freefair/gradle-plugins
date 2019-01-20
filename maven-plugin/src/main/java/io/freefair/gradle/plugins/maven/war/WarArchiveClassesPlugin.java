@@ -21,10 +21,10 @@ public class WarArchiveClassesPlugin implements Plugin<Project> {
             war.getConvention().getPlugins().put("archiveClasses", archiveClassesConvention);
 
             Jar warClassesJar = project.getTasks().create(war.getName() + "ClassesJar", Jar.class);
-            warClassesJar.getConventionMapping().map("baseName", war::getBaseName);
-            warClassesJar.getConventionMapping().map("appendix", war::getAppendix);
-            warClassesJar.getConventionMapping().map("version", war::getVersion);
-            warClassesJar.getConventionMapping().map("classifier", war::getClassifier);
+            warClassesJar.getArchiveBaseName().convention(war.getArchiveBaseName());
+            warClassesJar.getArchiveAppendix().convention(war.getArchiveAppendix());
+            warClassesJar.getArchiveVersion().convention(war.getArchiveVersion());
+            warClassesJar.getArchiveClassifier().convention(war.getArchiveClassifier());
 
             project.afterEvaluate(p -> {
 
