@@ -39,8 +39,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
         this.project = project;
         project.getPluginManager().apply(WarPlugin.class);
 
-        project.getTasks().withType(War.class, warTask -> {
-
+        project.getTasks().withType(War.class).configureEach(warTask -> {
             NamedDomainObjectContainer<WarOverlay> warOverlays = project.container(WarOverlay.class, name -> new WarOverlay(name, warTask));
             warTask.getExtensions().add("overlays", warOverlays);
 
