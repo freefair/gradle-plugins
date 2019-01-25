@@ -14,7 +14,7 @@ public class WarArchiveClassesPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
 
-        project.getTasks().withType(War.class).configureEach(war -> {
+        project.getTasks().withType(War.class, war -> {
 
             WarArchiveClassesConvention archiveClassesConvention = new WarArchiveClassesConvention();
 
