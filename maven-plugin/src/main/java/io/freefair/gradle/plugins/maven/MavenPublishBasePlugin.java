@@ -33,15 +33,15 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
             publication.from(getSoftwareComponent());
 
             project.getPlugins().withType(SourcesJarPlugin.class, sourcesJarPlugin ->
-                    publication.artifact(sourcesJarPlugin.getSourcesJar())
+                    publication.artifact(sourcesJarPlugin.getSourcesJar().get())
             );
 
             project.getPlugins().withType(JavadocJarPlugin.class, javadocJarPlugin -> {
                 if (javadocJarPlugin.getJavadocJar() != null) {
-                    publication.artifact(javadocJarPlugin.getJavadocJar());
+                    publication.artifact(javadocJarPlugin.getJavadocJar().get());
                 }
                 if (javadocJarPlugin.getAggregateJavadocJar() != null) {
-                    publication.artifact(javadocJarPlugin.getAggregateJavadocJar());
+                    publication.artifact(javadocJarPlugin.getAggregateJavadocJar().get());
                 }
             });
 
