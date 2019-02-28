@@ -8,6 +8,7 @@ import org.gradle.api.component.SoftwareComponent;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
@@ -32,17 +33,16 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
         project.afterEvaluate(p -> {
             publication.from(getSoftwareComponent());
 
-            project.getPlugins().withType(SourcesJarPlugin.class, sourcesJarPlugin ->
-                    publication.artifact(sourcesJarPlugin.getSourcesJar().get())
-            );
+            project.getPlugins().withType(SourcesJarPlugin.class, sourcesJarPlugin -> {
+                Jar sourcesJar = sourcesJarPlugin.getSourcesJar().get();
+                String classifier = sourcesJar.getArchiveClassifier().getOrElse("sources");
+                publication.artifact(sourcesJar, config -> config.setClassifier(classifier));
+            });
 
             project.getPlugins().withType(JavadocJarPlugin.class, javadocJarPlugin -> {
-                if (javadocJarPlugin.getJavadocJar() != null) {
-                    publication.artifact(javadocJarPlugin.getJavadocJar().get());
-                }
-                if (javadocJarPlugin.getAggregateJavadocJar() != null) {
-                    publication.artifact(javadocJarPlugin.getAggregateJavadocJar().get());
-                }
+                Jar javadocJar = javadocJarPlugin.getJavadocJar().get();
+                String classifier = javadocJar.getArchiveClassifier().getOrElse("javadoc");
+                publication.artifact(javadocJar, config -> config.setClassifier(classifier));
             });
 
             project.getPlugins().withType(SigningPlugin.class, signingPlugin -> project.getExtensions()
