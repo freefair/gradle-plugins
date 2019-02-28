@@ -26,7 +26,7 @@ public class SourcesJarPlugin implements Plugin<Project> {
         project.getPluginManager().withPlugin("java", appliedPlugin -> {
             sourcesJar = project.getTasks().register("sourcesJar", Jar.class, sourcesJar -> {
                 sourcesJar.setDescription("Assembles a jar archive containing the sources.");
-                sourcesJar.getArchiveClassifier().convention("sources");
+                sourcesJar.getArchiveClassifier().set("sources");
                 sourcesJar.setGroup(BasePlugin.BUILD_GROUP);
 
                 sourcesJar.dependsOn(project.getTasks().named(JavaPlugin.CLASSES_TASK_NAME));

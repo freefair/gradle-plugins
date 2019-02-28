@@ -35,14 +35,12 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
 
             project.getPlugins().withType(SourcesJarPlugin.class, sourcesJarPlugin -> {
                 Jar sourcesJar = sourcesJarPlugin.getSourcesJar().get();
-                String classifier = sourcesJar.getArchiveClassifier().getOrElse("sources");
-                publication.artifact(sourcesJar, config -> config.setClassifier(classifier));
+                publication.artifact(sourcesJar);
             });
 
             project.getPlugins().withType(JavadocJarPlugin.class, javadocJarPlugin -> {
                 Jar javadocJar = javadocJarPlugin.getJavadocJar().get();
-                String classifier = javadocJar.getArchiveClassifier().getOrElse("javadoc");
-                publication.artifact(javadocJar, config -> config.setClassifier(classifier));
+                publication.artifact(javadocJar);
             });
 
             project.getPlugins().withType(SigningPlugin.class, signingPlugin -> project.getExtensions()
