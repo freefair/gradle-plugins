@@ -31,7 +31,7 @@ public class LombokPlugin implements Plugin<Project> {
 
         lombokConfiguration = project.getConfigurations().create("lombok");
         lombokConfiguration.defaultDependencies(dependencySet -> dependencySet.add(
-                project.getDependencies().create("org.projectlombok:lombok:" + lombokExtension.getVersion())
+                project.getDependencies().create("org.projectlombok:lombok:" + lombokExtension.getVersion().get())
         ));
 
         generateLombokConfig = project.getTasks().register("generateLombokConfig", GenerateLombokConfig.class, genConfig -> {
