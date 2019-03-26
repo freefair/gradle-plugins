@@ -3,8 +3,8 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    compile "com.squareup.okhttp3:okhttp:3.10.0"
-    compile "com.squareup.okhttp3:logging-interceptor:3.10.0"
+    compile "com.squareup.okhttp3:okhttp:3.14.0"
+    compile "com.squareup.okhttp3:logging-interceptor:3.14.0"
 
     compile 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.0'
     compile 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.0'
