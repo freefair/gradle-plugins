@@ -5,7 +5,6 @@ import io.freefair.gradle.plugins.maven.plugin.wrappers.MojoAnnotationScannerWra
 import io.freefair.gradle.plugins.maven.plugin.wrappers.PlexusLoggerWrapper;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.factory.DefaultArtifactFactory;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
@@ -105,7 +104,7 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
         mojoAnnotationsScanner.setClassesDirectories(classesDirectories);
 
         ArtifactResolver artifactResolver = new DefaultArtifactResolver();
-        ArtifactFactory artifactFactory = new DefaultArtifactFactory();
+        DefaultArtifactFactory artifactFactory = new DefaultArtifactFactory();
         ArchiverManager archiverManager = new DefaultArchiverManager();
 
         Map<String, Object> values = new HashMap<>();

@@ -17,8 +17,7 @@ public class AspectJBasePlugin implements Plugin<Project> {
 
     @Override
     public void apply(@Nonnull Project project) {
-        aspectjExtension = project.getExtensions().create("aspectj", AspectJExtension.class, project);
-        aspectjExtension.getVersion().set("1.9.2");
+        aspectjExtension = project.getExtensions().create("aspectj", AspectJExtension.class);
 
         aspectjConfiguration = project.getConfigurations().create("aspectj");
 

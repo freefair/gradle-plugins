@@ -98,6 +98,7 @@ public class LombokPlugin implements Plugin<Project> {
                 ));
     }
 
+    @Deprecated
     private void configureForFindbugs(JavaPluginConvention javaPluginConvention) {
         lombokExtension.getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
 

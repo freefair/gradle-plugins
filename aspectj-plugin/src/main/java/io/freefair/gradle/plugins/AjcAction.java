@@ -7,7 +7,6 @@ import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
@@ -38,11 +37,11 @@ public class AjcAction implements Action<Task> {
     private final Property<Boolean> enabled;
 
     @Inject
-    public AjcAction(ObjectFactory providerFactory, ProjectLayout projectLayout) {
-        classpath = projectLayout.configurableFiles();
-        aspectpath = projectLayout.configurableFiles();
-        compilerArgs = providerFactory.listProperty(String.class);
-        enabled = providerFactory.property(Boolean.class).convention(true);
+    public AjcAction(ObjectFactory objectFactory) {
+        classpath = objectFactory.fileCollection();
+        aspectpath = objectFactory.fileCollection();
+        compilerArgs = objectFactory.listProperty(String.class);
+        enabled = objectFactory.property(Boolean.class).convention(true);
     }
 
     @Override
