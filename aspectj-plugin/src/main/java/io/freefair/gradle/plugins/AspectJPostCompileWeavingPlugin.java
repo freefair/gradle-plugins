@@ -1,11 +1,17 @@
 package io.freefair.gradle.plugins;
 
-import org.gradle.api.*;
+import org.gradle.api.NonNullApi;
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.plugins.*;
+import org.gradle.api.plugins.GroovyPlugin;
+import org.gradle.api.plugins.JavaBasePlugin;
+import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.scala.ScalaBasePlugin;
 import org.gradle.api.tasks.ClasspathNormalizer;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.GroovyCompile;
 import org.gradle.api.tasks.compile.JavaCompile;
@@ -15,47 +21,50 @@ import org.gradle.api.tasks.scala.ScalaCompile;
 public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
     private Project project;
+    private AspectJBasePlugin aspectjBasePlugin;
 
     @Override
     public void apply(Project project) {
         this.project = project;
-        AspectJBasePlugin aspectjBasePlugin = project.getPlugins().apply(AspectJBasePlugin.class);
+        aspectjBasePlugin = project.getPlugins().apply(AspectJBasePlugin.class);
 
         project.getPlugins().apply(JavaBasePlugin.class);
 
-        project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet -> {
-            project.afterEvaluate(p ->
-                    p.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
-            );
+        project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(this::configureSourceSet);
+    }
 
-            AspectJSourceSet aspectJSourceSet = project.getObjects().newInstance(AspectJSourceSet.class);
-            new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectJSourceSet);
+    private void configureSourceSet(SourceSet sourceSet) {
+        project.afterEvaluate(p ->
+                p.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
+        );
 
-            aspectJSourceSet.setAspectConfigurationName(sourceSet.getTaskName(null, "aspect"));
-            Configuration aspectpath = project.getConfigurations().create(aspectJSourceSet.getAspectConfigurationName());
-            aspectJSourceSet.setAspectPath(aspectpath);
+        AspectJSourceSet aspectJSourceSet = project.getObjects().newInstance(AspectJSourceSet.class);
+        new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectJSourceSet);
 
-            project.getConfigurations().getByName(sourceSet.getCompileConfigurationName())
-                    .extendsFrom(aspectpath);
+        aspectJSourceSet.setAspectConfigurationName(sourceSet.getTaskName(null, "aspect"));
+        Configuration aspectpath = project.getConfigurations().create(aspectJSourceSet.getAspectConfigurationName());
+        aspectJSourceSet.setAspectPath(aspectpath);
 
-            project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
-                JavaCompile compileJava = (JavaCompile) project.getTasks().getByName(sourceSet.getCompileJavaTaskName());
+        project.getConfigurations().getByName(sourceSet.getCompileConfigurationName())
+                .extendsFrom(aspectpath);
 
-                enhanceWithWeavingAction(compileJava, aspectpath, aspectjBasePlugin.getAspectjConfiguration());
-            });
+        project.getPlugins().withType(JavaPlugin.class, javaPlugin ->
+                project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava ->
+                        enhanceWithWeavingAction(compileJava, aspectpath, aspectjBasePlugin.getAspectjConfiguration())
+                )
+        );
 
-            project.getPlugins().withType(GroovyPlugin.class, groovyPlugin -> {
-                GroovyCompile compileGroovy = (GroovyCompile) project.getTasks().getByName(sourceSet.getCompileTaskName("groovy"));
+        project.getPlugins().withType(GroovyPlugin.class, groovyPlugin ->
+                project.getTasks().named(sourceSet.getCompileTaskName("groovy"), GroovyCompile.class, compileGroovy ->
+                        enhanceWithWeavingAction(compileGroovy, aspectpath, aspectjBasePlugin.getAspectjConfiguration())
+                )
+        );
 
-                enhanceWithWeavingAction(compileGroovy, aspectpath, aspectjBasePlugin.getAspectjConfiguration());
-            });
-
-            project.getPlugins().withType(ScalaBasePlugin.class, scalaBasePlugin -> {
-                ScalaCompile compileScala = (ScalaCompile) project.getTasks().getByName(sourceSet.getCompileTaskName("scala"));
-
-                enhanceWithWeavingAction(compileScala, aspectpath, aspectjBasePlugin.getAspectjConfiguration());
-            });
-        });
+        project.getPlugins().withType(ScalaBasePlugin.class, scalaBasePlugin ->
+                project.getTasks().named(sourceSet.getCompileTaskName("scala"), ScalaCompile.class, compileScala ->
+                        enhanceWithWeavingAction(compileScala, aspectpath, aspectjBasePlugin.getAspectjConfiguration())
+                )
+        );
     }
 
     private void enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration aspectjConfiguration) {

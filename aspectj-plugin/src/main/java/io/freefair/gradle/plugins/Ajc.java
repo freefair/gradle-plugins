@@ -24,7 +24,7 @@ public class Ajc extends DefaultTask {
 
     @Classpath
     @InputFiles
-    private final ConfigurableFileCollection aspectjClasspath = getProject().getLayout().configurableFiles();
+    private final ConfigurableFileCollection aspectjClasspath = getProject().getObjects().fileCollection();
 
     /**
      * Accept as source bytecode any .class files in the .jar files or directories on Path.
@@ -32,7 +32,7 @@ public class Ajc extends DefaultTask {
      */
     @Classpath
     @InputFiles
-    private final ConfigurableFileCollection inpath = getProject().getLayout().configurableFiles();
+    private final ConfigurableFileCollection inpath = getProject().getObjects().fileCollection();
 
     /**
      * Weave binary aspects from jar files and directories on path into all sources.
@@ -42,7 +42,7 @@ public class Ajc extends DefaultTask {
      */
     @Classpath
     @InputFiles
-    private final ConfigurableFileCollection aspectpath = getProject().getLayout().configurableFiles();
+    private final ConfigurableFileCollection aspectpath = getProject().getObjects().fileCollection();
 
     /**
      * Put output classes in zip file output.jar.
@@ -83,7 +83,7 @@ public class Ajc extends DefaultTask {
      */
     @CompileClasspath
     @InputFiles
-    private final ConfigurableFileCollection classpath = getProject().getLayout().configurableFiles();
+    private final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
 
     /**
      * Override location of VM's bootclasspath for purposes of evaluating types when compiling.
@@ -92,14 +92,14 @@ public class Ajc extends DefaultTask {
     @Optional
     @CompileClasspath
     @InputFiles
-    private final ConfigurableFileCollection bootclasspath = getProject().getLayout().configurableFiles();
+    private final ConfigurableFileCollection bootclasspath = getProject().getObjects().fileCollection();
 
     /**
      * Override location of VM's extension directories for purposes of evaluating types when compiling.
      * Path is a single argument containing a list of paths to directories, delimited by the platform-specific path delimiter.
      */
     @InputFiles
-    private final ConfigurableFileCollection extdirs = getProject().getLayout().configurableFiles();
+    private final ConfigurableFileCollection extdirs = getProject().getObjects().fileCollection();
 
     /**
      * Specify where to place generated .class files.
@@ -254,7 +254,7 @@ public class Ajc extends DefaultTask {
 
     @Optional
     @InputFiles
-    private final ConfigurableFileCollection files = getProject().getLayout().configurableFiles();
+    private final ConfigurableFileCollection files = getProject().getObjects().fileCollection();
 
     @TaskAction
     public void ajc() throws IOException {
