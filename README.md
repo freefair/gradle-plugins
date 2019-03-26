@@ -5,3 +5,11 @@
 
 Look here for a list of all available plugins:
 https://plugins.gradle.org/search?term=io.freefair
+
+# Compatibility Matrix
+
+|Plugin Version |Gradle Version |Java Version
+|---            |---            |---
+|3.2.x          |5.3+           |8 - 11
+|3.x            |5.1+           |8 - 11
+|2.x            |4.x            |8 - 11
