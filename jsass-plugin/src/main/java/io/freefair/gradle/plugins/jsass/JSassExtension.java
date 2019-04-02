@@ -3,10 +3,12 @@ package io.freefair.gradle.plugins.jsass;
 import io.bit3.jsass.OutputStyle;
 import lombok.Getter;
 import lombok.Setter;
-import org.gradle.api.Project;
 import org.gradle.api.internal.plugins.DslObject;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Property;
+
+import javax.inject.Inject;
 
 @Getter
 @Setter
@@ -45,32 +47,33 @@ public class JSassExtension {
 
     private final Property<Boolean> sourceMapEnabled;
 
-    public JSassExtension(Project project) {
-        indent = project.getObjects().property(String.class);
+    @Inject
+    public JSassExtension(ObjectFactory objectFactory) {
+        indent = objectFactory.property(String.class);
         indent.convention("  ");
 
-        linefeed = project.getObjects().property(String.class);
+        linefeed = objectFactory.property(String.class);
         linefeed.convention(System.lineSeparator());
 
-        omitSourceMapUrl = project.getObjects().property(Boolean.class);
+        omitSourceMapUrl = objectFactory.property(Boolean.class);
         omitSourceMapUrl.convention(false);
 
-        outputStyle = project.getObjects().property(OutputStyle.class);
+        outputStyle = objectFactory.property(OutputStyle.class);
         outputStyle.convention(OutputStyle.NESTED);
 
-        precision = project.getObjects().property(Integer.class);
+        precision = objectFactory.property(Integer.class);
         precision.convention(8);
 
-        sourceComments = project.getObjects().property(Boolean.class);
+        sourceComments = objectFactory.property(Boolean.class);
         sourceComments.convention(false);
 
-        sourceMapContents = project.getObjects().property(Boolean.class);
+        sourceMapContents = objectFactory.property(Boolean.class);
         sourceMapContents.convention(false);
 
-        sourceMapEmbed = project.getObjects().property(Boolean.class);
+        sourceMapEmbed = objectFactory.property(Boolean.class);
         sourceMapEmbed.convention(false);
 
-        sourceMapEnabled = project.getObjects().property(Boolean.class);
+        sourceMapEnabled = objectFactory.property(Boolean.class);
         sourceMapEnabled.convention(true);
 
         ExtraPropertiesExtension extraProperties = new DslObject(this).getExtensions().getExtraProperties();

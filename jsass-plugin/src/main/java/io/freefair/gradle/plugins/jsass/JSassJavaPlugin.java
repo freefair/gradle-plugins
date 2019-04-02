@@ -6,8 +6,8 @@ import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.language.jvm.tasks.ProcessResources;
 
 import java.io.File;
 
@@ -35,7 +35,7 @@ public class JSassJavaPlugin implements Plugin<Project> {
                 sassCompile.setDescription("Compile sass and scss files for the " + sourceSet.getName() + " source set");
             });
 
-            project.getTasks().named(sourceSet.getProcessResourcesTaskName(), Copy.class)
+            project.getTasks().named(sourceSet.getProcessResourcesTaskName(), ProcessResources.class)
                     .configure(processResources -> processResources.from(sassCompileTaskProvider));
         });
     }

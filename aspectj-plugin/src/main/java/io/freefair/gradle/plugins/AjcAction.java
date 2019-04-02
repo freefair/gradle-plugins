@@ -10,6 +10,7 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.api.tasks.compile.GroovyCompile;
@@ -42,6 +43,28 @@ public class AjcAction implements Action<Task> {
         aspectpath = objectFactory.fileCollection();
         compilerArgs = objectFactory.listProperty(String.class);
         enabled = objectFactory.property(Boolean.class).convention(true);
+    }
+
+
+    void addToTask(Task task) {
+        task.doLast("ajc", this);
+        task.getExtensions().add("ajc", this);
+
+        task.getInputs().files(this.getClasspath())
+                .withPropertyName("aspectjClasspath")
+                .withNormalizer(ClasspathNormalizer.class)
+                .optional(false);
+
+        task.getInputs().files(this.getAspectpath())
+                .withPropertyName("aspectpath")
+                .withNormalizer(ClasspathNormalizer.class)
+                .optional(true);
+
+        task.getInputs().property("ajcArgs", this.getCompilerArgs())
+                .optional(true);
+
+        task.getInputs().property("ajcEnabled", this.getEnabled())
+                .optional(true);
     }
 
     @Override

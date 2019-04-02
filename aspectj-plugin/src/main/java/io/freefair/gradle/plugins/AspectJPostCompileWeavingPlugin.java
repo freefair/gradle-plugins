@@ -70,27 +70,13 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
     private void enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration aspectjConfiguration) {
         AjcAction action = project.getObjects().newInstance(AjcAction.class);
 
-        abstractCompile.doLast("ajc", action);
-        abstractCompile.getExtensions().add("ajc", action);
 
         action.getAspectpath().from(aspectpath);
         action.getClasspath().from(aspectjConfiguration);
 
-        abstractCompile.getInputs().files(action.getClasspath())
-                .withPropertyName("aspectjClasspath")
-                .withNormalizer(ClasspathNormalizer.class)
-                .optional(false);
+        action.addToTask(abstractCompile);
 
-        abstractCompile.getInputs().files(action.getAspectpath())
-                .withPropertyName("aspectpath")
-                .withNormalizer(ClasspathNormalizer.class)
-                .optional(true);
 
-        abstractCompile.getInputs().property("ajcArgs", action.getCompilerArgs())
-                .optional(true);
-
-        abstractCompile.getInputs().property("ajcEnabled", action.getEnabled())
-                .optional(true);
     }
 
 }
