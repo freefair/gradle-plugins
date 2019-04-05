@@ -6,7 +6,7 @@ Available from plugins.gradle.org: https://plugins.gradle.org/search?term=io.fre
 
 ### `io.freefair.aspectj.post-compile-weaving `
 
-Enhances the `compile` tasks of the `java`, `groocy` and `scala` plugins to run `ajc` on the compiled classes.
+Enhances the `compile` tasks of the `java`, `groovy` and `scala` plugins to run `ajc` on the compiled classes.
 
 ### `io.freefair.aspectj.compile-time-weaving`
 
