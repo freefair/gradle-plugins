@@ -138,17 +138,17 @@ public class Delombok extends SourceTask {
         }
 
         if (target.isPresent()) {
-            args.add("--target=" + target.getAsFile().get().toString().replace('\\', '/'));
+            args.add("--target=" + target.getAsFile().get().toString().replaceAll("\\\\", "\\\\\\\\"));
         }
 
         if (!classpath.isEmpty()) {
-            args.add("--classpath=" + getClasspath().getAsPath());
+            args.add("--classpath=" + getClasspath().getAsPath().replaceAll("\\\\", "\\\\\\\\"));
         }
         if (!sourcepath.isEmpty()) {
-            args.add("--sourcepath=" + getSourcepath().getAsPath());
+            args.add("--sourcepath=" + getSourcepath().getAsPath().replaceAll("\\\\", "\\\\\\\\"));
         }
         if (!bootclasspath.isEmpty()) {
-            args.add("--bootclasspath=" + getBootclasspath().getAsPath());
+            args.add("--bootclasspath=" + getBootclasspath().getAsPath().replaceAll("\\\\", "\\\\\\\\"));
         }
 
         if (nocopy.getOrElse(false)) {
