@@ -138,17 +138,17 @@ public class Delombok extends SourceTask {
         }
 
         if (target.isPresent()) {
-            args.add("--target=" + target.getAsFile().get().toString().replaceAll("\\\\", "\\\\\\\\"));
+            args.add("--target=" + escape(getTarget().getAsFile().get().getAbsolutePath()));
         }
 
         if (!classpath.isEmpty()) {
-            args.add("--classpath=" + getClasspath().getAsPath().replaceAll("\\\\", "\\\\\\\\"));
+            args.add("--classpath=" + escape(getClasspath().getAsPath()));
         }
         if (!sourcepath.isEmpty()) {
-            args.add("--sourcepath=" + getSourcepath().getAsPath().replaceAll("\\\\", "\\\\\\\\"));
+            args.add("--sourcepath=" + escape(getSourcepath().getAsPath()));
         }
         if (!bootclasspath.isEmpty()) {
-            args.add("--bootclasspath=" + getBootclasspath().getAsPath().replaceAll("\\\\", "\\\\\\\\"));
+            args.add("--bootclasspath=" + escape(getBootclasspath().getAsPath()));
         }
 
         if (nocopy.getOrElse(false)) {
@@ -171,5 +171,9 @@ public class Delombok extends SourceTask {
                     .collect(Collectors.toList())
             );
         });
+    }
+
+    private static String escape(String path) {
+        return path.replace("\\", "\\\\");
     }
 }
