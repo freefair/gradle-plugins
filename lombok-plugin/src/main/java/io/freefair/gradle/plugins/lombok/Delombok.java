@@ -138,7 +138,7 @@ public class Delombok extends SourceTask {
         }
 
         if (target.isPresent()) {
-            args.add("--target=" + target.getAsFile().get());
+            args.add("--target=" + target.getAsFile().get().toString().replace('\\', '/'));
         }
 
         if (!classpath.isEmpty()) {
