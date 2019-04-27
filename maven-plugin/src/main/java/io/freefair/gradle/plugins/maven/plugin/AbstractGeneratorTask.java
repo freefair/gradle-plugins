@@ -89,8 +89,10 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
         );
     }
 
+    @Internal
     protected abstract Generator getGenerator();
 
+    @Internal
     protected abstract File getBaseDir();
 
     private MojoScanner getMojoScanner() {

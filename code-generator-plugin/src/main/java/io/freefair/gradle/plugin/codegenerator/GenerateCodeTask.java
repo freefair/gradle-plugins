@@ -16,13 +16,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.MapProperty;
-import org.gradle.api.tasks.Classpath;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputDirectory;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
 
@@ -34,6 +28,7 @@ import java.util.stream.Collectors;
 @Setter
 public class GenerateCodeTask extends DefaultTask {
 
+    @Internal
     private final WorkerExecutor workerExecutor;
 
     @InputDirectory
