@@ -1,0 +1,32 @@
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+
+dependencies {
+    compile project(':maven-plugin')
+
+    compile 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.0'
+    compile 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.0'
+    compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.0'
+
+    testCompile project(":test-common")
+}
+
+gradlePlugin {
+    plugins {
+        mavenPlugin {
+            id = "io.freefair.maven-plugin"
+            implementationClass = "io.freefair.gradle.plugins.maven.plugin.MavenPluginPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    plugins {
+        mavenPlugin {
+            displayName = "maven-plugin Plugin"
+            description = "A Gradle plugin for building maven plugins"
+            tags = ["maven-plugin"]
+        }
+    }
+}

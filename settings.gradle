@@ -2,6 +2,7 @@ rootProject.name = 'gradle-plugins'
 
 include "test-common"
 include "maven-plugin"
+include "maven-plugin-plugin"
 include "lombok-plugin"
 include "jsass-plugin"
 include "aspectj-plugin"

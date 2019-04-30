@@ -6,9 +6,7 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp:3.14.0"
     compile "com.squareup.okhttp3:logging-interceptor:3.14.0"
 
-    compile 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.0'
-    compile 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.0'
-    compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.0'
+    compile 'org.apache.maven:maven-model:3.6.1'
 
     testCompile project(":test-common")
 }
@@ -74,10 +72,6 @@ gradlePlugin {
         optional {
             id = "io.freefair.maven-optional"
             implementationClass = "io.freefair.gradle.plugins.maven.OptionalPlugin"
-        }
-        mavenPlugin {
-            id = "io.freefair.maven-plugin"
-            implementationClass = "io.freefair.gradle.plugins.maven.plugin.MavenPluginPlugin"
         }
         centralValidatePoms {
             id = "io.freefair.maven-central.validate-poms"
@@ -162,11 +156,6 @@ pluginBundle {
             displayName = "Maven optional Plugin"
             description = "Adds a maven-like 'optional' configuration to your gradle build"
             tags = ["maven", "optional"]
-        }
-        mavenPlugin {
-            displayName = "maven-plugin Plugin"
-            description = "A Gradle plugin for building maven plugins"
-            tags = ["maven-plugin"]
         }
         centralValidatePoms {
             displayName = "Maven Central POM validation plugin"
