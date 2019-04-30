@@ -1,7 +1,8 @@
-package io.freefair.gradle.plugins.lombok;
+package io.freefair.gradle.plugins.lombok.tasks;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileTree;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class Delombok extends SourceTask {
+public class Delombok extends DefaultTask implements LombokTask {
 
     /**
      * Print the name of each file as it is being delombok-ed.

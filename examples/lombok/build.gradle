@@ -1,3 +1,6 @@
+import io.freefair.gradle.plugins.lombok.tasks.LombokApiJar
+import io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar
+
 apply plugin: "java"
 apply plugin: "io.freefair.lombok"
 
@@ -9,3 +12,6 @@ dependencies {
 lombok {
     config['lombok.log.fieldName'] = 'LOG'
 }
+
+task lombokApiJar (type: LombokApiJar)
+task lombokRuntimeJar (type: LombokRuntimeJar)

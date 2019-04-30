@@ -1,9 +1,10 @@
 package io.freefair.gradle.plugins.lombok;
 
+import io.freefair.gradle.plugins.lombok.tasks.Delombok;
+import io.freefair.gradle.plugins.lombok.tasks.GenerateLombokConfig;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
@@ -18,24 +19,19 @@ import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 @Getter
 public class LombokPlugin implements Plugin<Project> {
 
-    private LombokExtension lombokExtension;
-    private Configuration lombokConfiguration;
+    private LombokBasePlugin lombokBasePlugin;
     private Project project;
     private TaskProvider<GenerateLombokConfig> generateLombokConfig;
 
     @Override
     public void apply(Project project) {
         this.project = project;
-        lombokExtension = project.getExtensions().create("lombok", LombokExtension.class);
-        lombokExtension.getConfig().put("config.stopBubbling", "true");
 
-        lombokConfiguration = project.getConfigurations().create("lombok");
-        lombokConfiguration.defaultDependencies(dependencySet -> dependencySet.add(
-                project.getDependencies().create("org.projectlombok:lombok:" + lombokExtension.getVersion().get())
-        ));
+        lombokBasePlugin = project.getPlugins().apply(LombokBasePlugin.class);
+        lombokBasePlugin.getLombokExtension().getConfig().put("config.stopBubbling", "true");
 
         generateLombokConfig = project.getTasks().register("generateLombokConfig", GenerateLombokConfig.class, genConfig -> {
-            genConfig.getProperties().convention(lombokExtension.getConfig());
+            genConfig.getProperties().convention(lombokBasePlugin.getLombokExtension().getConfig());
             genConfig.setGroup("lombok");
         });
 
@@ -49,8 +45,8 @@ public class LombokPlugin implements Plugin<Project> {
         JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
 
         javaPluginConvention.getSourceSets().all(sourceSet -> {
-            project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(lombokConfiguration);
-            project.getConfigurations().getByName(sourceSet.getAnnotationProcessorConfigurationName()).extendsFrom(lombokConfiguration);
+            project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(lombokBasePlugin.getLombokConfiguration());
+            project.getConfigurations().getByName(sourceSet.getAnnotationProcessorConfigurationName()).extendsFrom(lombokBasePlugin.getLombokConfiguration());
 
             TaskProvider<Delombok> delombokTaskProvider = project.getTasks().register(sourceSet.getTaskName("delombok", ""), Delombok.class, delombok -> {
                 delombok.setDescription("Runs delombok on the " + sourceSet.getName() + " source-set");
@@ -88,7 +84,7 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void configureForSpotbugs(JavaPluginConvention javaPluginConvention) {
-        lombokExtension.getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
+        lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
 
         CodeQualityExtension spotbugsExtension = (CodeQualityExtension) project.getExtensions().getByName("spotbugs");
         javaPluginConvention.getSourceSets().all(sourceSet ->
@@ -100,7 +96,7 @@ public class LombokPlugin implements Plugin<Project> {
 
     @Deprecated
     private void configureForFindbugs(JavaPluginConvention javaPluginConvention) {
-        lombokExtension.getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
+        lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
 
         FindBugsExtension findBugsExtension = project.getExtensions().getByType(FindBugsExtension.class);
         javaPluginConvention.getSourceSets().all(sourceSet ->
@@ -111,11 +107,10 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void configureForJacoco() {
-        lombokExtension.getConfig().put("lombok.addLombokGeneratedAnnotation", "true");
+        lombokBasePlugin.getLombokExtension().getConfig().put("lombok.addLombokGeneratedAnnotation", "true");
     }
 
     private void configureDelombokDefaults(Delombok delombok) {
-        delombok.getLombokClasspath().from(lombokConfiguration);
         delombok.setGroup("lombok");
         delombok.getFormat().put("pretty", null);
     }
