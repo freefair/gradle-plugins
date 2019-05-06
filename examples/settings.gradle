@@ -13,3 +13,5 @@ include ":aspectj:aspect"
 include ":aspectj:weaving"
 
 include ":lombok"
+
+include ":javadoc"

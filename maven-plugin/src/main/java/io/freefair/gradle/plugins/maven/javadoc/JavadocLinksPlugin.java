@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.maven.javadoc;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -11,6 +12,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.UnionFileCollection;
 import org.gradle.api.logging.Logger;
@@ -18,8 +20,10 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,8 +47,10 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         );
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
+        Cache cache = new Cache(new File(project.getBuildDir(), "tmp/" + getClass().getSimpleName()), 4 * 1024 * 1024);
         okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
+                .cache(cache)
                 .build();
 
         project.afterEvaluate(p -> {
@@ -66,46 +72,32 @@ public class JavadocLinksPlugin implements Plugin<Project> {
                             if (wellKnownLink != null) {
                                 javadoc.getLogger().info("Using well known link '{}' for '{}:{}:{}'", wellKnownLink, group, artifact, version);
                                 return wellKnownLink;
-                            } else {
+                            }
+                            else {
                                 String javadocIoLink = String.format("https://static.javadoc.io/%s/%s/%s/", group, artifact, version);
                                 if (checkLink(javadocIoLink)) {
                                     javadoc.getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
                                     return javadocIoLink;
-                                } else {
+                                }
+                                else {
                                     return null;
                                 }
                             }
                         })
                         .filter(Objects::nonNull)
                         .forEach(link -> addLink(javadoc, link));
-
-                boolean usedJavadocIo = getLinks(javadoc).stream()
-                        .anyMatch(link -> link.startsWith("https://static.javadoc.io"));
-
-                if (usedJavadocIo && javadoc.getOptions().getJFlags().stream().noneMatch(flag -> flag.contains("http.agent"))) {
-                    javadoc.getOptions().jFlags("-Dhttp.agent=" + System.currentTimeMillis());
-                }
             });
         });
     }
 
-    private static final Map<String, Boolean> javadocIoLinkCache = new HashMap<>();
-
     private boolean checkLink(String link) {
-        if (javadocIoLinkCache.containsKey(link)) {
-            return javadocIoLinkCache.get(link);
-        }
-
         Request request = new Request.Builder()
                 .url(link + "package-list")
-                .head()
-                .header("User-Agent", String.valueOf(System.nanoTime()))
+                .get()
                 .build();
 
         try (Response response = okHttpClient.newCall(request).execute()) {
-            boolean successful = response.isSuccessful();
-            javadocIoLinkCache.put(link, successful);
-            return successful;
+            return response.isSuccessful();
         } catch (IOException e) {
             project.getLogger().warn("Failed to access javadoc.io: {}", e.getLocalizedMessage(), e);
             return false;
@@ -122,18 +114,11 @@ public class JavadocLinksPlugin implements Plugin<Project> {
             if (links == null || !links.contains(link)) {
                 logger.debug("Adding '{}' to {}", link, javadoc);
                 docletOptions.links(link);
-            } else {
+            }
+            else {
                 logger.info("Not adding '{}' to {} because it's already present", link, javadoc);
             }
         }
-    }
-
-    private List<String> getLinks(Javadoc javadoc) {
-        MinimalJavadocOptions options = javadoc.getOptions();
-        if (options instanceof StandardJavadocDocletOptions) {
-            return ((StandardJavadocDocletOptions) options).getLinks();
-        }
-        return Collections.emptyList();
     }
 
     private String findWellKnownLink(String group, String artifact, String version) {
@@ -206,24 +191,38 @@ public class JavadocLinksPlugin implements Plugin<Project> {
             return "https://docs.joinfaces.org/" + version + "/api/";
         }
 
+        if (group.startsWith("org.apache.tomcat")) {
+            return "https://tomcat.apache.org/tomcat-" + version.substring(0, 3) + "-doc/api/";
+        }
+
         return null;
     }
 
     private Stream<Configuration> findConfigurations(FileCollection classpath) {
         if (classpath instanceof Configuration) {
             return Stream.of((Configuration) classpath);
-        } else if (classpath instanceof UnionFileCollection) {
+        }
+        else if (classpath instanceof UnionFileCollection) {
             return ((UnionFileCollection) classpath).getSources()
                     .stream()
                     .flatMap(this::findConfigurations);
+        }
+        else if (classpath instanceof ConfigurableFileCollection) {
+            return ((ConfigurableFileCollection) classpath).getFrom()
+                    .stream()
+                    .filter(FileCollection.class::isInstance)
+                    .map(FileCollection.class::cast)
+                    .flatMap(this::findConfigurations);
+
         }
         return Stream.empty();
     }
 
     private String getJavaSeLink(JavaVersion javaVersion) {
         if (javaVersion.isJava11Compatible()) {
-            return "https://docs.oracle.com/javase/10/docs/api/";
-        } else {
+            return "https://docs.oracle.com/en/java/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
+        }
+        else {
             return "https://docs.oracle.com/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
         }
     }
