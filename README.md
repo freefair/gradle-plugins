@@ -10,6 +10,7 @@ https://plugins.gradle.org/search?term=io.freefair
 
 |Plugin Version |Gradle Version |Java Version
 |---            |---            |---
+|3.3.x          |5.4+           |8 - 12
 |3.2.x          |5.3+           |8 - 11
 |3.x            |5.1+           |8 - 11
 |2.x            |4.x            |8 - 11
