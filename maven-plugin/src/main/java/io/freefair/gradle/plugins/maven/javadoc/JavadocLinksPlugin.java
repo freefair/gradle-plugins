@@ -18,6 +18,8 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +91,6 @@ public class JavadocLinksPlugin implements Plugin<Project> {
 
     private static final Map<String, Boolean> javadocIoLinkCache = new HashMap<>();
 
-    @SneakyThrows
     private boolean checkLink(String link) {
         if (javadocIoLinkCache.containsKey(link)) {
             return javadocIoLinkCache.get(link);
@@ -105,6 +106,9 @@ public class JavadocLinksPlugin implements Plugin<Project> {
             boolean successful = response.isSuccessful();
             javadocIoLinkCache.put(link, successful);
             return successful;
+        } catch (IOException e) {
+            project.getLogger().warn("Failed to access javadoc.io: {}", e.getLocalizedMessage(), e);
+            return false;
         }
     }
 
