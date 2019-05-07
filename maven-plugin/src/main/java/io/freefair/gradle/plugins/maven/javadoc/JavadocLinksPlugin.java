@@ -1,8 +1,6 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
-import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -20,14 +18,8 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -47,10 +39,8 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         );
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
-        Cache cache = new Cache(new File(project.getBuildDir(), "tmp/" + getClass().getSimpleName()), 4 * 1024 * 1024);
         okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
-                .cache(cache)
                 .build();
 
         project.afterEvaluate(p -> {
@@ -93,7 +83,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
     private boolean checkLink(String link) {
         Request request = new Request.Builder()
                 .url(link + "package-list")
-                .get()
+                .head()
                 .build();
 
         try (Response response = okHttpClient.newCall(request).execute()) {
