@@ -15,3 +15,7 @@ include ":aspectj:weaving"
 include ":lombok"
 
 include ":javadoc"
+
+include ":jacoco"
+include ":jacoco:sub-a"
+include ":jacoco:sub-b"
