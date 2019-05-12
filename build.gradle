@@ -7,7 +7,8 @@ buildscript {
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.12.0"
-        classpath "io.freefair.gradle:maven-plugin:3.0.0-rc.3"
+        classpath "io.freefair.gradle:maven-plugin:3.4.0"
+        classpath "io.freefair.gradle:lombok-plugin:3.4.0"
     }
 }
 
@@ -21,19 +22,12 @@ nexusStaging {
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     group = "io.freefair.gradle"
 
     plugins.withId("java") {
-        def javaVersion = JavaVersion.current()
-
-        if (javaVersion.isJava11Compatible()) {
-            javadoc.options.links "https://docs.oracle.com/en/java/javase/$javaVersion.majorVersion/docs/api/"
-        } else {
-            javadoc.options.links "https://docs.oracle.com/javase/$javaVersion.majorVersion/docs/api/"
-        }
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
         javadoc.failOnError = false
 
@@ -41,16 +35,10 @@ allprojects {
         targetCompatibility = 1.8
 
         plugins.apply "jacoco"
+        plugins.apply "io.freefair.lombok"
+        plugins.apply "io.freefair.javadoc-links"
 
         jacocoTestReport.reports.xml.enabled = true
-
-        dependencies {
-            compileOnly 'org.projectlombok:lombok:1.18.8'
-            annotationProcessor 'org.projectlombok:lombok:1.18.8'
-
-            testCompileOnly 'org.projectlombok:lombok:1.18.8'
-            testAnnotationProcessor 'org.projectlombok:lombok:1.18.8'
-        }
     }
 
     plugins.withId("com.gradle.plugin-publish") {
