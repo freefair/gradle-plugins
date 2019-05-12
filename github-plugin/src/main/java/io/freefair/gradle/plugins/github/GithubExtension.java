@@ -14,11 +14,24 @@ public class GithubExtension {
 
     private final static Pattern slugPattern = Pattern.compile("(.*)/(.*)");
 
+    /**
+     * The Identifier of the GitHub Repository as {@code owner/repo}
+     */
     private final Property<String> slug;
 
+    /**
+     * The username used for auhentication.
+     */
     private final Property<String> username;
 
+    /**
+     * The token used for authentication.
+     */
     private final Property<String> token;
+
+    private final Property<String> tag;
+
+    private final Property<Boolean> travis;
 
     @Inject
     public GithubExtension(ObjectFactory objectFactory) {
@@ -26,6 +39,10 @@ public class GithubExtension {
 
         username = objectFactory.property(String.class);
         token = objectFactory.property(String.class);
+
+        tag = objectFactory.property(String.class).convention("HEAD");
+
+        travis = objectFactory.property(Boolean.class);
     }
 
     public Provider<String> getOwner() {

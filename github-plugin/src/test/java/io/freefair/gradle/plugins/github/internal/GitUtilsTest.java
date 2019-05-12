@@ -1,5 +1,6 @@
-package io.freefair.gradle.plugins.github;
+package io.freefair.gradle.plugins.github.internal;
 
+import io.freefair.gradle.plugins.github.internal.GitUtils;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +25,24 @@ class GitUtilsTest {
     }
 
     @Test
-    void findSlug() throws UnsupportedEncodingException {
+    void findSlug() {
         assertThat(GitUtils.findSlug(project))
                 .isEqualTo("freefair/gradle-plugins");
     }
 
     @Test
-    void getRemoteUrl() throws UnsupportedEncodingException {
+    void getRemoteUrl() {
         assertThat(GitUtils.getRemoteUrl(project, "origin"))
                 .contains("freefair/gradle-plugins");
+    }
+
+    @Test
+    void findWorkingDirectory() {
+        assertThat(GitUtils.findWorkingDirectory(project)).isNotNull();
+    }
+
+    @Test
+    void getTag() {
+        assertThat(GitUtils.getTag(project)).isNotNull();
     }
 }

@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.github;
 
+import io.freefair.gradle.plugins.maven.MavenPublishJavaPlugin;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ class GithubPomPluginTest {
     @Test
     void apply() {
         project.getPlugins().apply(GithubPomPlugin.class);
+        project.getPlugins().apply(MavenPublishJavaPlugin.class);
     }
 
 }
