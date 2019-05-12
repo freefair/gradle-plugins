@@ -23,6 +23,10 @@ pluginBundle {
     tags = ['github']
 
     plugins {
+        githubBase {
+            displayName = "GitHub Base Plugin"
+            description = "GitHub Base Plugin"
+        }
         githubPom {
             displayName = "GitHub Pom Plugin"
             description = "GitHub Pom Plugin"
