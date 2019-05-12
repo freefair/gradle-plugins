@@ -6,8 +6,10 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 
+/**
+ * @author Lars Grefer
+ */
 public class GithubBasePlugin implements Plugin<Project> {
 
     @Getter
@@ -18,6 +20,10 @@ public class GithubBasePlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         this.project = project;
+
+        if (project != project.getRootProject()) {
+            project.getLogger().warn("This plugin should only be applied to the root project");
+        }
 
         githubExtension = project.getExtensions().create("github", GithubExtension.class);
 

@@ -6,6 +6,9 @@ import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 
+/**
+ * @author Lars Grefer
+ */
 public class GithubPomPlugin implements Plugin<Project> {
 
     private GithubExtension githubExtension;

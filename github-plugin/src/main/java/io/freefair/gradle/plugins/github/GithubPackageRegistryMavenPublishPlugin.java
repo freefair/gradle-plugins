@@ -5,6 +5,9 @@ import org.gradle.api.Project;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 
+/**
+ * @author Lars Grefer
+ */
 public class GithubPackageRegistryMavenPublishPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {

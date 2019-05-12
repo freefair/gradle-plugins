@@ -5,12 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.Project;
 import org.gradle.process.ExecResult;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

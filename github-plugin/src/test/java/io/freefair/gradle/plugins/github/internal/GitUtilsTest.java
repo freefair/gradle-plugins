@@ -1,13 +1,11 @@
 package io.freefair.gradle.plugins.github.internal;
 
-import io.freefair.gradle.plugins.github.internal.GitUtils;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

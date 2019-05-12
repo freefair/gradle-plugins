@@ -9,6 +9,9 @@ import javax.inject.Inject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Lars Grefer
+ */
 @Data
 public class GithubExtension {
 
