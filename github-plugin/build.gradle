@@ -1,0 +1,43 @@
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+
+gradlePlugin {
+    plugins {
+        githubBase {
+            id = "io.freefair.github.base"
+            implementationClass = "io.freefair.gradle.plugins.github.GithubBasePlugin"
+        }
+        githubPom {
+            id = "io.freefair.github.pom"
+            implementationClass = "io.freefair.gradle.plugins.github.GithubPomPlugin"
+        }
+        githubPackageRegistryMavenPublish {
+            id = "io.freefair.github.package-registry-maven-publish"
+            implementationClass = "io.freefair.gradle.plugins.github.GithubPackageRegistryMavenPublishPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    tags = ['github']
+
+    plugins {
+        githubPom {
+            displayName = "GitHub Pom Plugin"
+            description = "GitHub Pom Plugin"
+        }
+        githubPackageRegistryMavenPublish {
+            displayName = "GitHub Package Registry Maven Publish Plugin"
+            description = "GitHub Package Registry Maven Publish Plugin"
+        }
+    }
+}
+
+dependencies {
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+    testCompile 'org.assertj:assertj-core:3.11.1'
+}
+
+test.useJUnitPlatform()
