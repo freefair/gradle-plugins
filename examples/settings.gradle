@@ -4,6 +4,7 @@ includeBuild '..'
 
 include ":war:overlay"
 include ":war:overlay2"
+include ":war:archive-classes"
 
 include ":jsass:java"
 include ":jsass:web"
