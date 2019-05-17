@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.transform.CacheableTransform;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.model.ObjectFactory;

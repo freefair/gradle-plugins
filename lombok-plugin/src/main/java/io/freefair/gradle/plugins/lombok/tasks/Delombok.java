@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@CacheableTask
 public class Delombok extends DefaultTask implements LombokTask {
 
     /**

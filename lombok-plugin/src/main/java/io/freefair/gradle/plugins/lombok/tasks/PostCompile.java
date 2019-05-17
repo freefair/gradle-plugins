@@ -12,6 +12,7 @@ import org.gradle.api.tasks.*;
  * @author Lars Grefer
  */
 @Getter
+@CacheableTask
 public class PostCompile extends DefaultTask implements LombokTask {
 
     @Classpath

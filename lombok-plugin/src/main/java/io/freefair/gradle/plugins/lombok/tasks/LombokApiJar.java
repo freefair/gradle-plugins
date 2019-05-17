@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.lombok.tasks;
 
 import lombok.Getter;
 import org.gradle.api.NonNullApi;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.File;
  */
 @Getter
 @NonNullApi
+@CacheableTask
 public class LombokApiJar extends LombokJarTask {
 
     public LombokApiJar() {

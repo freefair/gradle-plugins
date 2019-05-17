@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@CacheableTask
 public class Ajc extends DefaultTask {
 
     @Classpath
