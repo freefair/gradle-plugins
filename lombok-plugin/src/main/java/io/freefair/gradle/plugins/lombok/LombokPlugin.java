@@ -58,7 +58,7 @@ public class LombokPlugin implements Plugin<Project> {
             TaskProvider<JavaCompile> compileTaskProvider = project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava -> {
                 compileJava.dependsOn(generateLombokConfig);
                 compileJava.getOptions().getCompilerArgs().add("-Xlint:-processing");
-                compileJava.getInputs().file(generateLombokConfig.get().getOutputFile());
+                compileJava.getInputs().file(generateLombokConfig.get().getOutputFile()).optional();
             });
 
             project.afterEvaluate(p -> {
