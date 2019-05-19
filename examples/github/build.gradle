@@ -1,0 +1,7 @@
+apply plugin: "io.freefair.github.pom"
+apply plugin: "io.freefair.maven-publish-java"
+
+rootProject.github {
+    slug = "freefair/gradle-plugins"
+    username = "larsgrefer"
+}

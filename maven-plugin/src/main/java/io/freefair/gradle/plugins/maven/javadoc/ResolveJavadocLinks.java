@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -92,6 +93,7 @@ public class ResolveJavadocLinks implements Action<Task> {
         return Stream.empty();
     }
 
+    @SneakyThrows
     private boolean checkLink(String link) {
         Request request = new Request.Builder()
                 .url(link + "package-list")
@@ -100,9 +102,6 @@ public class ResolveJavadocLinks implements Action<Task> {
 
         try (Response response = okHttpClient.newCall(request).execute()) {
             return response.isSuccessful();
-        } catch (IOException e) {
-            logger.warn("Failed to access javadoc.io: {}", e.getLocalizedMessage(), e);
-            return false;
         }
     }
 

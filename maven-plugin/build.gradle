@@ -8,6 +8,8 @@ dependencies {
 
     compile 'org.apache.maven:maven-model:3.6.1'
 
+    compile project(":okhttp-plugin")
+
     testCompile project(":test-common")
 }
 

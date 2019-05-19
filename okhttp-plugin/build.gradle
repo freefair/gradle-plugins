@@ -1,0 +1,29 @@
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+
+dependencies {
+    compile 'com.squareup.okhttp3:okhttp:3.14.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.14.1'
+
+    testCompile project(":test-common")
+}
+
+gradlePlugin {
+    plugins {
+        okhttp {
+            id = "io.freefair.okhttp"
+            implementationClass = "io.freefair.gradle.plugins.okhttp.OkHttpPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    plugins {
+        okhttp {
+            displayName = "OkHttp Plugin"
+            description = "A Gradle plugin for building maven plugins"
+            tags = ["maven-plugin"]
+        }
+    }
+}

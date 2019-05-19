@@ -1,9 +1,15 @@
 package io.freefair.gradle.plugins.github;
 
 import io.freefair.gradle.plugins.github.internal.GitUtils;
+import io.freefair.gradle.plugins.github.internal.GithubClient;
+import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
 import lombok.Getter;
+import okhttp3.OkHttpClient;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.provider.Provider;
+import org.gradle.initialization.layout.ProjectCacheDir;
 
 import java.io.File;
 
@@ -14,6 +20,9 @@ public class GithubBasePlugin implements Plugin<Project> {
 
     @Getter
     private GithubExtension githubExtension;
+
+    @Getter
+    private GithubClient githubClient;
 
     private Project project;
 
@@ -31,6 +40,10 @@ public class GithubBasePlugin implements Plugin<Project> {
 
         githubExtension.getTravis().convention(project.provider(this::isTravis));
         githubExtension.getTag().convention(project.provider(() -> GitUtils.getTag(project)));
+
+        OkHttpPlugin okHttpPlugin = project.getPlugins().apply(OkHttpPlugin.class);
+
+        githubClient = new GithubClient(githubExtension, okHttpPlugin.getOkHttpClient());
     }
 
     private boolean isTravis() {
@@ -46,6 +59,4 @@ public class GithubBasePlugin implements Plugin<Project> {
 
         return false;
     }
-
-
 }
