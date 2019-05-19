@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 @NonNullApi
 @RequiredArgsConstructor
-public class ResolveJavadocIoLinks implements Action<Task> {
+public class ResolveJavadocLinks implements Action<Task> {
 
     private final OkHttpClient okHttpClient;
 
