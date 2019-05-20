@@ -69,7 +69,13 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
         if (overlay.isDeferProvidedConfiguration()) {
             //Delay this to trick IntelliJ
-            overlay.getWarTask().doFirst(w -> overlay.getWarCopySpec().exclude(element -> overlay.isProvided()));
+            //noinspection Convert2Lambda
+            overlay.getWarTask().doFirst(new Action<Task>() {
+                @Override
+                public void execute(Task w) {
+                    overlay.getWarCopySpec().exclude(element -> overlay.isProvided());
+                }
+            });
         } else {
             overlay.getWarCopySpec().exclude(element -> overlay.isProvided());
         }
