@@ -13,8 +13,11 @@ buildscript {
     }
 }
 
+apply plugin: "io.freefair.aggregate-javadoc"
+
 allprojects {
     repositories {
         jcenter()
     }
 }
+

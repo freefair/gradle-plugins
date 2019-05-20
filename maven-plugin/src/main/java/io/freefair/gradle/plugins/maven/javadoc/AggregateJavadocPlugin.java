@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
@@ -30,12 +31,21 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
         project.allprojects(p ->
                 p.getPlugins().withType(JavaPlugin.class, jp ->
                         aggregateJavadoc.configure(aj -> {
-                            Javadoc javadoc = (Javadoc) p.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME);
+                            TaskProvider<Javadoc> javadoc = p.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class);
 
-                            aj.setClasspath(aj.getClasspath().plus(javadoc.getClasspath()));
-                            aj.setSource(aj.getSource().plus(javadoc.getSource()));
+                            aj.source(javadoc.map(Javadoc::getSource));
 
-                            StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
+                            if (aj.getClasspath() instanceof ConfigurableFileCollection) {
+                                ((ConfigurableFileCollection) aj.getClasspath()).from(javadoc.map(Javadoc::getClasspath));
+                            }
+                            else {
+                                ConfigurableFileCollection classpath = project.files();
+                                classpath.from(aj.getClasspath());
+                                classpath.from(javadoc.map(Javadoc::getClasspath));
+                                aj.setClasspath(classpath);
+                            }
+
+                            StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.get().getOptions();
                             StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
 
                             options.getLinks().forEach(link -> {
