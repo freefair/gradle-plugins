@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,6 +28,12 @@ class GithubClientTest {
         GithubService githubService = githubClient.getGithubService();
 
         Response<Repo> response = githubService.getRepository("freefair/gradle-plugins").execute();
+
+        String remaining = response.headers().get("X-RateLimit-Remaining");
+
+        if (Objects.equals(remaining, "0")) {
+            return;
+        }
 
         assertThat(response.isSuccessful()).isTrue();
 
