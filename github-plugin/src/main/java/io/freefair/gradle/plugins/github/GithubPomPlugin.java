@@ -9,6 +9,7 @@ import org.gradle.api.Project;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
+import org.gradle.api.publish.maven.internal.publication.MavenPomInternal;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 
 import java.time.ZoneId;
@@ -68,7 +69,7 @@ public class GithubPomPlugin implements Plugin<Project> {
                     });
                 }
 
-                if (getLicense().isPresent()) {
+                if (getLicense().isPresent() && ((MavenPomInternal) pom).getLicenses().isEmpty()) {
                     pom.licenses(licences -> {
                         licences.license(licence -> {
                             licence.getName().convention(getLicense().map(License::getName));
