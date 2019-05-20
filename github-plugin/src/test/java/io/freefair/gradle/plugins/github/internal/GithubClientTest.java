@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.github.internal;
 
 import io.freefair.gradle.plugins.github.GithubExtension;
+import okhttp3.OkHttpClient;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,7 @@ class GithubClientTest {
     void setUp() {
         GithubExtension githubExtension = new GithubExtension(ProjectBuilder.builder().build().getObjects());
 
-        githubExtension.getUsername().set("larsgrefer");
-        githubExtension.getToken().set("ecddce86ef95fe71ffc31dc78b2466aa0f589a3a");
-
-        githubClient = new GithubClient(githubExtension, null);
+        githubClient = new GithubClient(githubExtension, new OkHttpClient());
     }
 
     @Test
