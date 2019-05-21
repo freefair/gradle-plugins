@@ -4,4 +4,5 @@ apply plugin: "io.freefair.maven-publish-java"
 rootProject.github {
     slug = "freefair/gradle-plugins"
     username = "larsgrefer"
+    token = findProperty("githubToken")
 }
