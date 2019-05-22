@@ -46,7 +46,7 @@ public class GithubPomPlugin implements Plugin<Project> {
         mavenPublication.pom(pom -> {
             pom.getUrl().convention(getRepo().map(repo -> hasText(repo.getHomepage()).orElse(repo.getHtml_url())));
             pom.getDescription().convention(getRepo().flatMap(repo -> project.provider(() -> hasText(repo.getDescription()).orElse(project.getDescription()))));
-            pom.getName().convention(getRepo().map(Repo::getName));
+            pom.getName().convention(project.getName());
             pom.getInceptionYear().convention(getRepo().map(repo -> repo.getCreated_at().substring(0, 4)));
 
             pom.organization(organization -> {
@@ -62,7 +62,7 @@ public class GithubPomPlugin implements Plugin<Project> {
                     });
                 }
 
-                if (getRepo().get().isHas_issues()) {
+                if (getRepo().map(Repo::isHas_issues).getOrElse(true)) {
                     pom.issueManagement(issueManagement -> {
                         issueManagement.getSystem().convention("GitHub Issues");
                         issueManagement.getUrl().convention(githubExtension.getSlug().map(slug -> String.format("https://github.com/%s/issues", slug)));
