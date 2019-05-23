@@ -1,0 +1,24 @@
+= FreeFair Gradle Plugin Collection
+Lars Grefer <github@larsgrefer.de>
+:toc: left
+:sectnums:
+:icons: font
+:source-highlighter: coderay
+
+include::aspectj.adoc[leveloffset=+1]
+
+include::compress.adoc[leveloffset=+1]
+
+include::github.adoc[leveloffset=+1]
+
+include::jacoco.adoc[leveloffset=+1]
+
+include::jsass.adoc[leveloffset=+1]
+
+include::lombok.adoc[leveloffset=+1]
+
+include::maven.adoc[leveloffset=+1]
+
+include::maven-plugin.adoc[leveloffset=+1]
+
+

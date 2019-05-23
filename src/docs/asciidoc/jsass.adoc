@@ -1,0 +1,49 @@
+= JSass Plugins
+
+== `io.freefair.jsass-base`
+
+This plugin adds the `jsass` extension to the project and applies it to all `SassCompile` tasks.
+
+[source,groovy]
+----
+jsass {
+    indent = "  "
+    linefeed = System.lineSeparator()
+    omitSourceMapUrl = false
+    outputStyle = io.bit3.jsass.OutputStyle
+    precision = 8
+    sourceComments = false
+    sourceMapContents = false
+    sourceMapEmbed = false
+    sourceMapEnabled = true
+}
+----
+
+All the properties correspond to the https://jsass.readthedocs.io/en/latest/options.html[jsass options].
+
+== `io.freefair.jsass-webjars`
+
+This plugin adds webjars support to the sass compilation:
+
+[source,groovy]
+----
+dependencies {
+    compile 'org.webjars:bootstrap:4.1.1'
+}
+----
+
+[source,scss]
+----
+@import "bootstrap/scss/bootstrap";
+----
+
+== `io.freefair.jsass-java`
+
+This plugin configures a `compileSass` task for the
+https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html#org.gradle.api.tasks.SourceSet:resources[resources]
+of each
+https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:sourceSets(groovy.lang.Closure)[source set].
+
+== `io.freefair.jsass-war`
+
+This plugin creates a `compileWebappSass` for the `src/main/webapp` folder of your `war` project.

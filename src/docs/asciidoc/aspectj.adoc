@@ -1,0 +1,63 @@
+= AspectJ Plugins
+
+== `io.freefair.aspectj.base`
+
+This plugin adds the `aspectj` extension and the `aspectj` configuration to the project.
+
+.Setting the AspectJ version using the `aspectj` extension.
+[source,groovy]
+----
+aspectj {
+    version = "1.9.4"
+}
+----
+
+The `aspectj` configuration contains the `aspectjtools.jar` with the specified version.
+
+== `io.freefair.aspectj.post-compile-weaving`
+
+This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`) tasks of all source sets
+with an additional `ajc` action in order to perform post-compile-weaving.
+
+The output of the compilation (`javac`, etc.) becomes the `-inpath` for `ajc`.
+Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
+
+[source,groovy]
+----
+dependencies {
+    aspect project(":my-aspect")
+    testAspect "com.example.foo:bar-aspect:1.0.0"
+}
+----
+
+The `-classpath`, `-source`, `-target`, `-encoding`, `-verbose`, `-deprecation`, `-bootclasspath` and `-extdirs`
+arguments of ajc are set automatically to the corresponding values taken from the compile task.
+Additional `ajc` arguments can be configured using the `ajc.compilerArgs` property as shown below.
+
+The following things are configurable:
+
+[source,groovy]
+----
+compileJava {
+    ajc {
+        enabled = true //<1>
+        classpath = configurations.aspectj //<2>
+        aspectpath = configurations.aspect //<3>
+        compilerArgs = [] = //<4>
+    }
+}
+compileTestJava {
+    ajc {
+        enabled = true //<1>
+        classpath = configurations.aspectj //<2>
+        aspectpath = configurations.testAspect //<3>
+        compilerArgs = [] //<4>
+    }
+}
+----
+<1> Specifies if ajc should run at all. Defaults to `true`
+<2> The classpath containing ajc itself (`aspectjtools.jar`). Defaults to `configurations.aspectj`
+<3> The classpath containing additional advices to weave. This directly maps to the `-aspectpath` argument of ajc.
+<4> Addittional arguments which will be passed to `ajc`.
+
+NOTE: The official documentation of `ajc` can be found here: https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html

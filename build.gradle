@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'org.asciidoctor.jvm.convert' version '2.2.0'
+}
+
 apply plugin: "io.codearte.nexus-staging"
 
 nexusStaging {
@@ -101,4 +105,8 @@ allprojects {
             }
         }
     }
+}
+
+asciidoctor {
+    baseDirFollowsSourceDir()
 }
