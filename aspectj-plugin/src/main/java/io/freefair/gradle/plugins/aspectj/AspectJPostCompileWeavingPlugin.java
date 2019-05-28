@@ -1,5 +1,6 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.aspectj;
 
+import io.freefair.gradle.plugins.aspectj.internal.DefaultWeavingSourceSet;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -10,7 +11,6 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.scala.ScalaBasePlugin;
-import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.GroovyCompile;
@@ -38,12 +38,11 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
                 p.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
         );
 
-        AspectJSourceSet aspectJSourceSet = project.getObjects().newInstance(AspectJSourceSet.class);
-        new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectJSourceSet);
+        DefaultWeavingSourceSet weavingSourceSet = new DefaultWeavingSourceSet(sourceSet);
+        new DslObject(sourceSet).getConvention().add("aspectj", weavingSourceSet);
 
-        aspectJSourceSet.setAspectConfigurationName(sourceSet.getTaskName(null, "aspect"));
-        Configuration aspectpath = project.getConfigurations().create(aspectJSourceSet.getAspectConfigurationName());
-        aspectJSourceSet.setAspectPath(aspectpath);
+        Configuration aspectpath = project.getConfigurations().create(weavingSourceSet.getAspectConfigurationName());
+        weavingSourceSet.setAspectPath(aspectpath);
 
         project.getConfigurations().getByName(sourceSet.getCompileConfigurationName())
                 .extendsFrom(aspectpath);

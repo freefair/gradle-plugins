@@ -1,5 +1,8 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.aspectj;
 
+import io.freefair.gradle.plugins.aspectj.internal.AspectJCompileSpec;
+import io.freefair.gradle.plugins.aspectj.internal.AspectJCompiler;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.gradle.api.Action;
@@ -12,17 +15,21 @@ import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.ClasspathNormalizer;
+import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.api.tasks.compile.GroovyCompile;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.language.scala.tasks.AbstractScalaCompile;
+import org.gradle.process.internal.JavaExecHandleFactory;
 
 import javax.annotation.Nullable;
+import javax.imageio.spi.ServiceRegistry;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,12 +45,16 @@ public class AjcAction implements Action<Task> {
 
     private final Property<Boolean> enabled;
 
+    @Getter(AccessLevel.NONE)
+    private final JavaExecHandleFactory javaExecHandleFactory;
+
     @Inject
-    public AjcAction(ObjectFactory objectFactory) {
+    public AjcAction(ObjectFactory objectFactory, JavaExecHandleFactory javaExecHandleFactory) {
         classpath = objectFactory.fileCollection();
         aspectpath = objectFactory.fileCollection();
         compilerArgs = objectFactory.listProperty(String.class);
         enabled = objectFactory.property(Boolean.class).convention(true);
+        this.javaExecHandleFactory = javaExecHandleFactory;
     }
 
 
@@ -75,69 +86,30 @@ public class AjcAction implements Action<Task> {
             return;
         }
 
-        AbstractCompile abstractCompile = (AbstractCompile) task;
-        List<String> ajcArgs = new LinkedList<>();
-        File argfile = new File(abstractCompile.getTemporaryDir(), "ajc.options");
+        AspectJCompileSpec spec = createSpec((AbstractCompile) task);
 
-        ajcArgs.add("-inpath");
-        ajcArgs.add(abstractCompile.getDestinationDir().getAbsolutePath());
+        new AspectJCompiler(javaExecHandleFactory).execute(spec);
+    }
 
-        if (!aspectpath.isEmpty()) {
-            ajcArgs.add("-aspectpath");
-            ajcArgs.add(aspectpath.getAsPath());
-        }
+    private AspectJCompileSpec createSpec(AbstractCompile compile) {
+        AspectJCompileSpec spec = new AspectJCompileSpec();
 
-        if (!abstractCompile.getClasspath().isEmpty()) {
-            ajcArgs.add("-classpath");
-            ajcArgs.add(abstractCompile.getClasspath().filter(File::exists).getAsPath());
-        }
+        spec.setDestinationDir(compile.getDestinationDir());
+        spec.setWorkingDir(compile.getProject().getProjectDir());
+        spec.setTempDir(compile.getTemporaryDir());
+        spec.setCompileClasspath(new ArrayList<>(compile.getClasspath().filter(File::exists).getFiles()));
+        spec.setTargetCompatibility(compile.getTargetCompatibility());
+        spec.setSourceCompatibility(compile.getSourceCompatibility());
 
-        ajcArgs.add("-d");
-        ajcArgs.add(abstractCompile.getDestinationDir().getAbsolutePath());
+        spec.setAspectJClasspath(getClasspath());
+        spec.setAjcCompileOptions(new AjcCompileOptions(compile.getProject().getObjects()));
 
-        ajcArgs.add("-source");
-        ajcArgs.add(abstractCompile.getSourceCompatibility());
+        spec.getAjcCompileOptions().getInpath().from(compile.getDestinationDir());
+        spec.getAjcCompileOptions().getAspectpath().from(getAspectpath());
 
-        ajcArgs.add("-target");
-        ajcArgs.add(abstractCompile.getTargetCompatibility());
+        spec.getAjcCompileOptions().setCompilerArgs(getCompilerArgs().get());
 
-        CompileOptions compileOptions = findCompileOptions(abstractCompile);
-        if (compileOptions != null) {
-            String encoding = compileOptions.getEncoding();
-            if (encoding != null && !encoding.isEmpty()) {
-                ajcArgs.add("-encoding");
-                ajcArgs.add(encoding);
-            }
-            if (compileOptions.isVerbose()) {
-                ajcArgs.add("-verbose");
-            }
-            if (compileOptions.isDeprecation()) {
-                ajcArgs.add("-deprecation");
-            }
-            FileCollection bootstrapClasspath = compileOptions.getBootstrapClasspath();
-            if (bootstrapClasspath != null && !bootstrapClasspath.isEmpty()) {
-                ajcArgs.add("-bootclasspath");
-                ajcArgs.add(bootstrapClasspath.getAsPath());
-            }
-            String extensionDirs = compileOptions.getExtensionDirs();
-            if (extensionDirs != null && !extensionDirs.isEmpty()) {
-                ajcArgs.add("-extdirs");
-                ajcArgs.add(extensionDirs);
-            }
-        }
-
-        Files.write(argfile.toPath(), ajcArgs);
-
-        abstractCompile.getProject().javaexec(ajc -> {
-            ajc.setClasspath(classpath);
-            ajc.setMain("org.aspectj.tools.ajc.Main");
-
-            ajc.args("-argfile", argfile.getAbsolutePath());
-
-            if (compileOptions != null) {
-                ajc.setIgnoreExitValue(!compileOptions.isFailOnError());
-            }
-        });
+        return spec;
     }
 
     @Nullable

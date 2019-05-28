@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins;
 
+import io.freefair.gradle.plugins.aspectj.AspectJPostCompileWeavingPlugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaPlugin;

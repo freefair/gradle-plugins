@@ -1,17 +1,17 @@
 package io.freefair.gradle.plugins;
 
+import io.freefair.gradle.plugins.aspectj.AspectJBasePlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.api.tasks.compile.JavaCompile;
 
+@Deprecated
 public class AspectJCompileTimeWeavingPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
-
         AspectJBasePlugin aspectjBasePlugin = project.getPlugins().apply(AspectJBasePlugin.class);
 
         project.getPlugins().apply(JavaPlugin.class);

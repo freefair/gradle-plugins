@@ -1,0 +1,11 @@
+configurations {
+    dummy
+}
+
+dependencies {
+    dummy project(":lombok")
+}
+
+task myCustomWeaving(type: io.freefair.gradle.plugins.aspectj.AspectjCompile) {
+    ajcOptions.inpath.from configurations.dummy
+}

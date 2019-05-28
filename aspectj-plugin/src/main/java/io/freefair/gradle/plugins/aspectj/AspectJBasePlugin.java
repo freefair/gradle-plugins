@@ -1,5 +1,6 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.aspectj;
 
+import io.freefair.gradle.plugins.Ajc;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -23,6 +24,10 @@ public class AspectJBasePlugin implements Plugin<Project> {
 
         aspectjConfiguration.defaultDependencies(dependencies -> {
             dependencies.add(project.getDependencies().create("org.aspectj:aspectjtools:" + aspectjExtension.getVersion().get()));
+        });
+
+        project.getTasks().withType(AspectjCompile.class).configureEach(aspectjCompile -> {
+            aspectjCompile.getAspectjClasspath().from(aspectjConfiguration);
         });
 
         project.getTasks().withType(Ajc.class).configureEach(ajc -> {

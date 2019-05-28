@@ -1,6 +1,6 @@
 apply plugin: "java"
 apply plugin: "groovy"
-apply plugin: "io.freefair.aspectj.post-compile-weaving"
+apply plugin: "io.freefair.aspectj"
 
 dependencies {
     compile "org.aspectj:aspectjrt:1.9.2"

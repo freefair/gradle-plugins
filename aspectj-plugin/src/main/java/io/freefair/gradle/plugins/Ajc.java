@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @CacheableTask
+@Deprecated
 public class Ajc extends DefaultTask {
 
     @Classpath

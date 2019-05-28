@@ -1,4 +1,4 @@
-package io.freefair.gradle.plugins;
+package io.freefair.gradle.plugins.aspectj;
 
 import lombok.Data;
 import org.gradle.api.Project;

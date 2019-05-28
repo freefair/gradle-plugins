@@ -6,15 +6,19 @@ gradlePlugin {
     plugins {
         aspectjBase {
             id = "io.freefair.aspectj.base"
-            implementationClass = "io.freefair.gradle.plugins.AspectJBasePlugin"
+            implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJBasePlugin"
         }
         aspectjPostCompileWeaving {
             id = "io.freefair.aspectj.post-compile-weaving"
-            implementationClass = "io.freefair.gradle.plugins.AspectJPostCompileWeavingPlugin"
+            implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPostCompileWeavingPlugin"
         }
         aspectjCompileTimeWeaving {
             id = "io.freefair.aspectj.compile-time-weaving"
             implementationClass = "io.freefair.gradle.plugins.AspectJCompileTimeWeavingPlugin"
+        }
+        aspectj {
+            id = "io.freefair.aspectj"
+            implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPlugin"
         }
     }
 }
