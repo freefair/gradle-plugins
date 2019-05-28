@@ -5,6 +5,8 @@ Lars Grefer <github@larsgrefer.de>
 :icons: font
 :source-highlighter: coderay
 
+Recommended Gradle Version: {gradle_version}
+
 include::aspectj.adoc[leveloffset=+1]
 
 include::compress.adoc[leveloffset=+1]

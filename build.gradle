@@ -112,6 +112,8 @@ allprojects {
 
 asciidoctor {
     baseDirFollowsSourceDir()
+    
+    attributes gradle_version: gradle.gradleVersion
 }
 
 task docsZip(type: Zip) {

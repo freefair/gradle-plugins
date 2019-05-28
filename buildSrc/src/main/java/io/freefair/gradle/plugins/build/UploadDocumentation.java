@@ -55,12 +55,13 @@ public class UploadDocumentation extends DefaultTask {
 
         Call call = okHttpClient.newCall(request);
 
-        Response response = call.execute();
+        try (Response response = call.execute()) {
 
-        if (!response.isSuccessful()) {
-            getLogger().error("{}: {}", response.code(), response.message());
-            getLogger().error(response.body().string());
-            throw new GradleException(response.message());
+            if (!response.isSuccessful()) {
+                getLogger().error("{}: {}", response.code(), response.message());
+                getLogger().error(response.body().string());
+                throw new GradleException(response.message());
+            }
         }
     }
 
