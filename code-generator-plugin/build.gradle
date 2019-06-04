@@ -13,6 +13,9 @@ dependencies {
 task copyTestGenerator(type: Copy, dependsOn: ':test-code-generator:jar'){
     from  tasks.getByPath(':test-code-generator:jar').outputs
     into 'src/test/resources/'
+    eachFile {
+        name = "test-code-generator.jar"
+    }
 }
 
 test.dependsOn(copyTestGenerator)
