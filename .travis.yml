@@ -21,8 +21,15 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 deploy:
-  provider: script
-  script: ./gradlew clean publishPlugins -Pversion=$TRAVIS_TAG -Pgradle.publish.key=$GRADLE_PUBLISH_KEY -Pgradle.publish.secret=$GRADLE_PUBLISH_SECRET
+- provider: script
+  skip_cleanup: true
+  script: ./gradlew uploadDocs publishPlugins -Pgradle.publish.key=$GRADLE_PUBLISH_KEY -Pgradle.publish.secret=$GRADLE_PUBLISH_SECRET
   on:
     tags: true
+    jdk: openjdk11
+- provider: script
+  skip_cleanup: true
+  script: ./gradlew uploadDocs
+  on:
+    tags: false
     jdk: openjdk11
