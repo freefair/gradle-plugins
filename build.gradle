@@ -7,8 +7,8 @@ buildscript {
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.12.0"
-        classpath "io.freefair.gradle:maven-plugin:3.5.4"
-        classpath "io.freefair.gradle:lombok-plugin:3.5.4"
+        classpath "io.freefair.gradle:maven-plugin:3.6.4"
+        classpath "io.freefair.gradle:lombok-plugin:3.6.4"
     }
 }
 
@@ -116,13 +116,19 @@ asciidoctor {
     attributes gradle_version: gradle.gradleVersion
 }
 
+apply plugin: "io.freefair.aggregate-javadoc"
+apply plugin: "io.freefair.javadoc-links"
+
+aggregateJavadoc.failOnError = false
+aggregateJavadoc.options.links "https://docs.gradle.org/${gradle.gradleVersion}/javadoc/"
+
 task docsZip(type: Zip) {
     group = 'build'
     archiveClassifier = 'docs'
     dependsOn asciidoctor
 
     into("api") {
-        //from aggregateJavadoc
+        from aggregateJavadoc
     }
     into("reference") {
         from asciidoctor.outputDir
