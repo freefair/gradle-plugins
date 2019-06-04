@@ -15,6 +15,7 @@ import org.gradle.workers.WorkerExecutor;
 import org.jacoco.core.tools.ExecDumpClient;
 import org.jacoco.core.tools.ExecFileLoader;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 
@@ -23,7 +24,6 @@ import java.io.IOException;
  * @see org.jacoco.ant.DumpTask
  */
 @Getter
-@RequiredArgsConstructor
 public class JacocoDump extends JacocoBase {
 
     @Internal
@@ -49,6 +49,11 @@ public class JacocoDump extends JacocoBase {
 
     @Input
     private final Property<Boolean> append = getProject().getObjects().property(Boolean.class).convention(true);
+
+    @Inject
+    public JacocoDump(WorkerExecutor workerExecutor) {
+        this.workerExecutor = workerExecutor;
+    }
 
     @TaskAction
     public void dump() {
