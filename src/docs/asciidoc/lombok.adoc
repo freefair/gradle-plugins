@@ -45,7 +45,7 @@ lombok {
 
 The following task are provided:
 
-- `io.freefair.gradle.plugins.lombok.tasks.Delombok`
-- `io.freefair.gradle.plugins.lombok.tasks.LombokApiJar`
-- `io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar`
-- `io.freefair.gradle.plugins.lombok.tasks.PostCompile`
+- link:../api/io/freefair/gradle/plugins/lombok/tasks/Delombok.html[`io.freefair.gradle.plugins.lombok.tasks.Delombok`]
+- link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokApiJar.html[`io.freefair.gradle.plugins.lombok.tasks.LombokApiJar`]
+- link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokRuntimeJar.html[`io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar`]
+- link:../api/io/freefair/gradle/plugins/lombok/tasks/PostCompile.html[`io.freefair.gradle.plugins.lombok.tasks.PostCompile`]

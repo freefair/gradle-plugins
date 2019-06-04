@@ -3,24 +3,39 @@ Lars Grefer <github@larsgrefer.de>
 :toc: left
 :sectnums:
 :icons: font
+:doctype: book
 :source-highlighter: coderay
 
-Recommended Gradle Version: {gradle_version}
+= Introduction
 
-include::aspectj.adoc[leveloffset=+1]
+== About the Documentation
 
-include::compress.adoc[leveloffset=+1]
+The documentation of the FreeFair Gradle Plugin collection {revnumber} consists of two parts:
 
-include::github.adoc[leveloffset=+1]
+- This reference guide
+- The Javadoc API
 
-include::jacoco.adoc[leveloffset=+1]
+The latest copy of the user guide is available at https://docs.freefair.io/current/reference +
+and the corresponding javadocs can be found at https://docs.freefair.io/current/api.
 
-include::jsass.adoc[leveloffset=+1]
+== System Requirements
 
-include::lombok.adoc[leveloffset=+1]
+Unless otherwise noted, all plugins require at least Java 8 and are targeted at Gradle {gradle_version}
 
-include::maven.adoc[leveloffset=+1]
+include::aspectj.adoc[]
 
-include::maven-plugin.adoc[leveloffset=+1]
+include::compress.adoc[]
+
+include::github.adoc[]
+
+include::jacoco.adoc[]
+
+include::jsass.adoc[]
+
+include::lombok.adoc[]
+
+include::maven.adoc[]
+
+include::maven-plugin.adoc[]
 
 
