@@ -1,3 +1,51 @@
 = Lombok Plugins
 
+== `io.freefair.lombok-base`
+
+This plugin adds the `lombok` configuration and the `lombok` extension to the project.
+It also configures all Lombok related tasks to use the `lombok` configuration.
+
+The used Lombok version can be customized using the `lombok` extension:
+
+.Setting a custom Lombok version
+[source,groovy]
+----
+lombok {
+    version = "1.18.8"
+}
+----
+
 == `io.freefair.lombok`
+
+This plugin simplifies the use of https://projectlombok.org/[Lombok] in Gradle by performing the following steps:
+
+- Lombok is added to the `annotationProcessor` and `compileOnly` configurations of each source set
+- For each source set a `delombok` task is created.
+- The `javadoc` task will be configured to read the delombok-ed sources instead of the actual sources.
+- A `generateLombokConfig` will be added to the project, which generates the `lombok.config` file
+based on the `lombok` extension.
+
+=== `lombok.config` handling
+
+.Disable `lombok.config` generation
+[source,groovy]
+----
+generateLombokConfig.enabled = false
+----
+
+.Modifying the generated `lombok.config` file
+[source,groovy]
+----
+lombok {
+    config['lombok.log.fieldName'] = 'LOG'
+}
+----
+
+== Task overview
+
+The following task are provided:
+
+- `io.freefair.gradle.plugins.lombok.tasks.Delombok`
+- `io.freefair.gradle.plugins.lombok.tasks.LombokApiJar`
+- `io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar`
+- `io.freefair.gradle.plugins.lombok.tasks.PostCompile`
