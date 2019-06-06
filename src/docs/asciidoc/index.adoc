@@ -23,20 +23,20 @@ and the corresponding javadocs can be found at https://docs.freefair.io/current/
 
 Unless otherwise noted, all plugins require at least Java 8 and are targeted at Gradle {gradle_version}
 
-include::aspectj.adoc[]
+include::_aspectj.adoc[]
 
-include::compress.adoc[]
+include::_compress.adoc[]
 
-include::github.adoc[]
+include::_github.adoc[]
 
-include::jacoco.adoc[]
+include::_jacoco.adoc[]
 
-include::jsass.adoc[]
+include::_jsass.adoc[]
 
-include::lombok.adoc[]
+include::_lombok.adoc[]
 
-include::maven.adoc[]
+include::_maven.adoc[]
 
-include::maven-plugin.adoc[]
+include::_maven-plugin.adoc[]
 
 
