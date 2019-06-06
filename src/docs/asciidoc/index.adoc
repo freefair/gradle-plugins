@@ -19,13 +19,51 @@ The documentation of the FreeFair Gradle Plugin collection {revnumber} consists 
 The latest copy of the user guide is available at https://docs.freefair.io/current/reference +
 and the corresponding javadocs can be found at https://docs.freefair.io/current/api.
 
+== Installation
+
+All plugins are deployed to
+https://plugins.gradle.org/search?term=io.freefair[the Gradle Plugin Portal].
+
+The plugins are grouped in multiple modules, each containing some of the plugins.
+These submodules are described by the different parts of this documentation.
+
+Each plugin can be included using the Plugins DSL
+or by referencing it's containing module in the `buildscript`-block:
+
+.Using the plugins DSL
+[source,groovy,subs=attributes+]
+----
+plugins {
+    id "io.freefair.lombok" version "{revnumber}"
+}
+----
+
+.Using legacy plugin application
+[source,groovy,subs=attributes+]
+----
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "io.freefair.gradle:lombok-plugin:{revnumber}"
+  }
+}
+
+apply plugin: "io.freefair.lombok"
+----
+
 == System Requirements
 
-Unless otherwise noted, all plugins require at least Java 8 and are targeted at Gradle {gradle_version}
+Unless otherwise noted, all plugins require at least Java 8 and are targeted at Gradle {gradle_version}.
 
 include::_aspectj.adoc[]
 
 include::_compress.adoc[]
+
+include::_git.adoc[]
 
 include::_github.adoc[]
 
@@ -38,5 +76,3 @@ include::_lombok.adoc[]
 include::_maven.adoc[]
 
 include::_maven-plugin.adoc[]
-
-

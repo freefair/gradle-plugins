@@ -1,3 +1,5 @@
-= Maven Plugins
+= Maven
 
-== todo
+== Maven Plugins
+
+== Maven Tasks

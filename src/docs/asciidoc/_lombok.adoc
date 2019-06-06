@@ -1,10 +1,12 @@
-= Lombok Plugins
+= Lombok
 
 [quote, https://projectlombok.org]
 https://projectlombok.org/[Project Lombok] is a java library that automatically plugs into your editor and build tools, spicing up your java.
 Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.
 
-== `io.freefair.lombok-base`
+== Lombok Plugins
+
+=== `io.freefair.lombok-base`
 
 This plugin adds the `lombok` configuration and the `lombok` extension to the project.
 It also configures all Lombok related tasks to use the `lombok` configuration.
@@ -19,7 +21,7 @@ lombok {
 }
 ----
 
-== `io.freefair.lombok`
+=== `io.freefair.lombok`
 
 This plugin simplifies the use of https://projectlombok.org/[Lombok] in Gradle by performing the following steps:
 
@@ -29,7 +31,7 @@ This plugin simplifies the use of https://projectlombok.org/[Lombok] in Gradle b
 - A `generateLombokConfig` will be added to the project, which generates the `lombok.config` file
 based on the `lombok` extension.
 
-=== `lombok.config` handling
+==== `lombok.config` handling
 
 .Disable `lombok.config` generation
 [source,groovy]
@@ -45,7 +47,7 @@ lombok {
 }
 ----
 
-== Task overview
+== Lombok Tasks
 
 The following task are provided:
 

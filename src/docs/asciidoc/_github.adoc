@@ -1,3 +1,58 @@
-= GitHub Plugins
+= GitHub
 
-== todo
+== GitHub Plugins
+
+=== `io.freefair.github.base`
+
+Common base plugin which is applied by the other plugins in this module.
+It adds the `github` extension to the project:
+
+.Configuration options of the `github` extension
+[source, groovy]
+----
+github {
+    slug //<1>
+    username = findProperty('githubUsername') //<2>
+    token = findProperty('githubToken') //<3>
+    tag = 'HEAD' //<4>
+    travis = true //<5>
+}
+----
+<1> The `owner/name` identifier of the GitHub repository.
+This is auto-detected using the configured git remotes.
+<2> The username which should be used when accessing the GitHub API.
+<3> The
+https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line[token]
+which should be used when accessing the GitHub API.
+<4> See <<_io_freefair_github_pom>>
+<5> Whether the GitHub project uses https://travis-ci.org/[TravisCI] (`true`) or not (`false`).
+This is auto-detected by default.
+
+WARNING: This plugin should only be applied to the root project.
+
+=== `io.freefair.github.pom`
+
+This plugin pre-fills the pom's of all `MavenPublication`s with information avaiable from the GitHub project.
+
+The `scm.tag` element of the pom is auto-detected by default,
+but can be overriden using the `github.tag` extension property.
+
+TIP: This plugins calls the GitHub API.
+Configure a username and token as described in <<_io_freefair_github_base>> if
+you have problems with GitHub's rate limit.
+(The token does not need any scopes for this).
+
+=== `io.freefair.github.package-registry-maven-publish`
+
+This plugin pre-configures publishing to the https://github.com/features/package-registry[GitHub Package Registry]
+using the https://docs.gradle.org/{gradle_version}/userguide/publishing_maven.html[`maven-publish`] plugin.
+
+It also applies the <<_io_freefair_github_pom>> plugin.
+
+IMPORTANT: When using this plugin, you have to configure a username and token as described in <<_io_freefair_github_base>>.
+The token needs the `read:packages` and `write:packages` scopes as described
+https://help.github.com/en/articles/configuring-apache-maven-for-use-with-github-package-registry#authenticating-to-github-package-registry[here].
+
+== GitHub Tasks
+
+This module does not contain tasks.

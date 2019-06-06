@@ -1,12 +1,14 @@
-= Commons Compress Plugins
+= Commons Compress
 
 [quote, https://commons.apache.org/proper/commons-compress/]
 https://commons.apache.org/proper/commons-compress/[The Apache Commons Compress] library defines an API for working with ar, cpio, Unix dump, tar, zip, gzip, XZ, Pack200, bzip2, 7z, arj, lzma, snappy, DEFLATE, lz4, Brotli, Zstandard, DEFLATE64 and Z files.
 
-== `io.freefair.compress`
+== Compress Plugins
+
+=== `io.freefair.compress`
 This plugin applies all of the plugins listed below for convenience.
 
-== `io.freefair.compress.trees`
+=== `io.freefair.compress.trees`
 
 This plugin adds the following methods to the project:
 
@@ -36,13 +38,30 @@ and
 https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:tarTree(java.lang.Object)[`tarTree`]
 methods which are described https://docs.gradle.org/current/userguide/working_with_files.html#sec:unpacking_archives_example[here]
 
-== `io.freefair.compress.ar`
+=== `io.freefair.compress.ar`
 
-This plugin makes the `io.freefair.gradle.plugins.compress.tasks.Ar` task available without it's qualified name.
+This plugin makes the <<Ar>> task available without it's qualified name.
+
+=== `io.freefair.compress.cpio`
+
+This plugin makes the <<Cpio>> task available without it's qualified name.
+
+=== `io.freefair.compress.7z`
+
+This plugin makes the <<SevenZip>> task available without it's qualified name.
+
+== Compress Tasks
+
+[#Ar]
+=== `Ar`
+
+This
+https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`]
+implementation can be used to create `ar` archives.
 
 [source, groovy]
 ----
-task packageArArchive(type: Ar) {
+task packageArArchive(type: io.freefair.gradle.plugins.compress.tasks.Ar) {
     archiveFileName = "my-distribution.ar"
     destinationDirectory = file("$buildDir/dist")
 
@@ -52,15 +71,16 @@ task packageArArchive(type: Ar) {
 }
 ----
 
-TIP: This task extends from https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`], so you can use all of it's features.
+[#Cpio]
+=== `Cpio`
 
-== `io.freefair.compress.cpio`
-
-This plugin makes the `io.freefair.gradle.plugins.compress.tasks.Cpio` task available without it's qualified name.
+This
+https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`]
+implementation can be used to create `cpio` archives.
 
 [source, groovy]
 ----
-task packageCpioArchive(type: Cpio) {
+task packageCpioArchive(type: io.freefair.gradle.plugins.compress.tasks.Cpio) {
     archiveFileName = "my-distribution.cpio"
     destinationDirectory = file("$buildDir/dist")
 
@@ -72,15 +92,16 @@ task packageCpioArchive(type: Cpio) {
 }
 ----
 
-TIP: This task extends from https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`], so you can use all of it's features.
+[#SevenZip]
+=== `SevenZip`
 
-== `io.freefair.compress.7z`
-
-This plugin makes the `io.freefair.gradle.plugins.compress.tasks.SevenZip` task available without it's qualified name.
+This
+https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`]
+implementation can be used to create `7z` archives.
 
 [source, groovy]
 ----
-task packageSevenZipArchive(type: SevenZip) {
+task packageSevenZipArchive(type: io.freefair.gradle.plugins.compress.tasks.SevenZip) {
     archiveFileName = "my-distribution.7z"
     destinationDirectory = file("$buildDir/dist")
 
@@ -89,5 +110,3 @@ task packageSevenZipArchive(type: SevenZip) {
     contentCompression = org.apache.commons.compress.archivers.sevenz.SevenZMethod.LZMA2
 }
 ----
-
-TIP: This task extends from https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`], so you can use all of it's features.

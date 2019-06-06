@@ -114,6 +114,8 @@ asciidoctor {
     baseDirFollowsSourceDir()
     
     attributes gradle_version: gradle.gradleVersion
+    
+    inputs.dir("src/docs/asciidoc")
 }
 
 apply plugin: "io.freefair.aggregate-javadoc"
