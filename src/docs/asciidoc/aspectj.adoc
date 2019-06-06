@@ -1,5 +1,19 @@
 = AspectJ Plugins
 
+
+[quote, https://www.eclipse.org/aspectj/]
+____
+*https://www.eclipse.org/aspectj/[AspectJ™] is*
+
+- a seamless aspect-oriented extension to the Java™ programming language
+- Java platform compatible
+- easy to learn and use
+
+*AspectJ™ enables*
+
+- clean modularization of crosscutting concerns, such as error checking and handling, synchronization, context-sensitive behavior, performance optimizations, monitoring and logging, debugging support, and multi-object protocols
+____
+
 == `io.freefair.aspectj.base`
 
 This plugin adds the `aspectj` extension and the `aspectj` configuration to the project.

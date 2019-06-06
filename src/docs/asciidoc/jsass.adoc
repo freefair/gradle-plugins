@@ -1,5 +1,7 @@
 = JSass Plugins
 
+https://gitlab.com/jsass/jsass
+
 == `io.freefair.jsass-base`
 
 This plugin adds the `jsass` extension to the project and applies it to all `SassCompile` tasks.

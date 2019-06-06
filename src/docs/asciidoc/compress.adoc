@@ -1,5 +1,8 @@
 = Commons Compress Plugins
 
+[quote, https://commons.apache.org/proper/commons-compress/]
+https://commons.apache.org/proper/commons-compress/[The Apache Commons Compress] library defines an API for working with ar, cpio, Unix dump, tar, zip, gzip, XZ, Pack200, bzip2, 7z, arj, lzma, snappy, DEFLATE, lz4, Brotli, Zstandard, DEFLATE64 and Z files.
+
 == `io.freefair.compress`
 This plugin applies all of the plugins listed below for convenience.
 

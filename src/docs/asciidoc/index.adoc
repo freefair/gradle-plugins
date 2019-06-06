@@ -5,6 +5,7 @@ Lars Grefer <github@larsgrefer.de>
 :icons: font
 :doctype: book
 :source-highlighter: coderay
+:sectanchors:
 
 = Introduction
 
