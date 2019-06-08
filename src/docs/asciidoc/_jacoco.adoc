@@ -5,6 +5,8 @@ https://www.eclemma.org/jacoco/[JaCoCo] is a free code coverage library for Java
 
 == JaCoCo Plugins
 
+This chapter describes all the plugins contained in the `jacoco-plugin` module.
+
 === `io.freefair.aggregate-jacoco-report`
 
 This plugin adds a `aggregateJacocoReport` task to the project its applied on.

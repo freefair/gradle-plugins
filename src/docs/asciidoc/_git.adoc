@@ -2,6 +2,8 @@
 
 == Git Plugins
 
+This chapter describes all the plugins contained in the `git-plugin` module.
+
 === `io.freefair.git-version`
 
 This plugin sets the project version according to the current git tag or branch.

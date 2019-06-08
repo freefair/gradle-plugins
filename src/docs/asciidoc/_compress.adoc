@@ -5,6 +5,8 @@ https://commons.apache.org/proper/commons-compress/[The Apache Commons Compress]
 
 == Compress Plugins
 
+This chapter describes all the plugins contained in the `compress-plugin` module.
+
 === `io.freefair.compress`
 This plugin applies all of the plugins listed below for convenience.
 

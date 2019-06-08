@@ -2,4 +2,6 @@
 
 == Maven-Plugin Plugins
 
+This chapter describes all the plugins contained in the `maven-plugin-plugin` module.
+
 == Maven-Plugin Tasks

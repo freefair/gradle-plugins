@@ -2,4 +2,181 @@
 
 == Maven Plugins
 
+This chapter describes all the plugins contained in the `maven-plugin` module.
+
+=== `io.freefair.war`
+
+This plugin is a shortcut which applies the following plugins:
+
+- https://docs.gradle.org/current/userguide/war_plugin.html[`war`]
+- <<_io_freefair_war_overlay>>
+- <<_io_freefair_war_attach_classes>>
+- <<_io_freefair_war_archive_classes>>
+
+=== `io.freefair.war-overlay`
+
+This plugin ports the
+https://maven.apache.org/plugins/maven-war-plugin/overlays.html[overlays]
+feature of the
+https://maven.apache.org/plugins/maven-war-plugin/index.html[Maven War Plugin]
+to Gradle.
+
+The overlays can be configured using the `overlays` property, which is added to every `War` task.
+
+[source,groovy]
+----
+war {
+    overlays {
+        foo {
+            from "com.example:some-war:1.2.3@war" //<1>
+            enabled = true //<2>
+            into "sub-path/foo" //<3>
+            enableCompilation = true //<4>
+            provided = false //<5>
+        }
+        bar {
+            from project(":some-other-war") //<1>
+            skip = false //<2>
+            targetPath = "sub-path/bar" //<3>
+            include "*.html"
+            includes = ["*.html", "**/*.xml"]
+        }
+    }
+}
+----
+<1> The source of the overlay. This can be another project, a File instance or a dependency notation.
+<2> Whether the overlay is enabled or should be skipped.
+<3> The target relative path in the webapp structure. By default, the content of the overlay is added in the root structure of the webapp.
+<4> Whether the classes and jars in the overlay should be added to the compile classpath of the project.
+<5> Whether the contents of the overlay should not be added to the war.
+Setting this to `true` can be used to compile against the classes in the war and have IDE auto-completion without actually adding the files of the overlay to the war.
+
+The `overlays` property of the war task is a
+https://docs.gradle.org/{gradle_version}/javadoc/org/gradle/api/NamedDomainObjectCollection.html[`NamedDomainObjectContainer`]
+of
+link:../api/io/freefair/gradle/plugins/maven/war/WarOverlay[`WarOverlay`] instances.
+
+=== `io.freefair.war-attach-classes`
+
+This plugin ports the
+https://maven.apache.org/plugins/maven-war-plugin/war-mojo.html#attachClasses[attachClasses]
+feature of the
+https://maven.apache.org/plugins/maven-war-plugin/index.html[Maven War Plugin]
+to Gradle.
+
+[source,groovy]
+----
+war {
+    attachClasses = true //<1>
+    classesClassifier = 'classes' //<2>
+}
+----
+<1> Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the project as an additional artifact.
+<2> The classifier to use for the attached classes artifact.
+
+=== `io.freefair.war-archive-classes`
+
+This plugin ports the
+https://maven.apache.org/plugins/maven-war-plugin/war-mojo.html#archiveClasses[archiveClasses]
+feature of the
+https://maven.apache.org/plugins/maven-war-plugin/index.html[Maven War Plugin]
+to Gradle.
+
+[source,groovy]
+----
+war {
+    archiveClasses = true //<1>
+}
+----
+<1> Whether a JAR file will be created for the classes in the webapp. Using this optional configuration parameter will make the compiled classes to be archived into a JAR file and the classes directory will then be excluded from the webapp.
+
+
+=== `io.freefair.maven-jars`
+
+This plugin is a shortcut for applying the following plugins:
+
+- <<_io_freefair_sources_jar>>
+- <<_io_freefair_javadoc_jar>>
+
+=== `io.freefair.sources-jar`
+
+This plugin adds a `sourcesJar` task to the project, which produces a jar file containing all sources of the `main` source set.
+
+=== `io.freefair.javadoc-jar`
+
+This plugin adds a `javadocJar` task to the project, which produces a jar file containing the output of the `javadoc` task.
+
+It will also add a `aggregateJavadocJar` task, if the <<_io_freefair_aggregate_javadoc>> plugin is also applied.
+
+=== `io.freefair.aggregate-javadoc`
+
+This plugin adds a `aggregateJavadoc` task to the project which will generate the aggregated javadoc for the project itself
+and all of its subprojects (which have the `java` plugin applied).
+
+=== `io.freefair.aggregate-javadoc-jar`
+
+This plugin is a shortcut which applies the following plugins:
+
+- <<_io_freefair_aggregate_javadoc>>
+- <<_io_freefair_javadoc_jar>>
+
+=== `io.freefair.javadocs`
+
+This plugin is a shortcut which applies the following plugins:
+
+- <<_io_freefair_javadoc_jar>>
+- <<_io_freefair_javadoc_links>>
+- <<_io_freefair_javadoc_utf_8>>
+
+=== `io.freefair.javadoc-links`
+
+
+=== `io.freefair.javadoc-utf-8`
+
+This plugin configures all `Javadoc` tasks to use `UTF-8`.
+
+=== `io.freefair.maven-publish-java`
+
+This plugin applies the `maven-publish` and `java` plugins and configures a `mavenJava` publication.
+
+It also works together with the <<_io_freefair_sources_jar>>, <<_io_freefair_javadoc_jar>> and <<_io_freefair_maven_jars>> plugins.
+
+=== `io.freefair.maven-publish-war`
+
+This plugin applies the `maven-publish` and `war` plugins and configures a `mavenWeb` publication.
+
+It also works together with the <<_io_freefair_sources_jar>>, <<_io_freefair_javadoc_jar>> and <<_io_freefair_maven_jars>> plugins.
+
+=== `io.freefair.maven-optional`
+
+This plugin adds a Maven-like `optional` configuration to the project.
+
+[source,groovy]
+----
+dependencies {
+    optional "com.example:foo-bar:1.0.0"
+}
+----
+
+=== `io.freefair.maven-central.validate-poms`
+
+This plugin adds a <<ValidateMavenPom>> task for each
+https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.publish.maven.tasks.GenerateMavenPom.html[`GenerateMavenPom`]
+task.
+
 == Maven Tasks
+
+[#ValidateMavenPom]
+=== `ValidateMavenPom`
+
+This task validates, that a given pom file contains all the information required by maven central.
+
+[source,groovy]
+----
+task validateMyPom(type: io.freefair.gradle.plugins.maven.central.ValidateMavenPom) {
+    pomFile = file("path/to/my/pom.xml")
+    ignoreFailures = false
+}
+----
+
+

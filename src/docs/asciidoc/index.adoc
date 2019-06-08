@@ -1,5 +1,5 @@
 = FreeFair Gradle Plugin Collection
-Lars Grefer <github@larsgrefer.de>
+Lars Grefer <github@larsgrefer.de>; Dennis Fricke
 :toc: left
 :sectnums:
 :icons: font
@@ -16,13 +16,13 @@ The documentation of the FreeFair Gradle Plugin collection {revnumber} consists 
 - This reference guide
 - The Javadoc API
 
-The latest copy of the user guide is available at https://docs.freefair.io/current/reference +
-and the corresponding javadocs can be found at https://docs.freefair.io/current/api.
+The latest copy of the user guide is available at https://docs.freefair.io/gradle-plugins/current/reference +
+and the corresponding javadocs can be found at https://docs.freefair.io/gradle-plugins/current/api.
 
 == Installation
 
-All plugins are deployed to
-https://plugins.gradle.org/search?term=io.freefair[the Gradle Plugin Portal].
+All plugins are deployed to the
+https://plugins.gradle.org/search?term=io.freefair[Gradle Plugin Portal].
 
 The plugins are grouped in multiple modules, each containing some of the plugins.
 These submodules are described by the different parts of this documentation.

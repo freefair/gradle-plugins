@@ -6,6 +6,8 @@ Never write another getter or equals method again, with one annotation your clas
 
 == Lombok Plugins
 
+This chapter describes all the plugins contained in the `lombok-plugin` module.
+
 === `io.freefair.lombok-base`
 
 This plugin adds the `lombok` configuration and the `lombok` extension to the project.

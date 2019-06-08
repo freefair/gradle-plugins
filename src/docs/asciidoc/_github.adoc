@@ -2,6 +2,8 @@
 
 == GitHub Plugins
 
+This chapter describes all the plugins contained in the `github-plugin` module.
+
 === `io.freefair.github.base`
 
 Common base plugin which is applied by the other plugins in this module.

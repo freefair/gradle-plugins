@@ -15,6 +15,8 @@ ____
 
 == AspectJ Plugins
 
+This chapter describes all the plugins contained in the `aspectj-plugin` module.
+
 === `io.freefair.aspectj.base`
 
 This plugin adds the `aspectj` extension and the `aspectj` configuration to the project.
