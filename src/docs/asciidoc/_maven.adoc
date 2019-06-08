@@ -130,6 +130,8 @@ This plugin is a shortcut which applies the following plugins:
 
 === `io.freefair.javadoc-links`
 
+This plugin configures the links of each `Javadoc` task based on the dependencies
+in the classpath of the task.
 
 === `io.freefair.javadoc-utf-8`
 

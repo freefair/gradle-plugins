@@ -4,4 +4,16 @@
 
 This chapter describes all the plugins contained in the `maven-plugin-plugin` module.
 
+=== `io.freefair.maven-plugin`
+
+This plugin can be used to build maven plugins.
+It's based on the `java` and `maven-publish` plugins.
+
 == Maven-Plugin Tasks
+
+=== `DescriptorGeneratorTask`
+
+This Task is the gradle equivalent of the
+https://maven.apache.org/plugin-tools/maven-plugin-plugin/descriptor-mojo.html[`DescriptorGeneratorMojo`]
+of the
+https://maven.apache.org/plugin-tools/maven-plugin-plugin/index.html[Maven Plugin Maven Plugin].
