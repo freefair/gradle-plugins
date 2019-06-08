@@ -1,6 +1,23 @@
-= AspectJ Plugins
+= AspectJ
 
-== `io.freefair.aspectj.base`
+[quote, https://www.eclipse.org/aspectj/]
+____
+*https://www.eclipse.org/aspectj/[AspectJ™] is*
+
+- a seamless aspect-oriented extension to the Java™ programming language
+- Java platform compatible
+- easy to learn and use
+
+*AspectJ™ enables*
+
+- clean modularization of crosscutting concerns, such as error checking and handling, synchronization, context-sensitive behavior, performance optimizations, monitoring and logging, debugging support, and multi-object protocols
+____
+
+== AspectJ Plugins
+
+This chapter describes all the plugins contained in the `aspectj-plugin` module.
+
+=== `io.freefair.aspectj.base`
 
 This plugin adds the `aspectj` extension and the `aspectj` configuration to the project.
 
@@ -14,7 +31,7 @@ aspectj {
 
 The `aspectj` configuration contains the `aspectjtools.jar` with the specified version.
 
-== `io.freefair.aspectj.post-compile-weaving`
+=== `io.freefair.aspectj.post-compile-weaving`
 
 This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`) tasks of all source sets
 with an additional `ajc` action in order to perform post-compile-weaving.
@@ -61,3 +78,5 @@ compileTestJava {
 <4> Addittional arguments which will be passed to `ajc`.
 
 NOTE: The official documentation of `ajc` can be found here: https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html
+
+== AspectJ Tasks

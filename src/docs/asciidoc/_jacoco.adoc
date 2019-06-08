@@ -1,0 +1,38 @@
+= JaCoCo
+
+[quote, https://www.eclemma.org/jacoco/]
+https://www.eclemma.org/jacoco/[JaCoCo] is a free code coverage library for Java, which has been created by the EclEmma team based on the lessons learned from using and integration existing libraries for many years.
+
+== JaCoCo Plugins
+
+This chapter describes all the plugins contained in the `jacoco-plugin` module.
+
+=== `io.freefair.aggregate-jacoco-report`
+
+This plugin adds a `aggregateJacocoReport` task to the project its applied on.
+This Task will generate an aggregated Jacoco report for the main java source sets of
+all projects by evaluating the execution data of the test tasks of all projects.
+
+The task is of type https://docs.gradle.org/{gradle_version}/dsl/org.gradle.testing.jacoco.tasks.JacocoReport.html[JacocoReport]
+
+== JaCoCo Tasks
+
+=== `JacocoDump`
+
+The
+link:../api/io/freefair/gradle/plugins/jacoco/tasks/JacocoDump.html[`io.freefair.gradle.plugins.jacoco.tasks.JacocoDump`]
+task is the Gradle equivalent of the https://www.jacoco.org/jacoco/trunk/doc/ant.html#dump[`dump` Ant-Task]
+
+.JacocoDump Example
+[source, groovy]
+----
+task dump(type: io.freefair.gradle.plugins.jacoco.tasks.JacocoDump) {
+    address = "localhost"
+    port = 6300
+    retryCount = 10
+    dump = true
+    reset = false
+    destfile = file("build/dump.exec")
+    append = true
+}
+----

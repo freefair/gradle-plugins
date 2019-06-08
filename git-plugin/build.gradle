@@ -1,0 +1,27 @@
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+
+gradlePlugin {
+    plugins {
+        gitVersion {
+            id = "io.freefair.git-version"
+            implementationClass = "io.freefair.gradle.plugins.git.GitVersionPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    tags = ['git', 'version']
+
+    plugins {
+        gitVersion {
+            displayName = "Git Version Plugin"
+            description = "This plugin sets your latest git tag as project version"
+        }
+    }
+}
+
+dependencies {
+    testCompile project(":test-common")
+}
