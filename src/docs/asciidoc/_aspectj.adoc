@@ -31,6 +31,24 @@ aspectj {
 
 The `aspectj` configuration contains the `aspectjtools.jar` with the specified version.
 
+=== `io.freefair.aspectj`
+
+This plugin adds AspectJ support to the project, by adding a `aspectj` directory to every source set.
+
+Source contained in the `src/main/aspectj` directory will be compiled with `ajc` by the `compileAspectj` task.
+
+TIP: This is follows the same principles as the `groovy` and `scala` plugins.
+
+Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
+
+[source,groovy]
+----
+dependencies {
+    aspect project(":my-aspect")
+    testAspect "com.example.foo:bar-aspect:1.0.0"
+}
+----
+
 === `io.freefair.aspectj.post-compile-weaving`
 
 This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`) tasks of all source sets
@@ -47,9 +65,9 @@ dependencies {
 }
 ----
 
-The `-classpath`, `-source`, `-target`, `-encoding`, `-verbose`, `-deprecation`, `-bootclasspath` and `-extdirs`
-arguments of ajc are set automatically to the corresponding values taken from the compile task.
-Additional `ajc` arguments can be configured using the `ajc.compilerArgs` property as shown below.
+The `-classpath`, `-source` and `-target`
+arguments of `ajc` are set automatically to the corresponding values taken from the compile task.
+Additional `ajc` arguments can be configured using the `ajc.options.compilerArgs` property as shown below.
 
 The following things are configurable:
 
@@ -59,16 +77,20 @@ compileJava {
     ajc {
         enabled = true //<1>
         classpath = configurations.aspectj //<2>
-        aspectpath = configurations.aspect //<3>
-        compilerArgs = [] = //<4>
+        options {
+            aspectpath = configurations.aspect //<3>
+            compilerArgs = [] = //<4>
+        }
     }
 }
 compileTestJava {
     ajc {
         enabled = true //<1>
         classpath = configurations.aspectj //<2>
-        aspectpath = configurations.testAspect //<3>
-        compilerArgs = [] //<4>
+        options {
+            aspectpath = configurations.testAspect //<3>
+            compilerArgs = [] //<4>
+        }
     }
 }
 ----
@@ -80,3 +102,19 @@ compileTestJava {
 NOTE: The official documentation of `ajc` can be found here: https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html
 
 == AspectJ Tasks
+
+=== `AspectjCompile`
+
+This
+https://docs.gradle.org/{gradle_version}/javadoc/org/gradle/api/tasks/compile/AbstractCompile.html[`AbstractCompile`]
+task can be used to run
+https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html[`ajc`].
+
+[source,groovy]
+task myAjcTask(type: io.freefair.gradle.plugins.aspectj.AspectjCompile) {
+    aspectjClasspath = configurations.aspectj
+    ajcOptions {
+        inpath = files()
+        aspectpath = files()
+    }
+}
