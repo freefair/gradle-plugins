@@ -10,6 +10,10 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.internal.SourceSetUtil;
 import org.gradle.api.provider.Provider;
 
+/**
+ * @see org.gradle.api.plugins.GroovyBasePlugin
+ * @see org.gradle.api.plugins.GroovyPlugin
+ */
 public class AspectJPlugin implements Plugin<Project> {
 
     @Override
@@ -21,7 +25,7 @@ public class AspectJPlugin implements Plugin<Project> {
 
         plugin.getSourceSets().all(sourceSet -> {
             DefaultAspectjSourceSet aspectjSourceSet = new DefaultAspectjSourceSet(project.getObjects(), sourceSet);
-            new DslObject(sourceSet).getConvention().add("aspectj", aspectjSourceSet);
+            new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectjSourceSet);
 
             aspectjSourceSet.getAspectj().srcDir("src/" + sourceSet.getName() + "/aspectj");
             sourceSet.getResources().getFilter().exclude(element -> aspectjSourceSet.getAspectj().contains(element.getFile()));
