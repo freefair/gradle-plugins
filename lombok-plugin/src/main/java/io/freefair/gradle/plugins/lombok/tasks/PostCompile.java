@@ -19,6 +19,7 @@ public class PostCompile extends DefaultTask implements LombokTask {
     private final ConfigurableFileCollection lombokClasspath = getProject().files();
 
     @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     @SkipWhenEmpty
     private final ConfigurableFileCollection classFiles = getProject().files();
 

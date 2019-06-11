@@ -79,6 +79,7 @@ public class Delombok extends DefaultTask implements LombokTask {
      * Sourcepath (analogous to javac -sourcepath option).
      */
     @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     @Optional
     private final ConfigurableFileCollection sourcepath = getProject().files();
 
@@ -104,6 +105,7 @@ public class Delombok extends DefaultTask implements LombokTask {
     private final ConfigurableFileCollection input = getProject().files();
 
     @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     @SkipWhenEmpty
     protected FileTree getFilteredInput() {
         List<FileTreeInternal> collect = input.getFiles().stream()

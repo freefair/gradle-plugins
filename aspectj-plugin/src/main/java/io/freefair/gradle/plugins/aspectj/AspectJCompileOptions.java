@@ -31,6 +31,7 @@ public class AspectJCompileOptions extends AbstractOptions {
      * Path is a single argument containing a list of paths to zip files or directories.
      */
     @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     @SkipWhenEmpty
     private final ConfigurableFileCollection inpath;
 
@@ -68,6 +69,7 @@ public class AspectJCompileOptions extends AbstractOptions {
      * DirPaths, like classpath, is a single argument containing a list of paths to directories.
      */
     @SkipWhenEmpty
+    @PathSensitive(PathSensitivity.RELATIVE)
     @InputFiles
     private final ConfigurableFileCollection sourceroots;
 
@@ -110,6 +112,8 @@ public class AspectJCompileOptions extends AbstractOptions {
      */
     @Input
     private List<String> compilerArgs = new ArrayList<>();
+
+    @Input
     private List<CommandLineArgumentProvider> compilerArgumentProviders = new ArrayList<>();
 
     /**
