@@ -33,6 +33,7 @@ public class AspectJPlugin implements Plugin<Project> {
 
             final Provider<AspectjCompile> compileTask = project.getTasks().register(sourceSet.getCompileTaskName("aspectj"), AspectjCompile.class, compile -> {
                 SourceSetUtil.configureForSourceSet(sourceSet, aspectjSourceSet.getAspectj(), compile, compile.getOptions(), project);
+                compile.dependsOn(sourceSet.getCompileJavaTaskName());
                 compile.setDescription("Compiles the " + sourceSet.getName() + " AspectJ source.");
                 compile.setSource(aspectjSourceSet.getAspectj());
                 compile.getAjcOptions().getAspectpath().from(aspect);

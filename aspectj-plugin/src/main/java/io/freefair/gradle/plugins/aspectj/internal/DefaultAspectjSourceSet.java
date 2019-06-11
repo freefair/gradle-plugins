@@ -30,7 +30,7 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
         String name = sourceSet.getName();
         String displayName = ((DefaultSourceSet) sourceSet).getDisplayName();
 
-        aspectj = objectFactory.sourceDirectorySet(name, displayName + " AspectJ source");
+        aspectj = objectFactory.sourceDirectorySet("aspectj", displayName + " AspectJ source");
         aspectj.getFilter().include("**/*.java", "**/*.aj");
         allAspectj = objectFactory.sourceDirectorySet("all" + name, displayName + " AspectJ source");
         allAspectj.source(aspectj);

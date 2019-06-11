@@ -19,9 +19,11 @@ import java.util.List;
  * Compilation options to be passed to the AspectJ compiler.
  *
  * @author Lars Grefer
+ * @see org.gradle.api.tasks.compile.GroovyCompileOptions
+ * @see org.gradle.api.tasks.scala.ScalaCompileOptions
  */
 @Data
-public class AjcCompileOptions extends AbstractOptions {
+public class AspectJCompileOptions extends AbstractOptions {
 
     /**
      * Accept as source bytecode any .class files in the .jar files or directories on Path.
@@ -94,17 +96,29 @@ public class AjcCompileOptions extends AbstractOptions {
      * Specify default source encoding format.
      */
     @Input
+    @Optional
     private final Property<String> encoding;
 
     /**
      * Emit messages about accessed/processed compilation units.
      */
+    @Console
     private final Property<Boolean> verbose;
 
+    /**
+     * Any additional arguments to be passed to the compiler.
+     */
+    @Input
     private List<String> compilerArgs = new ArrayList<>();
     private List<CommandLineArgumentProvider> compilerArgumentProviders = new ArrayList<>();
 
-    public AjcCompileOptions(ObjectFactory objectFactory) {
+    /**
+     * Options for running the compiler in a child process.
+     */
+    @Internal
+    private AjcForkOptions forkOptions = new AjcForkOptions();
+
+    public AspectJCompileOptions(ObjectFactory objectFactory) {
         inpath = objectFactory.fileCollection();
         aspectpath = objectFactory.fileCollection();
         outjar = objectFactory.fileProperty();

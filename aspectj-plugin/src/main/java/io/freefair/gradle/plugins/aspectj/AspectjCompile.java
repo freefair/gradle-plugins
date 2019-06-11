@@ -22,7 +22,7 @@ public class AspectjCompile extends AbstractCompile {
     private final CompileOptions options = getProject().getObjects().newInstance(CompileOptions.class);
 
     @Nested
-    private final AjcCompileOptions ajcOptions = new AjcCompileOptions(getProject().getObjects());
+    private final AspectJCompileOptions ajcOptions = new AspectJCompileOptions(getProject().getObjects());
 
     @Override
     @TaskAction
@@ -46,7 +46,7 @@ public class AspectjCompile extends AbstractCompile {
         spec.setSourceCompatibility(getSourceCompatibility());
         spec.setTargetCompatibility(getTargetCompatibility());
         spec.setAspectJClasspath(getAspectjClasspath());
-        spec.setAjcCompileOptions(getAjcOptions());
+        spec.setAspectJCompileOptions(getAjcOptions());
 
         return spec;
     }
