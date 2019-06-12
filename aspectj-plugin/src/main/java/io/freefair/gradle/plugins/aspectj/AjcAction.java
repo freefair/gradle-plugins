@@ -4,7 +4,6 @@ import io.freefair.gradle.plugins.aspectj.internal.AspectJCompileSpec;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompiler;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
@@ -17,7 +16,6 @@ import org.gradle.process.internal.JavaExecHandleFactory;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**

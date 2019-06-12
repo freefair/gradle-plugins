@@ -1,12 +1,9 @@
 package io.freefair.gradle.plugins.aspectj;
 
 import lombok.Data;
-import lombok.Getter;
-import org.graalvm.compiler.options.Option;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
-import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.compile.AbstractOptions;
