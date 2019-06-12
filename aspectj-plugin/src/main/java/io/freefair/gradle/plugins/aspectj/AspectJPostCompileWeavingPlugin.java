@@ -44,32 +44,38 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         Configuration aspectpath = project.getConfigurations().create(weavingSourceSet.getAspectConfigurationName());
         weavingSourceSet.setAspectPath(aspectpath);
 
+        Configuration inpath = project.getConfigurations().create(weavingSourceSet.getInpathConfigurationName());
+        weavingSourceSet.setInPath(inpath);
+
         project.getConfigurations().getByName(sourceSet.getCompileConfigurationName())
                 .extendsFrom(aspectpath);
 
+        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
+
         project.getPlugins().withType(JavaPlugin.class, javaPlugin ->
                 project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava ->
-                        enhanceWithWeavingAction(compileJava, aspectpath, aspectjBasePlugin.getAspectjConfiguration())
+                        enhanceWithWeavingAction(compileJava, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
                 )
         );
 
         project.getPlugins().withType(GroovyPlugin.class, groovyPlugin ->
                 project.getTasks().named(sourceSet.getCompileTaskName("groovy"), GroovyCompile.class, compileGroovy ->
-                        enhanceWithWeavingAction(compileGroovy, aspectpath, aspectjBasePlugin.getAspectjConfiguration())
+                        enhanceWithWeavingAction(compileGroovy, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
                 )
         );
 
         project.getPlugins().withType(ScalaBasePlugin.class, scalaBasePlugin ->
                 project.getTasks().named(sourceSet.getCompileTaskName("scala"), ScalaCompile.class, compileScala ->
-                        enhanceWithWeavingAction(compileScala, aspectpath, aspectjBasePlugin.getAspectjConfiguration())
+                        enhanceWithWeavingAction(compileScala, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
                 )
         );
     }
 
-    private void enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration aspectjConfiguration) {
+    private void enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration inpath, Configuration aspectjConfiguration) {
         AjcAction action = project.getObjects().newInstance(AjcAction.class);
 
         action.getOptions().getAspectpath().from(aspectpath);
+        action.getOptions().getInpath().from(inpath);
         action.getClasspath().from(aspectjConfiguration);
 
         action.addToTask(abstractCompile);

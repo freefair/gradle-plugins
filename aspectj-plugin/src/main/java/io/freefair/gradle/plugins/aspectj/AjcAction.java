@@ -61,6 +61,11 @@ public class AjcAction implements Action<Task> {
                 .withNormalizer(ClasspathNormalizer.class)
                 .optional(true);
 
+        task.getInputs().files(this.getOptions().getInpath())
+                .withPropertyName("ajcInpath")
+                .withNormalizer(ClasspathNormalizer.class)
+                .optional(true);
+
         task.getInputs().property("ajcArgs", this.getOptions().getCompilerArgs())
                 .optional(true);
 

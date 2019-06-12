@@ -13,8 +13,12 @@ public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType 
     private final String aspectConfigurationName;
     private FileCollection aspectPath;
 
+    private final String inpathConfigurationName;
+    private FileCollection inPath;
+
     public DefaultWeavingSourceSet(SourceSet sourceSet) {
         aspectConfigurationName = sourceSet.getTaskName("", "aspect");
+        inpathConfigurationName = sourceSet.getTaskName("", "inpath");
     }
 
     @Override

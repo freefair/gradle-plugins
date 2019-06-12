@@ -12,6 +12,7 @@ include ":jsass:webjars"
 
 include ":aspectj:aspect"
 include ":aspectj:weaving"
+include ":aspectj:httpcore-nio"
 
 include ":lombok"
 

@@ -49,6 +49,17 @@ dependencies {
 }
 ----
 
+Additional jars/classes which should be woven and added to the output as well (the `-inpath`)
+can be declared as dependencies fo the `inpath` configuration:
+
+[source,groovy]
+----
+dependencies {
+    inpath project(":my-lib")
+    testInpath "com.example.foo:bar-lib:1.0.0"
+}
+----
+
 === `io.freefair.aspectj.post-compile-weaving`
 
 This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`) tasks of all source sets
@@ -62,6 +73,17 @@ Additional advices (the `-aspectpath`) can be declared as dependencies of the `a
 dependencies {
     aspect project(":my-aspect")
     testAspect "com.example.foo:bar-aspect:1.0.0"
+}
+----
+
+Additional jars/classes which should be woven and added to the output as well (the `-inpath`)
+can be declared as dependencies fo the `inpath` configuration:
+
+[source,groovy]
+----
+dependencies {
+    inpath project(":my-lib")
+    testInpath "com.example.foo:bar-lib:1.0.0"
 }
 ----
 
