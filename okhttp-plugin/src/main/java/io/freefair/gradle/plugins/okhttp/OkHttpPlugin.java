@@ -9,6 +9,9 @@ import org.gradle.api.Project;
 
 import javax.annotation.Nullable;
 
+/**
+ * @author Lars Grefer
+ */
 public class OkHttpPlugin implements Plugin<Project> {
 
     @Nullable

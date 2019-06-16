@@ -9,6 +9,9 @@ import org.gradle.initialization.layout.ProjectCacheDir;
 
 import java.io.File;
 
+/**
+ * @author Lars Grefer
+ */
 public class OkHttpCachePlugin implements Plugin<Project> {
 
     @Getter
