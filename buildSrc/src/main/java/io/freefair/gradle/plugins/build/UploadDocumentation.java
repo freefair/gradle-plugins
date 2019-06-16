@@ -50,7 +50,7 @@ public class UploadDocumentation extends DefaultTask {
         Request request = new Request.Builder()
                 .put(RequestBody.create(MediaType.get("application/zip"), this.inputFile.get().getAsFile()))
                 .header("Authorization", Credentials.basic(this.username.get(), this.password.get()))
-                .url("https://docs.freefair.io/api/" + this.version.get())
+                .url("https://docs.freefair.io/api/" + this.version.get() + "?path=gradle-plugins")
                 .build();
 
         Call call = okHttpClient.newCall(request);
