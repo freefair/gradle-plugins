@@ -6,6 +6,7 @@ import lombok.Setter;
 import okhttp3.*;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
+import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
@@ -27,6 +28,9 @@ public abstract class OkHttpRequestTask extends DefaultTask {
 
     @Input
     private final Property<String> url = getProject().getObjects().property(String.class);
+
+    @Input
+    private final MapProperty<String, String> headers = getProject().getObjects().mapProperty(String.class, String.class);
 
     @TaskAction
     public void executeRequest() throws IOException {
@@ -57,12 +61,15 @@ public abstract class OkHttpRequestTask extends DefaultTask {
     }
 
     public Request.Builder buildRequest(Request.Builder builder) {
+
+        headers.get().forEach(builder::header);
+
         if (username.isPresent() && password.isPresent()) {
-            builder = builder.header("Authorization", Credentials.basic(this.username.get(), this.password.get()));
+            builder.header("Authorization", Credentials.basic(this.username.get(), this.password.get()));
         }
 
         if (url.isPresent()) {
-            builder = builder.url(url.get());
+            builder.url(url.get());
         }
 
         return builder;

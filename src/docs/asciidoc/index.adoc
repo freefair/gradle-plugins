@@ -76,3 +76,5 @@ include::_lombok.adoc[]
 include::_maven.adoc[]
 
 include::_maven-plugin.adoc[]
+
+include::_okhttp.adoc[]

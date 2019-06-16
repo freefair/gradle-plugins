@@ -1,0 +1,46 @@
+= OkHttp
+
+[quote,https://square.github.io/okhttp/]
+An HTTP & HTTP/2 client for Android and Java applications
+
+== OkHttp Plugins
+
+=== `io.freefair.okhttp`
+
+This plugin provides an `OkHttpClient` instance which can be used by other tasks and plugins.
+
+== OkHttp Tasks
+
+[#OkHttpRequestTask]
+=== `OkHttpRequestTask`
+
+This is the base class for all tasks executing an http request which provides the following
+common properties:
+
+`url`:: The URL for the Request
+`username`:: The username for HTTP Basic Auth
+`password`:: The password for HTTP Basic Auth
+`headers`:: Additional headers which will be added to the request.
+
+=== `DownloadFile`
+
+----
+task myDownload(type: io.freefair.gradle.plugins.okhttp.tasks.DownloadFile) {
+    url = "https://example.com/foo.txt"
+    outputFile = file("build/foo.txt")
+}
+----
+
+NOTE: See also <<OkHttpRequestTask>>
+
+=== `UploadFile`
+
+----
+task myUpload(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
+    url = "https://example.com/foo.txt"
+    file = file("build/file.txt")
+    contentType = "text/plain"
+}
+----
+
+NOTE: See also <<OkHttpRequestTask>>
