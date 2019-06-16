@@ -5,6 +5,7 @@ import lombok.Setter;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.tasks.InputFile;
 
 import javax.annotation.Nullable;
 
@@ -15,6 +16,7 @@ import javax.annotation.Nullable;
 @Setter
 public class UploadFile extends HttpPut {
 
+    @InputFile
     private final RegularFileProperty file = getProject().getObjects().fileProperty();
 
     @Override

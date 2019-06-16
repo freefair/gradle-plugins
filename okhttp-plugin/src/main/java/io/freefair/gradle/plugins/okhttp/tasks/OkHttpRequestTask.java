@@ -9,6 +9,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 
 import java.io.IOException;
@@ -21,16 +22,18 @@ import java.io.IOException;
 public abstract class OkHttpRequestTask extends DefaultTask {
 
     @Input
-    private final Property<String> username = getProject().getObjects().property(String.class);
-
-    @Input
-    private final Property<String> password = getProject().getObjects().property(String.class);
-
-    @Input
     private final Property<String> url = getProject().getObjects().property(String.class);
 
     @Input
     private final MapProperty<String, String> headers = getProject().getObjects().mapProperty(String.class, String.class);
+
+    @Input
+    @Optional
+    private final Property<String> username = getProject().getObjects().property(String.class);
+
+    @Input
+    @Optional
+    private final Property<String> password = getProject().getObjects().property(String.class);
 
     @TaskAction
     public void executeRequest() throws IOException {
