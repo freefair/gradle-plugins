@@ -23,13 +23,13 @@ after_success:
 deploy:
 - provider: script
   skip_cleanup: true
-  script: ./gradlew uploadDocs publishPlugins -Pgradle.publish.key=$GRADLE_PUBLISH_KEY -Pgradle.publish.secret=$GRADLE_PUBLISH_SECRET
+  script: ./gradlew publishPlugins -Pgradle.publish.key=$GRADLE_PUBLISH_KEY -Pgradle.publish.secret=$GRADLE_PUBLISH_SECRET
   on:
     tags: true
     jdk: openjdk11
 - provider: script
   skip_cleanup: true
-  script: ./gradlew uploadDocs
+  script: ./gradlew
   on:
     tags: false
     jdk: openjdk11
