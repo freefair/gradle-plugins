@@ -26,7 +26,7 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         String travisTag = System.getenv("TRAVIS_TAG");
-        if (travisTag != null) {
+        if (travisTag != null && !travisTag.trim().isEmpty()) {
             logger.lifecycle("Using TRAVIS_TAG as version: {}", travisTag);
             return travisTag;
         }
