@@ -62,7 +62,7 @@ dependencies {
 
 === `io.freefair.aspectj.post-compile-weaving`
 
-This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`) tasks of all source sets
+This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`, `compileKotlin`) tasks of all source sets
 with an additional `ajc` action in order to perform post-compile-weaving.
 
 The output of the compilation (`javac`, etc.) becomes the `-inpath` for `ajc`.

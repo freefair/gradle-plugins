@@ -69,6 +69,12 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
                         enhanceWithWeavingAction(compileScala, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
                 )
         );
+
+        project.getPlugins().withId("org.jetbrains.kotlin.jvm", kotlinPlugin ->
+                project.getTasks().named(sourceSet.getCompileTaskName("kotlin"), AbstractCompile.class, compileKotlin ->
+                        enhanceWithWeavingAction(compileKotlin, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
+                )
+        );
     }
 
     private void enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration inpath, Configuration aspectjConfiguration) {
