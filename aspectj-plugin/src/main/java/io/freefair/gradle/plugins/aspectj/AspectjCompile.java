@@ -22,11 +22,13 @@ public class AspectjCompile extends AbstractCompile {
     private final CompileOptions options = getProject().getObjects().newInstance(CompileOptions.class);
 
     @Nested
-    private final AspectJCompileOptions ajcOptions = new AspectJCompileOptions(getProject().getObjects());
+    private final AspectJCompileOptions ajcOptions = getProject().getObjects().newInstance(AspectJCompileOptions.class);
 
     @Override
     @TaskAction
     protected void compile() {
+        getProject().delete(getDestinationDir());
+
         AspectJCompileSpec spec = createSpec();
         WorkResult result = getCompiler().execute(spec);
         setDidWork(result.getDidWork());

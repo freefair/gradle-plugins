@@ -68,7 +68,7 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
         if (spec.getAspectJCompileOptions().getOutxmlfile().isPresent()) {
             args.add("-outxmlfile");
-            args.add(spec.getAspectJCompileOptions().getOutxmlfile().getAsFile().get().getAbsolutePath());
+            args.add(spec.getAspectJCompileOptions().getOutxmlfile().get());
         }
 
         if (!spec.getAspectJCompileOptions().getSourceroots().isEmpty()) {

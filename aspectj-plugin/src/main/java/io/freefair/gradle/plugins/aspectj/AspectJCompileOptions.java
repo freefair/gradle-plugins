@@ -9,6 +9,7 @@ import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.compile.AbstractOptions;
 import org.gradle.process.CommandLineArgumentProvider;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,9 +58,9 @@ public class AspectJCompileOptions extends AbstractOptions {
     /**
      * Generate aop.xml file for load-time weaving with custom name.
      */
-    @OutputFile
+    @Input
     @Optional
-    private final RegularFileProperty outxmlfile;
+    private final Property<String> outxmlfile;
 
     /**
      * Find and build all .java or .aj source files under any directory listed in DirPaths.
@@ -119,12 +120,13 @@ public class AspectJCompileOptions extends AbstractOptions {
     @Internal
     private AjcForkOptions forkOptions = new AjcForkOptions();
 
+    @Inject
     public AspectJCompileOptions(ObjectFactory objectFactory) {
         inpath = objectFactory.fileCollection();
         aspectpath = objectFactory.fileCollection();
         outjar = objectFactory.fileProperty();
         outxml = objectFactory.property(Boolean.class).convention(false);
-        outxmlfile = objectFactory.fileProperty();
+        outxmlfile = objectFactory.property(String.class);
         sourceroots = objectFactory.fileCollection();
         crossrefs = objectFactory.property(Boolean.class).convention(false);
         bootclasspath = objectFactory.fileCollection();
