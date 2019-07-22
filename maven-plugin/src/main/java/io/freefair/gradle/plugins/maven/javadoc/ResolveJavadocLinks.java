@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -93,15 +92,35 @@ public class ResolveJavadocLinks implements Action<Task> {
         return Stream.empty();
     }
 
-    @SneakyThrows
     private boolean checkLink(String link) {
-        Request request = new Request.Builder()
+        Request elementListRequest = new Request.Builder()
+                .url(link + "element-list")
+                .get()
+                .build();
+
+        IOException exception = null;
+
+        try (Response response = okHttpClient.newCall(elementListRequest).execute()) {
+            if (response.isSuccessful()) {
+                return true;
+            }
+        } catch (IOException e) {
+            exception = e;
+        }
+
+        Request packageListRequest = new Request.Builder()
                 .url(link + "package-list")
                 .get()
                 .build();
 
-        try (Response response = okHttpClient.newCall(request).execute()) {
+        try (Response response = okHttpClient.newCall(packageListRequest).execute()) {
             return response.isSuccessful();
+        } catch (IOException e) {
+            if (exception != null) {
+                e.addSuppressed(exception);
+            }
+            logger.warn("Failed to access {}", packageListRequest.url(), e);
+            return false;
         }
     }
 
