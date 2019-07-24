@@ -10,6 +10,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
 import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.plugin.AbstractGeneratorMojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.tools.plugin.DefaultPluginToolsRequest;
 import org.apache.maven.tools.plugin.extractor.ExtractionException;
@@ -28,9 +29,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -38,10 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * @author Lars Grefer
- * @see org.apache.maven.plugin.plugin.DescriptorGeneratorMojo
+ * @see AbstractGeneratorMojo
  */
 @Getter
 @Setter
@@ -73,7 +77,7 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
         pluginDescriptor.setArtifactId(project.getArtifactId());
         pluginDescriptor.setGoalPrefix(goalPrefix.getOrElse(PluginDescriptor.getGoalPrefixFromArtifactId(project.getArtifactId())));
 
-        List<ComponentDependency> deps = GeneratorUtils.toComponentDependencies(project.getDependencies());
+        List<ComponentDependency> deps = getRuntimeDependencies();
         pluginDescriptor.setDependencies(deps);
 
         DefaultPluginToolsRequest request = new DefaultPluginToolsRequest(project, pluginDescriptor);
@@ -87,6 +91,25 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
                 getBaseDir(),
                 request
         );
+    }
+
+    @Nonnull
+    private List<ComponentDependency> getRuntimeDependencies() {
+        return getProject().getConfigurations().getByName(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME)
+                .getResolvedConfiguration()
+                .getResolvedArtifacts()
+                .stream()
+                .map(resolvedDependency -> {
+                    ComponentDependency componentDependency = new ComponentDependency();
+
+                    componentDependency.setArtifactId(resolvedDependency.getModuleVersion().getId().getName());
+                    componentDependency.setGroupId(resolvedDependency.getModuleVersion().getId().getGroup());
+                    componentDependency.setVersion(resolvedDependency.getModuleVersion().getId().getVersion());
+                    componentDependency.setType(resolvedDependency.getType());
+
+                    return componentDependency;
+                })
+                .collect(Collectors.toList());
     }
 
     @Internal
