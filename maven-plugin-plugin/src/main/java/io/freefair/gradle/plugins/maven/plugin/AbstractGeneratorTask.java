@@ -37,6 +37,7 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +61,32 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
     @InputFile
     private final RegularFileProperty pomFile = getProject().getObjects().fileProperty();
 
+    /**
+     * The file encoding of the source files.
+     *
+     * @see AbstractGeneratorMojo#encoding
+     */
+    @Optional
+    @Input
+    private final Property<String> encoding = getProject().getObjects().property(String.class);
+
+    /**
+     * The goal prefix that will appear before the ":".
+     *
+     * @see AbstractGeneratorMojo#goalPrefix
+     */
     @Optional
     @Input
     private final Property<String> goalPrefix = getProject().getObjects().property(String.class);
 
+    /**
+     * @see AbstractGeneratorMojo#skipErrorNoDescriptorsFound
+     */
+    private final Property<Boolean> skipErrorNoDescriptorsFound = getProject().getObjects().property(Boolean.class).convention(false);
+
+    /**
+     * @see AbstractGeneratorMojo#execute()
+     */
     @TaskAction
     public void generate() throws GeneratorException, IOException, XmlPullParserException, InvalidPluginDescriptorException, ExtractionException {
         PluginDescriptor pluginDescriptor = new PluginDescriptor();
@@ -82,10 +105,15 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
 
         DefaultPluginToolsRequest request = new DefaultPluginToolsRequest(project, pluginDescriptor);
 
-        request.setEncoding("UTF-8");
+        if (getEncoding().isPresent()) {
+            request.setEncoding(getEncoding().getOrNull());
+        }
+        request.setSkipErrorNoDescriptorsFound(getSkipErrorNoDescriptorsFound().get());
 
         MojoScanner mojoScanner = getMojoScanner();
         mojoScanner.populatePluginDescriptor(request);
+
+        getBaseDir().mkdirs();
 
         getGenerator().execute(
                 getBaseDir(),

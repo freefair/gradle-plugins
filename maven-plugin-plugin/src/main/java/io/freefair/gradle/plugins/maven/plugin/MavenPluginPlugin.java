@@ -39,7 +39,9 @@ public class MavenPluginPlugin implements Plugin<Project> {
             SourceSet main = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().getByName("main");
             generateMavenPluginDescriptor.getSourceDirectories().from(main.getAllJava().getSourceDirectories());
             JavaCompile javaCompile = (JavaCompile) project.getTasks().getByName(main.getCompileJavaTaskName());
+
             generateMavenPluginDescriptor.getClassesDirectories().from(javaCompile);
+            generateMavenPluginDescriptor.getEncoding().convention(javaCompile.getOptions().getEncoding());
         });
 
         project.getTasks().named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME, ProcessResources.class)
