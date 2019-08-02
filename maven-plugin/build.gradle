@@ -4,7 +4,7 @@ apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
     compile "com.squareup.okhttp3:okhttp:3.14.0"
-    compile "com.squareup.okhttp3:logging-interceptor:3.14.0"
+    compile "com.squareup.okhttp3:logging-interceptor:4.0.1"
 
     compile 'org.apache.maven:maven-model:3.6.1'
 
