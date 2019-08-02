@@ -82,6 +82,7 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
     /**
      * @see AbstractGeneratorMojo#skipErrorNoDescriptorsFound
      */
+    @Input
     private final Property<Boolean> skipErrorNoDescriptorsFound = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**

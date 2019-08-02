@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.maven.central;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -17,16 +18,16 @@ import java.util.Collection;
 /**
  * @author Lars Grefer
  */
+@Getter
 public class ValidateMavenPom extends DefaultTask implements VerificationTask {
 
     @InputFile
-    @Getter
     private final RegularFileProperty pomFile = getProject().getObjects().fileProperty();
 
     @Input
     private final Property<Boolean> ignoreFailures = getProject().getObjects().property(Boolean.class).convention(false);
 
-    @Internal
+    @Getter(AccessLevel.NONE)
     private boolean errorFound = false;
 
     @TaskAction
