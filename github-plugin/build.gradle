@@ -39,7 +39,7 @@ pluginBundle {
 }
 
 dependencies {
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
 
     compile project(":okhttp-plugin")
