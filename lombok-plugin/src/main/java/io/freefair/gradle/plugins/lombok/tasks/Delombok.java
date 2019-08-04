@@ -178,6 +178,7 @@ public class Delombok extends DefaultTask implements LombokTask {
     }
 
     private static String escape(String path) {
-        return path.replace("\\", "\\\\");
+        return path.replace("\\", "\\\\")
+                .replace(" ", "\\ ");
     }
 }
