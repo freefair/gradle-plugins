@@ -141,5 +141,6 @@ task uploadDocs(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
     username = findProperty("freefairDocsUser")
     password = findProperty("freefairDocsPass")
     file = docsZip.archiveFile
+    contentType = 'application/zip'
     url = "https://docs.freefair.io/api/$project.version?path=gradle-plugins"
 }

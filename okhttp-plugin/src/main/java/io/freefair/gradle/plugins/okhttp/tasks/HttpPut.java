@@ -6,6 +6,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Optional;
 
 import javax.annotation.Nullable;
 
@@ -16,6 +17,7 @@ import javax.annotation.Nullable;
 public abstract class HttpPut extends OkHttpRequestTask {
 
     @Input
+    @Optional
     private final Property<String> contentType = getProject().getObjects().property(String.class);
 
     @Override
