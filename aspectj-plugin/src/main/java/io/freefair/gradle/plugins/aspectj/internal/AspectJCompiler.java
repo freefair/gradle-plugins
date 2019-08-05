@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.aspectj.internal;
 import io.freefair.gradle.plugins.aspectj.AjcForkOptions;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.internal.tasks.compile.CompilationFailedException;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
@@ -14,6 +15,7 @@ import org.gradle.process.internal.JavaExecHandleFactory;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,12 +51,12 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
         if (!spec.getAspectJCompileOptions().getInpath().isEmpty()) {
             args.add("-inpath");
-            args.add(spec.getAspectJCompileOptions().getInpath().getAsPath());
+            args.add(getAsPath(spec.getAspectJCompileOptions().getInpath().getFiles()));
         }
 
         if (!spec.getAspectJCompileOptions().getAspectpath().isEmpty()) {
             args.add("-aspectpath");
-            args.add(spec.getAspectJCompileOptions().getAspectpath().getAsPath());
+            args.add(getAsPath(spec.getAspectJCompileOptions().getAspectpath().getFiles()));
         }
 
         if (spec.getAspectJCompileOptions().getOutjar().isPresent()) {
@@ -88,12 +90,12 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
         if (!spec.getAspectJCompileOptions().getBootclasspath().isEmpty()) {
             args.add("-bootclasspath");
-            args.add(spec.getAspectJCompileOptions().getBootclasspath().getAsPath());
+            args.add(getAsPath(spec.getAspectJCompileOptions().getBootclasspath().getFiles()));
         }
 
         if (!spec.getAspectJCompileOptions().getExtdirs().isEmpty()) {
             args.add("-extdirs");
-            args.add(spec.getAspectJCompileOptions().getExtdirs().getAsPath());
+            args.add(getAsPath(spec.getAspectJCompileOptions().getExtdirs().getFiles()));
         }
 
         if (spec.getDestinationDir() != null) {
@@ -149,8 +151,9 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
         }
     }
 
-    private String getAsPath(List<File> files) {
+    private String getAsPath(Collection<File> files) {
         return files.stream()
+                .filter(File::exists)
                 .map(File::getAbsolutePath)
                 .collect(Collectors.joining(File.pathSeparator));
     }
