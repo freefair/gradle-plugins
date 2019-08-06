@@ -14,7 +14,7 @@ buildscript {
 
 plugins {
     id 'org.asciidoctor.jvm.convert' version '2.2.0'
-    id 'io.freefair.git-version' version '3.8.2'
+    id 'io.freefair.git-version' version '3.8.4'
 }
 
 apply plugin: "io.codearte.nexus-staging"
