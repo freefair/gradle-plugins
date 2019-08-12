@@ -71,6 +71,7 @@ public class MkDocsServe extends MkDocs {
     @SuppressWarnings("UnstableApiUsage")
     public MkDocsServe() {
         super("serve");
+        setDescription("Run the builtin development server.");
 
         getArgumentProviders().add((CommandLineArgumentProvider) () -> {
             LinkedList<String> args = new LinkedList<>();

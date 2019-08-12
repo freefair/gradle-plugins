@@ -4,8 +4,6 @@ import lombok.Getter;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.process.CommandLineArgumentProvider;
 
 import java.util.LinkedList;
@@ -23,6 +21,7 @@ public class MkDocsNew extends MkDocs {
     @SuppressWarnings("UnstableApiUsage")
     public MkDocsNew() {
         super("new");
+        setDescription("Create a new MkDocs project");
 
         getArgumentProviders().add((CommandLineArgumentProvider) () -> {
             LinkedList<String> args = new LinkedList<>();

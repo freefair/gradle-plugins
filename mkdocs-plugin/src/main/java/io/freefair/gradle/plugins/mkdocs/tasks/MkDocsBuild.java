@@ -57,6 +57,8 @@ public class MkDocsBuild extends MkDocs {
 
     public MkDocsBuild() {
         super("build");
+        setDescription("Build the MkDocs documentation");
+
         getArgumentProviders().add((CommandLineArgumentProvider) () -> {
             LinkedList<String> args = new LinkedList<>();
 

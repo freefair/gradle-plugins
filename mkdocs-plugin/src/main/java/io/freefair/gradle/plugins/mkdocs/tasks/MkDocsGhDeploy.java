@@ -64,6 +64,7 @@ public class MkDocsGhDeploy extends MkDocs {
 
     public MkDocsGhDeploy() {
         super("gh-deploy");
+        setDescription("Deploy your documentation to GitHub Pages");
 
         getArgumentProviders().add((CommandLineArgumentProvider) () -> {
             LinkedList<String> args = new LinkedList<>();
