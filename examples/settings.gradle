@@ -23,3 +23,5 @@ include ":jacoco:sub-a"
 include ":jacoco:sub-b"
 
 include ":github"
+
+include ":mkdocs"
