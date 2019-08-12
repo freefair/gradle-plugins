@@ -66,6 +66,7 @@ public class Delombok extends DefaultTask implements LombokTask {
      * Directory to save delomboked files to.
      */
     @OutputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty target = getProject().getObjects().directoryProperty();
 
     /**

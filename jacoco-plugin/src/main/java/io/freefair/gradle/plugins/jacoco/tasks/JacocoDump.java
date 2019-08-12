@@ -7,10 +7,7 @@ import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.OutputFile;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 import org.gradle.testing.jacoco.tasks.JacocoBase;
 import org.gradle.workers.WorkerExecutor;
 import org.jacoco.core.tools.ExecDumpClient;
@@ -82,6 +79,7 @@ public class JacocoDump extends JacocoBase {
      * @see org.jacoco.ant.DumpTask#setDestfile(File)
      */
     @OutputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     private final RegularFileProperty destfile = getProject().getObjects().fileProperty();
 
     /**
