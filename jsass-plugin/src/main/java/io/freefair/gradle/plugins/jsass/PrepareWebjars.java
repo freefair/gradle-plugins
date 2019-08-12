@@ -6,9 +6,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.DuplicatesStrategy;
-import org.gradle.api.tasks.InputFiles;
-import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.*;
 
 import java.io.File;
 
@@ -17,9 +15,11 @@ import java.io.File;
 public class PrepareWebjars extends DefaultTask {
 
     @OutputDirectory
-    private final DirectoryProperty outputDirectory= getProject().getObjects().directoryProperty();
+    @PathSensitive(PathSensitivity.RELATIVE)
+    private final DirectoryProperty outputDirectory = getProject().getObjects().directoryProperty();
 
     @InputFiles
+    @PathSensitive(PathSensitivity.NAME_ONLY)
     private final ConfigurableFileCollection webjars = getProject().files();
 
     @TaskAction

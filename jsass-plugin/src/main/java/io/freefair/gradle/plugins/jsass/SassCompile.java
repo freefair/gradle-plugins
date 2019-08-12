@@ -31,6 +31,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@CacheableTask
 public class SassCompile extends SourceTask {
 
     public SassCompile() {
@@ -44,6 +45,7 @@ public class SassCompile extends SourceTask {
     }
 
     @OutputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     protected FileTree getOutputFiles() {
         ConfigurableFileTree files = getProject().fileTree(destinationDir);
         files.include("**/*.css");
@@ -52,6 +54,7 @@ public class SassCompile extends SourceTask {
     }
 
     @Internal
+    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty destinationDir = getProject().getObjects().directoryProperty();
 
     @TaskAction
@@ -170,6 +173,7 @@ public class SassCompile extends SourceTask {
      */
     @InputFiles
     @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
     private final ConfigurableFileCollection includePaths = getProject().files();
 
     @Input
