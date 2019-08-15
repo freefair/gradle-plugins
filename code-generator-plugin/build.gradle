@@ -3,7 +3,7 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    compile 'io.github.classgraph:classgraph:4.4.7'
+    compile 'io.github.classgraph:classgraph:4.8.44'
     compile 'commons-io:commons-io:2.6'
     compile project(':code-generator-api')
     testCompile project(':test-common')
