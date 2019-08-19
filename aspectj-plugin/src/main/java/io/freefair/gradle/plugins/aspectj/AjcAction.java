@@ -95,8 +95,6 @@ public class AjcAction implements Action<Task> {
         spec.setAspectJClasspath(getClasspath());
         spec.setAspectJCompileOptions(getOptions());
 
-        spec.getAspectJCompileOptions().getInpath().from(compile.getDestinationDir());
-
         return spec;
     }
 }
