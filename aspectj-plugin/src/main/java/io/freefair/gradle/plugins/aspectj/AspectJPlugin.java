@@ -8,7 +8,7 @@ import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.plugins.internal.SourceSetUtil;
+import org.gradle.api.plugins.internal.JvmPluginsHelper;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 
@@ -67,14 +67,14 @@ public class AspectJPlugin implements Plugin<Project> {
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
 
         final Provider<AspectjCompile> compileTask = project.getTasks().register(sourceSet.getCompileTaskName("aspectj"), AspectjCompile.class, compile -> {
-            SourceSetUtil.configureForSourceSet(sourceSet, aspectjSourceSet.getAspectj(), compile, compile.getOptions(), project);
+            JvmPluginsHelper.configureForSourceSet(sourceSet, aspectjSourceSet.getAspectj(), compile, compile.getOptions(), project);
             compile.dependsOn(sourceSet.getCompileJavaTaskName());
             compile.setDescription("Compiles the " + sourceSet.getName() + " AspectJ source.");
             compile.setSource(aspectjSourceSet.getAspectj());
             compile.getAjcOptions().getAspectpath().from(aspectjSourceSet.getAspectPath());
             compile.getAjcOptions().getInpath().from(aspectjSourceSet.getInPath());
         });
-        SourceSetUtil.configureOutputDirectoryForSourceSet(sourceSet, aspectjSourceSet.getAspectj(), project, compileTask, compileTask.map(AspectjCompile::getOptions));
+        JvmPluginsHelper.configureOutputDirectoryForSourceSet(sourceSet, aspectjSourceSet.getAspectj(), project, compileTask, compileTask.map(AspectjCompile::getOptions));
 
         project.getTasks().named(sourceSet.getClassesTaskName(), task -> task.dependsOn(compileTask));
     }
