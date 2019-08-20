@@ -12,10 +12,6 @@ gradlePlugin {
             id = "io.freefair.aspectj.post-compile-weaving"
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPostCompileWeavingPlugin"
         }
-        aspectjCompileTimeWeaving {
-            id = "io.freefair.aspectj.compile-time-weaving"
-            implementationClass = "io.freefair.gradle.plugins.AspectJCompileTimeWeavingPlugin"
-        }
         aspectj {
             id = "io.freefair.aspectj"
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPlugin"
@@ -33,10 +29,6 @@ pluginBundle {
         }
         aspectjPostCompileWeaving {
             displayName = "AspectJ Post-Compile Weaving Plugin"
-            description = "AspectJ Weaving Plugin"
-        }
-        aspectjCompileTimeWeaving {
-            displayName = "AspectJ Compile-Time Weaving Plugin"
             description = "AspectJ Weaving Plugin"
         }
         aspectj {
