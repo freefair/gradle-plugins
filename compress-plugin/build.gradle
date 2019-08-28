@@ -56,7 +56,7 @@ pluginBundle {
 }
 
 dependencies {
-    compile 'org.apache.commons:commons-compress:1.18'
+    compile 'org.apache.commons:commons-compress:1.19'
     compile 'org.tukaani:xz:1.8'
 
     testCompile project(":test-common")
