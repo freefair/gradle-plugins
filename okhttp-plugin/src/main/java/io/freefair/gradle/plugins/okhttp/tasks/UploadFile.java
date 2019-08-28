@@ -21,6 +21,6 @@ public class UploadFile extends HttpPut {
 
     @Override
     public RequestBody getRequestBody(@Nullable MediaType contentType) {
-        return RequestBody.create(contentType, file.getAsFile().get());
+        return RequestBody.create(file.getAsFile().get(), contentType);
     }
 }

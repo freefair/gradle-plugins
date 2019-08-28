@@ -53,7 +53,7 @@ public class Ar extends AbstractArchiveTask {
 
     @SneakyThrows
     private WorkResult execute(CopyActionProcessingStream copyActionProcessingStream) {
-        try (ArArchiveOutputStream archiveOutputStream = new ArArchiveOutputStream(new FileOutputStream(getArchivePath()))) {
+        try (ArArchiveOutputStream archiveOutputStream = new ArArchiveOutputStream(new FileOutputStream(getArchiveFile().get().getAsFile()))) {
 
             archiveOutputStream.setLongFileMode(this.longFileMode.get());
 

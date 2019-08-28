@@ -8,7 +8,11 @@ import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.process.internal.worker.request.WorkerAction;
 import org.gradle.testing.jacoco.tasks.JacocoBase;
+import org.gradle.workers.WorkAction;
+import org.gradle.workers.WorkParameters;
+import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 import org.jacoco.core.tools.ExecDumpClient;
 import org.jacoco.core.tools.ExecFileLoader;
@@ -107,39 +111,52 @@ public class JacocoDump extends JacocoBase {
             throw new InvalidUserDataException("Destination file is required when dumping execution data");
         }
 
-        workerExecutor.submit(Action.class, workerConfiguration -> {
-            workerConfiguration.setClasspath(getJacocoClasspath());
-            workerConfiguration.params(dump.get(), reset.get(), retryCount.get());
-            workerConfiguration.params(address.get(), port.get());
-            workerConfiguration.params(destfile.getAsFile().get(), append.get());
+        WorkQueue workQueue = workerExecutor.classLoaderIsolation(spec -> spec.getClasspath().from(getJacocoClasspath()));
+
+        workQueue.submit(Action.class, jacocoDumpParameters -> {
+            jacocoDumpParameters.getDump().set(dump);
+            jacocoDumpParameters.getReset().set(reset);
+            jacocoDumpParameters.getRetryCount().set(retryCount);
+
+            jacocoDumpParameters.getAddress().set(address);
+            jacocoDumpParameters.getPort().set(port);
+
+            jacocoDumpParameters.getDestfile().set(destfile);
+            jacocoDumpParameters.getAppend().set(append);
         });
     }
 
-    @RequiredArgsConstructor
-    private static class Action implements Runnable {
+    interface JacocoDumpParameters extends WorkParameters {
+        Property<Boolean> getDump();
 
-        private final boolean dump;
-        private final boolean reset;
-        private final int retryCount;
+        Property<Boolean> getReset();
 
-        private final String address;
-        private final int port;
+        Property<Integer> getRetryCount();
 
-        private final File destfile;
-        private final boolean append;
+        Property<String> getAddress();
+
+        Property<Integer> getPort();
+
+        RegularFileProperty getDestfile();
+
+        Property<Boolean> getAppend();
+    }
+
+    static abstract class Action implements WorkAction<JacocoDumpParameters> {
 
         @Override
-        public void run() {
+        public void execute() {
+
             ExecDumpClient client = new ExecDumpClient();
 
-            client.setDump(dump);
-            client.setReset(reset);
-            client.setRetryCount(retryCount);
+            client.setDump(getParameters().getDump().getOrElse(false));
+            client.setReset(getParameters().getReset().getOrElse(false));
+            client.setRetryCount(getParameters().getRetryCount().getOrElse(0));
 
             try {
-                ExecFileLoader loader = client.dump(address, port);
-                if (dump) {
-                    loader.save(destfile, append);
+                ExecFileLoader loader = client.dump(getParameters().getAddress().get(), getParameters().getPort().get());
+                if (getParameters().getDump().getOrElse(false)) {
+                    loader.save(getParameters().getDestfile().get().getAsFile(), getParameters().getAppend().get());
                 }
             } catch (IOException e) {
                 throw new UncheckedIOException(e);

@@ -43,7 +43,7 @@ public class SevenZip extends AbstractArchiveTask {
 
     @SneakyThrows
     private WorkResult execute(CopyActionProcessingStream stream) {
-        try (SevenZOutputFile outputFile = new SevenZOutputFile(getArchivePath())) {
+        try (SevenZOutputFile outputFile = new SevenZOutputFile(getArchiveFile().get().getAsFile())) {
 
             if (contentCompression.isPresent()) {
                 outputFile.setContentCompression(contentCompression.get());

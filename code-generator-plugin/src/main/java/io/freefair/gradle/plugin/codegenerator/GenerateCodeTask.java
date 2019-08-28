@@ -16,9 +16,9 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.MapProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.workers.IsolationMode;
-import org.gradle.workers.WorkerExecutor;
+import org.gradle.workers.*;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -70,27 +70,33 @@ public class GenerateCodeTask extends DefaultTask {
 
         ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().get(), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()));
 
+        WorkQueue workQueue = workerExecutor.classLoaderIsolation(spec -> spec.getClasspath().from(codeGeneratorClasspath));
+
         for (ClassInfo classInfo : classesWithAnnotation) {
-            workerExecutor.submit(UnitOfWork.class, workerConfiguration -> {
-                workerConfiguration.setDisplayName(classInfo.getName());
-                workerConfiguration.setIsolationMode(IsolationMode.CLASSLOADER);
-                workerConfiguration.classpath(codeGeneratorClasspath);
-                workerConfiguration.params(classInfo.getName(), context);
+            workQueue.submit(UnitOfWork.class, parameters -> {
+                parameters.getClassName().set(classInfo.getName());
+                parameters.getProjectContext().set(context);
             });
         }
     }
 
+    interface Parameters extends WorkParameters {
+        Property<String> getClassName();
+
+        Property<ProjectContext> getProjectContext();
+    }
+
     @Slf4j
     @RequiredArgsConstructor(onConstructor_ = @Inject)
-    static class UnitOfWork implements Runnable {
-        private final String className;
-        private final ProjectContext projectContext;
+    abstract static class UnitOfWork implements WorkAction<Parameters> {
 
         @Override
         @SneakyThrows
-        public void run() {
+        public void execute() {
+            String className = getParameters().getClassName().get();
+
             log.info("Executing {} ...", className);
-            new CodeGeneratorExecutor(Class.forName(className)).execute(projectContext);
+            new CodeGeneratorExecutor(Class.forName(className)).execute(getParameters().getProjectContext().get());
             log.debug("... Success");
         }
     }
