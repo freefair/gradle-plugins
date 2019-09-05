@@ -15,7 +15,6 @@ import java.io.File;
 public class PrepareWebjars extends DefaultTask {
 
     @OutputDirectory
-    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty outputDirectory = getProject().getObjects().directoryProperty();
 
     @InputFiles

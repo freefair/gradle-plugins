@@ -45,7 +45,6 @@ public class SassCompile extends SourceTask {
     }
 
     @OutputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
     protected FileTree getOutputFiles() {
         ConfigurableFileTree files = getProject().fileTree(destinationDir);
         files.include("**/*.css");

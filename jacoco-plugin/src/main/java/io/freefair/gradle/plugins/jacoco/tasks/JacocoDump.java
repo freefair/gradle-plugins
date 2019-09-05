@@ -83,7 +83,6 @@ public class JacocoDump extends JacocoBase {
      * @see org.jacoco.ant.DumpTask#setDestfile(File)
      */
     @OutputFile
-    @PathSensitive(PathSensitivity.RELATIVE)
     private final RegularFileProperty destfile = getProject().getObjects().fileProperty();
 
     /**
