@@ -3,7 +3,7 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    compile 'com.squareup.okhttp3:okhttp:4.1.0'
+    compile 'com.squareup.okhttp3:okhttp:4.1.1'
     compile 'com.squareup.okhttp3:logging-interceptor:4.1.0'
 
     testCompile project(":test-common")
