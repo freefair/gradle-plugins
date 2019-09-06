@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:0.10.1"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.0"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1"
 
         classpath "io.freefair.gradle:maven-plugin:4.0.1"
         classpath "io.freefair.gradle:lombok-plugin:4.0.1"
