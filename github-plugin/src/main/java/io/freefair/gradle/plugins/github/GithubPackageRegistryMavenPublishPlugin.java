@@ -20,8 +20,7 @@ public class GithubPackageRegistryMavenPublishPlugin implements Plugin<Project> 
         project.afterEvaluate(p -> p.getExtensions().getByType(PublishingExtension.class)
                 .getRepositories()
                 .maven(githubRepo -> {
-                    String owner = githubExtension.getOwner().get();
-                    githubRepo.setName("GitHub " + owner + " Apache Maven Packages");
+                    githubRepo.setName("GithubPackageRegistry");
                     githubRepo.setUrl("https://maven.pkg.github.com/" + githubExtension.getSlug().get());
 
                     if (githubExtension.getUsername().isPresent() && githubExtension.getToken().isPresent()) {
