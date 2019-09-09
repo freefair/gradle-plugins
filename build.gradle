@@ -9,7 +9,7 @@ buildscript {
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1"
 
         classpath "io.freefair.gradle:maven-plugin:4.0.1"
-        classpath "io.freefair.gradle:lombok-plugin:4.0.1"
+        classpath "io.freefair.gradle:lombok-plugin:4.0.2"
         classpath "io.freefair.gradle:git-plugin:4.0.1"
     }
 }
