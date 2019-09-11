@@ -91,6 +91,13 @@ public class Delombok extends DefaultTask implements LombokTask {
     private final ConfigurableFileCollection bootclasspath = getProject().files();
 
     /**
+     * Module path (analogous to javac --module-path option)
+     */
+    @Classpath
+    @Optional
+    private final ConfigurableFileCollection modulePath = getProject().files();
+
+    /**
      * Lombok will only delombok source files.
      * Without this option, non-java, non-class files are copied to the target directory.
      */
@@ -153,6 +160,10 @@ public class Delombok extends DefaultTask implements LombokTask {
         }
         if (!bootclasspath.isEmpty()) {
             args.add("--bootclasspath=" + escape(getBootclasspath().getAsPath()));
+        }
+
+        if (!modulePath.isEmpty()) {
+            args.add("--module-path=" + escape(getModulePath().getAsPath()));
         }
 
         if (nocopy.getOrElse(false)) {
