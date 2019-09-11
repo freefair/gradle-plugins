@@ -4,7 +4,7 @@ apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
     testCompile project(":test-common")
-    testCompile 'org.projectlombok:lombok:1.18.8'
+    testCompile 'org.projectlombok:lombok:1.18.10'
 }
 
 gradlePlugin {
