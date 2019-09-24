@@ -1,5 +1,5 @@
 plugins {
-    id "de.marcphilipp.nexus-publish" version "0.2.0"
+    id "de.marcphilipp.nexus-publish" version "0.3.1"
 }
 apply plugin: "io.freefair.maven-publish-java"
 apply plugin: "io.freefair.maven-jars"
