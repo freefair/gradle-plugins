@@ -4,6 +4,8 @@ import io.freefair.gradle.plugins.aspectj.internal.AspectJCompileSpec;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompiler;
 import lombok.Getter;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.CompileOptions;
@@ -23,6 +25,23 @@ public class AspectjCompile extends AbstractCompile {
 
     @Nested
     private final AspectJCompileOptions ajcOptions = getProject().getObjects().newInstance(AspectJCompileOptions.class);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @InputFiles
+    @SkipWhenEmpty
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public FileTree getSource() {
+        return super.getSource();
+    }
+
+    @Override
+    @CompileClasspath
+    public FileCollection getClasspath() {
+        return super.getClasspath();
+    }
 
     @Override
     @TaskAction
