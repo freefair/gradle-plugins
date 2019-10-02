@@ -51,7 +51,7 @@ compileTestKotlin {
 compileJava {
     ajc {
         options {
-            compilerArgs += "-noImportError"
+            compilerArgs += "-showWeaveInfo"
         }
     }
 }
