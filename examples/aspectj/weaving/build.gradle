@@ -47,3 +47,11 @@ compileTestKotlin {
         jvmTarget = "1.8"
     }
 }
+
+compileJava {
+    ajc {
+        options {
+            compilerArgs += "-noImportError"
+        }
+    }
+}

@@ -101,7 +101,7 @@ compileJava {
         classpath = configurations.aspectj //<2>
         options {
             aspectpath = configurations.aspect //<3>
-            compilerArgs = [] = //<4>
+            compilerArgs = [] //<4>
         }
     }
 }

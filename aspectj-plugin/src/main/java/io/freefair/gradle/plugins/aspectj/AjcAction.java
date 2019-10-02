@@ -32,6 +32,10 @@ public class AjcAction implements Action<Task> {
 
     private final AspectJCompileOptions options;
 
+    public void options(Action<AspectJCompileOptions> action) {
+        action.execute(getOptions());
+    }
+
     @Getter(AccessLevel.NONE)
     private final JavaExecHandleFactory javaExecHandleFactory;
 
@@ -43,7 +47,6 @@ public class AjcAction implements Action<Task> {
         enabled = objectFactory.property(Boolean.class).convention(true);
         this.javaExecHandleFactory = javaExecHandleFactory;
     }
-
 
     void addToTask(Task task) {
         task.doLast("ajc", this);
