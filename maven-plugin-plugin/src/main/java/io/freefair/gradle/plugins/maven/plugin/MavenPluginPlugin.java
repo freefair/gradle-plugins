@@ -23,7 +23,15 @@ public class MavenPluginPlugin implements Plugin<Project> {
         project.getPlugins().apply(JavaPlugin.class);
         MavenPublishJavaPlugin mavenPublishJavaPlugin = project.getPlugins().apply(MavenPublishJavaPlugin.class);
 
-        mavenPublishJavaPlugin.getPublication().getPom().setPackaging("maven-plugin");
+        // https://github.com/gradle/gradle/issues/10555#issue-492150084
+        if (project.getGradle().getGradleVersion().startsWith("5.6")) {
+            mavenPublishJavaPlugin.getPublication().getPom().withXml(xmlProvider ->
+                    xmlProvider.asNode().appendNode("packaging", "maven-plugin")
+            );
+        }
+        else {
+            mavenPublishJavaPlugin.getPublication().getPom().setPackaging("maven-plugin");
+        }
 
         TaskProvider<GenerateMavenPom> generateMavenPom = project.getTasks().named("generatePomFileForMavenJavaPublication", GenerateMavenPom.class);
 
