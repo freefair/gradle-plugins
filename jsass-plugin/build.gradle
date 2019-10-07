@@ -48,7 +48,7 @@ pluginBundle {
 
 dependencies {
     compile "io.bit3:jsass:5.9.2"
-    compile 'com.google.code.gson:gson:2.8.5'
+    compile 'com.google.code.gson:gson:2.8.6'
 
     testCompile project(":test-common")
 }
