@@ -83,10 +83,11 @@ public class LombokPlugin implements Plugin<Project> {
 
         });
 
-        project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class, javadoc -> {
-            SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-            javadoc.setSource(mainSourceSet.getExtensions().getByName("delombokTask"));
+        final SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+        project.getTasks().withType(Javadoc.class).forEach(javadoc -> {
+          javadoc.setSource(mainSourceSet.getExtensions().getByName("delombokTask"));          
         });
+       
 
         project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> configureForJacoco());
 
