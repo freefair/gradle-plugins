@@ -24,7 +24,7 @@ public class MavenPluginPlugin implements Plugin<Project> {
         MavenPublishJavaPlugin mavenPublishJavaPlugin = project.getPlugins().apply(MavenPublishJavaPlugin.class);
 
         // https://github.com/gradle/gradle/issues/10555#issue-492150084
-        if (project.getGradle().getGradleVersion().startsWith("5.6")) {
+        if (project.getGradle().getGradleVersion().matches("5\\.6(\\.[12])?")) {
             mavenPublishJavaPlugin.getPublication().getPom().withXml(xmlProvider ->
                     xmlProvider.asNode().appendNode("packaging", "maven-plugin")
             );
