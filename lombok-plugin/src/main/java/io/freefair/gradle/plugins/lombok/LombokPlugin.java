@@ -9,15 +9,12 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
-import org.gradle.api.plugins.quality.FindBugsExtension;
-import org.gradle.api.plugins.quality.FindBugsPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 @Getter
