@@ -3,8 +3,8 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    testCompile project(":test-common")
-    testCompile 'org.projectlombok:lombok:1.18.10'
+    testImplementation project(":test-common")
+    testImplementation 'org.projectlombok:lombok:1.18.10'
 }
 
 gradlePlugin {

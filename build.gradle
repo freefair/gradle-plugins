@@ -48,6 +48,9 @@ allprojects {
         plugins.apply "io.freefair.javadoc-links"
 
         jacocoTestReport.reports.xml.enabled = true
+
+        java.withSourcesJar()
+        java.withJavadocJar()
     }
 
     plugins.withId("com.gradle.plugin-publish") {

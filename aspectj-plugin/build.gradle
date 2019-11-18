@@ -39,7 +39,7 @@ pluginBundle {
 }
 
 dependencies {
-    testCompile "junit:junit:4.12"
+    testImplementation "junit:junit:4.12"
 
     compileOnly "org.aspectj:aspectjtools:1.9.4"
     compileOnly "org.aspectj:aspectjrt:1.9.4"
