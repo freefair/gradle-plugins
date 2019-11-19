@@ -48,7 +48,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
             if (warTask.getName().equals(WarPlugin.WAR_TASK_NAME)) {
                 project.getConfigurations().getByName(COMPILE_CLASSPATH_CONFIGURATION_NAME).extendsFrom(warOverlayClasspath);
-                project.getConfigurations().getByName(TEST_COMPILE_CONFIGURATION_NAME).extendsFrom(warOverlayClasspath);
+                project.getConfigurations().getByName(TEST_IMPLEMENTATION_CONFIGURATION_NAME).extendsFrom(warOverlayClasspath);
             }
 
             project.afterEvaluate(p -> warOverlays.all(overlay -> {
