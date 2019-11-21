@@ -8,9 +8,10 @@ buildscript {
         classpath "com.gradle.publish:plugin-publish-plugin:0.10.1"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1"
 
-        classpath "io.freefair.gradle:maven-plugin:4.1.1"
-        classpath "io.freefair.gradle:lombok-plugin:4.1.1"
-        classpath "io.freefair.gradle:git-plugin:4.1.1"
+        def pluginVersion = "4.1.4"
+        classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
+        classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
+        classpath "io.freefair.gradle:git-plugin:$pluginVersion"
     }
 }
 
@@ -47,6 +48,9 @@ allprojects {
         plugins.apply "io.freefair.javadoc-links"
 
         jacocoTestReport.reports.xml.enabled = true
+
+        java.withSourcesJar()
+        java.withJavadocJar()
     }
 
     plugins.withId("com.gradle.plugin-publish") {

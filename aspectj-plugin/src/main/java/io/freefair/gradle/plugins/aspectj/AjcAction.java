@@ -48,7 +48,8 @@ public class AjcAction implements Action<Task> {
         this.javaExecHandleFactory = javaExecHandleFactory;
     }
 
-    void addToTask(Task task) {
+    @SuppressWarnings("WeakerAccess")
+    public void addToTask(Task task) {
         task.doLast("ajc", this);
         task.getExtensions().add("ajc", this);
 

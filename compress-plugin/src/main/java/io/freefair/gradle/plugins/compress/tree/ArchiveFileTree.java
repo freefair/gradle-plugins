@@ -98,24 +98,6 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
         return String.format("archive '%s'", archiveFile);
     }
 
-    @Override
-    public void registerWatchPoints(FileSystemSubset.Builder builder) {
-        builder.add(archiveFile);
-    }
-
-    /**
-     * @see ZipFileTree#visitTreeOrBackingFile(FileVisitor)
-     */
-    @Override
-    public void visitTreeOrBackingFile(FileVisitor visitor) {
-        File backingFile = archiveFile;
-        if (backingFile != null) {
-            new DefaultSingletonFileTree(backingFile).visit(visitor);
-        } else {
-            visit(visitor);
-        }
-    }
-
     private File getExpandedDir() {
         String expandedDirName = archiveFile.getName() + "_" + fileHasher.hash(archiveFile);
         return new File(tmpDir, expandedDirName);

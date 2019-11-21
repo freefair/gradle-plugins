@@ -10,10 +10,12 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.javadoc.Javadoc;
+import org.gradle.util.SingleMessageLogger;
 
 import java.io.File;
 
 @Getter
+@Deprecated
 public class JavadocJarPlugin implements Plugin<Project> {
 
     private TaskProvider<Jar> javadocJar;
@@ -22,6 +24,8 @@ public class JavadocJarPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
+
+            SingleMessageLogger.nagUserOfDeprecatedPlugin("io.freefair.javadoc-jar", "Use java.withJavadocJar() instead");
 
             javadocJar = project.getTasks().register("javadocJar", Jar.class, javadocJar -> {
                 javadocJar.from(project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME));

@@ -62,7 +62,7 @@ public class AspectJPlugin implements Plugin<Project> {
         Configuration inpath = project.getConfigurations().create(aspectjSourceSet.getInpathConfigurationName());
         aspectjSourceSet.setInPath(inpath);
 
-        project.getConfigurations().getByName(sourceSet.getCompileConfigurationName()).extendsFrom(aspect);
+        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName()).extendsFrom(aspect);
 
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
 

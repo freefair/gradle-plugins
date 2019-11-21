@@ -43,7 +43,6 @@ public class AspectjCompile extends AbstractCompile {
         return super.getClasspath();
     }
 
-    @Override
     @TaskAction
     protected void compile() {
         getProject().delete(getDestinationDir());

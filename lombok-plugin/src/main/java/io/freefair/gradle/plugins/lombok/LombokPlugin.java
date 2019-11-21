@@ -9,15 +9,12 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
-import org.gradle.api.plugins.quality.FindBugsExtension;
-import org.gradle.api.plugins.quality.FindBugsPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 
-import java.io.File;
 import java.util.concurrent.Callable;
 
 @Getter
@@ -90,8 +87,6 @@ public class LombokPlugin implements Plugin<Project> {
 
         project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> configureForJacoco());
 
-        project.getPlugins().withType(FindBugsPlugin.class, findBugsPlugin -> configureForFindbugs(javaPluginConvention));
-
         project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginConvention));
     }
 
@@ -103,18 +98,6 @@ public class LombokPlugin implements Plugin<Project> {
                 project.getDependencies().add(
                         sourceSet.getCompileOnlyConfigurationName(),
                         "com.github.spotbugs:spotbugs-annotations:" + spotbugsExtension.getToolVersion()
-                ));
-    }
-
-    @Deprecated
-    private void configureForFindbugs(JavaPluginConvention javaPluginConvention) {
-        lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
-
-        FindBugsExtension findBugsExtension = project.getExtensions().getByType(FindBugsExtension.class);
-        javaPluginConvention.getSourceSets().all(sourceSet ->
-                project.getDependencies().add(
-                        sourceSet.getCompileOnlyConfigurationName(),
-                        "com.google.code.findbugs:findbugs:" + findBugsExtension.getToolVersion()
                 ));
     }
 

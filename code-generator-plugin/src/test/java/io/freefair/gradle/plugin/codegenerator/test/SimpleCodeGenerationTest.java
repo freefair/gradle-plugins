@@ -10,6 +10,7 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -42,6 +43,7 @@ public class SimpleCodeGenerationTest extends AbstractPluginTest {
     }
 
     @Test
+    @Ignore
     public void testBuild() {
         try {
             File resource = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("test-code-generator.jar")).toURI());

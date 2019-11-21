@@ -35,7 +35,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
     private void configureSourceSet(SourceSet sourceSet) {
         project.afterEvaluate(p ->
-                p.getDependencies().add(sourceSet.getCompileConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
+                p.getDependencies().add(sourceSet.getImplementationConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
         );
 
         DefaultWeavingSourceSet weavingSourceSet = new DefaultWeavingSourceSet(sourceSet);
@@ -47,7 +47,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         Configuration inpath = project.getConfigurations().create(weavingSourceSet.getInpathConfigurationName());
         weavingSourceSet.setInPath(inpath);
 
-        project.getConfigurations().getByName(sourceSet.getCompileConfigurationName())
+        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
                 .extendsFrom(aspectpath);
 
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);

@@ -33,6 +33,19 @@ This plugin simplifies the use of https://projectlombok.org/[Lombok] in Gradle b
 - A `generateLombokConfig` will be added to the project, which generates the `lombok.config` file
 based on the `lombok` extension.
 
+[NOTE]
+====
+Only the default `javadoc` https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.tasks.javadoc.Javadoc.html[Javadoc] task will be modified to work on the delombok-ed sources.
+If you create your own custom https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.tasks.javadoc.Javadoc.html[Javadoc] tasks, it's up to you to assign the correct `source`.
+The `delombok` task created by this plugin can be used as source for the javadoc task:
+[source,groovy]
+----
+task myJavadocs(type: Javadoc) {
+  source = delombok
+}
+----
+====
+
 ==== `lombok.config` handling
 
 .Disable `lombok.config` generation
