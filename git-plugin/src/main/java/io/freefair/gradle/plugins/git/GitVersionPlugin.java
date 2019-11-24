@@ -40,6 +40,18 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         try {
+            Process execute = ProcessGroovyMethods.execute("git describe --tags --exact-match");
+            String gitTag = ProcessGroovyMethods.getText(execute).trim();
+
+            if (!gitTag.isEmpty()) {
+                logger.lifecycle("Using git tag as version: {}", gitTag);
+                return gitTag;
+            }
+        } catch (Exception e) {
+            logger.debug("Failed to get current git tag", e);
+        }
+
+        try {
             Process execute = ProcessGroovyMethods.execute("git symbolic-ref --short HEAD");
             String gitBranch = ProcessGroovyMethods.getText(execute).trim();
 
@@ -49,7 +61,8 @@ public class GitVersionPlugin implements Plugin<Project> {
                 logger.lifecycle("Using git branch as version: {}", version);
                 return version;
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.debug("Failed to get current git branch", e);
         }
 
         return project.getVersion();
