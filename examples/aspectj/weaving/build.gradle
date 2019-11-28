@@ -24,8 +24,6 @@ repositories {
     mavenCentral()
 }
 
-jacoco.toolVersion = "0.8.2"
-
 dependencies {
     aspect project(":aspectj:aspect")
 
