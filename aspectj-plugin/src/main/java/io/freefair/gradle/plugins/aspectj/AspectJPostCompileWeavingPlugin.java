@@ -53,21 +53,27 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin ->
-                project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava ->
-                        enhanceWithWeavingAction(compileJava, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
-                )
+                project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava -> {
+                    AjcAction ajcAction = enhanceWithWeavingAction(compileJava, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
+                    ajcAction.getOptions().getBootclasspath().from(compileJava.getOptions().getBootstrapClasspath());
+                    ajcAction.getOptions().getExtdirs().from(compileJava.getOptions().getExtensionDirs());
+                })
         );
 
         project.getPlugins().withType(GroovyPlugin.class, groovyPlugin ->
-                project.getTasks().named(sourceSet.getCompileTaskName("groovy"), GroovyCompile.class, compileGroovy ->
-                        enhanceWithWeavingAction(compileGroovy, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
-                )
+                project.getTasks().named(sourceSet.getCompileTaskName("groovy"), GroovyCompile.class, compileGroovy -> {
+                    AjcAction ajcAction = enhanceWithWeavingAction(compileGroovy, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
+                    ajcAction.getOptions().getBootclasspath().from(compileGroovy.getOptions().getBootstrapClasspath());
+                    ajcAction.getOptions().getExtdirs().from(compileGroovy.getOptions().getExtensionDirs());
+                })
         );
 
         project.getPlugins().withType(ScalaBasePlugin.class, scalaBasePlugin ->
-                project.getTasks().named(sourceSet.getCompileTaskName("scala"), ScalaCompile.class, compileScala ->
-                        enhanceWithWeavingAction(compileScala, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
-                )
+                project.getTasks().named(sourceSet.getCompileTaskName("scala"), ScalaCompile.class, compileScala -> {
+                    AjcAction ajcAction = enhanceWithWeavingAction(compileScala, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
+                    ajcAction.getOptions().getBootclasspath().from(compileScala.getOptions().getBootstrapClasspath());
+                    ajcAction.getOptions().getExtdirs().from(compileScala.getOptions().getExtensionDirs());
+                })
         );
 
         project.getPlugins().withId("org.jetbrains.kotlin.jvm", kotlinPlugin ->
@@ -77,7 +83,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         );
     }
 
-    private void enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration inpath, Configuration aspectjConfiguration) {
+    private AjcAction enhanceWithWeavingAction(AbstractCompile abstractCompile, Configuration aspectpath, Configuration inpath, Configuration aspectjConfiguration) {
         AjcAction action = project.getObjects().newInstance(AjcAction.class);
 
         action.getOptions().getAspectpath().from(aspectpath);
@@ -86,6 +92,8 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         action.getClasspath().from(aspectjConfiguration);
 
         action.addToTask(abstractCompile);
+
+        return action;
     }
 
 }
