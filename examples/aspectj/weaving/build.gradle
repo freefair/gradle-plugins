@@ -24,17 +24,15 @@ repositories {
     mavenCentral()
 }
 
-jacoco.toolVersion = "0.8.2"
-
 dependencies {
     aspect project(":aspectj:aspect")
 
-    compile "org.slf4j:slf4j-api:1.+"
+    implementation "org.slf4j:slf4j-api:1.+"
 
-    compile localGroovy()
+    implementation localGroovy()
 
-    testCompile "junit:junit:4.12"
-    testCompile configurations.jacocoAnt
+    testImplementation "junit:junit:4.12"
+    testImplementation configurations.jacocoAnt
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 compileKotlin {

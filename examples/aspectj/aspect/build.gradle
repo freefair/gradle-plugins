@@ -3,7 +3,7 @@ apply plugin: "groovy"
 apply plugin: "io.freefair.aspectj"
 
 dependencies {
-    compile "org.aspectj:aspectjrt:1.9.5"
+    implementation "org.aspectj:aspectjrt:1.9.5"
 }
 
 compileAspectj.ajcOptions.outxml = true
