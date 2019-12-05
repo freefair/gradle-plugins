@@ -6,6 +6,7 @@ import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
+@Deprecated
 public class JavadocJarPluginTest {
 
     private Project project;
