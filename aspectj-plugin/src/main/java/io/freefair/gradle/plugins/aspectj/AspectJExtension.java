@@ -1,12 +1,14 @@
 package io.freefair.gradle.plugins.aspectj;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 
 import javax.inject.Inject;
 
-@Data
+@Getter
+@Setter
 public class AspectJExtension {
 
     private final Property<String> version;

@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.lombok;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
@@ -11,7 +12,8 @@ import javax.inject.Inject;
  * @author Lars Grefer
  * @see LombokPlugin
  */
-@Data
+@Getter
+@Setter
 public class LombokExtension {
 
     /**
