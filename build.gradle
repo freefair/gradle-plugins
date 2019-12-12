@@ -26,6 +26,7 @@ nexusStaging {
     stagingProfileId = '7e6204597a774f'
     username = findProperty('ossrhUser')
     password = findProperty('ossrhPass')
+    delayBetweenRetriesInMillis = 5000
 }
 
 allprojects {
