@@ -4,6 +4,9 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 import io.freefair.gradle.plugins.builder.gradle.GradleConfigurationBuilder;
 import io.freefair.gradle.plugins.builder.io.FileBuilder;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -32,7 +35,11 @@ public class AbstractPluginTest {
 
     protected void loadBuildFileFromClasspath(String name) throws IOException {
         InputStream resourceAsStream = getClass().getResourceAsStream(name);
-        Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        try (BufferedSource source = Okio.buffer(Okio.source(resourceAsStream));
+             BufferedSink sink = Okio.buffer(Okio.sink(buildFile, false))) {
+            source.readAll(sink);
+        }
     }
 
     protected File getTemporaryDirectory() {

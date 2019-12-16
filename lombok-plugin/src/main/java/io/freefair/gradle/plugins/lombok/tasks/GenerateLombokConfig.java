@@ -5,17 +5,13 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.RegularFile;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.MapProperty;
-import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import java.io.File;
 import java.io.PrintWriter;
-import java.util.Comparator;
 import java.util.Map;
 
 @Getter

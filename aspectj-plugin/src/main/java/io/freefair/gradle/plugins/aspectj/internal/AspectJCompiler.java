@@ -3,7 +3,8 @@ package io.freefair.gradle.plugins.aspectj.internal;
 import io.freefair.gradle.plugins.aspectj.AjcForkOptions;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.gradle.api.file.ConfigurableFileCollection;
+import okio.BufferedSink;
+import okio.Okio;
 import org.gradle.api.internal.tasks.compile.CompilationFailedException;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
@@ -14,7 +15,6 @@ import org.gradle.process.internal.JavaExecHandleBuilder;
 import org.gradle.process.internal.JavaExecHandleFactory;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -135,7 +135,12 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
         File argFile = new File(spec.getTempDir(), "ajc.options");
 
-        Files.write(argFile.toPath(), args);
+        try (BufferedSink sink = Okio.buffer(Okio.sink(argFile, false))) {
+            for (String arg : args) {
+                sink.writeUtf8(arg);
+                sink.writeUtf8(System.lineSeparator());
+            }
+        }
 
         ajc.args("-argfile", argFile.getAbsolutePath());
 

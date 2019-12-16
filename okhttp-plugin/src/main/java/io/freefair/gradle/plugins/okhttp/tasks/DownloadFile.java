@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.okhttp.tasks;
 
 import lombok.Getter;
 import okhttp3.Response;
+import okio.BufferedSink;
 import okio.Okio;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.OutputFile;
@@ -21,7 +22,8 @@ public class DownloadFile extends HttpGet {
     public void handleResponse(Response response) throws IOException {
         super.handleResponse(response);
 
-        Okio.buffer(Okio.sink(outputFile.getAsFile().get()))
-                .writeAll(response.body().source());
+        try (BufferedSink sink = Okio.buffer(Okio.sink(outputFile.getAsFile().get()))) {
+            sink.writeAll(response.body().source());
+        }
     }
 }

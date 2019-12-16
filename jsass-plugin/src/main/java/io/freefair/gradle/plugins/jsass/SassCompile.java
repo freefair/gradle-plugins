@@ -9,6 +9,8 @@ import io.bit3.jsass.annotation.WarnFunction;
 import io.bit3.jsass.importer.Importer;
 import lombok.Getter;
 import lombok.Setter;
+import okio.BufferedSink;
+import okio.Okio;
 import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.gradle.api.GradleException;
 import org.gradle.api.UncheckedIOException;
@@ -120,15 +122,21 @@ public class SassCompile extends SourceTask {
                         Output output = compiler.compileFile(inputPath, fakeOut.toURI(), options);
 
                         if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
-                            ResourceGroovyMethods.write(realOut, output.getCss());
-                        } else {
+                            try (BufferedSink sink = Okio.buffer(Okio.sink(realOut))) {
+                                sink.writeUtf8(output.getCss());
+                            }
+                        }
+                        else {
                             getLogger().error("Cannot write into {}", realOut.getParentFile());
                             throw new GradleException("Cannot write into " + realMap.getParentFile());
                         }
                         if (sourceMapEnabled.get()) {
                             if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
-                                ResourceGroovyMethods.write(realMap, output.getSourceMap());
-                            } else {
+                                try (BufferedSink sink = Okio.buffer(Okio.sink(realMap))) {
+                                    sink.writeUtf8(output.getSourceMap());
+                                }
+                            }
+                            else {
                                 getLogger().error("Cannot write into {}", realMap.getParentFile());
                                 throw new GradleException("Cannot write into " + realMap.getParentFile());
                             }
