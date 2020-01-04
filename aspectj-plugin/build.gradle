@@ -39,7 +39,7 @@ pluginBundle {
 }
 
 dependencies {
-    testImplementation "junit:junit:4.12"
+    testImplementation "junit:junit:4.13"
 
     implementation "com.squareup.okio:okio:2.4.2"
 
