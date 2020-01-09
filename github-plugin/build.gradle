@@ -39,8 +39,9 @@ pluginBundle {
 }
 
 dependencies {
-    implementation 'com.squareup.retrofit2:retrofit:2.7.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.7.0'
+    def retrofitVersion = "2.7.1"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     api project(":okhttp-plugin")
 
