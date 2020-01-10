@@ -48,7 +48,7 @@ pluginBundle {
 
 dependencies {
     api "io.bit3:jsass:5.10.3"
-    implementation "com.squareup.okio:okio:2.4.2"
+    implementation "com.squareup.okio:okio:2.4.3"
     implementation 'com.google.code.gson:gson:2.8.6'
 
     testImplementation project(":test-common")
