@@ -16,7 +16,7 @@ buildscript {
 }
 
 plugins {
-    id 'org.asciidoctor.jvm.convert' version '2.4.0'
+    id 'org.asciidoctor.jvm.convert' version '3.0.0'
 }
 
 apply plugin: 'io.freefair.git-version'
