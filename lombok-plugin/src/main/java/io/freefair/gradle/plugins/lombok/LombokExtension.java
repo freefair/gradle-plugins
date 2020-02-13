@@ -28,7 +28,7 @@ public class LombokExtension {
 
     @Inject
     public LombokExtension(ObjectFactory objectFactory) {
-        version = objectFactory.property(String.class).convention("1.18.10");
+        version = objectFactory.property(String.class).convention("1.18.12");
         config = objectFactory.mapProperty(String.class, String.class);
     }
 }
