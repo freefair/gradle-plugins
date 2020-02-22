@@ -12,23 +12,16 @@ import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.file.AbstractFileTreeElement;
-import org.gradle.api.internal.file.FileSystemSubset;
 import org.gradle.api.internal.file.archive.ZipFileTree;
-import org.gradle.api.internal.file.collections.DefaultSingletonFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.FileSystemMirroringFileTree;
-import org.gradle.internal.hash.FileHasher;
 import org.gradle.internal.file.Chmod;
+import org.gradle.internal.hash.FileHasher;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

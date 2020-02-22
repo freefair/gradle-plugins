@@ -8,11 +8,9 @@ import org.gradle.api.internal.tasks.DefaultSourceSet;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
-import org.gradle.util.SingleMessageLogger;
 
 /**
  * @author Lars Grefer
@@ -27,7 +25,7 @@ public class SourcesJarPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
 
-        SingleMessageLogger.nagUserOfDeprecatedPlugin("io.freefair.sources-jar", "Use java.withSourcesJar() instead");
+        project.getLogger().warn("io.freefair.sources-jar is deprecated. Use java.withSourcesJar() instead");
 
         project.getPluginManager().withPlugin("java", appliedPlugin -> {
             sourcesJar = project.getTasks().register("sourcesJar", Jar.class, sourcesJar -> {
