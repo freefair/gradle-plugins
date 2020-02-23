@@ -1,8 +1,8 @@
 package io.freefair.gradle.plugins.jsass;
 
 import com.google.gson.Gson;
-import io.bit3.jsass.*;
 import io.bit3.jsass.Compiler;
+import io.bit3.jsass.*;
 import io.bit3.jsass.annotation.DebugFunction;
 import io.bit3.jsass.annotation.ErrorFunction;
 import io.bit3.jsass.annotation.WarnFunction;
@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 import okio.BufferedSink;
 import okio.Okio;
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.gradle.api.GradleException;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.*;
@@ -55,7 +54,6 @@ public class SassCompile extends SourceTask {
     }
 
     @Internal
-    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty destinationDir = getProject().getObjects().directoryProperty();
 
     @TaskAction
