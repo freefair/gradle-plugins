@@ -3,9 +3,9 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    def okhttpVersion = "4.4.0"
-    api "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    api "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    api platform("com.squareup.okhttp3:okhttp-bom:4.4.0")
+    api "com.squareup.okhttp3:okhttp"
+    api "com.squareup.okhttp3:logging-interceptor"
 
     testImplementation project(":test-common")
 }

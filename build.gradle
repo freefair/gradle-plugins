@@ -81,7 +81,7 @@ allprojects {
                     }
                     organization {
                         name = 'FreeFair'
-                        url = 'http://joinfaces.org'
+                        url = 'https://github.com/freefair'
                     }
                     developers {
                         developer {
