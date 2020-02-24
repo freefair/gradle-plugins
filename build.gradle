@@ -58,10 +58,6 @@ allprojects {
         pluginBundle {
             website = "https://docs.freefair.io/gradle-plugins/$version/reference/"
             vcsUrl = 'https://github.com/freefair/gradle-plugins'
-
-            mavenCoordinates {
-                groupId = project.group
-            }
         }
     }
 
