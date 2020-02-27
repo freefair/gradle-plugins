@@ -1,0 +1,31 @@
+= MkDocs
+
+[quote,https://www.mkdocs.org/]
+MkDocs is a fast, simple and downright gorgeous static site generator that's geared towards building project documentation.
+Documentation source files are written in Markdown, and configured with a single YAML configuration file.
+
+== MkDocs Plugins
+
+=== `io.freefair.mkdocs`
+
+== MkDocs Tasks
+
+All MkDocs tasks can be found in the
+link:../api/io/freefair/gradle/plugins/mkdocs/tasks/package-summary.html[`io.freefair.gradle.plugins.mkdocs.tasks`]
+package
+
+=== `MkDocsBuild`
+
+This tasks executes `mkdocs build`.
+
+=== `MkDocsGhDeploy`
+
+This task executes `mkdocs gh-deploy`
+
+=== `MkDocsNew`
+
+This task executes `mkdocs new`
+
+=== `MkDocsServe`
+
+This tasks executes `mkdocs serve`
