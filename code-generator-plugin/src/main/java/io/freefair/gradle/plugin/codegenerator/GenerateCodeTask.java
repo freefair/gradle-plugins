@@ -32,6 +32,7 @@ public class GenerateCodeTask extends DefaultTask {
     private final WorkerExecutor workerExecutor;
 
     @InputDirectory
+    @Optional
     private final DirectoryProperty inputDir = getProject().getObjects().directoryProperty();
 
     @OutputDirectory
