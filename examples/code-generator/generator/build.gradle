@@ -1,0 +1,5 @@
+apply plugin: "java"
+
+dependencies {
+    implementation "io.freefair.gradle:code-generator-api"
+}

@@ -1,0 +1,6 @@
+apply plugin: "java"
+apply plugin: "io.freefair.code-generator"
+
+dependencies {
+    codeGenerator project(":code-generator:generator")
+}
