@@ -33,7 +33,8 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
             TaskProvider<GenerateCodeTask> generate = project.getTasks().register(taskName, GenerateCodeTask.class, s -> {
                 s.setGroup("generate");
                 s.getOutputDir().set(outputDirFile);
-                s.getInputDir().set(inputDir);
+                if(!inputDir.exists())
+                    s.getInputDir().set(inputDir);
                 s.getCodeGeneratorClasspath().from(codeGeneratorConfiguration);
                 s.getConfigurationValues().set(codeGenerator.getConfigurationValues());
                 s.dependsOn(codeGeneratorConfiguration);

@@ -21,6 +21,7 @@ import org.gradle.api.tasks.*;
 import org.gradle.workers.*;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -69,7 +70,7 @@ public class GenerateCodeTask extends DefaultTask {
             getLogger().debug(classesImplementing.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
         }
 
-        ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().get(), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()));
+        ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().getOrElse(this.getTemporaryDir()), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()));
 
         WorkQueue workQueue = workerExecutor.classLoaderIsolation(spec -> spec.getClasspath().from(codeGeneratorClasspath));
 
