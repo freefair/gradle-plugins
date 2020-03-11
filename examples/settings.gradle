@@ -24,3 +24,6 @@ include ":jacoco:sub-a"
 include ":jacoco:sub-b"
 
 include ":github"
+
+include ":code-generator:use"
+include ":code-generator:generator"
