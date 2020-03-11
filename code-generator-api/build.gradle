@@ -14,6 +14,8 @@ dependencies {
 }
 
 nexusPublishing {
+    clientTimeout = Duration.ofMinutes(5)
+    connectTimeout = Duration.ofMinutes(5)
     repositories {
         sonatype()
     }
