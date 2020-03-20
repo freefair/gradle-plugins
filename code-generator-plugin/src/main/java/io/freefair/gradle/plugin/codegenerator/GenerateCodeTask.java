@@ -43,6 +43,9 @@ public class GenerateCodeTask extends DefaultTask {
     @Optional
     private final MapProperty<String, Object> configurationValues = getProject().getObjects().mapProperty(String.class, Object.class);
 
+    @Input
+    private final Property<String> sourceSet = getProject().getObjects().property(String.class);
+
     @InputFiles
     @Classpath
     private final ConfigurableFileCollection codeGeneratorClasspath = getProject().files();
@@ -70,7 +73,7 @@ public class GenerateCodeTask extends DefaultTask {
             getLogger().debug(classesImplementing.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
         }
 
-        ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().getOrElse(this.getTemporaryDir()), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()));
+        ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().getOrElse(this.getTemporaryDir()), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()), sourceSet.getOrElse("none"));
 
         WorkQueue workQueue = workerExecutor.classLoaderIsolation(spec -> spec.getClasspath().from(codeGeneratorClasspath));
 

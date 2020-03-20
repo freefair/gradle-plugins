@@ -26,6 +26,8 @@ public class ProjectContext implements Serializable {
 	@Getter(AccessLevel.PACKAGE)
 	private Map<String, Object> configurationValues;
 
+	private String sourceSet;
+
 	public String getNamespaceFromFile(File file) {
 		String absolutePath = file.getAbsolutePath();
 		if (absolutePath.startsWith(inputDir.getAbsolutePath()))
