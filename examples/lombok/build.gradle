@@ -1,5 +1,8 @@
 import io.freefair.gradle.plugins.lombok.tasks.LombokApiJar
 import io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar
+plugins {
+    id "com.github.spotbugs" version "4.0.4"
+}
 
 apply plugin: "java"
 apply plugin: "io.freefair.lombok"

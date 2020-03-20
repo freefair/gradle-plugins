@@ -6,9 +6,11 @@ import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
@@ -93,12 +95,24 @@ public class LombokPlugin implements Plugin<Project> {
     private void configureForSpotbugs(JavaPluginConvention javaPluginConvention) {
         lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
 
-        CodeQualityExtension spotbugsExtension = (CodeQualityExtension) project.getExtensions().getByName("spotbugs");
-        javaPluginConvention.getSourceSets().all(sourceSet ->
-                project.getDependencies().add(
-                        sourceSet.getCompileOnlyConfigurationName(),
-                        "com.github.spotbugs:spotbugs-annotations:" + spotbugsExtension.getToolVersion()
-                ));
+        project.afterEvaluate(p -> {
+            Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
+
+            String toolVersion;
+            if (spotbugsExtension instanceof CodeQualityExtension) {
+                toolVersion = ((CodeQualityExtension) spotbugsExtension).getToolVersion();
+            }
+            else {
+                Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
+                toolVersion = toolVersionProperty.get();
+            }
+
+            javaPluginConvention.getSourceSets().all(sourceSet ->
+                    project.getDependencies().add(
+                            sourceSet.getCompileOnlyConfigurationName(),
+                            "com.github.spotbugs:spotbugs-annotations:" + toolVersion
+                    ));
+        });
     }
 
     private void configureForJacoco() {
