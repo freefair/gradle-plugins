@@ -36,6 +36,7 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
                 if(inputDir.isDirectory()) {
                     s.getInputDir().set(inputDir);
                 }
+                s.getSourceSet().set(sourceSet.getName());
                 s.getCodeGeneratorClasspath().from(codeGeneratorConfiguration);
                 s.getConfigurationValues().set(codeGenerator.getConfigurationValues());
                 s.dependsOn(codeGeneratorConfiguration);
