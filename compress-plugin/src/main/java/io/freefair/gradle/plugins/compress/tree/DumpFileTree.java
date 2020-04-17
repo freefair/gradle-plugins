@@ -28,6 +28,7 @@ public class DumpFileTree extends ArchiveFileTree<DumpArchiveInputStream, DumpAr
             super(chmod);
         }
 
+        @SuppressWarnings("OctalInteger")
         public int getMode() {
             int unixMode = getArchiveEntry().getMode() & 0777;
             if (unixMode == 0) {

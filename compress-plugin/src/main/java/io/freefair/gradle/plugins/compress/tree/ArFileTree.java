@@ -28,6 +28,7 @@ public class ArFileTree extends ArchiveFileTree<ArArchiveInputStream, ArArchiveE
             super(chmod);
         }
 
+        @SuppressWarnings("OctalInteger")
         public int getMode() {
             int unixMode = getArchiveEntry().getMode() & 0777;
             if (unixMode == 0) {

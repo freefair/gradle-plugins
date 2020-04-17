@@ -12,10 +12,10 @@ import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.file.AbstractFileTreeElement;
+import org.gradle.api.internal.file.archive.AbstractArchiveFileTree;
 import org.gradle.api.internal.file.archive.ZipFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
-import org.gradle.api.internal.file.collections.FileSystemMirroringFileTree;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
 
@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @see ZipFileTree
  */
 @RequiredArgsConstructor
-public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEntry> implements FileSystemMirroringFileTree {
+public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEntry> extends AbstractArchiveFileTree {
 
     private final File archiveFile;
     private final ArchiveInputStreamProvider<IS> inputStreamProvider;
@@ -71,7 +71,8 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
                     try {
                         if (archiveEntry.isDirectory()) {
                             visitor.visitDir(details);
-                        } else {
+                        }
+                        else {
                             visitor.visitFile(details);
                         }
                     } finally {
@@ -94,6 +95,12 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
     private File getExpandedDir() {
         String expandedDirName = archiveFile.getName() + "_" + fileHasher.hash(archiveFile);
         return new File(tmpDir, expandedDirName);
+    }
+
+    @Nullable
+    @Override
+    protected File getBackingFile() {
+        return archiveFile;
     }
 
     @Getter
