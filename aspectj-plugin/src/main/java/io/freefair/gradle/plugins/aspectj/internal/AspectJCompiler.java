@@ -16,6 +16,7 @@ import org.gradle.process.internal.JavaExecHandleFactory;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,9 +50,19 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
         List<String> args = new LinkedList<>();
 
+        Collection<File> inpath = new LinkedHashSet<>();
+
+        if (spec.getAdditionalInpath() != null && !spec.getAdditionalInpath().isEmpty()) {
+            inpath.addAll(spec.getAdditionalInpath().getFiles());
+        }
+
         if (!spec.getAspectJCompileOptions().getInpath().isEmpty()) {
+            inpath.addAll(spec.getAspectJCompileOptions().getInpath().getFiles());
+        }
+
+        if (!inpath.isEmpty()) {
             args.add("-inpath");
-            args.add(getAsPath(spec.getAspectJCompileOptions().getInpath().getFiles()));
+            args.add(getAsPath(inpath));
         }
 
         if (!spec.getAspectJCompileOptions().getAspectpath().isEmpty()) {

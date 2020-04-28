@@ -12,4 +12,6 @@ public class AspectJCompileSpec extends DefaultJvmLanguageCompileSpec {
     private FileCollection aspectJClasspath;
 
     AspectJCompileOptions aspectJCompileOptions;
+
+    private FileCollection additionalInpath;
 }

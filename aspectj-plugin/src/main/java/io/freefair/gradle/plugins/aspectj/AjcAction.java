@@ -32,6 +32,8 @@ public class AjcAction implements Action<Task> {
 
     private final AspectJCompileOptions options;
 
+    private final ConfigurableFileCollection additionalInpath;
+
     public void options(Action<AspectJCompileOptions> action) {
         action.execute(getOptions());
     }
@@ -43,6 +45,7 @@ public class AjcAction implements Action<Task> {
     public AjcAction(ObjectFactory objectFactory, JavaExecHandleFactory javaExecHandleFactory) {
         options = new AspectJCompileOptions(objectFactory);
         classpath = objectFactory.fileCollection();
+        additionalInpath = objectFactory.fileCollection();
 
         enabled = objectFactory.property(Boolean.class).convention(true);
         this.javaExecHandleFactory = javaExecHandleFactory;
@@ -98,6 +101,7 @@ public class AjcAction implements Action<Task> {
 
         spec.setAspectJClasspath(getClasspath());
         spec.setAspectJCompileOptions(getOptions());
+        spec.setAdditionalInpath(getAdditionalInpath());
 
         return spec;
     }
