@@ -66,7 +66,7 @@ public class AjcAction implements Action<Task> {
                 .withNormalizer(ClasspathNormalizer.class)
                 .optional(true);
 
-        task.getInputs().files(this.getAdditionalInpath())
+        task.getInputs().files(this.getOptions().getInpath())
                 .withPropertyName("ajcInpath")
                 .withNormalizer(ClasspathNormalizer.class)
                 .optional(true);
@@ -101,6 +101,7 @@ public class AjcAction implements Action<Task> {
 
         spec.setAspectJClasspath(getClasspath());
         spec.setAspectJCompileOptions(getOptions());
+        spec.setAdditionalInpath(getAdditionalInpath());
 
         return spec;
     }
