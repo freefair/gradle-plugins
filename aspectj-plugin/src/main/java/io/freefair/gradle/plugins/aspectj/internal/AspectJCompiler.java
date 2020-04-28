@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import okio.BufferedSink;
 import okio.Okio;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.tasks.compile.CompilationFailedException;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
