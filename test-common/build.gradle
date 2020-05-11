@@ -2,7 +2,7 @@ apply plugin: "java-library"
 
 dependencies {
     api "junit:junit:4.13"
-    api "org.assertj:assertj-core:3.16.0"
+    api "org.assertj:assertj-core:3.16.1"
     api 'org.hamcrest:hamcrest-all:1.3'
     implementation 'commons-io:commons-io:2.6'
     api gradleApi()
