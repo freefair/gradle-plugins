@@ -15,6 +15,7 @@ buildscript {
 }
 
 apply plugin: "io.freefair.aggregate-javadoc"
+apply plugin: "io.freefair.javadoc-links"
 
 allprojects {
     repositories {

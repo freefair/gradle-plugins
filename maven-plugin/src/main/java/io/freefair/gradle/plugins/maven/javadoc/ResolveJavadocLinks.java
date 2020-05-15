@@ -13,7 +13,9 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.UnionFileCollection;
+import org.gradle.api.internal.provider.TransformBackedProvider;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
@@ -72,6 +74,24 @@ public class ResolveJavadocLinks implements Action<Task> {
                 .forEach(this::addLink);
     }
 
+    private Stream<Configuration> findConfigurations(Object classpath) {
+        if (classpath instanceof FileCollection) {
+            return findConfigurations((FileCollection) classpath);
+        }
+        else if (classpath instanceof Provider) {
+            Provider<?> provider = (Provider<?>) classpath;
+            if (provider.isPresent()) {
+                return findConfigurations(provider.get());
+            }
+            else {
+                return Stream.empty();
+            }
+        }
+        else {
+            return Stream.empty();
+        }
+    }
+
     private Stream<Configuration> findConfigurations(FileCollection classpath) {
         if (classpath instanceof Configuration) {
             return Stream.of((Configuration) classpath);
@@ -84,8 +104,6 @@ public class ResolveJavadocLinks implements Action<Task> {
         else if (classpath instanceof ConfigurableFileCollection) {
             return ((ConfigurableFileCollection) classpath).getFrom()
                     .stream()
-                    .filter(FileCollection.class::isInstance)
-                    .map(FileCollection.class::cast)
                     .flatMap(this::findConfigurations);
 
         }

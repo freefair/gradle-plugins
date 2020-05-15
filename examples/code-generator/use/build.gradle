@@ -4,3 +4,5 @@ apply plugin: "io.freefair.code-generator"
 dependencies {
     codeGenerator project(":code-generator:generator")
 }
+
+javadoc.failOnError = false
