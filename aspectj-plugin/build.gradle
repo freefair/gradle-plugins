@@ -45,5 +45,5 @@ dependencies {
 
     compileOnly "org.aspectj:aspectjtools:1.9.5"
     compileOnly "org.aspectj:aspectjrt:1.9.5"
-    compileOnly "org.aspectj:aspectjweaver:1.9.5"
+    compileOnly "org.aspectj:aspectjweaver:1.9.6"
 }
