@@ -15,6 +15,6 @@ public class AspectJExtension {
 
     @Inject
     public AspectJExtension(ObjectFactory objectFactory) {
-        this.version = objectFactory.property(String.class).convention("1.9.5");
+        this.version = objectFactory.property(String.class).convention("1.9.6");
     }
 }
