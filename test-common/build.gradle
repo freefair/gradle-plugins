@@ -8,5 +8,5 @@ dependencies {
     api gradleApi()
     api gradleTestKit()
     api 'com.squareup:javapoet:1.13.0'
-    api 'com.squareup.okio:okio:2.6.0'
+    api 'com.squareup.okio:okio:2.7.0'
 }
