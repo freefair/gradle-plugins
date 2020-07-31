@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -54,8 +56,26 @@ public class GenerateLombokConfig extends DefaultTask {
             properties.get().entrySet().stream()
                     .sorted(Map.Entry.comparingByKey(String.CASE_INSENSITIVE_ORDER))
                     .forEach(entry ->
-                            writer.println(entry.getKey() + " = " + entry.getValue())
+                            write(writer, entry)
                     );
         }
+    }
+    private void write(final PrintWriter writer, final Map.Entry<String, String> entry) {
+        if (isList(entry.getValue())) {
+            getListValues(entry.getValue()).forEach(item ->
+                    writer.println(entry.getKey() + " += " + item)
+            );
+        } else {
+            writer.println(entry.getKey() + " = " + entry.getValue());
+        }
+    }
+
+    private boolean isList(final String value) {
+        return value.startsWith("[") && value.endsWith("]");
+    }
+
+    private List<String> getListValues(final String value) {
+        final String delimitedString = value.substring(1, value.length() - 1);
+        return Arrays.asList(delimitedString.split(","));
     }
 }
