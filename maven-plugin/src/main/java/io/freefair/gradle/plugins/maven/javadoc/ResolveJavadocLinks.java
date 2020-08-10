@@ -60,7 +60,7 @@ public class ResolveJavadocLinks implements Action<Task> {
                         return wellKnownLink;
                     }
                     else {
-                        String javadocIoLink = String.format("https://static.javadoc.io/%s/%s/%s/", group, artifact, version);
+                        String javadocIoLink = String.format("https://www.javadoc.io/doc/%s/%s/%s/", group, artifact, version);
                         if (checkLink(javadocIoLink)) {
                             javadoc.getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
                             return javadocIoLink;

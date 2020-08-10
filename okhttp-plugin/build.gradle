@@ -3,7 +3,7 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    api platform("com.squareup.okhttp3:okhttp-bom:4.8.0")
+    api platform("com.squareup.okhttp3:okhttp-bom:4.8.1")
     api "com.squareup.okhttp3:okhttp"
     api "com.squareup.okhttp3:logging-interceptor"
 
