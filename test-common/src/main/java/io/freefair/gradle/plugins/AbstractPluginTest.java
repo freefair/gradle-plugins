@@ -4,10 +4,6 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 import io.freefair.gradle.plugins.builder.gradle.GradleConfigurationBuilder;
 import io.freefair.gradle.plugins.builder.io.FileBuilder;
-import okio.BufferedSink;
-import okio.BufferedSource;
-import okio.Okio;
-import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Before;
@@ -17,7 +13,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
@@ -36,10 +31,7 @@ public class AbstractPluginTest {
     protected void loadBuildFileFromClasspath(String name) throws IOException {
         InputStream resourceAsStream = getClass().getResourceAsStream(name);
 
-        try (BufferedSource source = Okio.buffer(Okio.source(resourceAsStream));
-             BufferedSink sink = Okio.buffer(Okio.sink(buildFile, false))) {
-            source.readAll(sink);
-        }
+        Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     protected File getTemporaryDirectory() {
@@ -90,7 +82,7 @@ public class AbstractPluginTest {
             if(!direcotry.endsWith("/"))
                 direcotry += "/";
             String path = direcotry + packageName.replace(".", "/");
-            return FileUtils.readFileToString(getFile(path, className + ".java"), Charset.defaultCharset());
+            return new String(Files.readAllBytes(getFile(path, className + ".java").toPath()));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -100,7 +92,7 @@ public class AbstractPluginTest {
         try {
             String replace = "src/" + sourceSet + "/java/" + packageName.replace(".", "/");
             File file = getFile(replace, className + ".java");
-            return FileUtils.readFileToString(file, Charset.defaultCharset());
+            return new String(Files.readAllBytes(file.toPath()));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

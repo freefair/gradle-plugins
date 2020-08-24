@@ -10,7 +10,6 @@ description = "Code Generator API"
 validatePomFileForMavenJavaPublication.ignoreFailures = false
 
 dependencies {
-    implementation 'commons-io:commons-io:2.7'
 }
 
 nexusPublishing {

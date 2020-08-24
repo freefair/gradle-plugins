@@ -2,7 +2,6 @@ package io.freefair.gradle.plugin.codegenerator.test;
 
 import io.freefair.gradle.plugin.codegenerator.CodeGeneratorPlugin;
 import io.freefair.gradle.plugins.AbstractPluginTest;
-import org.apache.commons.io.FileUtils;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskContainer;
@@ -14,6 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.*;
@@ -47,7 +47,7 @@ public class SimpleCodeGenerationTest extends AbstractPluginTest {
     public void testBuild() {
         try {
             File resource = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("test-code-generator.jar")).toURI());
-            FileUtils.copyFile(resource, new File(getTemporaryDirectory(), "test-code-generator.jar"));
+            Files.copy(resource.toPath(), new File(getTemporaryDirectory(), "test-code-generator.jar").toPath());
 
             createGradleConfiguration()
                     .applyPlugin("java")

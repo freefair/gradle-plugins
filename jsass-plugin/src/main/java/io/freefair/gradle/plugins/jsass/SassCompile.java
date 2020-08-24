@@ -9,8 +9,6 @@ import io.bit3.jsass.annotation.WarnFunction;
 import io.bit3.jsass.importer.Importer;
 import lombok.Getter;
 import lombok.Setter;
-import okio.BufferedSink;
-import okio.Okio;
 import org.gradle.api.GradleException;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.*;
@@ -22,6 +20,8 @@ import org.gradle.api.tasks.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -110,7 +110,8 @@ public class SassCompile extends SourceTask {
 
                     if (sourceMapEnabled.get()) {
                         options.setSourceMapFile(fakeMap.toURI());
-                    } else {
+                    }
+                    else {
                         options.setSourceMapFile(null);
                     }
 
@@ -120,9 +121,7 @@ public class SassCompile extends SourceTask {
                         Output output = compiler.compileFile(inputPath, fakeOut.toURI(), options);
 
                         if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
-                            try (BufferedSink sink = Okio.buffer(Okio.sink(realOut))) {
-                                sink.writeUtf8(output.getCss());
-                            }
+                            Files.write(realOut.toPath(), output.getCss().getBytes(StandardCharsets.UTF_8));
                         }
                         else {
                             getLogger().error("Cannot write into {}", realOut.getParentFile());
@@ -130,9 +129,7 @@ public class SassCompile extends SourceTask {
                         }
                         if (sourceMapEnabled.get()) {
                             if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
-                                try (BufferedSink sink = Okio.buffer(Okio.sink(realMap))) {
-                                    sink.writeUtf8(output.getSourceMap());
-                                }
+                                Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
                             }
                             else {
                                 getLogger().error("Cannot write into {}", realMap.getParentFile());

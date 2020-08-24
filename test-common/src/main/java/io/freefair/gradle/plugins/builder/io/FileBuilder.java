@@ -1,9 +1,8 @@
 package io.freefair.gradle.plugins.builder.io;
 
-import okio.BufferedSink;
-import okio.Okio;
-
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class FileBuilder {
     private File file;
@@ -85,8 +84,8 @@ public class FileBuilder {
     }
 
     public void write() {
-        try (BufferedSink sink = Okio.buffer(Okio.sink(file))) {
-            sink.writeUtf8(stringBuilder.toString());
+        try {
+            Files.write(file.toPath(), stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
