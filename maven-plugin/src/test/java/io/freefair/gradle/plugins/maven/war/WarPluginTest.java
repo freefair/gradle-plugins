@@ -1,13 +1,9 @@
 package io.freefair.gradle.plugins.maven.war;
 
-import io.freefair.gradle.plugins.maven.war.WarArchiveClassesPlugin;
-import io.freefair.gradle.plugins.maven.war.WarAttachClassesPlugin;
-import io.freefair.gradle.plugins.maven.war.WarOverlayPlugin;
-import io.freefair.gradle.plugins.maven.war.WarPlugin;
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +11,7 @@ public class WarPluginTest {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         project = ProjectBuilder.builder().build();
     }

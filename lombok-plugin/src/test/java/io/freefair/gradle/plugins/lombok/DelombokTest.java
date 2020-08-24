@@ -1,18 +1,15 @@
 package io.freefair.gradle.plugins.lombok;
 
-
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.freefair.gradle.plugins.AbstractPluginTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.Modifier;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DelombokTest extends AbstractPluginTest {
 
@@ -34,6 +31,6 @@ public class DelombokTest extends AbstractPluginTest {
 
         executeTask("build", "delombok", "--debug");
         String simpleLombokFile = readJavaClass("main-delombok", "io.freefair.gradle.plugins.lombok.test", "SimpleLombokFile");
-        assertThat(simpleLombokFile, not(containsString("lombok.Data")));
+        assertThat(simpleLombokFile).doesNotContain("lombok.Data");
     }
 }

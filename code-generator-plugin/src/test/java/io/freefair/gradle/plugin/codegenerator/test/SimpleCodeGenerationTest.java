@@ -8,29 +8,31 @@ import org.gradle.api.tasks.TaskContainer;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.TaskOutcome;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Objects;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SimpleCodeGenerationTest extends AbstractPluginTest {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         project = ProjectBuilder.builder().build();
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void applyAlone() {
-        project.getPlugins().apply(CodeGeneratorPlugin.class);
+        assertThrows(Exception.class, () -> {
+            project.getPlugins().apply(CodeGeneratorPlugin.class);
+        });
     }
 
     @Test
@@ -39,11 +41,11 @@ public class SimpleCodeGenerationTest extends AbstractPluginTest {
         project.getPlugins().apply(CodeGeneratorPlugin.class);
 
         TaskContainer tasks = project.getTasks();
-        assertThat(tasks.parallelStream().anyMatch(t -> t.getName().equals("generateCode")), is(equalTo(true)));
+        assertThat(tasks).anyMatch(t -> t.getName().equals("generateCode"));
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testBuild() {
         try {
             File resource = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("test-code-generator.jar")).toURI());
@@ -65,9 +67,9 @@ public class SimpleCodeGenerationTest extends AbstractPluginTest {
         BuildResult generateCode = executeTask("generateCode");
 
         System.out.println(generateCode.getOutput());
-        assertThat(Objects.requireNonNull(generateCode.task(":generateCode")).getOutcome(), is(equalTo(TaskOutcome.SUCCESS)));
+        assertThat(Objects.requireNonNull(generateCode.task(":generateCode")).getOutcome()).isEqualTo(TaskOutcome.SUCCESS);
         String javaClass = readJavaClassFromDirectory("build/generated-src/generator/main/", "io.freefair.gradle.codegen.test", "TestClass");
         System.out.println(javaClass);
-        assertThat(javaClass, not(isEmptyString()));
+        assertThat(javaClass).isNotEmpty();
     }
 }
