@@ -27,7 +27,7 @@ jobs:
         run: |
           java -version
           ./gradlew --version
-      - run: ./gradlew assemble
-      - run: cd examples && ./gradlew assemble && cd ..
-      - run: ./gradlew check
-      - run: cd examples && ./gradlew check && cd ..
+      - run: ./gradlew assemble -s
+      - run: cd examples && ./gradlew assemble -s && cd ..
+      - run: ./gradlew check -s
+      - run: cd examples && ./gradlew check -s && cd ..
