@@ -15,8 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         java: [ 8, 11, 14 ]
-    env:
-      GRADLE_OPTS: '-Dorg.gradle.daemon=false'
     steps:
       - uses: actions/checkout@v2
 
@@ -30,6 +28,6 @@ jobs:
           java -version
           ./gradlew --version
       - run: ./gradlew assemble -s
-      - run: cd examples && ./gradlew assemble --info -s && cd ..
+      - run: cd examples && ./gradlew assemble --debug -s && cd ..
       - run: ./gradlew check -s
       - run: cd examples && ./gradlew check -s && cd ..
