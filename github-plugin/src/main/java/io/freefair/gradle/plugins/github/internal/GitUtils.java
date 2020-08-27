@@ -30,6 +30,13 @@ public class GitUtils {
             return travisSlug;
         }
 
+        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+            String githubActionsSlug = System.getenv("GITHUB_REPOSITORY");
+            if (githubActionsSlug != null) {
+                return githubActionsSlug;
+            }
+        }
+
         String remoteUrl = getRemoteUrl(project, "origin");
 
         Matcher httpsMatcher = httpsUrlPattern.matcher(remoteUrl);
