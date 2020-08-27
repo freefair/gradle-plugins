@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:0.12.0"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.2"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.22.0"
 
         def pluginVersion = "5.1.1"
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
