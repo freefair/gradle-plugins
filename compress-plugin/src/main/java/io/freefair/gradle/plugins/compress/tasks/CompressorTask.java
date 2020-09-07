@@ -2,7 +2,6 @@ package io.freefair.gradle.plugins.compress.tasks;
 
 import lombok.Getter;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.workers.WorkAction;
@@ -10,12 +9,11 @@ import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.File;
 
 @SuppressWarnings("UnstableApiUsage")
 public abstract class CompressorTask<P extends CompressorWorkParameters> extends SourceTask {
 
-    @Internal
     private final WorkerExecutor workerExecutor;
 
     @Getter
@@ -51,6 +49,7 @@ public abstract class CompressorTask<P extends CompressorWorkParameters> extends
         });
     }
 
+    @Internal
     protected abstract Class<? extends WorkAction<P>> getWorkAction();
 
     protected void fillParameters(P parameters) {

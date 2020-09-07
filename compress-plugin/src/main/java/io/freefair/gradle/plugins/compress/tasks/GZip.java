@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.compress.tasks;
 
 import lombok.Getter;
-import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.gradle.api.provider.Property;
