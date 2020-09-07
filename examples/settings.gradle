@@ -2,6 +2,8 @@ rootProject.name = 'gradle-plugins-examples'
 
 includeBuild '..'
 
+include ":compress"
+
 include ":war:overlay"
 include ":war:overlay2"
 include ":war:archive-classes"

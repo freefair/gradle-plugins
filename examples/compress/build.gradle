@@ -1,0 +1,19 @@
+
+
+task foo(type: io.freefair.gradle.plugins.compress.tasks.GZip) {
+    source "src/main/resources"
+    source "$rootDir/../compress-plugin/src/main/java"
+
+    compressionLevel = 9
+
+    destinationDir = file("$buildDir/foo")
+}
+
+task bar(type: io.freefair.gradle.plugins.compress.tasks.Deflate) {
+    source "src/main/resources"
+    source "$rootDir/../compress-plugin/src/main/java"
+
+    compressionLevel = 9
+
+    destinationDir = file("$buildDir/bar")
+}
