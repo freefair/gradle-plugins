@@ -39,6 +39,24 @@ public class GitVersionPlugin implements Plugin<Project> {
             return version;
         }
 
+        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+            String githubRef = System.getenv("GITHUB_REF");
+            if (githubRef != null) {
+                if (githubRef.startsWith("refs/tags/")) {
+                    githubRef = githubRef.substring("refs/tags/".length());
+                    logger.lifecycle("Using GitHub Tag as version: {}", githubRef);
+                    return githubRef;
+                }
+                else if (githubRef.startsWith("refs/heads/")) {
+                    githubRef = githubRef.substring("refs/heads/".length());
+                    githubRef = githubRef.replace("/", "-");
+                    String version = githubRef + "-SNAPSHOT";
+                    logger.lifecycle("Using GitHub Branch as version: {}", version);
+                    return version;
+                }
+            }
+        }
+
         try {
             Process execute = ProcessGroovyMethods.execute("git describe --tags --exact-match");
             String gitTag = ProcessGroovyMethods.getText(execute).trim();
