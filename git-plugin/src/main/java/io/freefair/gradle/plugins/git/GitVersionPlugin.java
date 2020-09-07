@@ -69,6 +69,30 @@ public class GitVersionPlugin implements Plugin<Project> {
             logger.debug("Failed to get current git tag", e);
         }
 
+        if (System.getenv("JENKINS_HOME") != null) {
+            String gitLocalBranch = System.getenv("GIT_LOCAL_BRANCH");
+            if (gitLocalBranch != null && !gitLocalBranch.isEmpty()) {
+                gitLocalBranch = gitLocalBranch.replace("/", "-");
+                String version = gitLocalBranch + "-SNAPSHOT";
+                logger.lifecycle("Using GIT_LOCAL_BRANCH as version: {}", version);
+                return version;
+            }
+            String gitBranch = System.getenv("GIT_BRANCH");
+            if (gitBranch != null && !gitBranch.isEmpty()) {
+                gitBranch = gitBranch.replace("/", "-");
+                String version = gitBranch + "-SNAPSHOT";
+                logger.lifecycle("Using GIT_BRANCH as version: {}", version);
+                return version;
+            }
+            String branchName = System.getenv("BRANCH_NAME");
+            if (branchName != null && !branchName.isEmpty()) {
+                branchName = branchName.replace("/", "-");
+                String version = branchName + "-SNAPSHOT";
+                logger.lifecycle("Using BRANCH_NAME as version: {}", version);
+                return version;
+            }
+        }
+
         try {
             Process execute = ProcessGroovyMethods.execute("git symbolic-ref --short HEAD");
             String gitBranch = ProcessGroovyMethods.getText(execute).trim();
