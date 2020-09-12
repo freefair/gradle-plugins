@@ -10,10 +10,17 @@ apply plugin: "io.freefair.lombok"
 
 dependencies {
     implementation "org.slf4j:slf4j-api:1.+"
+    implementation "javax.inject:javax.inject:1"
 }
 
 lombok {
-    config['lombok.log.fieldName'] = 'LOG'
+    importFile "common.config"
+    lombokProperty 'lombok.log.fieldName' set 'LOG'
+    lombokProperty 'lombok.copyableAnnotations' add 'org.springframework.beans.factory.annotation.Autowired'
+    lombokProperty 'lombok.copyableAnnotations' removeAll([
+        'javax.annotation.Nonnull',
+        'javax.annotation.Nullable'
+    ])
 }
 
 task lombokApiJar (type: LombokApiJar)

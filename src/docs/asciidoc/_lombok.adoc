@@ -58,7 +58,19 @@ generateLombokConfig.enabled = false
 [source,groovy]
 ----
 lombok {
-    config['lombok.log.fieldName'] = 'LOG'
+    importFile '../common/lombok.config'
+    lombokProperty 'lombok.log.fieldName' set 'LOG'
+    lombokProperty 'lombok.copyableannotations' clear()
+    lombokProperty 'lombok.copyableannotations' add 'javax.inject.Named'
+    lombokProperty 'lombok.copyableannotations' remove 'javax.inject.Named'
+    lombokProperty 'lombok.copyableannotations' addAll([
+        'javax.inject.Named',
+        'javax.inject.Inject'
+    ])
+    lombokProperty 'lombok.copyableannotations' removeAll([
+        'javax.inject.Named',
+        'javax.inject.Inject'
+    ])
 }
 ----
 

@@ -34,7 +34,9 @@ public class LombokPlugin implements Plugin<Project> {
         lombokBasePlugin.getLombokExtension().getConfig().put("config.stopBubbling", "true");
 
         generateLombokConfig = project.getTasks().register("generateLombokConfig", GenerateLombokConfig.class, genConfig -> {
+            genConfig.getImports().convention(lombokBasePlugin.getLombokExtension().getImports());
             genConfig.getProperties().convention(lombokBasePlugin.getLombokExtension().getConfig());
+            genConfig.getConfigurationChanges().convention(lombokBasePlugin.getLombokExtension().getConfigurationChanges());
             genConfig.setGroup("lombok");
         });
 
