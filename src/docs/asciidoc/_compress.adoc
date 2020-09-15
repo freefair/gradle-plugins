@@ -73,6 +73,20 @@ task packageArArchive(type: io.freefair.gradle.plugins.compress.tasks.Ar) {
 }
 ----
 
+[#BZip2]
+=== `BZip2`
+
+This task can be used to compress individual files using BZip2.
+
+[source, groovy]
+----
+task compressBZip2(type: io.freefair.gradle.plugins.compress.tasks.BZip2) {
+    source "src/main/resources"
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "bz2"
+}
+----
+
 [#Cpio]
 === `Cpio`
 
@@ -91,6 +105,55 @@ task packageCpioArchive(type: io.freefair.gradle.plugins.compress.tasks.Cpio) {
     format = org.apache.commons.compress.archivers.cpio.CpioConstants.FORMAT_NEW
     blockSize = 512
     encoding = "US-ASCII"
+}
+----
+
+[#Deflate]
+=== `Deflate`
+
+This task can be used to compress individual files using the zlib deflate algorithm.
+
+[source, groovy]
+----
+task compressDeflate(type: io.freefair.gradle.plugins.compress.tasks.Deflate) {
+    source "src/main/resources"
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "deflate"
+
+    compressionLevel = 9
+    withZlibHeader = false
+}
+----
+
+[#GZip]
+=== `GZip`
+
+This task can be used to compress individual files using BZip2.
+
+[source, groovy]
+----
+task compressGZip(type: io.freefair.gradle.plugins.compress.tasks.GZip) {
+    source "src/main/resources"
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "gz"
+
+    compressionLevel = 9
+    comment = ""
+    addFilename = false
+}
+----
+
+[#LZMA]
+=== `LZMA`
+
+This task can be used to compress individual files using LZMA.
+
+[source, groovy]
+----
+task compressLZMA(type: io.freefair.gradle.plugins.compress.tasks.LZMA) {
+    source "src/main/resources"
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "lzma"
 }
 ----
 
