@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.aspectj;
 
 import io.freefair.gradle.plugins.aspectj.internal.DefaultWeavingSourceSet;
+import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -25,6 +26,10 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        if (project.getPlugins().hasPlugin(AspectJPlugin.class)) {
+            throw new IllegalStateException("Another aspectj plugin (which is excludes this one) has already been applied to the project.");
+        }
+
         this.project = project;
         aspectjBasePlugin = project.getPlugins().apply(AspectJBasePlugin.class);
 

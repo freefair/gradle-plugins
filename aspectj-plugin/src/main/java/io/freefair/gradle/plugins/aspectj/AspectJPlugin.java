@@ -22,6 +22,10 @@ public class AspectJPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        if (project.getPlugins().hasPlugin(AspectJPostCompileWeavingPlugin.class)) {
+            throw new IllegalStateException("Another aspectj plugin (which is excludes this one) has already been applied to the project.");
+        }
+
         this.project = project;
         project.getPlugins().apply(AspectJBasePlugin.class);
         project.getPlugins().apply(JavaBasePlugin.class);
