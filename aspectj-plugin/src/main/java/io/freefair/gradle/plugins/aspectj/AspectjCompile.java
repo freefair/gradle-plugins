@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.aspectj;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompileSpec;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompiler;
 import lombok.Getter;
+import org.gradle.api.Action;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
@@ -69,6 +70,14 @@ public class AspectjCompile extends AbstractCompile {
         spec.setAspectJCompileOptions(getAjcOptions());
 
         return spec;
+    }
+
+    public void options(Action<CompileOptions> action) {
+        action.execute(getOptions());
+    }
+
+    public void ajcOptions(Action<AspectJCompileOptions> action) {
+        action.execute(getAjcOptions());
     }
 
 }

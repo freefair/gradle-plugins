@@ -101,9 +101,9 @@ The following things are configurable:
 compileJava {
     ajc {
         enabled = true //<1>
-        classpath = configurations.aspectj //<2>
+        classpath.setFrom configurations.aspectj //<2>
         options {
-            aspectpath = configurations.aspect //<3>
+            aspectpath.setFrom configurations.aspect //<3>
             compilerArgs = [] //<4>
         }
     }
@@ -111,9 +111,9 @@ compileJava {
 compileTestJava {
     ajc {
         enabled = true //<1>
-        classpath = configurations.aspectj //<2>
+        classpath.setFrom configurations.aspectj //<2>
         options {
-            aspectpath = configurations.testAspect //<3>
+            aspectpath.setFrom configurations.testAspect //<3>
             compilerArgs = [] //<4>
         }
     }
@@ -137,7 +137,7 @@ https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html[`ajc`].
 
 [source,groovy]
 task myAjcTask(type: io.freefair.gradle.plugins.aspectj.AspectjCompile) {
-    aspectjClasspath = configurations.aspectj
+    aspectjClasspath.setFrom configurations.aspectj
     ajcOptions {
         inpath = files()
         aspectpath = files()
