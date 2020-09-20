@@ -8,7 +8,7 @@ buildscript {
         classpath "com.gradle.publish:plugin-publish-plugin:0.12.0"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.22.0"
 
-        def pluginVersion = "5.1.1"
+        def pluginVersion = "5.2.1"
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
         classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
         classpath "io.freefair.gradle:git-plugin:$pluginVersion"
@@ -56,7 +56,7 @@ allprojects {
         test.useJUnitPlatform()
 
         dependencies {
-            testImplementation 'org.assertj:assertj-core:3.17.1'
+            testImplementation 'org.assertj:assertj-core:3.17.2'
             testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
             testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
         }
