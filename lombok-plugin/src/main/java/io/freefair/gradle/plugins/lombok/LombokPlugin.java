@@ -25,6 +25,7 @@ public class LombokPlugin implements Plugin<Project> {
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
     private TaskProvider<GenerateLombokConfig> generateLombokConfig;
+    private boolean spotbugConfigured;
 
     @Override
     public void apply(Project project) {
@@ -90,9 +91,15 @@ public class LombokPlugin implements Plugin<Project> {
         project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> configureForJacoco());
 
         project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginConvention));
+        project.getPlugins().withId("org.sonarqube", sonarPlugin -> configureForSpotbugs(javaPluginConvention));
     }
 
     private void configureForSpotbugs(JavaPluginConvention javaPluginConvention) {
+        if (spotbugConfigured) {
+            return;
+        }
+        spotbugConfigured = true;
+
         lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
 
         project.afterEvaluate(p -> {
