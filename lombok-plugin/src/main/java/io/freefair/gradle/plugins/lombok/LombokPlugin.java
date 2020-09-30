@@ -22,6 +22,8 @@ import java.util.concurrent.Callable;
 @Getter
 public class LombokPlugin implements Plugin<Project> {
 
+    private static final String SPOTBUG_DEFAULT_VERSION = "4.1.3";
+
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
     private TaskProvider<GenerateLombokConfig> generateLombokConfig;
@@ -103,16 +105,7 @@ public class LombokPlugin implements Plugin<Project> {
         lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
 
         project.afterEvaluate(p -> {
-            Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
-
-            String toolVersion;
-            if (spotbugsExtension instanceof CodeQualityExtension) {
-                toolVersion = ((CodeQualityExtension) spotbugsExtension).getToolVersion();
-            }
-            else {
-                Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
-                toolVersion = toolVersionProperty.get();
-            }
+            String toolVersion = resolveSpotBugVersion();
 
             javaPluginConvention.getSourceSets().all(sourceSet ->
                     project.getDependencies().add(
@@ -120,6 +113,20 @@ public class LombokPlugin implements Plugin<Project> {
                             "com.github.spotbugs:spotbugs-annotations:" + toolVersion
                     ));
         });
+    }
+
+    private String resolveSpotBugVersion() {
+        if (!project.getPlugins().hasPlugin("com.github.spotbugs")) {
+            return SPOTBUG_DEFAULT_VERSION;
+        }
+
+        Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
+        if (spotbugsExtension instanceof CodeQualityExtension) {
+            return ((CodeQualityExtension) spotbugsExtension).getToolVersion();
+        }
+
+        Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
+        return toolVersionProperty.get();
     }
 
     private void configureForJacoco() {

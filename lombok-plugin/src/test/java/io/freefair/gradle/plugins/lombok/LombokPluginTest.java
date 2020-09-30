@@ -6,6 +6,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.sonarqube.gradle.SonarQubePlugin;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +46,7 @@ public class LombokPluginTest {
         assertThat(lombokExtension).isNotNull();
         assertThat(lombokExtension.getConfig().get()).doesNotContainKey("lombok.extern.findbugs.addSuppressFBWarnings");
 
-        project.getPlugins().apply("org.sonarqube");
+        project.getPlugins().apply(SonarQubePlugin.class);
         assertThat(lombokExtension.getConfig().get()).containsEntry("lombok.extern.findbugs.addSuppressFBWarnings", "true");
     }
 }
