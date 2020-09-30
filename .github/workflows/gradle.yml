@@ -31,3 +31,5 @@ jobs:
       - run: cd examples && ./gradlew assemble -s && cd ..
       - run: ./gradlew check -s
       - run: cd examples && ./gradlew check -s && cd ..
+      - run: cd examples && ./gradlew github:pTML -s && cd ..
+      - run: cat examples/github/build/publications/mavenJava/pom-default.xml
