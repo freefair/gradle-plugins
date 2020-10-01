@@ -61,6 +61,12 @@ public class GithubPomPlugin implements Plugin<Project> {
                         ciManagement.getUrl().convention(githubExtension.getSlug().map(slug -> String.format("https://travis-ci.org/%s/", slug)));
                     });
                 }
+                else if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+                    pom.ciManagement(ciManagement -> {
+                        ciManagement.getSystem().convention("GitHub Actions");
+                        ciManagement.getUrl().convention(githubExtension.getSlug().map(slug -> String.format("https://github.com/%s/actions", slug)));
+                    });
+                }
 
                 if (getRepo().map(Repo::isHas_issues).getOrElse(true)) {
                     pom.issueManagement(issueManagement -> {

@@ -151,4 +151,33 @@ public class GitUtils {
 
         return "HEAD";
     }
+
+    @Nullable
+    public String findGithubUsername(Project project) {
+        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+            return System.getenv("GITHUB_ACTOR");
+        }
+
+        Object githubUsername = project.findProperty("githubUsername");
+        if (githubUsername != null) {
+            return githubUsername.toString();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public String findGithubToken(Project project) {
+        String github_token = System.getenv("GITHUB_TOKEN");
+        if (github_token != null) {
+            return github_token;
+        }
+
+        Object githubToken = project.findProperty("githubToken");
+        if (githubToken != null) {
+            return githubToken.toString();
+        }
+
+        return null;
+    }
 }
