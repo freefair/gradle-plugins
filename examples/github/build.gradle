@@ -2,6 +2,8 @@ apply plugin: "io.freefair.github.pom"
 apply plugin: "io.freefair.maven-publish-java"
 apply plugin: "io.freefair.github.package-registry-maven-publish"
 
+group = "io.freefair.gradle.examples"
+
 rootProject.github {
     slug = "freefair/gradle-plugins"
     //username = "larsgrefer"

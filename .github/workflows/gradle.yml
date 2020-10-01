@@ -27,11 +27,21 @@ jobs:
         run: |
           java -version
           ./gradlew --version
-      - run: cd examples && ./gradlew github:publish -s && cd ..
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: cat examples/github/build/publications/mavenJava/pom-default.xml
       - run: ./gradlew assemble -s
       - run: cd examples && ./gradlew assemble -s && cd ..
       - run: ./gradlew check -s
       - run: cd examples && ./gradlew check -s && cd ..
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - run: cd examples && ./gradlew github:publish -s && cd ..
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: cat examples/github/build/publications/mavenJava/pom-default.xml
+
