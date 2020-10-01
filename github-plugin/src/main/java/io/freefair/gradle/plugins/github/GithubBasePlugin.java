@@ -41,6 +41,15 @@ public class GithubBasePlugin implements Plugin<Project> {
         githubExtension.getTravis().convention(project.provider(this::isTravis));
         githubExtension.getTag().convention(project.provider(() -> GitUtils.getTag(project)));
 
+        String github_actor = System.getenv("GITHUB_ACTOR");
+        if (github_actor != null) {
+            githubExtension.getUsername().convention(System.getenv("GITHUB_ACTOR"));
+        }
+        String github_token = System.getenv("GITHUB_TOKEN");
+        if (github_token != null) {
+            githubExtension.getToken().convention(System.getenv("GITHUB_TOKEN"));
+        }
+
         OkHttpPlugin okHttpPlugin = project.getPlugins().apply(OkHttpPlugin.class);
 
         githubClient = new GithubClient(githubExtension, okHttpPlugin.getOkHttpClient());
