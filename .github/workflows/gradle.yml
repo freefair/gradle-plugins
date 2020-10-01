@@ -28,6 +28,8 @@ jobs:
           java -version
           ./gradlew --version
       - run: cd examples && ./gradlew github:publish -s && cd ..
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: cat examples/github/build/publications/mavenJava/pom-default.xml
       - run: ./gradlew assemble -s
       - run: cd examples && ./gradlew assemble -s && cd ..
