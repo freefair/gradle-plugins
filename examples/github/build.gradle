@@ -9,8 +9,3 @@ rootProject.github {
     //username = "larsgrefer"
     //token = findProperty("githubToken")
 }
-
-System.getenv().keySet()
-.stream()
-.sorted()
-.forEach({println it})
