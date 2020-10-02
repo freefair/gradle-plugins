@@ -96,6 +96,11 @@ public class GitUtils {
             return new File(travisBuildDirEnv);
         }
 
+        String githubActionsWorkspace = System.getenv("GITHUB_WORKSPACE");
+        if (githubActionsWorkspace != null) {
+            return new File(githubActionsWorkspace);
+        }
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         ExecResult execResult = project.exec(execSpec -> {
@@ -120,6 +125,15 @@ public class GitUtils {
             return travisTagEnv.trim();
         }
 
+        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+            String githubRef = System.getenv("GITHUB_REF");
+            if (githubRef != null) {
+                if (githubRef.startsWith("refs/tags/")) {
+                    return githubRef.substring("refs/tags/".length());
+                }
+            }
+        }
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         ExecResult execResult = project.exec(execSpec -> {
@@ -136,5 +150,34 @@ public class GitUtils {
         }
 
         return "HEAD";
+    }
+
+    @Nullable
+    public String findGithubUsername(Project project) {
+        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+            return System.getenv("GITHUB_ACTOR");
+        }
+
+        Object githubUsername = project.findProperty("githubUsername");
+        if (githubUsername != null) {
+            return githubUsername.toString();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public String findGithubToken(Project project) {
+        String github_token = System.getenv("GITHUB_TOKEN");
+        if (github_token != null) {
+            return github_token;
+        }
+
+        Object githubToken = project.findProperty("githubToken");
+        if (githubToken != null) {
+            return githubToken.toString();
+        }
+
+        return null;
     }
 }

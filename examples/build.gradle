@@ -6,6 +6,7 @@ buildscript {
         classpath "io.freefair.gradle:maven-plugin"
         classpath "io.freefair.gradle:aspectj-plugin"
         classpath "io.freefair.gradle:jacoco-plugin"
+        classpath "io.freefair.gradle:git-plugin"
         classpath "io.freefair.gradle:github-plugin"
         classpath "io.freefair.gradle:code-generator-plugin"
     }
@@ -15,6 +16,7 @@ buildscript {
     }
 }
 
+apply plugin: "io.freefair.git-version"
 apply plugin: "io.freefair.aggregate-javadoc"
 apply plugin: "io.freefair.javadoc-links"
 

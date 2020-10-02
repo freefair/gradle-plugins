@@ -41,6 +41,9 @@ public class GithubBasePlugin implements Plugin<Project> {
         githubExtension.getTravis().convention(project.provider(this::isTravis));
         githubExtension.getTag().convention(project.provider(() -> GitUtils.getTag(project)));
 
+        githubExtension.getUsername().convention(project.provider(() -> GitUtils.findGithubUsername(project)));
+        githubExtension.getToken().convention(project.provider(() -> GitUtils.findGithubToken(project)));
+
         OkHttpPlugin okHttpPlugin = project.getPlugins().apply(OkHttpPlugin.class);
 
         githubClient = new GithubClient(githubExtension, okHttpPlugin.getOkHttpClient());
@@ -51,6 +54,10 @@ public class GithubBasePlugin implements Plugin<Project> {
         String travisEnv = System.getenv("TRAVIS");
         if (travisEnv != null) {
             return travisEnv.trim().equalsIgnoreCase("true");
+        }
+
+        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+            return false;
         }
 
         if (new File(GitUtils.findWorkingDirectory(project), ".travis.yml").isFile()) {
