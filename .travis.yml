@@ -21,6 +21,8 @@ after_success:
   - ./gradlew jacocoTestReport
   - bash <(curl -s https://codecov.io/bash)
 
+after_failure: dmesg -T | grep -E -i -B100 'killed process'
+
 before_deploy:
   - openssl aes-256-cbc -K $encrypted_6afd0fc9428e_key -iv $encrypted_6afd0fc9428e_iv
     -in secring.gpg.enc -out $TRAVIS_BUILD_DIR/secring.gpg -d
