@@ -51,12 +51,10 @@ public class GithubBasePlugin implements Plugin<Project> {
 
     private boolean isTravis() {
 
-        String travisEnv = System.getenv("TRAVIS");
-        if (travisEnv != null) {
-            return travisEnv.trim().equalsIgnoreCase("true");
+        if (GitUtils.currentlyRunningOnTravisCi()) {
+            return true;
         }
-
-        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+        else if (GitUtils.currentlyRunningOnGithubActions()) {
             return false;
         }
 

@@ -47,7 +47,7 @@ public class GithubExtension {
 
         tag = objectFactory.property(String.class).convention("HEAD");
 
-        travis = objectFactory.property(Boolean.class);
+        travis = objectFactory.property(Boolean.class).convention(false);
     }
 
     public Provider<String> getOwner() {
