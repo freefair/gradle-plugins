@@ -22,8 +22,8 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 after_failure:
-  - dmesg -T
-  - cat $HOME/.gradle/daemon/6.6.1/*.log
+  - ls -l $HOME/.gradle/daemon/6.1.1
+  - cat $HOME/.gradle/daemon/6.6.1/daemon-*.log
 
 before_deploy:
   - openssl aes-256-cbc -K $encrypted_6afd0fc9428e_key -iv $encrypted_6afd0fc9428e_iv
