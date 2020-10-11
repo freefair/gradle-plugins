@@ -22,7 +22,7 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 after_failure:
-  - ls -l $HOME/.gradle/daemon/6.1.1
+  - ls -l $HOME/.gradle/daemon/6.6.1
   - cat $HOME/.gradle/daemon/6.6.1/daemon-*.log
 
 before_deploy:
