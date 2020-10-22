@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
@@ -61,15 +62,19 @@ public class LombokPlugin implements Plugin<Project> {
             TaskProvider<JavaCompile> compileTaskProvider = project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava -> {
                 compileJava.dependsOn(generateLombokConfig);
                 compileJava.getOptions().getCompilerArgs().add("-Xlint:-processing");
-                compileJava.getInputs().file((Callable<RegularFileProperty>) () -> {
-                    GenerateLombokConfig generateLombokConfig = this.generateLombokConfig.get();
-                    if (generateLombokConfig.isEnabled()) {
-                        return generateLombokConfig.getOutputFile();
-                    }
-                    else {
-                        return null;
-                    }
-                }).withPropertyName("lombok.config").optional();
+                compileJava.getInputs()
+                        .file((Callable<RegularFileProperty>) () -> {
+                            GenerateLombokConfig generateLombokConfig = this.generateLombokConfig.get();
+                            if (generateLombokConfig.isEnabled()) {
+                                return generateLombokConfig.getOutputFile();
+                            }
+                            else {
+                                return null;
+                            }
+                        })
+                        .withPropertyName("lombok.config")
+                        .withPathSensitivity(PathSensitivity.RELATIVE)
+                        .optional();
             });
 
             project.afterEvaluate(p -> {
