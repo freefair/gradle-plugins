@@ -1,8 +1,10 @@
 package io.freefair.gradle.plugins.lombok;
 
+import groovy.lang.Closure;
 import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.freefair.gradle.plugins.lombok.tasks.GenerateLombokConfig;
 import lombok.Getter;
+import org.codehaus.groovy.runtime.GStringImpl;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.RegularFileProperty;
@@ -99,25 +101,28 @@ public class LombokPlugin implements Plugin<Project> {
 
     private void configureForSpotbugs(JavaPluginConvention javaPluginConvention) {
         lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
-
-        project.afterEvaluate(p -> {
-            Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
-
-            String toolVersion;
-            if (spotbugsExtension instanceof CodeQualityExtension) {
-                toolVersion = ((CodeQualityExtension) spotbugsExtension).getToolVersion();
+        final Closure<String> toolVersionClosure = new Closure<String>(null) {
+            public String doCall() {
+                Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
+                String toolVersion;
+                if (spotbugsExtension instanceof CodeQualityExtension) {
+                    toolVersion = ((CodeQualityExtension) spotbugsExtension).getToolVersion();
+                } else {
+                    Property<String> toolVersionProperty =
+                            (Property<String>) new DslObject(spotbugsExtension)
+                                    .getAsDynamicObject()
+                                    .getProperty("toolVersion");
+                    toolVersion = toolVersionProperty.get();
+                }
+                return toolVersion;
             }
-            else {
-                Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
-                toolVersion = toolVersionProperty.get();
-            }
-
-            javaPluginConvention.getSourceSets().all(sourceSet ->
-                    project.getDependencies().add(
-                            sourceSet.getCompileOnlyConfigurationName(),
-                            "com.github.spotbugs:spotbugs-annotations:" + toolVersion
-                    ));
-        });
+        };
+        javaPluginConvention.getSourceSets().all(sourceSet ->
+                project.getDependencies().add(
+                        sourceSet.getCompileOnlyConfigurationName(),
+                        new GStringImpl(new Object[]{toolVersionClosure},
+                                new String[]{"com.github.spotbugs:spotbugs-annotations:"})
+                ));
     }
 
     private void configureForJacoco() {
