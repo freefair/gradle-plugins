@@ -2,7 +2,7 @@ apply plugin: "java-library"
 
 dependencies {
     api "org.junit.jupiter:junit-jupiter-api:5.7.0"
-    api "org.assertj:assertj-core:3.18.0"
+    api "org.assertj:assertj-core:3.18.1"
     api gradleApi()
     api gradleTestKit()
     api 'com.squareup:javapoet:1.13.0'
