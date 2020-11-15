@@ -54,7 +54,8 @@ public class LombokPlugin implements Plugin<Project> {
 
             TaskProvider<Delombok> delombokTaskProvider = project.getTasks().register(sourceSet.getTaskName("delombok", ""), Delombok.class, delombok -> {
                 delombok.setDescription("Runs delombok on the " + sourceSet.getName() + " source-set");
-                delombok.getTarget().set(project.getLayout().getBuildDirectory().dir("delombok/" + sourceSet.getName()));
+                String delombokDir = "generated/sources/delombok/" + sourceSet.getJava().getName() + "/" + sourceSet.getName();
+                delombok.getTarget().convention(project.getLayout().getBuildDirectory().dir(delombokDir));
             });
 
             sourceSet.getExtensions().add("delombokTask", delombokTaskProvider);
