@@ -9,6 +9,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     defaults:
       run:
         working-directory: examples
@@ -20,7 +22,5 @@ jobs:
           java-version: 11
       - run: ./gradlew github:assemble -s
       - run: ./gradlew github:publish -s
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: cat examples/github/build/publications/mavenJava/pom-default.xml
+      - run: cat github/build/publications/mavenJava/pom-default.xml
 
