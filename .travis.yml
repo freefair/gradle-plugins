@@ -15,11 +15,6 @@ jdk:
 
 script:
   - ./gradlew check
-  - cd examples && ./gradlew check && cd ..
-
-after_success:
-  - ./gradlew jacocoTestReport
-  - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
   - openssl aes-256-cbc -K $encrypted_6afd0fc9428e_key -iv $encrypted_6afd0fc9428e_iv

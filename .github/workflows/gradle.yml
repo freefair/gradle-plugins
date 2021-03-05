@@ -29,6 +29,10 @@ jobs:
           ./gradlew --version
       - run: ./gradlew assemble -s
       - run: ./gradlew check -s
+      - name: Upload Coverage Reports
+        run: |
+          ./gradlew jacocoTestReport
+          bash <(curl -s https://codecov.io/bash)
 
   build-examples:
     name: Build example projects
