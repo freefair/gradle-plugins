@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build the Plugin
+    name: Build plugin
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -31,7 +31,7 @@ jobs:
       - run: ./gradlew check -s
 
   build-examples:
-    name: Build the example projects
+    name: Build example projects
     runs-on: ${{ matrix.os }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
