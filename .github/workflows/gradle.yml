@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-
+    name: Build the Plugin
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -31,12 +31,13 @@ jobs:
       - run: ./gradlew check -s
 
   build-examples:
-
-    runs-on: ubuntu-latest
+    name: Build the example projects
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         java: [ 8, 11 ]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     defaults:
       run:
         working-directory: examples
