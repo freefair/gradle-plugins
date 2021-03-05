@@ -28,6 +28,10 @@ public class GithubClient {
                         request = request.newBuilder()
                                 .header("Authorization", Credentials.basic(username.get(), token.get()))
                                 .build();
+                    } else if(token.isPresent()) {
+                        request = request.newBuilder()
+                                .header("Authorization", "Bearer " + token.get())
+                                .build();
                     }
                     return chain.proceed(request);
                 })
