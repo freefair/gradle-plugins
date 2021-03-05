@@ -9,6 +9,9 @@ on:
 jobs:
   deploy-plugin:
     runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_freefairDocsUser: ${{ secrets.FREEFAIR_DOCS_USER }}
+      ORG_GRADLE_PROJECT_freefairDocsPass: ${{ secrets.FREEFAIR_DOCS_PASS }}
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
