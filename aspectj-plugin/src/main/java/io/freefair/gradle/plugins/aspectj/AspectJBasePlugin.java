@@ -4,10 +4,8 @@ import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.plugins.JavaPluginConvention;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.Callable;
 
 @Getter
 public class AspectJBasePlugin implements Plugin<Project> {

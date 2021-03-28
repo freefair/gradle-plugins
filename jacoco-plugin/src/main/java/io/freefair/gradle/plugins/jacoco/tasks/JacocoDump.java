@@ -2,13 +2,11 @@ package io.freefair.gradle.plugins.jacoco.tasks;
 
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.internal.worker.request.WorkerAction;
 import org.gradle.testing.jacoco.tasks.JacocoBase;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;

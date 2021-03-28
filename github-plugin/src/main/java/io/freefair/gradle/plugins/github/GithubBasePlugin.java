@@ -4,12 +4,8 @@ import io.freefair.gradle.plugins.github.internal.GitUtils;
 import io.freefair.gradle.plugins.github.internal.GithubClient;
 import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
 import lombok.Getter;
-import okhttp3.OkHttpClient;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.api.provider.Provider;
-import org.gradle.initialization.layout.ProjectCacheDir;
 
 import java.io.File;
 
