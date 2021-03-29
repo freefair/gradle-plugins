@@ -14,6 +14,7 @@ Javadoc https://docs.freefair.io/gradle-plugins/current/api/
 
 |Plugin Version |Gradle Version |Java Version
 |---            |---            |---
+|5.3.x          |6.7            |8 - 15
 |5.1.x          |6.4+           |8 - 14
 |5.0.x          |6.3            |8 - 13
 |4.x            |5.6+           |8 - 12

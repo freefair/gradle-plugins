@@ -7,17 +7,33 @@ on:
   - push
 
 jobs:
-  deploy:
+  deploy-plugin:
     runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_freefairDocsUser: ${{ secrets.FREEFAIR_DOCS_USER }}
+      ORG_GRADLE_PROJECT_freefairDocsPass: ${{ secrets.FREEFAIR_DOCS_PASS }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - run: ./gradlew uploadDocs
+
+  deploy-example:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        working-directory: examples
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - run: cd examples && ./gradlew github:assemble -s && cd ..
-      - run: cd examples && ./gradlew github:publish -s && cd ..
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: cat examples/github/build/publications/mavenJava/pom-default.xml
+      - run: ./gradlew github:assemble -s
+      - run: ./gradlew github:publish -s
+      - run: cat github/build/publications/mavenJava/pom-default.xml
 

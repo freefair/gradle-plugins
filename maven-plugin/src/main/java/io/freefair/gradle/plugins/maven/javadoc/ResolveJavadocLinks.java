@@ -13,14 +13,14 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.UnionFileCollection;
-import org.gradle.api.internal.provider.TransformBackedProvider;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
-import org.gradle.jvm.internal.toolchain.JavaToolChainInternal;
-import org.gradle.jvm.toolchain.JavaToolChain;
+import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.jvm.toolchain.JavadocTool;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -224,9 +224,10 @@ public class ResolveJavadocLinks implements Action<Task> {
     private String getJavaSeLink() {
         JavaVersion javaVersion = JavaVersion.current();
 
-        JavaToolChain toolChain = javadoc.getToolChain();
-        if (toolChain instanceof JavaToolChainInternal) {
-            javaVersion = ((JavaToolChainInternal) toolChain).getJavaVersion();
+        Property<JavadocTool> javadocTool = javadoc.getJavadocTool();
+        if (javadocTool.isPresent()) {
+            JavaLanguageVersion languageVersion = javadocTool.get().getMetadata().getLanguageVersion();
+            javaVersion = JavaVersion.toVersion(languageVersion.asInt());
         }
 
         if (javaVersion.isJava11Compatible()) {

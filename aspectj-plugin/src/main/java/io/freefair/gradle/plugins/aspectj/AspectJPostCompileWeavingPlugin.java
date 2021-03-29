@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.aspectj;
 
 import io.freefair.gradle.plugins.aspectj.internal.DefaultWeavingSourceSet;
-import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;

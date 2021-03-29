@@ -2,8 +2,6 @@ package io.freefair.aspectj.demo;
 
 import org.junit.Test;
 
-import javax.swing.plaf.nimbus.NimbusStyle;
-
 import static org.junit.Assert.*;
 
 public class StupidAspectTest {
