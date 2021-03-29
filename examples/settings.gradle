@@ -18,6 +18,7 @@ include ":aspectj:httpcore-nio"
 include ":aspectj:test"
 
 include ":lombok"
+include ":lombok:sonarqube"
 
 include ":javadoc"
 

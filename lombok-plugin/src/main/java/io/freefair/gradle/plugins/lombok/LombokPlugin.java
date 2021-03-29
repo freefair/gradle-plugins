@@ -23,9 +23,12 @@ import java.util.concurrent.Callable;
 @Getter
 public class LombokPlugin implements Plugin<Project> {
 
+    private static final String SPOTBUG_DEFAULT_VERSION = "4.1.3";
+
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
     private TaskProvider<GenerateLombokConfig> generateLombokConfig;
+    private boolean spotbugConfigured;
 
     @Override
     public void apply(Project project) {
@@ -96,22 +99,19 @@ public class LombokPlugin implements Plugin<Project> {
         project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> configureForJacoco());
 
         project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginConvention));
+        project.getPlugins().withId("org.sonarqube", sonarPlugin -> configureForSpotbugs(javaPluginConvention));
     }
 
     private void configureForSpotbugs(JavaPluginConvention javaPluginConvention) {
+        if (spotbugConfigured) {
+            return;
+        }
+        spotbugConfigured = true;
+
         lombokBasePlugin.getLombokExtension().getConfig().put("lombok.extern.findbugs.addSuppressFBWarnings", "true");
 
         project.afterEvaluate(p -> {
-            Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
-
-            String toolVersion;
-            if (spotbugsExtension instanceof CodeQualityExtension) {
-                toolVersion = ((CodeQualityExtension) spotbugsExtension).getToolVersion();
-            }
-            else {
-                Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
-                toolVersion = toolVersionProperty.get();
-            }
+            String toolVersion = resolveSpotBugVersion();
 
             javaPluginConvention.getSourceSets().all(sourceSet ->
                     project.getDependencies().add(
@@ -119,6 +119,20 @@ public class LombokPlugin implements Plugin<Project> {
                             "com.github.spotbugs:spotbugs-annotations:" + toolVersion
                     ));
         });
+    }
+
+    private String resolveSpotBugVersion() {
+        if (!project.getPlugins().hasPlugin("com.github.spotbugs")) {
+            return SPOTBUG_DEFAULT_VERSION;
+        }
+
+        Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
+        if (spotbugsExtension instanceof CodeQualityExtension) {
+            return ((CodeQualityExtension) spotbugsExtension).getToolVersion();
+        }
+
+        Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
+        return toolVersionProperty.get();
     }
 
     private void configureForJacoco() {
