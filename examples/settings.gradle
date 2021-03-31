@@ -31,3 +31,5 @@ include ":github"
 
 include ":code-generator:use"
 include ":code-generator:generator"
+
+include ":test-maven-plugin"
