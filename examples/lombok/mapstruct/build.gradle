@@ -1,0 +1,9 @@
+plugins {
+    id "java"
+    id "io.freefair.lombok"
+}
+
+dependencies {
+    implementation "org.mapstruct:mapstruct:+"
+    annotationProcessor "org.mapstruct:mapstruct-processor:+"
+}

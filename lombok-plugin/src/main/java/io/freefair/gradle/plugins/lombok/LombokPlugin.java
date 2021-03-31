@@ -5,6 +5,8 @@ import io.freefair.gradle.plugins.lombok.tasks.GenerateLombokConfig;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
@@ -23,6 +25,7 @@ import java.util.concurrent.Callable;
 @Getter
 public class LombokPlugin implements Plugin<Project> {
 
+    private static final String LOMBOK_MAPSTRUCT_VERSION = "0.2.0";
     private static final String SPOTBUG_DEFAULT_VERSION = "4.1.3";
 
     private LombokBasePlugin lombokBasePlugin;
@@ -82,6 +85,8 @@ public class LombokPlugin implements Plugin<Project> {
             });
 
             project.afterEvaluate(p -> {
+                handleMapstructSupport(sourceSet);
+
                 delombokTaskProvider.configure(delombok -> {
                     delombok.getEncoding().set(compileTaskProvider.get().getOptions().getEncoding());
                     delombok.getClasspath().from(sourceSet.getCompileClasspath());
@@ -142,5 +147,31 @@ public class LombokPlugin implements Plugin<Project> {
     private void configureDelombokDefaults(Delombok delombok) {
         delombok.setGroup("lombok");
         delombok.getFormat().put("pretty", null);
+    }
+
+    private void handleMapstructSupport(SourceSet sourceSet) {
+        Configuration annotationProcessor = project.getConfigurations().getByName(sourceSet.getAnnotationProcessorConfigurationName());
+
+        Dependency mapstruct = null;
+        boolean hasBinding = false;
+
+        for (Dependency aptDependency : annotationProcessor.getAllDependencies()) {
+            if ("mapstruct-processor".equals(aptDependency.getName()) && "org.mapstruct".equals(aptDependency.getGroup())) {
+                mapstruct = aptDependency;
+            }
+
+            if ("lombok-mapstruct-binding".equals(aptDependency.getName())) {
+                hasBinding = true;
+            }
+        }
+
+        if (mapstruct != null && !hasBinding) {
+            project.getLogger().info("Adding lombok-mapstruct-binding for source set {} because {} was found", sourceSet.getName(), mapstruct);
+
+            project.getDependencies().add(
+                    sourceSet.getAnnotationProcessorConfigurationName(),
+                    "org.projectlombok:lombok-mapstruct-binding:" + LOMBOK_MAPSTRUCT_VERSION
+            );
+        }
     }
 }
