@@ -165,6 +165,10 @@ public class LombokPlugin implements Plugin<Project> {
 
     @Nullable
     private String getLombokConfig(File dir) {
+        if (!dir.exists()) {
+            return null;
+        }
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         project.javaexec(configTool -> {
