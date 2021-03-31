@@ -2,10 +2,10 @@ package io.freefair.gradle.plugins.lombok;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.internal.deprecation.DeprecationLogger;
 
 import javax.inject.Inject;
 
@@ -13,7 +13,6 @@ import javax.inject.Inject;
  * @author Lars Grefer
  * @see LombokPlugin
  */
-@Slf4j
 @Getter
 @Setter
 public class LombokExtension {
@@ -37,7 +36,10 @@ public class LombokExtension {
 
     @Deprecated
     public MapProperty<String, String> getConfig() {
-        log.warn("'lombok.config' is deprecated", new Exception("stacktrace"));
+        DeprecationLogger.deprecateProperty(LombokExtension.class, "config")
+                .willBeRemovedInGradle8()
+                .undocumented()
+                .nagUser();
         return config;
     }
 }
