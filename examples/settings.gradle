@@ -19,6 +19,7 @@ include ":aspectj:test"
 
 include ":lombok"
 include ":lombok:sonarqube"
+include ":lombok:mapstruct"
 
 include ":javadoc"
 
