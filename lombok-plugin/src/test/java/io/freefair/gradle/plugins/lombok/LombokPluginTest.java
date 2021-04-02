@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.lombok;
 
-
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -44,9 +43,7 @@ public class LombokPluginTest {
         LombokExtension lombokExtension = project.getExtensions().getByType(LombokExtension.class);
 
         assertThat(lombokExtension).isNotNull();
-        assertThat(lombokExtension.getConfig().get()).doesNotContainKey("lombok.extern.findbugs.addSuppressFBWarnings");
 
         project.getPlugins().apply(SonarQubePlugin.class);
-        assertThat(lombokExtension.getConfig().get()).containsEntry("lombok.extern.findbugs.addSuppressFBWarnings", "true");
     }
 }
