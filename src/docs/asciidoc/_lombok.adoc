@@ -19,7 +19,7 @@ The used Lombok version can be customized using the `lombok` extension:
 [source,groovy]
 ----
 lombok {
-    version = "1.18.18"
+    version = "1.18.20"
 }
 ----
 
@@ -30,6 +30,7 @@ This plugin simplifies the use of https://projectlombok.org/[Lombok] in Gradle b
 - Lombok is added to the `annotationProcessor` and `compileOnly` configurations of each source set
 - For each source set a `delombok` task is created.
 - The `javadoc` task will be configured to read the delombok-ed sources instead of the actual sources.
+- `lombok-mapstruct-binding` is added to each source-set when 'org.mapstruct:mapstruct-processor' is found.
 - A `generateLombokConfig` will be added to the project, which generates the `lombok.config` file
 based on the `lombok` extension.
 

@@ -16,6 +16,8 @@ import javax.inject.Inject;
 @Setter
 public class LombokExtension {
 
+    public static final String LOMBOK_VERSION = "1.18.20";
+
     /**
      * The version of Lombok which will be used.
      */
@@ -28,7 +30,7 @@ public class LombokExtension {
 
     @Inject
     public LombokExtension(ObjectFactory objectFactory) {
-        version = objectFactory.property(String.class).convention("1.18.18");
+        version = objectFactory.property(String.class).convention(LOMBOK_VERSION);
         config = objectFactory.mapProperty(String.class, String.class);
     }
 }
