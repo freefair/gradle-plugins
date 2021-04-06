@@ -19,7 +19,7 @@ The used Lombok version can be customized using the `lombok` extension:
 [source,groovy]
 ----
 lombok {
-    version = "1.18.18"
+    version = "1.18.20"
 }
 ----
 
