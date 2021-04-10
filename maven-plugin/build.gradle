@@ -28,18 +28,6 @@ gradlePlugin {
             id = "io.freefair.war-archive-classes"
             implementationClass = "io.freefair.gradle.plugins.maven.war.WarArchiveClassesPlugin"
         }
-        sourcesJar {
-            id = "io.freefair.sources-jar"
-            implementationClass = "io.freefair.gradle.plugins.maven.SourcesJarPlugin"
-        }
-        javadocJar {
-            id = "io.freefair.javadoc-jar"
-            implementationClass = "io.freefair.gradle.plugins.maven.javadoc.JavadocJarPlugin"
-        }
-        mavenJars {
-            id = "io.freefair.maven-jars"
-            implementationClass = "io.freefair.gradle.plugins.maven.MavenJarsPlugin"
-        }
         aggregateJavadoc {
             id = "io.freefair.aggregate-javadoc"
             implementationClass = "io.freefair.gradle.plugins.maven.javadoc.AggregateJavadocPlugin"
