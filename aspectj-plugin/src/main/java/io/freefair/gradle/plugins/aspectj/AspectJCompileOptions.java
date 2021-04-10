@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.aspectj;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.gradle.api.Action;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
@@ -21,7 +22,8 @@ import java.util.List;
  * @see org.gradle.api.tasks.compile.GroovyCompileOptions
  * @see org.gradle.api.tasks.scala.ScalaCompileOptions
  */
-@Data
+@Getter
+@Setter
 public class AspectJCompileOptions extends AbstractOptions {
 
     /**

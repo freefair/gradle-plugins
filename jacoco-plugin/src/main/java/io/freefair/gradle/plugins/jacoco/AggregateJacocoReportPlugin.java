@@ -2,8 +2,11 @@ package io.freefair.gradle.plugins.jacoco;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.file.Directory;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.reporting.Report;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -44,12 +47,20 @@ public class AggregateJacocoReportPlugin implements Plugin<Project> {
             JacocoPluginExtension reportingExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
             reportTask.getReports().getHtml().setEnabled(true);
             reportTask.getReports().all(report -> {
+                Provider<File> destination;
                 if (report.getOutputType().equals(Report.OutputType.DIRECTORY)) {
-                    report.setDestination(project.provider(() -> new File(reportingExtension.getReportsDir(), reportTask.getName() + "/" + report.getName())));
+                    destination = reportingExtension
+                            .getReportsDirectory()
+                            .dir(reportTask.getName() + "/" + report.getName())
+                            .map(Directory::getAsFile);
                 }
                 else {
-                    report.setDestination(project.provider(() -> new File(reportingExtension.getReportsDir(), reportTask.getName() + "/" + reportTask.getName() + "." + report.getName())));
+                    destination = reportingExtension
+                            .getReportsDirectory()
+                            .file(reportTask.getName() + "/" + reportTask.getName() + "." + report.getName())
+                            .map(RegularFile::getAsFile);
                 }
+                report.setDestination(destination);
             });
         });
 
