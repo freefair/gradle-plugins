@@ -89,11 +89,6 @@ pluginBundle {
             description = "Maven-like archiveClasses options for war tasks."
             tags = ['war', 'maven', 'archiveClasses']
         }
-        sourcesJar {
-            displayName = "Sources Jar Plugin"
-            description = 'This plugin adds a sourcesJar task'
-            tags = ['maven', 'sources', 'jar']
-        }
         aggregateJavadoc {
             displayName = "Aggregate Javadoc Plugin"
             description = "Generate Javadoc over multiple projects"
@@ -103,16 +98,6 @@ pluginBundle {
             displayName = "Aggregate Javadoc Jar Plugin"
             description = "Generate Javadoc over multiple projects"
             tags = ['maven', 'javadoc', 'aggregate', "jar"]
-        }
-        javadocJar {
-            displayName = "Javadoc Jar Plugin"
-            description = 'This plugin adds a javadocJar task'
-            tags = ['maven', 'javadoc', 'jar']
-        }
-        mavenJars {
-            displayName = "Maven Jars Plugin"
-            description = 'This plugin adds a sourcesJar and a javadocJar task'
-            tags = ['maven', 'javadoc', 'sources', 'jar']
         }
         javadocLinks {
             displayName = "Maven Jars Plugin"
