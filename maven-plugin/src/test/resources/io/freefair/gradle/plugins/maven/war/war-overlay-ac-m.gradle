@@ -9,7 +9,7 @@ war {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 war {
