@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.maven;
 
-import io.freefair.gradle.plugins.maven.javadoc.JavadocJarPlugin;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -8,7 +7,6 @@ import org.gradle.api.component.SoftwareComponent;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
-import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.plugins.signing.SigningExtension;
 import org.gradle.plugins.signing.SigningPlugin;
 
@@ -32,16 +30,6 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
 
         project.afterEvaluate(p -> {
             publication.from(getSoftwareComponent());
-
-            project.getPlugins().withType(SourcesJarPlugin.class, sourcesJarPlugin -> {
-                Jar sourcesJar = sourcesJarPlugin.getSourcesJar().get();
-                publication.artifact(sourcesJar);
-            });
-
-            project.getPlugins().withType(JavadocJarPlugin.class, javadocJarPlugin -> {
-                Jar javadocJar = javadocJarPlugin.getJavadocJar().get();
-                publication.artifact(javadocJar);
-            });
 
             project.getPlugins().withType(SigningPlugin.class, signingPlugin -> project.getExtensions()
                     .getByType(SigningExtension.class)
