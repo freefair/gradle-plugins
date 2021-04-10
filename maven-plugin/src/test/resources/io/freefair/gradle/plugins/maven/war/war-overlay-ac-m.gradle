@@ -1,6 +1,5 @@
 plugins {
     id "io.freefair.war"
-    id "maven"
     id "maven-publish"
 }
 
@@ -9,7 +8,7 @@ war {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 war {
