@@ -156,8 +156,8 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void checkLombokConfig(SourceSet sourceSet, Map<File, String> configs, String expected) {
-        configs.forEach((dir, config) -> {
-            if (config.contains(expected)) {
+        configs.forEach((File dir, @Nullable String config) -> {
+            if (dir.exists() && (config == null || !config.contains(expected))) {
                 project.getLogger().warn("'{}' is not configured for '{}' of the {} source-set", expected, dir, sourceSet.getName());
             }
         });
