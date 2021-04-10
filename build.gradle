@@ -159,4 +159,3 @@ task uploadDocs(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
 tasks.named('wrapper') {
     distributionType = Wrapper.DistributionType.ALL
 }
-
