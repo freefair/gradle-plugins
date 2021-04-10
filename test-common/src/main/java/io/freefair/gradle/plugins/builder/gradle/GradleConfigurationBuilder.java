@@ -61,7 +61,7 @@ public class GradleConfigurationBuilder {
         builder.appendNewLine();
 
         builder.append("repositories {").indent();
-        builder.appendNewLine().append("jcenter()").appendNewLine().append("mavenCentral()");
+        builder.appendNewLine().append("mavenCentral()").appendNewLine().append("mavenCentral()");
 
         for (String repository : repositories) {
             builder.appendNewLine().append("maven {")

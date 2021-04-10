@@ -8,7 +8,7 @@ buildscript {
         classpath "com.gradle.publish:plugin-publish-plugin:0.14.0"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
 
-        def pluginVersion = "5.3.0"
+        def pluginVersion = "5.3.3.3"
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
         classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
         classpath "io.freefair.gradle:git-plugin:$pluginVersion"
@@ -154,4 +154,8 @@ task uploadDocs(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
     file = docsZip.archiveFile
     contentType = 'application/zip'
     url = "https://docs.freefair.io/api/$project.version?path=gradle-plugins"
+}
+
+tasks.named('wrapper') {
+    distributionType = Wrapper.DistributionType.ALL
 }
