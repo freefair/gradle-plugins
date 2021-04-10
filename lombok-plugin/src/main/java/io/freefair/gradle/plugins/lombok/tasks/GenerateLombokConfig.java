@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 @Getter
 @Setter
+@Deprecated
 public class GenerateLombokConfig extends DefaultTask {
 
     @OutputFile
