@@ -155,3 +155,7 @@ task uploadDocs(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
     contentType = 'application/zip'
     url = "https://docs.freefair.io/api/$project.version?path=gradle-plugins"
 }
+
+tasks.named('wrapper') {
+    distributionType = Wrapper.DistributionType.ALL
+}
