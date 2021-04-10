@@ -24,11 +24,11 @@ and the corresponding javadocs can be found at https://docs.freefair.io/gradle-p
 All plugins are deployed to the
 https://plugins.gradle.org/search?term=io.freefair[Gradle Plugin Portal].
 
-The plugins are grouped in multiple modules, each containing some of the plugins.
+The plugins are grouped in multiple modules, each containing some plugins.
 These submodules are described by the different parts of this documentation.
 
 Each plugin can be included using the Plugins DSL
-or by referencing it's containing module in the `buildscript`-block:
+or by referencing its containing module in the `buildscript`-block:
 
 .Using the plugins DSL
 [source,groovy,subs=attributes+]
