@@ -1,4 +1,4 @@
-name: Publish to MavenCentral and plugins.gradle.org
+name: Publish Release
 
 on:
   release:
