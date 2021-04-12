@@ -176,7 +176,7 @@ public class Delombok extends DefaultTask implements LombokTask {
 
         getProject().javaexec(delombok -> {
             delombok.setClasspath(getLombokClasspath());
-            delombok.setMain("lombok.launch.Main");
+            delombok.getMainClass().set("lombok.launch.Main");
             delombok.args("delombok");
 
             delombok.args("@" + optionsFile);

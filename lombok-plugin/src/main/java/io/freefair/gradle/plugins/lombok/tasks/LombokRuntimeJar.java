@@ -40,7 +40,7 @@ public class LombokRuntimeJar extends LombokJarTask {
     public void copy() {
         getProject().javaexec(runtimeJar -> {
             runtimeJar.setClasspath(getLombokClasspath());
-            runtimeJar.setMain("lombok.launch.Main");
+            runtimeJar.getMainClass().set("lombok.launch.Main");
             runtimeJar.args("createRuntime");
 
             if (print.get()) {

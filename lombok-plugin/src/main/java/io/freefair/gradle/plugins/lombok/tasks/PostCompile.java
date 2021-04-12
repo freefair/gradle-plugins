@@ -30,7 +30,7 @@ public class PostCompile extends DefaultTask implements LombokTask {
     public void postCompile() {
         getProject().javaexec(postCompile -> {
             postCompile.setClasspath(getLombokClasspath());
-            postCompile.setMain("lombok.launch.Main");
+            postCompile.getMainClass().set("lombok.launch.Main");
             postCompile.args("post-compile");
 
             if (verbose.get()) {
