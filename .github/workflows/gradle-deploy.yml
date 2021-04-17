@@ -19,7 +19,7 @@ jobs:
         with:
           java-version: 11
           distribution: 'adopt'
-      - run: ./gradlew uploadDocs
+      - run: ./gradlew uploadDocs -s
 
   deploy-example:
     runs-on: ubuntu-latest
