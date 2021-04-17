@@ -4,7 +4,9 @@
 name: Deploy Docs
 
 on:
-  - push
+  push:
+    branches-ignore:
+      - 'dependabot**'
 
 jobs:
   deploy-plugin:
