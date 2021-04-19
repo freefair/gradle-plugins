@@ -45,6 +45,15 @@ public class SimpleCodeGenerationTest extends AbstractPluginTest {
     }
 
     @Test
+    public void applyBeforeJava() {
+        project.getPlugins().apply(CodeGeneratorPlugin.class);
+        project.getPlugins().apply(JavaPlugin.class);
+
+        TaskContainer tasks = project.getTasks();
+        assertThat(tasks).anyMatch(t -> t.getName().equals("generateCode"));
+    }
+
+    @Test
     @Disabled
     public void testBuild() {
         try {
