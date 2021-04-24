@@ -9,8 +9,8 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.internal.JvmPluginsHelper;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.TaskProvider;
 
 /**
  * @see org.gradle.api.plugins.GroovyBasePlugin
@@ -70,7 +70,7 @@ public class AspectJPlugin implements Plugin<Project> {
 
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
 
-        final Provider<AspectjCompile> compileTask = project.getTasks().register(sourceSet.getCompileTaskName("aspectj"), AspectjCompile.class, compile -> {
+        final TaskProvider<AspectjCompile> compileTask = project.getTasks().register(sourceSet.getCompileTaskName("aspectj"), AspectjCompile.class, compile -> {
             JvmPluginsHelper.configureForSourceSet(sourceSet, aspectjSourceSet.getAspectj(), compile, compile.getOptions(), project);
             compile.dependsOn(sourceSet.getCompileJavaTaskName());
             compile.setDescription("Compiles the " + sourceSet.getName() + " AspectJ source.");

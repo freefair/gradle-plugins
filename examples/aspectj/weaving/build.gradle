@@ -24,6 +24,10 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    foo //https://github.com/freefair/gradle-plugins/issues/329
+}
+
 dependencies {
     aspect project(":aspectj:aspect")
 
