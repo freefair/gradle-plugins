@@ -5,7 +5,7 @@ apply plugin: "com.gradle.plugin-publish"
 dependencies {
     api project(':maven-plugin')
 
-    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.0'
+    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.1'
     implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.1'
     compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.1'
 
