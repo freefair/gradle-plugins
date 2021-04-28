@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SimpleCodeGenerationTest extends AbstractPluginTest {
 
@@ -26,13 +25,6 @@ public class SimpleCodeGenerationTest extends AbstractPluginTest {
     @BeforeEach
     public void setUp() {
         project = ProjectBuilder.builder().build();
-    }
-
-    @Test
-    public void applyAlone() {
-        assertThrows(Exception.class, () -> {
-            project.getPlugins().apply(CodeGeneratorPlugin.class);
-        });
     }
 
     @Test
