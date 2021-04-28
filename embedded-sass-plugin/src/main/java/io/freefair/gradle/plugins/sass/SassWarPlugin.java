@@ -1,5 +1,6 @@
-package io.freefair.gradle.plugins.jsass;
+package io.freefair.gradle.plugins.sass;
 
+import org.gradle.api.Incubating;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
@@ -10,13 +11,13 @@ import org.gradle.api.tasks.bundling.War;
 
 import java.io.File;
 
-@Deprecated
-public class JSassWarPlugin implements Plugin<Project> {
+@Incubating
+public class SassWarPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
 
-        project.getPlugins().apply(JSassWebjarsPlugin.class);
+        project.getPlugins().apply(SassWebjarsPlugin.class);
         project.getPlugins().apply(WarPlugin.class);
 
         TaskProvider<SassCompile> sassCompileTaskProvider = project.getTasks().register("compileWebappSass", SassCompile.class, compileWebappSass -> {

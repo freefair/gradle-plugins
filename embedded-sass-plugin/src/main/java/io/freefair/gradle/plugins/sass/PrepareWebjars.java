@@ -1,8 +1,9 @@
-package io.freefair.gradle.plugins.jsass;
+package io.freefair.gradle.plugins.sass;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Incubating;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.DuplicatesStrategy;
@@ -12,7 +13,7 @@ import java.io.File;
 
 @Getter
 @Setter
-@Deprecated
+@Incubating
 public class PrepareWebjars extends DefaultTask {
 
     @OutputDirectory

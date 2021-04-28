@@ -1,5 +1,5 @@
 apply plugin: "java"
-apply plugin: "io.freefair.jsass-java"
+apply plugin: "io.freefair.sass-java"
 
 dependencies {
     implementation 'org.webjars:bootstrap:4.1.1'

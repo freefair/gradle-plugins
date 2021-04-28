@@ -1,0 +1,53 @@
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+
+gradlePlugin {
+    plugins {
+        sassBase {
+            id = "io.freefair.sass-base"
+            implementationClass = "io.freefair.gradle.plugins.sass.SassBasePlugin"
+        }
+        sassJava {
+            id = "io.freefair.sass-java"
+            implementationClass = "io.freefair.gradle.plugins.sass.SassJavaPlugin"
+        }
+        sassWar {
+            id = "io.freefair.sass-war"
+            implementationClass = "io.freefair.gradle.plugins.sass.SassWarPlugin"
+        }
+        sassWebjars {
+            id = "io.freefair.sass-webjars"
+            implementationClass = "io.freefair.gradle.plugins.sass.SassWebjarsPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    tags = ['dart-sass', 'sass', 'scss']
+
+    plugins {
+        sassBase {
+            displayName = "sass Base Plugin"
+            description = "sass Base Plugin"
+        }
+        sassJava {
+            displayName = "sass Java Plugin"
+            description = "Compiles SASS and SCSS in your java resources (src/*/resources)"
+        }
+        sassWar {
+            displayName = "sass War Plugin"
+            description = "Compiles SASS and SCSS in your webapp resources (src/main/webapp)"
+        }
+        sassWebjars {
+            displayName = "sass webjars support"
+            description = "Webjars dependency support"
+        }
+    }
+}
+
+dependencies {
+    api 'de.larsgrefer.sass:sass-embedded-host:0.0.1-m1'
+
+    testImplementation project(":test-common")
+}

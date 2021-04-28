@@ -12,6 +12,10 @@ include ":jsass:java"
 include ":jsass:web"
 include ":jsass:webjars"
 
+include ":embedded-sass:java"
+include ":embedded-sass:web"
+include ":embedded-sass:webjars"
+
 include ":aspectj:aspect"
 include ":aspectj:weaving"
 include ":aspectj:httpcore-nio"

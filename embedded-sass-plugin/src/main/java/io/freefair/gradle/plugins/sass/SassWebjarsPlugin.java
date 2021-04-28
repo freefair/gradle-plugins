@@ -1,17 +1,18 @@
-package io.freefair.gradle.plugins.jsass;
+package io.freefair.gradle.plugins.sass;
 
+import org.gradle.api.Incubating;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskProvider;
 
-@Deprecated
-public class JSassWebjarsPlugin implements Plugin<Project> {
+@Incubating
+public class SassWebjarsPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        project.getPlugins().apply(JSassBasePlugin.class);
+        project.getPlugins().apply(SassBasePlugin.class);
         Configuration webjars = project.getConfigurations().create("webjars");
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin ->
@@ -20,7 +21,7 @@ public class JSassWebjarsPlugin implements Plugin<Project> {
 
         TaskProvider<PrepareWebjars> prepareWebjarsTaskProvider = project.getTasks().register("prepareWebjars", PrepareWebjars.class, prepareWebjars -> {
             prepareWebjars.getWebjars().from(webjars);
-            prepareWebjars.getOutputDirectory().set(project.getLayout().getBuildDirectory().dir("jsass/webjars"));
+            prepareWebjars.getOutputDirectory().set(project.getLayout().getBuildDirectory().dir("sass/webjars"));
         });
 
         project.getTasks().withType(SassCompile.class)
