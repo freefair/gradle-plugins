@@ -7,6 +7,7 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.plugins.DslObject;
+import org.gradle.api.internal.tasks.compile.HasCompileOptions;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
@@ -15,9 +16,6 @@ import org.gradle.api.plugins.scala.ScalaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.compile.AbstractCompile;
-import org.gradle.api.tasks.compile.GroovyCompile;
-import org.gradle.api.tasks.compile.JavaCompile;
-import org.gradle.api.tasks.scala.ScalaCompile;
 
 @NonNullApi
 public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
@@ -40,10 +38,10 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
         sourceSets.all(this::configureSourceSetDefaults);
 
-        project.getPlugins().withType(JavaPlugin.class, this::configureJavaPlugin);
-        project.getPlugins().withType(GroovyPlugin.class, this::configureGroovyPlugin);
-        project.getPlugins().withType(ScalaPlugin.class, this::configureScalaPlugin);
-        project.getPlugins().withId("org.jetbrains.kotlin.jvm", this::configureKotlinPlugin);
+        project.getPlugins().withType(JavaPlugin.class, plugin -> this.configurePlugin("java"));
+        project.getPlugins().withType(GroovyPlugin.class, plugin -> this.configurePlugin("groovy"));
+        project.getPlugins().withType(ScalaPlugin.class, plugin -> this.configurePlugin("scala"));
+        project.getPlugins().withId("org.jetbrains.kotlin.jvm", plugin -> this.configurePlugin("kotlin"));
     }
 
     private void configureSourceSetDefaults(SourceSet sourceSet) {
@@ -60,68 +58,25 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         Configuration inpath = project.getConfigurations().create(weavingSourceSet.getInpathConfigurationName());
         weavingSourceSet.setInPath(inpath);
 
-        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName())
-                .extendsFrom(aspectpath);
-
+        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName()).extendsFrom(aspectpath);
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
-
     }
 
-    private void configureJavaPlugin(JavaPlugin groovyPlugin) {
+    private void configurePlugin(String language) {
         sourceSets.all(sourceSet -> {
             WeavingSourceSet weavingSourceSet = new DslObject(sourceSet).getConvention().getByType(WeavingSourceSet.class);
 
             FileCollection aspectpath = weavingSourceSet.getAspectPath();
             FileCollection inpath = weavingSourceSet.getInPath();
 
-            project.getTasks().named(sourceSet.getCompileJavaTaskName(), JavaCompile.class, compileJava -> {
-                AjcAction ajcAction = enhanceWithWeavingAction(compileJava, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
-                ajcAction.getOptions().getBootclasspath().from(compileJava.getOptions().getBootstrapClasspath());
-                ajcAction.getOptions().getExtdirs().from(compileJava.getOptions().getExtensionDirs());
+            project.getTasks().named(sourceSet.getCompileTaskName(language), AbstractCompile.class, compileTask -> {
+                AjcAction ajcAction = enhanceWithWeavingAction(compileTask, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
+                if (compileTask instanceof HasCompileOptions) {
+                    HasCompileOptions compileTaskWithOptions = (HasCompileOptions) compileTask;
+                    ajcAction.getOptions().getBootclasspath().from(compileTaskWithOptions.getOptions().getBootstrapClasspath());
+                    ajcAction.getOptions().getExtdirs().from(compileTaskWithOptions.getOptions().getExtensionDirs());
+                }
             });
-        });
-    }
-
-    private void configureGroovyPlugin(GroovyPlugin groovyPlugin) {
-        sourceSets.all(sourceSet -> {
-            WeavingSourceSet weavingSourceSet = new DslObject(sourceSet).getConvention().getByType(WeavingSourceSet.class);
-
-            FileCollection aspectpath = weavingSourceSet.getAspectPath();
-            FileCollection inpath = weavingSourceSet.getInPath();
-
-            project.getTasks().named(sourceSet.getCompileTaskName("groovy"), GroovyCompile.class, compileGroovy -> {
-                AjcAction ajcAction = enhanceWithWeavingAction(compileGroovy, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
-                ajcAction.getOptions().getBootclasspath().from(compileGroovy.getOptions().getBootstrapClasspath());
-                ajcAction.getOptions().getExtdirs().from(compileGroovy.getOptions().getExtensionDirs());
-            });
-        });
-    }
-
-    private void configureScalaPlugin(ScalaPlugin scalaPlugin) {
-        sourceSets.all(sourceSet -> {
-            WeavingSourceSet weavingSourceSet = new DslObject(sourceSet).getConvention().getByType(WeavingSourceSet.class);
-
-            FileCollection aspectpath = weavingSourceSet.getAspectPath();
-            FileCollection inpath = weavingSourceSet.getInPath();
-
-            project.getTasks().named(sourceSet.getCompileTaskName("scala"), ScalaCompile.class, compileScala -> {
-                AjcAction ajcAction = enhanceWithWeavingAction(compileScala, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
-                ajcAction.getOptions().getBootclasspath().from(compileScala.getOptions().getBootstrapClasspath());
-                ajcAction.getOptions().getExtdirs().from(compileScala.getOptions().getExtensionDirs());
-            });
-        });
-    }
-
-    private void configureKotlinPlugin(Plugin<Project> plugin) {
-        sourceSets.all(sourceSet -> {
-            WeavingSourceSet weavingSourceSet = new DslObject(sourceSet).getConvention().getByType(WeavingSourceSet.class);
-
-            FileCollection aspectpath = weavingSourceSet.getAspectPath();
-            FileCollection inpath = weavingSourceSet.getInPath();
-
-            project.getTasks().named(sourceSet.getCompileTaskName("kotlin"), AbstractCompile.class, compileKotlin ->
-                    enhanceWithWeavingAction(compileKotlin, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration())
-            );
         });
     }
 
