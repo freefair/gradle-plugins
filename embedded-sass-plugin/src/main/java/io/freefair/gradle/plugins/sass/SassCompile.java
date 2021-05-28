@@ -6,6 +6,7 @@ import de.larsgrefer.sass.embedded.SassCompilerFactory;
 import de.larsgrefer.sass.embedded.functions.HostFunction;
 import de.larsgrefer.sass.embedded.importer.CustomImporter;
 import de.larsgrefer.sass.embedded.importer.FileImporter;
+import de.larsgrefer.sass.embedded.importer.WebjarsImporter;
 import de.larsgrefer.sass.embedded.logging.Slf4jLoggingHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,12 +20,16 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.Optional;
+import org.webjars.WebJarAssetLocator;
 import sass.embedded_protocol.EmbeddedSass;
 import sass.embedded_protocol.EmbeddedSass.InboundMessage.CompileRequest.OutputStyle;
+import sass.embedded_protocol.EmbeddedSass.OutboundMessage.CompileResponse.CompileSuccess;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -61,6 +66,7 @@ public class SassCompile extends SourceTask {
 
         SassCompiler compiler = SassCompilerFactory.bundled();
         compiler.setOutputStyle(getOutputStyle().getOrNull());
+        compiler.setGenerateSourceMaps(sourceMapEnabled.getOrElse(true));
 
         compiler.setLoggingHandler(new Slf4jLoggingHandler(getLogger()));
         compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
@@ -68,6 +74,17 @@ public class SassCompile extends SourceTask {
         fileImporters.get().forEach(compiler::registerImporter);
         customImporters.get().forEach(compiler::registerImporter);
         hostFunctions.get().forEach(compiler::registerFunction);
+
+        if(!webjars.isEmpty()) {
+            LinkedHashSet<URL> urls = new LinkedHashSet<>();
+
+            for (File webjar : webjars) {
+                urls.add(webjar.toURI().toURL());
+            }
+
+            URLClassLoader webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
+            compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
+        }
 
         getSource().visit(new FileVisitor() {
             @Override
@@ -93,7 +110,7 @@ public class SassCompile extends SourceTask {
 
                     try {
 
-                        EmbeddedSass.OutboundMessage.CompileResponse.CompileSuccess output = compiler.compileFile(in, getOutputStyle().getOrNull(), sourceMapEnabled.get());
+                        CompileSuccess output = compiler.compileFile(in, getOutputStyle().getOrNull());
 
                         if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
                             String css = output.getCss();
@@ -158,6 +175,11 @@ public class SassCompile extends SourceTask {
     @Input
     @Optional
     private ListProperty<CustomImporter> customImporters = getProject().getObjects().listProperty(CustomImporter.class);
+
+    @InputFiles
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    private final ConfigurableFileCollection webjars = getProject().files();
 
     /**
      * SassList of paths.
