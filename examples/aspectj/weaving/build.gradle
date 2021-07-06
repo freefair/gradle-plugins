@@ -3,12 +3,9 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
 }
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.50"
+    id "org.jetbrains.kotlin.jvm"
 }
 
 apply plugin: "io.freefair.aspectj.post-compile-weaving"

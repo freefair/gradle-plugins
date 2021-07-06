@@ -1,0 +1,42 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
+}
+
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+
+repositories {
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+    implementation "com.github.node-gradle:gradle-node-plugin:3.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"
+
+    testImplementation project(":test-common")
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:3.2.0"
+    testImplementation "com.natpryce:hamkrest:1.7.0.0"
+}
+
+gradlePlugin {
+    plugins {
+        quicktype {
+            id = "io.freefair.quicktype"
+            implementationClass = "io.freefair.gradle.plugins.quicktype.QuicktypePlugin"
+        }
+    }
+}
+
+pluginBundle {
+    plugins {
+        quicktype {
+            displayName = "Quicktype Plugin"
+            description = "A Gradle plugin for automatically generating models with quicktype on build"
+            tags = ["quicktype-plugin"]
+        }
+    }
+}
