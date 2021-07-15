@@ -5,11 +5,9 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
-
-import java.io.File;
 
 public class AggregateJavadocJarPlugin implements Plugin<Project> {
 
@@ -33,10 +31,9 @@ public class AggregateJavadocJarPlugin implements Plugin<Project> {
                 aggregateJavadocJar.configure(aggregateJavadocJar -> {
 
                     aggregateJavadocJar.getArchiveClassifier().convention("aggregateJavadoc");
-                    aggregateJavadocJar.getDestinationDirectory().set(new File(
-                            project.getConvention().getPlugin(JavaPluginConvention.class).getDocsDir(),
-                            "aggregateJavadoc"
-                    ));
+                    aggregateJavadocJar.getDestinationDirectory().set(
+                            project.getExtensions().getByType(JavaPluginExtension.class).getDocsDir().dir("aggregateJavadoc")
+                    );
                 });
             });
 

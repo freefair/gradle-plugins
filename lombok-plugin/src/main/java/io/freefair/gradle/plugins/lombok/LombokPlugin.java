@@ -10,7 +10,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -48,24 +48,27 @@ public class LombokPlugin implements Plugin<Project> {
         project.getTasks().withType(Delombok.class).configureEach(this::configureDelombokDefaults);
 
         checkLombokConfigs = project.getTasks().register("checkLombokConfigs");
-        project.getTasks().named(LifecycleBasePlugin.CHECK_TASK_NAME).configure(check -> check.dependsOn(checkLombokConfigs));
+        project.getPlugins().withType(LifecycleBasePlugin.class, lifecycleBasePlugin -> {
+            project.getTasks().named(LifecycleBasePlugin.CHECK_TASK_NAME)
+                    .configure(check -> check.dependsOn(checkLombokConfigs));
+        });
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> configureJavaPluginDefaults());
 
     }
 
     private void configureJavaPluginDefaults() {
-        JavaPluginConvention javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention.class);
+        JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
 
-        javaPluginConvention.getSourceSets().all(this::configureSourceSetDefaults);
+        javaPluginExtension.getSourceSets().all(this::configureSourceSetDefaults);
 
         project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class, javadoc -> {
-            SourceSet mainSourceSet = javaPluginConvention.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            SourceSet mainSourceSet = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             javadoc.setSource(mainSourceSet.getExtensions().getByName("delombokTask"));
         });
 
-        project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginConvention));
-        project.getPlugins().withId("org.sonarqube", sonarPlugin -> configureForSpotbugs(javaPluginConvention));
+        project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginExtension));
+        project.getPlugins().withId("org.sonarqube", sonarPlugin -> configureForSpotbugs(javaPluginExtension));
     }
 
     private void configureSourceSetDefaults(SourceSet sourceSet) {
@@ -98,7 +101,7 @@ public class LombokPlugin implements Plugin<Project> {
 
     }
 
-    private void configureForSpotbugs(JavaPluginConvention javaPluginConvention) {
+    private void configureForSpotbugs(JavaPluginExtension javaPluginExtension) {
         if (spotbugConfigured) {
             return;
         }
@@ -107,7 +110,7 @@ public class LombokPlugin implements Plugin<Project> {
         project.afterEvaluate(p -> {
             String toolVersion = resolveSpotBugVersion();
 
-            javaPluginConvention.getSourceSets().all(sourceSet ->
+            javaPluginExtension.getSourceSets().all(sourceSet ->
                     project.getDependencies().add(
                             sourceSet.getCompileOnlyConfigurationName(),
                             "com.github.spotbugs:spotbugs-annotations:" + toolVersion

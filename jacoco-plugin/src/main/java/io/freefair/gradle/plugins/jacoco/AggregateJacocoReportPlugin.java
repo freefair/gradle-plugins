@@ -5,7 +5,7 @@ import org.gradle.api.Project;
 import org.gradle.api.file.Directory;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.reporting.Report;
 import org.gradle.api.tasks.SourceSet;
@@ -34,7 +34,7 @@ public class AggregateJacocoReportPlugin implements Plugin<Project> {
 
             project.allprojects(subproject -> {
                 subproject.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
-                    SourceSetContainer sourceSets = subproject.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+                    SourceSetContainer sourceSets = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
                     SourceSet main = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
                     reportTask.sourceSets(main);
                 });
@@ -45,7 +45,7 @@ public class AggregateJacocoReportPlugin implements Plugin<Project> {
             });
 
             JacocoPluginExtension reportingExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
-            reportTask.getReports().getHtml().setEnabled(true);
+            reportTask.getReports().getHtml().getRequired().set(true);
             reportTask.getReports().all(report -> {
                 Provider<File> destination;
                 if (report.getOutputType().equals(Report.OutputType.DIRECTORY)) {

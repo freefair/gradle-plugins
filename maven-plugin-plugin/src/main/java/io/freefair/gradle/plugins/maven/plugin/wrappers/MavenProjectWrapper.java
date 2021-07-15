@@ -6,7 +6,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
@@ -40,15 +40,15 @@ public class MavenProjectWrapper extends MavenProject {
 
         getBuild().setDirectory(project.getBuildDir().getAbsolutePath());
 
-        SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+        SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
 
         main = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         getBuild().setSourceDirectory(main.getJava().getSrcDirs().iterator().next().getAbsolutePath());
-        getBuild().setOutputDirectory(main.getJava().getOutputDir().getAbsolutePath());
+        getBuild().setOutputDirectory(main.getJava().getClassesDirectory().get().getAsFile().getAbsolutePath());
 
         test = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
         getBuild().setTestSourceDirectory(test.getJava().getSrcDirs().iterator().next().getAbsolutePath());
-        getBuild().setTestOutputDirectory(test.getJava().getOutputDir().getAbsolutePath());
+        getBuild().setTestOutputDirectory(test.getJava().getClassesDirectory().get().getAsFile().getAbsolutePath());
 
         setArtifact(new ProjectArtifact(this));
     }

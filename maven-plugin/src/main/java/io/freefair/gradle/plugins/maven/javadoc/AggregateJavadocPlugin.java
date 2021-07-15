@@ -6,7 +6,7 @@ import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
@@ -28,8 +28,9 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
             aggregateJavadoc.getConventionMapping().map("destinationDir", new Callable<Object>() {
                 @Override
                 public Object call() {
-                    File docsDir = Optional.ofNullable(project.getConvention().findPlugin(JavaPluginConvention.class))
-                            .map(JavaPluginConvention::getDocsDir)
+                    File docsDir = Optional.ofNullable(project.getExtensions().findByType(JavaPluginExtension.class))
+                            .map(JavaPluginExtension::getDocsDir)
+                            .map(directoryProperty -> directoryProperty.get().getAsFile())
                             .orElse(new File(project.getBuildDir(), "docs"));
                     return new File(docsDir, "aggregateJavadoc");
                 }

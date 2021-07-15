@@ -7,7 +7,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JvmPluginsHelper;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
@@ -30,7 +30,7 @@ public class AspectJPlugin implements Plugin<Project> {
         project.getPlugins().apply(AspectJBasePlugin.class);
         project.getPlugins().apply(JavaBasePlugin.class);
 
-        JavaPluginConvention plugin = project.getConvention().getPlugin(JavaPluginConvention.class);
+        JavaPluginExtension plugin = project.getExtensions().getByType(JavaPluginExtension.class);
 
         plugin.getSourceSets().all(this::configureSourceSet);
 

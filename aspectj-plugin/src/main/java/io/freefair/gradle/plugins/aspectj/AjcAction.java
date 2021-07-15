@@ -92,7 +92,7 @@ public class AjcAction implements Action<Task> {
     private AspectJCompileSpec createSpec(AbstractCompile compile) {
         AspectJCompileSpec spec = new AspectJCompileSpec();
 
-        spec.setDestinationDir(compile.getDestinationDir());
+        spec.setDestinationDir(compile.getDestinationDirectory().get().getAsFile());
         spec.setWorkingDir(compile.getProject().getProjectDir());
         spec.setTempDir(compile.getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(compile.getClasspath().filter(File::exists).getFiles()));
