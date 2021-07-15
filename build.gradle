@@ -48,7 +48,7 @@ allprojects {
         plugins.apply "io.freefair.lombok"
         plugins.apply "io.freefair.javadoc-links"
 
-        jacocoTestReport.reports.xml.enabled = true
+        jacocoTestReport.reports.xml.required = true
 
         java.withSourcesJar()
         java.withJavadocJar()
