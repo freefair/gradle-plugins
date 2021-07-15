@@ -39,7 +39,7 @@ pluginBundle {
 }
 
 dependencies {
-    compileOnly "org.aspectj:aspectjtools:1.9.7.M3"
+    compileOnly "org.aspectj:aspectjtools:1.9.7"
     compileOnly "org.aspectj:aspectjrt:1.9.7.M3"
     compileOnly "org.aspectj:aspectjweaver:1.9.7.M3"
 }
