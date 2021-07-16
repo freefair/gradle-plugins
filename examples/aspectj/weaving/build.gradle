@@ -27,8 +27,9 @@ dependencies {
     implementation localGroovy()
 
     testImplementation "junit:junit:4.12"
-    testImplementation configurations.jacocoAnt
 }
+
+configurations.testImplementation.extendsFrom(configurations.jacocoAnt)
 
 compileJava {
     ajc {
