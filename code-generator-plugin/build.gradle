@@ -17,7 +17,7 @@ task copyTestGenerator(type: Copy, dependsOn: ':test-code-generator:jar'){
     }
 }
 
-test.dependsOn(copyTestGenerator)
+processTestResources.dependsOn(copyTestGenerator)
 
 gradlePlugin {
     plugins {
