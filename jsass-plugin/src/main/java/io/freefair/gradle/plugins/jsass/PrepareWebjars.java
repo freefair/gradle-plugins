@@ -12,6 +12,7 @@ import java.io.File;
 
 @Getter
 @Setter
+@Deprecated
 public class PrepareWebjars extends DefaultTask {
 
     @OutputDirectory

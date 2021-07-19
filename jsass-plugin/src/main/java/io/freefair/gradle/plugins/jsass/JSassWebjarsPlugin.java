@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskProvider;
 
+@Deprecated
 public class JSassWebjarsPlugin implements Plugin<Project> {
 
     @Override
