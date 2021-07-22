@@ -12,9 +12,5 @@ dependencies {
     implementation "org.slf4j:slf4j-api:1.+"
 }
 
-lombok {
-    config['lombok.log.fieldName'] = 'LOG'
-}
-
 task lombokApiJar (type: LombokApiJar)
 task lombokRuntimeJar (type: LombokRuntimeJar)
