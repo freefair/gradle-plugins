@@ -3,15 +3,18 @@ package io.freefair.gradle.plugins.maven.javadoc;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -22,6 +25,8 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+
+        Configuration classpathConfiguration = project.getConfigurations().create("aggregateJavadocClasspath");
 
         aggregateJavadoc = project.getTasks().register("aggregateJavadoc", Javadoc.class, aggregateJavadoc -> {
             aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
@@ -35,45 +40,47 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
                     return new File(docsDir, "aggregateJavadoc");
                 }
             });
+            aggregateJavadoc.setClasspath(classpathConfiguration);
         });
 
-        project.allprojects(p ->
-                p.getPlugins().withType(JavaPlugin.class, jp ->
-                        aggregateJavadoc.configure(aj -> {
-                            TaskProvider<Javadoc> javadoc = p.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class);
+        project.allprojects(subproject -> {
+            subproject.getPlugins().withType(JavaPlugin.class, jp -> {
 
-                            aj.source(javadoc.map(Javadoc::getSource));
+                SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
+                Configuration compileClasspath = subproject.getConfigurations().getByName(main.getCompileClasspathConfigurationName());
+                Configuration javadocClasspathProvider = subproject.getConfigurations().maybeCreate("javadocClasspathProvider");
+                javadocClasspathProvider.extendsFrom(compileClasspath);
 
-                            if (aj.getClasspath() instanceof ConfigurableFileCollection) {
-                                ((ConfigurableFileCollection) aj.getClasspath()).from(javadoc.map(Javadoc::getClasspath));
-                            }
-                            else {
-                                ConfigurableFileCollection classpath = project.files();
-                                classpath.from(aj.getClasspath());
-                                classpath.from(javadoc.map(Javadoc::getClasspath));
-                                aj.setClasspath(classpath);
-                            }
+                Map<String, String> dep = new HashMap<>();
+                dep.put("path", subproject.getPath());
+                dep.put("configuration", javadocClasspathProvider.getName());
+                classpathConfiguration.getDependencies().add(project.getDependencies().project(dep));
 
-                            StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.get().getOptions();
-                            StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
+                aggregateJavadoc.configure(aj -> {
+                    Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
 
-                            options.getLinks().forEach(link -> {
-                                if (!aggregateOptions.getLinks().contains(link)) {
-                                    aggregateOptions.getLinks().add(link);
-                                }
-                            });
-                            options.getLinksOffline().forEach(link -> {
-                                if (!aggregateOptions.getLinksOffline().contains(link)) {
-                                    aggregateOptions.getLinksOffline().add(link);
-                                }
-                            });
-                            options.getJFlags().forEach(jFlag -> {
-                                if (!aggregateOptions.getJFlags().contains(jFlag)) {
-                                    aggregateOptions.getJFlags().add(jFlag);
-                                }
-                            });
-                        })
-                )
-        );
+                    aj.source(javadoc.getSource());
+
+                    StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
+                    StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
+
+                    options.getLinks().forEach(link -> {
+                        if (!aggregateOptions.getLinks().contains(link)) {
+                            aggregateOptions.getLinks().add(link);
+                        }
+                    });
+                    options.getLinksOffline().forEach(link -> {
+                        if (!aggregateOptions.getLinksOffline().contains(link)) {
+                            aggregateOptions.getLinksOffline().add(link);
+                        }
+                    });
+                    options.getJFlags().forEach(jFlag -> {
+                        if (!aggregateOptions.getJFlags().contains(jFlag)) {
+                            aggregateOptions.getJFlags().add(jFlag);
+                        }
+                    });
+                });
+            });
+        });
     }
 }
