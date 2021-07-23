@@ -12,5 +12,13 @@ dependencies {
     implementation "org.slf4j:slf4j-api:1.+"
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs += ['src/main/java2']
+        }
+    }
+}
+
 task lombokApiJar (type: LombokApiJar)
 task lombokRuntimeJar (type: LombokRuntimeJar)

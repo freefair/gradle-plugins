@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.lombok;
 
 import io.freefair.gradle.plugins.lombok.tasks.CheckLombokConfig;
 import io.freefair.gradle.plugins.lombok.tasks.Delombok;
+import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -14,6 +15,7 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
@@ -138,28 +140,47 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void handleLombokConfig(SourceSet sourceSet, TaskProvider<JavaCompile> compileTaskProvider) {
-        Map<File, Provider<String>> lombokConfigs = new HashMap<>();
+        Map<File, TaskProvider<LombokConfig>> lombokConfigTasks = new HashMap<>();
 
+        TaskProvider<Task> generateConfigsTask = project.getTasks().register(sourceSet.getTaskName("generate", "EffectiveLombokConfigs"), genConfigsTask -> {
+            genConfigsTask.setGroup("lombok");
+            genConfigsTask.setDescription("Generate effective Lombok configurations for source-set '" + sourceSet.getName() + "'");
+        });
+
+        int i = 1;
         for (File srcDir : sourceSet.getJava().getSrcDirs()) {
-            Provider<String> lombokConfig = getLombokConfigProvider(srcDir);
-            lombokConfigs.put(srcDir, lombokConfig);
+
+            int finalI = i;
+            TaskProvider<LombokConfig> genConfigTask = project.getTasks().register(sourceSet.getTaskName("generate", "EffectiveLombokConfig" + i), LombokConfig.class, lombokConfigTask -> {
+                lombokConfigTask.setGroup("lombok");
+                lombokConfigTask.setDescription("Generate effective Lombok configuration for '" + srcDir + "' of source-set '" + sourceSet.getName() + "'.");
+                lombokConfigTask.getPaths().from(srcDir);
+                lombokConfigTask.getOutputFile().set(project.getLayout().getBuildDirectory().file("lombok/effective-config/" + sourceSet.getName() + "/lombok-" + finalI + ".config"));
+            });
+            generateConfigsTask.configure(t -> t.dependsOn(genConfigTask));
+            lombokConfigTasks.put(srcDir, genConfigTask);
+
+            i++;
         }
 
         TaskProvider<CheckLombokConfig> checkLombokConfig = project.getTasks()
                 .register(sourceSet.getTaskName("check", "lombokConfig"), CheckLombokConfig.class, sourceSet);
 
         checkLombokConfig.configure(c -> {
-            lombokConfigs.forEach((file, stringProvider) -> {
-                c.getConfigs().put(file, stringProvider);
+            lombokConfigTasks.forEach((file, stringProvider) -> {
+                c.getConfigs().put(file, stringProvider.get().getOutputFile().getAsFile());
+                c.dependsOn(stringProvider);
             });
         });
 
         checkLombokConfigs.configure(c -> c.dependsOn(checkLombokConfig));
 
         compileTaskProvider.configure(javaCompile -> {
-            javaCompile.getInputs()
-                    .property("lombokConfig", lombokConfigs)
-                    .optional(true);
+            lombokConfigTasks.forEach((file, lombokConfigTaskProvider) -> {
+                javaCompile.getInputs().file(lombokConfigTaskProvider.get().getOutputFile())
+                        .withPathSensitivity(PathSensitivity.NONE)
+                        .optional();
+            });
             javaCompile.dependsOn(checkLombokConfig);
         });
 
@@ -174,34 +195,6 @@ public class LombokPlugin implements Plugin<Project> {
         project.getPlugins().withId("org.sonarqube", spotBugsPlugin -> {
             checkLombokConfig.configure(c -> c.getExpectedConfigs().add("lombok.extern.findbugs.addSuppressFBWarnings = true"));
         });
-    }
-
-    private Provider<String> getLombokConfigProvider(File dir) {
-        return project.provider(() -> getLombokConfig(dir));
-    }
-
-    @Nullable
-    private String getLombokConfig(File dir) {
-        if (!dir.exists()) {
-            return null;
-        }
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        project.javaexec(configTool -> {
-            configTool.setClasspath(lombokBasePlugin.getLombokConfiguration());
-            configTool.setStandardOutput(outputStream);
-
-            configTool.args("config", dir);
-        });
-
-        String output = outputStream.toString();
-        project.getLogger().debug(output);
-
-        if (output.startsWith("No 'lombok.config' found for")) {
-            return null;
-        }
-        return output;
     }
 
     private void handleMapstructSupport(SourceSet sourceSet) {

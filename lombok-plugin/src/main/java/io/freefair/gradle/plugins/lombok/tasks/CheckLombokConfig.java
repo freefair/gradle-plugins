@@ -12,6 +12,8 @@ import org.gradle.api.tasks.TaskAction;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ public class CheckLombokConfig extends DefaultTask {
 
     @Input
     @Optional
-    private final MapProperty<File, String> configs = getProject().getObjects().mapProperty(File.class, String.class);
+    private final MapProperty<File, File> configs = getProject().getObjects().mapProperty(File.class, File.class);
 
     @Input
     @Optional
@@ -38,13 +40,17 @@ public class CheckLombokConfig extends DefaultTask {
     }
 
     @TaskAction
-    public void check() {
-        for (Map.Entry<File, String> entry : configs.getOrElse(Collections.emptyMap()).entrySet()) {
+    public void check() throws IOException {
+        for (Map.Entry<File, File> entry : configs.getOrElse(Collections.emptyMap()).entrySet()) {
             File dir = entry.getKey();
-            String config = entry.getValue();
+            if (!dir.exists()) {
+                continue;
+            }
+
+            String config = String.join("\n", Files.readAllLines(entry.getValue().toPath()));
 
             for (String expected : expectedConfigs.getOrElse(Collections.emptyList())) {
-                if (dir.exists() && (config == null || !config.contains(expected))) {
+                if (!config.contains(expected)) {
                     getLogger().warn("'{}' is not configured for '{}' of the {} source-set", expected, dir, sourceSet);
                 }
             }
