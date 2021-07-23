@@ -4,7 +4,7 @@ plugins {
 }
 
 war {
-    attachClasses = true
+    attachClasses.set true
 }
 
 repositories {

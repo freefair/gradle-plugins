@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.maven.war;
 
 import org.gradle.api.Project;
 import org.gradle.api.plugins.WarPlugin;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.bundling.War;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +27,7 @@ public class WarArchiveClassesPluginTest {
         War warTask = (War) project.getTasks().getByName(WarPlugin.WAR_TASK_NAME);
 
         assertThat(warTask.hasProperty("archiveClasses")).isTrue();
-        assertThat(warTask.property("archiveClasses")).isInstanceOf(Boolean.class);
+        assertThat(warTask.property("archiveClasses")).isInstanceOf(Property.class);
     }
 
 }
