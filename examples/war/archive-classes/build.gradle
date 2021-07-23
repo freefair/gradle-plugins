@@ -1,4 +1,4 @@
 apply plugin: "war"
 apply plugin: "io.freefair.war-archive-classes"
 
-war.archiveClasses = true
+war.archiveClasses.set(true)

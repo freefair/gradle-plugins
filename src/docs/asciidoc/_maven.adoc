@@ -67,8 +67,8 @@ to Gradle.
 [source,groovy]
 ----
 war {
-    attachClasses = true //<1>
-    classesClassifier = 'classes' //<2>
+    attachClasses.set(true) //<1>
+    classesClassifier.set('classes') //<2>
 }
 ----
 <1> Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the project as an additional artifact.
@@ -85,7 +85,7 @@ to Gradle.
 [source,groovy]
 ----
 war {
-    archiveClasses = true //<1>
+    archiveClasses.set(true) //<1>
 }
 ----
 <1> Whether a JAR file will be created for the classes in the webapp. Using this optional configuration parameter will make the compiled classes to be archived into a JAR file and the classes directory will then be excluded from the webapp.
