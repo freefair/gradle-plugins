@@ -39,6 +39,7 @@ allprojects {
 
     plugins.withId("java") {
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+        javadoc.options.addBooleanOption("Xdoclint:-missing", true)
         javadoc.failOnError = false
 
         sourceCompatibility = 1.8
