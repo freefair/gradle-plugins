@@ -6,10 +6,6 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
-repositories {
-    gradlePluginPortal()
-}
-
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "com.github.node-gradle:gradle-node-plugin:3.1.0"

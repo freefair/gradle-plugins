@@ -32,6 +32,7 @@ nexusStaging {
 allprojects {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 
     group = "io.freefair.gradle"
