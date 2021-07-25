@@ -3,7 +3,7 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    implementation 'io.github.classgraph:classgraph:4.8.105'
+    implementation 'io.github.classgraph:classgraph:4.8.110'
     api project(':code-generator-api')
     testImplementation project(':test-common')
 
@@ -17,7 +17,7 @@ task copyTestGenerator(type: Copy, dependsOn: ':test-code-generator:jar'){
     }
 }
 
-test.dependsOn(copyTestGenerator)
+processTestResources.dependsOn(copyTestGenerator)
 
 gradlePlugin {
     plugins {

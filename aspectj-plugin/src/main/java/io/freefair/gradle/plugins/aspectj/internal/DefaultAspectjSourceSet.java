@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.aspectj.internal;
 
 import groovy.lang.Closure;
+import io.freefair.gradle.plugins.aspectj.AspectjSourceDirectorySet;
 import io.freefair.gradle.plugins.aspectj.AspectjSourceSet;
 import lombok.Getter;
 import org.gradle.api.Action;
@@ -17,11 +18,12 @@ import javax.annotation.Nullable;
 /**
  * @see org.gradle.api.internal.tasks.DefaultGroovySourceSet
  */
+@Deprecated
 @Getter
 public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements AspectjSourceSet, HasPublicType {
 
 
-    private final SourceDirectorySet aspectj;
+    private final AspectjSourceDirectorySet aspectj;
     private final SourceDirectorySet allAspectj;
 
     public DefaultAspectjSourceSet(ObjectFactory objectFactory, SourceSet sourceSet) {
@@ -30,7 +32,7 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
         String name = sourceSet.getName();
         String displayName = ((DefaultSourceSet) sourceSet).getDisplayName();
 
-        aspectj = objectFactory.sourceDirectorySet("aspectj", displayName + " AspectJ source");
+        aspectj = new DefaultAspectjSourceDirectorySet(objectFactory.sourceDirectorySet("aspectj", displayName + " AspectJ source"));
         aspectj.getFilter().include("**/*.java", "**/*.aj");
         allAspectj = objectFactory.sourceDirectorySet("all" + name, displayName + " AspectJ source");
         allAspectj.source(aspectj);

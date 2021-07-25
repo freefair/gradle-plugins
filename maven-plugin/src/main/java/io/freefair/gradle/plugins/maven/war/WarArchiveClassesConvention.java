@@ -1,8 +1,11 @@
 package io.freefair.gradle.plugins.maven.war;
 
 import lombok.Data;
+import org.gradle.api.provider.Property;
+import org.gradle.internal.deprecation.DeprecationLogger;
 
 @Data
+@Deprecated
 public class WarArchiveClassesConvention {
 
     /**
@@ -11,5 +14,22 @@ public class WarArchiveClassesConvention {
      *
      * @see <a href="https://maven.apache.org/plugins/maven-war-plugin/war-mojo.html#archiveClasses">maven-war-plugin#archiveClasses</a>
      */
-    private boolean archiveClasses = false;
+    private final Property<Boolean> archiveClasses;
+
+    public boolean isArchiveClasses() {
+        DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "archiveClasses")
+                .willBeRemovedInGradle8()
+                .undocumented()
+                .nagUser();
+        return this.archiveClasses.get();
+    }
+
+    public void setArchiveClasses(boolean archiveClasses) {
+        DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "archiveClasses")
+                .willBeRemovedInGradle8()
+                .undocumented()
+                .nagUser();
+        this.archiveClasses.convention(archiveClasses);
+        this.archiveClasses.set(archiveClasses);
+    }
 }

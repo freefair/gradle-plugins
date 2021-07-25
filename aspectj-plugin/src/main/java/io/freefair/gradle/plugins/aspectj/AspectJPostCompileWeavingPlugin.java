@@ -11,7 +11,7 @@ import org.gradle.api.internal.tasks.compile.HasCompileOptions;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.scala.ScalaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
@@ -34,7 +34,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         aspectjBasePlugin = project.getPlugins().apply(AspectJBasePlugin.class);
 
         project.getPlugins().apply(JavaBasePlugin.class);
-        sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+        sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
 
         sourceSets.all(this::configureSourceSetDefaults);
 
@@ -85,7 +85,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
         action.getOptions().getAspectpath().from(aspectpath);
         action.getOptions().getInpath().from(inpath);
-        action.getAdditionalInpath().from(abstractCompile.getDestinationDir());
+        action.getAdditionalInpath().from(abstractCompile.getDestinationDirectory());
         action.getClasspath().from(aspectjConfiguration);
 
         action.addToTask(abstractCompile);

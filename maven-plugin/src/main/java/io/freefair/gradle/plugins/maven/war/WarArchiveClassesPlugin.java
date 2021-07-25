@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.maven.war;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.bundling.War;
 
@@ -16,8 +17,10 @@ public class WarArchiveClassesPlugin implements Plugin<Project> {
 
         project.getTasks().withType(War.class, war -> {
 
-            WarArchiveClassesConvention archiveClassesConvention = new WarArchiveClassesConvention();
+            Property<Boolean> archiveClasses = project.getObjects().property(Boolean.class).convention(false);
+            war.getExtensions().add("archiveClasses", archiveClasses);
 
+            WarArchiveClassesConvention archiveClassesConvention = new WarArchiveClassesConvention(archiveClasses);
             war.getConvention().getPlugins().put("archiveClasses", archiveClassesConvention);
 
             Jar warClassesJar = project.getTasks().create(war.getName() + "ClassesJar", Jar.class);
@@ -28,9 +31,9 @@ public class WarArchiveClassesPlugin implements Plugin<Project> {
 
             project.afterEvaluate(p -> {
 
-                warClassesJar.setEnabled(archiveClassesConvention.isArchiveClasses());
+                warClassesJar.setEnabled(archiveClasses.get());
 
-                if (archiveClassesConvention.isArchiveClasses()) {
+                if (archiveClasses.get()) {
                     FileCollection warClasspath = war.getClasspath();
 
                     warClassesJar.from(warClasspath != null ? warClasspath.filter(File::isDirectory) : Collections.emptyList());

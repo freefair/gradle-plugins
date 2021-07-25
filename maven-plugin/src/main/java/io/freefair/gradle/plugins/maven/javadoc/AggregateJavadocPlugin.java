@@ -6,7 +6,8 @@ import org.gradle.api.Project;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
@@ -23,56 +24,55 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
 
+        ConfigurableFileCollection aggregateClasspath = project.files();
+
         aggregateJavadoc = project.getTasks().register("aggregateJavadoc", Javadoc.class, aggregateJavadoc -> {
             aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
             aggregateJavadoc.getConventionMapping().map("destinationDir", new Callable<Object>() {
                 @Override
                 public Object call() {
-                    File docsDir = Optional.ofNullable(project.getConvention().findPlugin(JavaPluginConvention.class))
-                            .map(JavaPluginConvention::getDocsDir)
+                    File docsDir = Optional.ofNullable(project.getExtensions().findByType(JavaPluginExtension.class))
+                            .map(JavaPluginExtension::getDocsDir)
+                            .map(directoryProperty -> directoryProperty.get().getAsFile())
                             .orElse(new File(project.getBuildDir(), "docs"));
                     return new File(docsDir, "aggregateJavadoc");
                 }
             });
+            aggregateJavadoc.setClasspath(aggregateClasspath);
         });
 
-        project.allprojects(p ->
-                p.getPlugins().withType(JavaPlugin.class, jp ->
-                        aggregateJavadoc.configure(aj -> {
-                            TaskProvider<Javadoc> javadoc = p.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class);
+        project.allprojects(subproject -> {
+            subproject.getPlugins().withType(JavaPlugin.class, jp -> {
 
-                            aj.source(javadoc.map(Javadoc::getSource));
+                AggregateJavadocClientPlugin clientPlugin = subproject.getPlugins().apply(AggregateJavadocClientPlugin.class);
+                aggregateClasspath.from(clientPlugin.getJavadocClasspath());
 
-                            if (aj.getClasspath() instanceof ConfigurableFileCollection) {
-                                ((ConfigurableFileCollection) aj.getClasspath()).from(javadoc.map(Javadoc::getClasspath));
-                            }
-                            else {
-                                ConfigurableFileCollection classpath = project.files();
-                                classpath.from(aj.getClasspath());
-                                classpath.from(javadoc.map(Javadoc::getClasspath));
-                                aj.setClasspath(classpath);
-                            }
+                aggregateJavadoc.configure(aj -> {
+                    SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
+                    Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
 
-                            StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.get().getOptions();
-                            StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
+                    aj.source(javadoc.getSource());
 
-                            options.getLinks().forEach(link -> {
-                                if (!aggregateOptions.getLinks().contains(link)) {
-                                    aggregateOptions.getLinks().add(link);
-                                }
-                            });
-                            options.getLinksOffline().forEach(link -> {
-                                if (!aggregateOptions.getLinksOffline().contains(link)) {
-                                    aggregateOptions.getLinksOffline().add(link);
-                                }
-                            });
-                            options.getJFlags().forEach(jFlag -> {
-                                if (!aggregateOptions.getJFlags().contains(jFlag)) {
-                                    aggregateOptions.getJFlags().add(jFlag);
-                                }
-                            });
-                        })
-                )
-        );
+                    StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
+                    StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
+
+                    options.getLinks().forEach(link -> {
+                        if (!aggregateOptions.getLinks().contains(link)) {
+                            aggregateOptions.getLinks().add(link);
+                        }
+                    });
+                    options.getLinksOffline().forEach(link -> {
+                        if (!aggregateOptions.getLinksOffline().contains(link)) {
+                            aggregateOptions.getLinksOffline().add(link);
+                        }
+                    });
+                    options.getJFlags().forEach(jFlag -> {
+                        if (!aggregateOptions.getJFlags().contains(jFlag)) {
+                            aggregateOptions.getJFlags().add(jFlag);
+                        }
+                    });
+                });
+            });
+        });
     }
 }

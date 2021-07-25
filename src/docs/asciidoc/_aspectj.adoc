@@ -28,7 +28,7 @@ This plugin adds the `aspectj` extension and the `aspectj` configuration to the 
 [source,groovy]
 ----
 aspectj {
-    version = "1.9.6"
+    version = "1.9.7"
 }
 ----
 

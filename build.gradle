@@ -5,10 +5,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.14.0"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.15.0"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
 
-        def pluginVersion = "6.0.0-m2"
+        def pluginVersion = "6.1.0-m3"
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
         classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
         classpath "io.freefair.gradle:git-plugin:$pluginVersion"
@@ -32,6 +32,7 @@ nexusStaging {
 allprojects {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 
     group = "io.freefair.gradle"
@@ -39,6 +40,7 @@ allprojects {
 
     plugins.withId("java") {
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+        javadoc.options.addBooleanOption("Xdoclint:-missing", true)
         javadoc.failOnError = false
 
         sourceCompatibility = 1.8
@@ -48,7 +50,7 @@ allprojects {
         plugins.apply "io.freefair.lombok"
         plugins.apply "io.freefair.javadoc-links"
 
-        jacocoTestReport.reports.xml.enabled = true
+        jacocoTestReport.reports.xml.required = true
 
         java.withSourcesJar()
         java.withJavadocJar()
@@ -56,9 +58,9 @@ allprojects {
         test.useJUnitPlatform()
 
         dependencies {
-            testImplementation 'org.assertj:assertj-core:3.19.0'
-            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-            testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.1'
+            testImplementation 'org.assertj:assertj-core:3.20.2'
+            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+            testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.2'
             testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
         }
     }

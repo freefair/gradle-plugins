@@ -56,13 +56,13 @@ pluginBundle {
 }
 
 dependencies {
-    api 'org.apache.commons:commons-compress:1.20'
+    api 'org.apache.commons:commons-compress:1.21'
     implementation 'org.tukaani:xz:1.9'
 
     implementation 'org.brotli:dec:0.1.2'
 
     testImplementation project(":test-common")
-    testImplementation platform("org.spockframework:spock-bom:2.0-M5-groovy-3.0")
+    testImplementation platform("org.spockframework:spock-bom:2.0-groovy-3.0")
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-junit4'
     testImplementation 'junit:junit:4.13.2'

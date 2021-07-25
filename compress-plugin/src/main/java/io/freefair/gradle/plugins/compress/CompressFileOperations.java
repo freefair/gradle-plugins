@@ -4,6 +4,7 @@ import org.gradle.api.file.FileTree;
 
 /**
  * @author Lars Grefer
+ * @see org.gradle.api.internal.file.FileOperations
  */
 public interface CompressFileOperations {
 

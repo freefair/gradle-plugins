@@ -11,9 +11,11 @@ buildscript {
         classpath "io.freefair.gradle:git-plugin"
         classpath "io.freefair.gradle:github-plugin"
         classpath "io.freefair.gradle:code-generator-plugin"
+        classpath "io.freefair.gradle:quicktype-plugin"
     }
 
     repositories {
+        gradlePluginPortal()
         mavenCentral()
     }
 }

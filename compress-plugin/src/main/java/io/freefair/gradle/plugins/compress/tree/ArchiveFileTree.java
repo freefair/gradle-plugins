@@ -16,6 +16,7 @@ import org.gradle.api.internal.file.archive.AbstractArchiveFileTree;
 import org.gradle.api.internal.file.archive.ZipFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
+import org.gradle.api.provider.Provider;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
 
@@ -97,10 +98,9 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
         return new File(tmpDir, expandedDirName);
     }
 
-    @Nullable
     @Override
-    protected File getBackingFile() {
-        return archiveFile;
+    protected Provider<File> getBackingFileProvider() {
+        return null;
     }
 
     @Getter

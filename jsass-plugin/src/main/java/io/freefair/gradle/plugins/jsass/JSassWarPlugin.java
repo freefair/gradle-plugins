@@ -23,8 +23,7 @@ public class JSassWarPlugin implements Plugin<Project> {
             compileWebappSass.setGroup(BasePlugin.BUILD_GROUP);
             compileWebappSass.setDescription("Compile sass and scss files for the webapp");
 
-            WarPluginConvention warPluginConvention = project.getConvention().getPlugin(WarPluginConvention.class);
-            compileWebappSass.source(warPluginConvention.getWebAppDir());
+            compileWebappSass.source(project.file("src/main/webapp"));
 
             compileWebappSass.getDestinationDir().set(new File(project.getBuildDir(), "jsass/webapp"));
         });

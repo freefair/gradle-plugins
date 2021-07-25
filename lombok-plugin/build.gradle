@@ -5,7 +5,7 @@ apply plugin: "com.gradle.plugin-publish"
 dependencies {
     testImplementation project(":test-common")
     testImplementation 'org.projectlombok:lombok:1.18.20'
-    testImplementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.2.0'
+    testImplementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
 }
 
 gradlePlugin {

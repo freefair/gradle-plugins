@@ -46,7 +46,7 @@ public class AspectjCompile extends AbstractCompile {
 
     @TaskAction
     protected void compile() {
-        getProject().delete(getDestinationDir());
+        getProject().delete(getDestinationDirectory());
 
         AspectJCompileSpec spec = createSpec();
         WorkResult result = getCompiler().execute(spec);
@@ -60,7 +60,7 @@ public class AspectjCompile extends AbstractCompile {
     private AspectJCompileSpec createSpec() {
         AspectJCompileSpec spec = new AspectJCompileSpec();
         spec.setSourceFiles(getSource());
-        spec.setDestinationDir(getDestinationDir());
+        spec.setDestinationDir(getDestinationDirectory().getAsFile().get());
         spec.setWorkingDir(getProject().getProjectDir());
         spec.setTempDir(getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(getClasspath().getFiles()));

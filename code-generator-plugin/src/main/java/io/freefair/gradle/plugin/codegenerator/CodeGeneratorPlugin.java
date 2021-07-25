@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.Directory;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 
@@ -24,7 +25,7 @@ public class CodeGeneratorPlugin implements Plugin<Project> {
 
         project.getPlugins().apply(JavaPlugin.class);
 
-        JavaPluginConvention plugin = project.getConvention().getPlugin(JavaPluginConvention.class);
+        JavaPluginExtension plugin = project.getExtensions().getByType(JavaPluginExtension.class);
         plugin.getSourceSets().all(sourceSet -> {
             String outputDir = "generated/sources/codeGenerator/java/" + sourceSet.getName();
             Provider<Directory> outputDirFile = project.getLayout().getBuildDirectory().dir(outputDir);

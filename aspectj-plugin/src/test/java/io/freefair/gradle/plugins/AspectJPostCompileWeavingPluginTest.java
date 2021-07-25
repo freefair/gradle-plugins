@@ -5,6 +5,7 @@ import org.gradle.api.*;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.scala.ScalaPlugin;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +32,7 @@ public class AspectJPostCompileWeavingPluginTest {
     public void compileIsApplied(List<Class<Plugin<Project>>> pluginClasses, int expectedNumberOfTaskAjcIsAddedTo) {
         pluginClasses.forEach(pluginClass -> project.getPlugins().apply(pluginClass));
 
-        JavaPluginConvention convention = project.getConvention().getPlugin(JavaPluginConvention.class);
+        JavaPluginExtension convention = project.getExtensions().getByType(JavaPluginExtension.class);
         convention.getSourceSets().create("foo");
         convention.getSourceSets().create("foo2");
         convention.getSourceSets().forEach(sourceSet -> {
