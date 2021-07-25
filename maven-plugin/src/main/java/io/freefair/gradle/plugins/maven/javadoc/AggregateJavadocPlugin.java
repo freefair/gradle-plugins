@@ -3,7 +3,7 @@ package io.freefair.gradle.plugins.maven.javadoc;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -13,8 +13,6 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -26,7 +24,7 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
 
-        Configuration classpathConfiguration = project.getConfigurations().create("aggregateJavadocClasspath");
+        ConfigurableFileCollection aggregateClasspath = project.files();
 
         aggregateJavadoc = project.getTasks().register("aggregateJavadoc", Javadoc.class, aggregateJavadoc -> {
             aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
@@ -40,23 +38,17 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
                     return new File(docsDir, "aggregateJavadoc");
                 }
             });
-            aggregateJavadoc.setClasspath(classpathConfiguration);
+            aggregateJavadoc.setClasspath(aggregateClasspath);
         });
 
         project.allprojects(subproject -> {
             subproject.getPlugins().withType(JavaPlugin.class, jp -> {
 
-                SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
-                Configuration compileClasspath = subproject.getConfigurations().getByName(main.getCompileClasspathConfigurationName());
-                Configuration javadocClasspathProvider = subproject.getConfigurations().maybeCreate("javadocClasspathProvider");
-                javadocClasspathProvider.extendsFrom(compileClasspath);
-
-                Map<String, String> dep = new HashMap<>();
-                dep.put("path", subproject.getPath());
-                dep.put("configuration", javadocClasspathProvider.getName());
-                classpathConfiguration.getDependencies().add(project.getDependencies().project(dep));
+                AggregateJavadocClientPlugin clientPlugin = subproject.getPlugins().apply(AggregateJavadocClientPlugin.class);
+                aggregateClasspath.from(clientPlugin.getJavadocClasspath());
 
                 aggregateJavadoc.configure(aj -> {
+                    SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
                     Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
 
                     aj.source(javadoc.getSource());
