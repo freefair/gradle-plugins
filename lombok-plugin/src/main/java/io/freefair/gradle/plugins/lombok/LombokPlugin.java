@@ -140,6 +140,10 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void handleLombokConfig(SourceSet sourceSet, TaskProvider<JavaCompile> compileTaskProvider) {
+        if (lombokBasePlugin.getLombokExtension().getDisableConfig().get()) {
+            return;
+        }
+
         Map<File, TaskProvider<LombokConfig>> lombokConfigTasks = new HashMap<>();
 
         TaskProvider<Task> generateConfigsTask = project.getTasks().register(sourceSet.getTaskName("generate", "EffectiveLombokConfigs"), genConfigsTask -> {
