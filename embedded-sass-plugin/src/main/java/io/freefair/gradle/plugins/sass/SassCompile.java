@@ -19,7 +19,6 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.api.tasks.Optional;
 import org.webjars.WebJarAssetLocator;
 import sass.embedded_protocol.EmbeddedSass;
 import sass.embedded_protocol.EmbeddedSass.InboundMessage.CompileRequest.OutputStyle;
@@ -33,7 +32,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Base64;
+import java.util.LinkedHashSet;
 
 @Getter
 @Setter

@@ -6,7 +6,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.jvm.tasks.ProcessResources;
 
@@ -27,7 +27,7 @@ public class SassJavaPlugin implements Plugin<Project> {
 
         File baseDestinationDir = new File(project.getBuildDir(), "sass");
 
-        project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets().all(sourceSet -> {
+        project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
             String taskName = sourceSet.getCompileTaskName("Sass");
 
             TaskProvider<SassCompile> sassCompileTaskProvider = project.getTasks().register(taskName, SassCompile.class, sassCompile -> {
