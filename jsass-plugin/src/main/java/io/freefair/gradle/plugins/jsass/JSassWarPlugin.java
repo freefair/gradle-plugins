@@ -2,13 +2,10 @@ package io.freefair.gradle.plugins.jsass;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.WarPlugin;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.War;
-import org.gradle.internal.deprecation.DeprecationLogger;
 
 import java.io.File;
 

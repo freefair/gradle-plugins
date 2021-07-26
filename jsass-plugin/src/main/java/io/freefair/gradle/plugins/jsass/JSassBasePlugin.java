@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.jsass;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.internal.deprecation.DeprecationLogger;
 
 /**
  * @author Lars Grefer

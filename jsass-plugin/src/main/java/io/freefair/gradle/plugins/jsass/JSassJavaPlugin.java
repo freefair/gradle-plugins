@@ -7,7 +7,6 @@ import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.internal.deprecation.DeprecationLogger;
 import org.gradle.language.jvm.tasks.ProcessResources;
 
 import java.io.File;
