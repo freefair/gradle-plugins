@@ -21,11 +21,6 @@ public class JSassJavaPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        DeprecationLogger.deprecatePlugin("io.freefair.jsass-java")
-                .replaceWithExternalPlugin("io.freefair.sass-java")
-                .willBeRemovedInGradle8()
-                .undocumented()
-                .nagUser();
 
         project.getPlugins().apply(JSassWebjarsPlugin.class);
 

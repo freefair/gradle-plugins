@@ -16,12 +16,6 @@ public class JSassBasePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        DeprecationLogger.deprecatePlugin("io.freefair.jsass-base")
-                .replaceWithExternalPlugin("io.freefair.sass-base")
-                .willBeRemovedInGradle8()
-                .undocumented()
-                .nagUser();
-
         this.extension = project.getExtensions().create("jsass", JSassExtension.class);
 
         project.getTasks().withType(SassCompile.class)
