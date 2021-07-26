@@ -24,6 +24,7 @@ import org.webjars.WebJarAssetLocator;
 import sass.embedded_protocol.EmbeddedSass;
 import sass.embedded_protocol.EmbeddedSass.InboundMessage.CompileRequest.OutputStyle;
 import sass.embedded_protocol.EmbeddedSass.OutboundMessage.CompileResponse.CompileSuccess;
+import sass.embedded_protocol.EmbeddedSass.OutboundMessage.VersionResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +86,9 @@ public class SassCompile extends SourceTask {
             URLClassLoader webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
             compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
         }
+
+        VersionResponse version = compiler.getVersion();
+        getLogger().info("{}", version);
 
         getSource().visit(new FileVisitor() {
             @Override
