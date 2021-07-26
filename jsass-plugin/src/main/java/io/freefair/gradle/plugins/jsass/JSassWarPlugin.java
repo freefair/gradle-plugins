@@ -4,9 +4,9 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.WarPlugin;
-import org.gradle.api.plugins.WarPluginConvention;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.War;
+import org.gradle.internal.deprecation.DeprecationLogger;
 
 import java.io.File;
 
@@ -15,6 +15,11 @@ public class JSassWarPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        DeprecationLogger.deprecatePlugin("io.freefair.jsass-war")
+                .replaceWithExternalPlugin("io.freefair.sass-war")
+                .willBeRemovedInGradle8()
+                .undocumented()
+                .nagUser();
 
         project.getPlugins().apply(JSassWebjarsPlugin.class);
         project.getPlugins().apply(WarPlugin.class);

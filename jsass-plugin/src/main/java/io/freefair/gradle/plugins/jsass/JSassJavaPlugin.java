@@ -7,6 +7,7 @@ import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.internal.deprecation.DeprecationLogger;
 import org.gradle.language.jvm.tasks.ProcessResources;
 
 import java.io.File;
@@ -20,6 +21,12 @@ public class JSassJavaPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        DeprecationLogger.deprecatePlugin("io.freefair.jsass-java")
+                .replaceWithExternalPlugin("io.freefair.sass-java")
+                .willBeRemovedInGradle8()
+                .undocumented()
+                .nagUser();
+
         project.getPlugins().apply(JSassWebjarsPlugin.class);
 
         project.getPlugins().apply(JavaPlugin.class);

@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.jsass;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.internal.deprecation.DeprecationLogger;
 
 /**
  * @author Lars Grefer
@@ -15,6 +16,12 @@ public class JSassBasePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        DeprecationLogger.deprecatePlugin("io.freefair.jsass-base")
+                .replaceWithExternalPlugin("io.freefair.sass-base")
+                .willBeRemovedInGradle8()
+                .undocumented()
+                .nagUser();
+
         this.extension = project.getExtensions().create("jsass", JSassExtension.class);
 
         project.getTasks().withType(SassCompile.class)
