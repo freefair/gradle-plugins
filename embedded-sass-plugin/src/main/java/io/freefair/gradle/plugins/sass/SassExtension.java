@@ -40,7 +40,7 @@ public class SassExtension {
         omitSourceMapUrl.convention(false);
 
         outputStyle = objectFactory.property(OutputStyle.class);
-        outputStyle.convention(OutputStyle.NESTED);
+        outputStyle.convention(OutputStyle.EXPANDED);
 
         sourceMapContents = objectFactory.property(Boolean.class);
         sourceMapContents.convention(false);
