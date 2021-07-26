@@ -30,10 +30,15 @@ public class LombokExtension {
     @Deprecated
     private final MapProperty<String, String> config;
 
+    private final Property<Boolean> disableConfig;
+
     @Inject
     public LombokExtension(ObjectFactory objectFactory) {
         version = objectFactory.property(String.class).convention(LOMBOK_VERSION);
         config = objectFactory.mapProperty(String.class, String.class);
+        disableConfig = objectFactory.property(Boolean.class);
+
+        disableConfig.convention(System.getProperty("lombok.disableConfig") != null);
     }
 
     @Deprecated
