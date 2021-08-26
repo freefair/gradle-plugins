@@ -10,6 +10,9 @@ import org.gradle.api.Project;
 public class CompressTreePlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
+        //noinspection deprecation
         project.getConvention().create(CompressFileOperations.class, "compressTree", CompressFileOperationsImpl.class, project);
+
+        project.getExtensions().create(CompressFileOperations.class, "commonsCompress", CompressFileOperationsImpl.class, project);
     }
 }
