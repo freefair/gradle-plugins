@@ -20,11 +20,12 @@ import java.util.concurrent.Callable;
 public class AggregateJavadocPlugin implements Plugin<Project> {
 
     private TaskProvider<Javadoc> aggregateJavadoc;
+    private ConfigurableFileCollection aggregateClasspath;
 
     @Override
     public void apply(Project project) {
 
-        ConfigurableFileCollection aggregateClasspath = project.files();
+        aggregateClasspath = project.files();
 
         aggregateJavadoc = project.getTasks().register("aggregateJavadoc", Javadoc.class, aggregateJavadoc -> {
             aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
@@ -42,35 +43,39 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
         });
 
         project.allprojects(subproject -> {
-            subproject.getPlugins().withType(JavaPlugin.class, jp -> {
+            subproject.afterEvaluate(this::handleSubproject);
+        });
+    }
 
-                AggregateJavadocClientPlugin clientPlugin = subproject.getPlugins().apply(AggregateJavadocClientPlugin.class);
-                aggregateClasspath.from(clientPlugin.getJavadocClasspath());
+    private void handleSubproject(Project subproject) {
+        subproject.getPlugins().withType(JavaPlugin.class, jp -> {
 
-                aggregateJavadoc.configure(aj -> {
-                    SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
-                    Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
+            AggregateJavadocClientPlugin clientPlugin = subproject.getPlugins().apply(AggregateJavadocClientPlugin.class);
+            aggregateClasspath.from(clientPlugin.getJavadocClasspath());
 
-                    aj.source(javadoc.getSource());
+            aggregateJavadoc.configure(aj -> {
+                SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
+                Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
 
-                    StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
-                    StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
+                aj.source(javadoc.getSource());
 
-                    options.getLinks().forEach(link -> {
-                        if (!aggregateOptions.getLinks().contains(link)) {
-                            aggregateOptions.getLinks().add(link);
-                        }
-                    });
-                    options.getLinksOffline().forEach(link -> {
-                        if (!aggregateOptions.getLinksOffline().contains(link)) {
-                            aggregateOptions.getLinksOffline().add(link);
-                        }
-                    });
-                    options.getJFlags().forEach(jFlag -> {
-                        if (!aggregateOptions.getJFlags().contains(jFlag)) {
-                            aggregateOptions.getJFlags().add(jFlag);
-                        }
-                    });
+                StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
+                StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
+
+                options.getLinks().forEach(link -> {
+                    if (!aggregateOptions.getLinks().contains(link)) {
+                        aggregateOptions.getLinks().add(link);
+                    }
+                });
+                options.getLinksOffline().forEach(link -> {
+                    if (!aggregateOptions.getLinksOffline().contains(link)) {
+                        aggregateOptions.getLinksOffline().add(link);
+                    }
+                });
+                options.getJFlags().forEach(jFlag -> {
+                    if (!aggregateOptions.getJFlags().contains(jFlag)) {
+                        aggregateOptions.getJFlags().add(jFlag);
+                    }
                 });
             });
         });
