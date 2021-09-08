@@ -46,6 +46,12 @@ task myJavadocs(type: Javadoc) {
 ----
 ====
 
+[NOTE]
+====
+In contrast to the `javadoc` task, the `sourcesJar` task is *not* adjusted to use the delomboked sources.
+This is done on purpose, so the line numbers in the `-sources.jar` match the `LineNumberTable` in the generated class files.
+====
+
 == Lombok Tasks
 
 The following task are provided:
@@ -54,3 +60,4 @@ The following task are provided:
 - link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokApiJar.html[`io.freefair.gradle.plugins.lombok.tasks.LombokApiJar`]
 - link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokRuntimeJar.html[`io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar`]
 - link:../api/io/freefair/gradle/plugins/lombok/tasks/PostCompile.html[`io.freefair.gradle.plugins.lombok.tasks.PostCompile`]
+- link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokConfig.html[`io.freefair.gradle.plugins.lombok.tasks.LombokConfig`]
