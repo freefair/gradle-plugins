@@ -48,7 +48,7 @@ pluginBundle {
 
 dependencies {
     api "io.bit3:jsass:5.10.4"
-    implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'com.google.code.gson:gson:2.8.8'
 
     testImplementation project(":test-common")
 }

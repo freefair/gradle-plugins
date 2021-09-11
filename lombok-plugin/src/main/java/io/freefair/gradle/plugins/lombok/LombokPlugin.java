@@ -1,6 +1,6 @@
 package io.freefair.gradle.plugins.lombok;
 
-import io.freefair.gradle.plugins.lombok.tasks.CheckLombokConfig;
+import io.freefair.gradle.plugins.lombok.internal.ConfigUtil;
 import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import lombok.Getter;
@@ -14,19 +14,13 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
 import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
-import org.gradle.language.base.plugins.LifecycleBasePlugin;
-import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 
-import javax.annotation.Nullable;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -39,7 +33,6 @@ public class LombokPlugin implements Plugin<Project> {
     private Project project;
 
     private boolean spotbugConfigured;
-    private TaskProvider<Task> checkLombokConfigs;
 
     @Override
     public void apply(Project project) {
@@ -48,12 +41,6 @@ public class LombokPlugin implements Plugin<Project> {
         lombokBasePlugin = project.getPlugins().apply(LombokBasePlugin.class);
 
         project.getTasks().withType(Delombok.class).configureEach(this::configureDelombokDefaults);
-
-        checkLombokConfigs = project.getTasks().register("checkLombokConfigs");
-        project.getPlugins().withType(LifecycleBasePlugin.class, lifecycleBasePlugin -> {
-            project.getTasks().named(LifecycleBasePlugin.CHECK_TASK_NAME)
-                    .configure(check -> check.dependsOn(checkLombokConfigs));
-        });
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> configureJavaPluginDefaults());
 
@@ -144,40 +131,13 @@ public class LombokPlugin implements Plugin<Project> {
             return;
         }
 
-        Map<File, TaskProvider<LombokConfig>> lombokConfigTasks = new HashMap<>();
+        Map<File, TaskProvider<LombokConfig>> lombokConfigTasks = ConfigUtil.getLombokConfigTasks(project, sourceSet.getName(), sourceSet.getJava().getSrcDirs());
 
         TaskProvider<Task> generateConfigsTask = project.getTasks().register(sourceSet.getTaskName("generate", "EffectiveLombokConfigs"), genConfigsTask -> {
             genConfigsTask.setGroup("lombok");
             genConfigsTask.setDescription("Generate effective Lombok configurations for source-set '" + sourceSet.getName() + "'");
+            lombokConfigTasks.values().forEach(genConfigsTask::dependsOn);
         });
-
-        int i = 1;
-        for (File srcDir : sourceSet.getJava().getSrcDirs()) {
-
-            int finalI = i;
-            TaskProvider<LombokConfig> genConfigTask = project.getTasks().register(sourceSet.getTaskName("generate", "EffectiveLombokConfig" + i), LombokConfig.class, lombokConfigTask -> {
-                lombokConfigTask.setGroup("lombok");
-                lombokConfigTask.setDescription("Generate effective Lombok configuration for '" + srcDir + "' of source-set '" + sourceSet.getName() + "'.");
-                lombokConfigTask.getPaths().from(srcDir);
-                lombokConfigTask.getOutputFile().set(project.getLayout().getBuildDirectory().file("lombok/effective-config/" + sourceSet.getName() + "/lombok-" + finalI + ".config"));
-            });
-            generateConfigsTask.configure(t -> t.dependsOn(genConfigTask));
-            lombokConfigTasks.put(srcDir, genConfigTask);
-
-            i++;
-        }
-
-        TaskProvider<CheckLombokConfig> checkLombokConfig = project.getTasks()
-                .register(sourceSet.getTaskName("check", "lombokConfig"), CheckLombokConfig.class, sourceSet);
-
-        checkLombokConfig.configure(c -> {
-            lombokConfigTasks.forEach((file, stringProvider) -> {
-                c.getConfigs().put(file, stringProvider.get().getOutputFile().getAsFile());
-                c.dependsOn(stringProvider);
-            });
-        });
-
-        checkLombokConfigs.configure(c -> c.dependsOn(checkLombokConfig));
 
         compileTaskProvider.configure(javaCompile -> {
             lombokConfigTasks.forEach((file, lombokConfigTaskProvider) -> {
@@ -185,19 +145,6 @@ public class LombokPlugin implements Plugin<Project> {
                         .withPathSensitivity(PathSensitivity.NONE)
                         .optional();
             });
-            javaCompile.dependsOn(checkLombokConfig);
-        });
-
-        project.getPlugins().withType(JacocoPlugin.class, jacocoPlugin -> {
-            checkLombokConfig.configure(c -> c.getExpectedConfigs().add("lombok.addLombokGeneratedAnnotation = true"));
-        });
-
-        project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> {
-            checkLombokConfig.configure(c -> c.getExpectedConfigs().add("lombok.extern.findbugs.addSuppressFBWarnings = true"));
-        });
-
-        project.getPlugins().withId("org.sonarqube", spotBugsPlugin -> {
-            checkLombokConfig.configure(c -> c.getExpectedConfigs().add("lombok.extern.findbugs.addSuppressFBWarnings = true"));
         });
     }
 

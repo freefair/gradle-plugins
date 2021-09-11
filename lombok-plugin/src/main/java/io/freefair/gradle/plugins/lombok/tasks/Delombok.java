@@ -134,7 +134,7 @@ public class Delombok extends DefaultTask implements LombokTask {
             args.add("--verbose");
         }
         getFormat().forEach((key, value) -> {
-            String formatValue = key + (GUtil.isTrue(value) ? ":" + value : "");
+            String formatValue = key + (value != null && !value.isEmpty() ? ":" + value : "");
             args.add("--format=" + formatValue);
         });
         if (quiet.getOrElse(false)) {

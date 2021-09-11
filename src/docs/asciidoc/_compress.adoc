@@ -12,7 +12,7 @@ This plugin applies all of the plugins listed below for convenience.
 
 === `io.freefair.compress.trees`
 
-This plugin adds the following methods to the project:
+This plugin adds the `commonsCompress` Extension to the project, which provides the  following methods:
 
 [source, java]
 ----
@@ -39,6 +39,14 @@ https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.P
 and
 https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:tarTree(java.lang.Object)[`tarTree`]
 methods which are described https://docs.gradle.org/current/userguide/working_with_files.html#sec:unpacking_archives_example[here]
+
+.Example
+[source,groovy]
+----
+task example(type: Sync) {
+    from commonsCompress.arTree(file("foo.ar"))
+}
+----
 
 === `io.freefair.compress.ar`
 

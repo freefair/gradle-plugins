@@ -26,7 +26,9 @@ class AggregateJavadocClientPlugin implements Plugin<Project> {
             collectJavadocClasspath.configure(c -> {
                 c.doFirst(t -> {
                     Javadoc javadoc = (Javadoc) project.getTasks().getByName(JavaPlugin.JAVADOC_TASK_NAME);
-                    javadocClasspath.from(javadoc.getClasspath().getFiles());
+                    javadocClasspath
+                            .from(javadoc.getClasspath().getFiles())
+                            .builtBy(javadoc.getClasspath());
                 });
             });
         });
