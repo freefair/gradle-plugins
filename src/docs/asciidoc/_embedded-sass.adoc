@@ -1,36 +1,29 @@
-= JSass
+= Embedded Sass
 
-WARNING: The JSass plugin is deprecated and should not be used anymore.
-Use the Embedded Sass plugin instead.
-
-https://gitlab.com/jsass/jsass
+https://github.com/larsgrefer/dart-sass-java
+https://github.com/sass/embedded-protocol
+https://github.com/sass/dart-sass-embedded
 
 == JSass Plugins
 
-This chapter describes all the plugins contained in the `jsass-plugin` module.
+This chapter describes all the plugins contained in the `embedded-sass-plugin` module.
 
-=== `io.freefair.jsass-base`
+=== `io.freefair.sass-base`
 
-This plugin adds the `jsass` extension to the project and applies it to all `SassCompile` tasks.
+This plugin adds the `sass` extension to the project and applies it to all `SassCompile` tasks.
 
 [source,groovy]
 ----
-jsass {
-    indent = "  "
-    linefeed = System.lineSeparator()
+sass {
     omitSourceMapUrl = false
-    outputStyle = io.bit3.jsass.OutputStyle
-    precision = 8
-    sourceComments = false
+    outputStyle = sass.embedded_protocol.EmbeddedSass.OutputStyle.EXPANDED
     sourceMapContents = false
     sourceMapEmbed = false
     sourceMapEnabled = true
 }
 ----
 
-All the properties correspond to the https://jsass.readthedocs.io/en/latest/options.html[jsass options].
-
-=== `io.freefair.jsass-webjars`
+=== `io.freefair.sass-webjars`
 
 This plugin adds webjars support to the sass compilation:
 
@@ -46,14 +39,15 @@ dependencies {
 @import "bootstrap/scss/bootstrap";
 ----
 
-=== `io.freefair.jsass-java`
+=== `io.freefair.sass-java`
 
 This plugin configures a `compileSass` task for the
 https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html#org.gradle.api.tasks.SourceSet:resources[resources]
 of each
 https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:sourceSets(groovy.lang.Closure)[source set].
 
-=== `io.freefair.jsass-war`
+=== `io.freefair.sass-war`
 
 This plugin creates a `compileWebappSass` for the `src/main/webapp` folder of your `war` project.
 
+== Sass Tasks
