@@ -21,7 +21,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.webjars.WebJarAssetLocator;
 import sass.embedded_protocol.EmbeddedSass;
-import sass.embedded_protocol.EmbeddedSass.InboundMessage.CompileRequest.OutputStyle;
+import sass.embedded_protocol.EmbeddedSass.OutputStyle;
 import sass.embedded_protocol.EmbeddedSass.OutboundMessage.CompileResponse.CompileSuccess;
 import sass.embedded_protocol.EmbeddedSass.OutboundMessage.VersionResponse;
 
