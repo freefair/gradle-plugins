@@ -136,6 +136,7 @@ apply plugin: "io.freefair.javadoc-links"
 
 aggregateJavadoc.failOnError = false
 aggregateJavadoc.options.links "https://docs.gradle.org/${gradle.gradleVersion}/javadoc/"
+aggregateJavadoc.options.addBooleanOption("Xdoclint:-missing", true)
 
 task docsZip(type: Zip) {
     group = 'build'
