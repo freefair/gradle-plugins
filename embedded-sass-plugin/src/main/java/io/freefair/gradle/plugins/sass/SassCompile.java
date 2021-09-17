@@ -1,39 +1,44 @@
-package io.freefair.gradle.plugins.jsass;
+package io.freefair.gradle.plugins.sass;
 
-import com.google.gson.Gson;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.*;
-import io.bit3.jsass.annotation.DebugFunction;
-import io.bit3.jsass.annotation.ErrorFunction;
-import io.bit3.jsass.annotation.WarnFunction;
-import io.bit3.jsass.importer.Importer;
+import de.larsgrefer.sass.embedded.SassCompilationFailedException;
+import de.larsgrefer.sass.embedded.SassCompiler;
+import de.larsgrefer.sass.embedded.SassCompilerFactory;
+import de.larsgrefer.sass.embedded.functions.HostFunction;
+import de.larsgrefer.sass.embedded.importer.CustomImporter;
+import de.larsgrefer.sass.embedded.importer.FileImporter;
+import de.larsgrefer.sass.embedded.importer.WebjarsImporter;
+import de.larsgrefer.sass.embedded.logging.Slf4jLoggingHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.GradleException;
+import org.gradle.api.Incubating;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.*;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.webjars.WebJarAssetLocator;
+import sass.embedded_protocol.EmbeddedSass;
+import sass.embedded_protocol.EmbeddedSass.OutputStyle;
+import sass.embedded_protocol.EmbeddedSass.OutboundMessage.CompileResponse.CompileSuccess;
+import sass.embedded_protocol.EmbeddedSass.OutboundMessage.VersionResponse;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Base64;
+import java.util.LinkedHashSet;
 
-/**
- * @author Lars Grefer
- */
 @Getter
 @Setter
 @CacheableTask
-@Deprecated
+@Incubating
 public class SassCompile extends SourceTask {
 
     public SassCompile() {
@@ -58,27 +63,32 @@ public class SassCompile extends SourceTask {
     private final DirectoryProperty destinationDir = getProject().getObjects().directoryProperty();
 
     @TaskAction
-    public void compileSass() {
-        Compiler compiler = new Compiler();
-        Options options = new Options();
+    public void compileSass() throws IOException {
 
-        options.setFunctionProviders(new ArrayList<>(getFunctionProviders()));
-        options.getFunctionProviders().add(new LoggingFunctionProvider());
-        options.setHeaderImporters(getHeaderImporters());
-        options.setImporters(getImporters());
-        if (getIncludePaths() != null) {
-            options.setIncludePaths(new ArrayList<>(getIncludePaths().getFiles()));
+        SassCompiler compiler = SassCompilerFactory.bundled();
+        compiler.setOutputStyle(getOutputStyle().getOrNull());
+        compiler.setGenerateSourceMaps(sourceMapEnabled.getOrElse(true));
+
+        compiler.setLoggingHandler(new Slf4jLoggingHandler(getLogger()));
+        compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
+
+        fileImporters.get().forEach(compiler::registerImporter);
+        customImporters.get().forEach(compiler::registerImporter);
+        hostFunctions.get().forEach(compiler::registerFunction);
+
+        if(!webjars.isEmpty()) {
+            LinkedHashSet<URL> urls = new LinkedHashSet<>();
+
+            for (File webjar : webjars) {
+                urls.add(webjar.toURI().toURL());
+            }
+
+            URLClassLoader webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
+            compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
         }
-        options.setIndent(indent.get());
-        options.setLinefeed(linefeed.get());
-        options.setOmitSourceMapUrl(omitSourceMapUrl.get());
-        options.setOutputStyle(outputStyle.get());
-        options.setPluginPath(pluginPath.getOrNull());
-        options.setPrecision(precision.get());
-        options.setSourceComments(sourceComments.get());
-        options.setSourceMapContents(sourceMapContents.get());
-        options.setSourceMapEmbed(sourceMapEmbed.get());
-        options.setSourceMapRoot(sourceMapRoot.getOrNull());
+
+        VersionResponse version = compiler.getVersion();
+        getLogger().info("{}", version);
 
         getSource().visit(new FileVisitor() {
             @Override
@@ -100,35 +110,35 @@ public class SassCompile extends SourceTask {
                     pathString = pathString.substring(0, pathString.length() - 5) + ".css";
 
                     File realOut = new File(getDestinationDir().get().getAsFile(), pathString);
-                    File fakeOut = new File(
-                            fileVisitDetails.getFile().getParentFile(),
-                            name.substring(0, name.length() - 5) + ".css"
-                    );
                     File realMap = new File(getDestinationDir().get().getAsFile(), pathString + ".map");
-                    File fakeMap = new File(fakeOut.getPath() + ".map");
-
-                    options.setIsIndentedSyntaxSrc(name.endsWith(".sass"));
-
-                    if (sourceMapEnabled.get()) {
-                        options.setSourceMapFile(fakeMap.toURI());
-                    }
-                    else {
-                        options.setSourceMapFile(null);
-                    }
 
                     try {
-                        URI inputPath = in.getAbsoluteFile().toURI();
 
-                        Output output = compiler.compileFile(inputPath, fakeOut.toURI(), options);
+                        CompileSuccess output = compiler.compileFile(in, getOutputStyle().getOrNull());
 
                         if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
-                            Files.write(realOut.toPath(), output.getCss().getBytes(StandardCharsets.UTF_8));
+                            String css = output.getCss();
+
+                            if (sourceMapEnabled.get()) {
+                                String mapUrl;
+
+                                if (sourceMapEmbed.get()) {
+                                    mapUrl = "data:application/json;base64," + Base64.getEncoder().encodeToString(output.getSourceMapBytes().toByteArray());
+                                }
+                                else {
+                                    mapUrl = realMap.getName();
+                                }
+
+                                css += "\n/*# sourceMappingURL=" + mapUrl + " */";
+                            }
+
+                            Files.write(realOut.toPath(), css.getBytes(StandardCharsets.UTF_8));
                         }
                         else {
                             getLogger().error("Cannot write into {}", realOut.getParentFile());
                             throw new GradleException("Cannot write into " + realMap.getParentFile());
                         }
-                        if (sourceMapEnabled.get()) {
+                        if (sourceMapEnabled.get() && !sourceMapEmbed.get()) {
                             if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
                                 Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
                             }
@@ -137,11 +147,10 @@ public class SassCompile extends SourceTask {
                                 throw new GradleException("Cannot write into " + realMap.getParentFile());
                             }
                         }
-                    } catch (CompilationException e) {
-                        SassError sassError = new Gson().fromJson(e.getErrorJson(), SassError.class);
+                    } catch (SassCompilationFailedException e) {
+                        EmbeddedSass.OutboundMessage.CompileResponse.CompileFailure sassError = e.getCompileFailure();
 
-                        getLogger().error("{}:{}:{}", sassError.getFile(), sassError.getLine(), sassError.getColumn());
-                        getLogger().error(e.getErrorMessage());
+                        getLogger().error(sassError.getMessage());
 
                         throw new RuntimeException(e);
                     } catch (IOException e) {
@@ -158,18 +167,23 @@ public class SassCompile extends SourceTask {
      */
     @Input
     @Optional
-    private List<Object> functionProviders = new LinkedList<>();
+    private ListProperty<HostFunction> hostFunctions = getProject().getObjects().listProperty(HostFunction.class);
 
     @Input
     @Optional
-    private List<Importer> headerImporters = new LinkedList<>();
+    private ListProperty<FileImporter> fileImporters = getProject().getObjects().listProperty(FileImporter.class);
 
     /**
      * Custom import functions.
      */
     @Input
     @Optional
-    private Collection<Importer> importers = new LinkedList<>();
+    private ListProperty<CustomImporter> customImporters = getProject().getObjects().listProperty(CustomImporter.class);
+
+    @InputFiles
+    @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
+    private final ConfigurableFileCollection webjars = getProject().files();
 
     /**
      * SassList of paths.
@@ -178,12 +192,6 @@ public class SassCompile extends SourceTask {
     @Optional
     @PathSensitive(PathSensitivity.RELATIVE)
     private final ConfigurableFileCollection includePaths = getProject().files();
-
-    @Input
-    private final Property<String> indent = getProject().getObjects().property(String.class);
-
-    @Input
-    private final Property<String> linefeed = getProject().getObjects().property(String.class);
 
     /**
      * Disable sourceMappingUrl in css output.
@@ -196,22 +204,6 @@ public class SassCompile extends SourceTask {
      */
     @Input
     private final Property<OutputStyle> outputStyle = getProject().getObjects().property(OutputStyle.class);
-
-    @Input
-    @Optional
-    private final Property<String> pluginPath = getProject().getObjects().property(String.class);
-
-    /**
-     * Precision for outputting fractional numbers.
-     */
-    @Input
-    private final Property<Integer> precision = getProject().getObjects().property(Integer.class);
-
-    /**
-     * If you want inline source comments.
-     */
-    @Input
-    private final Property<Boolean> sourceComments = getProject().getObjects().property(Boolean.class);
 
     /**
      * Embed include contents in maps.
@@ -234,26 +226,5 @@ public class SassCompile extends SourceTask {
 
     public void setOutputStyle(String outputStyle) {
         this.outputStyle.set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
-    }
-
-    public class LoggingFunctionProvider {
-
-        @WarnFunction
-        @SuppressWarnings("unused")
-        public void warn(String message) {
-            getLogger().warn(message);
-        }
-
-        @ErrorFunction
-        @SuppressWarnings("unused")
-        public void error(String message) {
-            getLogger().error(message);
-        }
-
-        @DebugFunction
-        @SuppressWarnings("unused")
-        public void debug(String message) {
-            getLogger().info(message);
-        }
     }
 }

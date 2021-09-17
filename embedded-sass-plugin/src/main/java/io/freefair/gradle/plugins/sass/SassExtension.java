@@ -1,23 +1,18 @@
-package io.freefair.gradle.plugins.jsass;
+package io.freefair.gradle.plugins.sass;
 
-import io.bit3.jsass.OutputStyle;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import org.gradle.api.Incubating;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Property;
+import sass.embedded_protocol.EmbeddedSass.OutputStyle;
 
 import javax.inject.Inject;
 
-@Getter
-@Setter
-@Deprecated
-public class JSassExtension {
-
-    private final Property<String> indent;
-
-    private final Property<String> linefeed;
+@Data
+@Incubating
+public class SassExtension {
 
     private final Property<Boolean> omitSourceMapUrl;
 
@@ -25,16 +20,6 @@ public class JSassExtension {
      * Output style for the generated css code.
      */
     private final Property<OutputStyle> outputStyle;
-
-    /**
-     * Precision for outputting fractional numbers.
-     */
-    private final Property<Integer> precision;
-
-    /**
-     * If you want inline source comments.
-     */
-    private final Property<Boolean> sourceComments;
 
     /**
      * Embed include contents in maps.
@@ -49,24 +34,13 @@ public class JSassExtension {
     private final Property<Boolean> sourceMapEnabled;
 
     @Inject
-    public JSassExtension(ObjectFactory objectFactory) {
-        indent = objectFactory.property(String.class);
-        indent.convention("  ");
-
-        linefeed = objectFactory.property(String.class);
-        linefeed.convention(System.lineSeparator());
+    public SassExtension(ObjectFactory objectFactory) {
 
         omitSourceMapUrl = objectFactory.property(Boolean.class);
         omitSourceMapUrl.convention(false);
 
         outputStyle = objectFactory.property(OutputStyle.class);
-        outputStyle.convention(OutputStyle.NESTED);
-
-        precision = objectFactory.property(Integer.class);
-        precision.convention(8);
-
-        sourceComments = objectFactory.property(Boolean.class);
-        sourceComments.convention(false);
+        outputStyle.convention(OutputStyle.EXPANDED);
 
         sourceMapContents = objectFactory.property(Boolean.class);
         sourceMapContents.convention(false);

@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@Deprecated
 public class SassError {
 
     private int status;

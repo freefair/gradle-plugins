@@ -1,6 +1,7 @@
-package io.freefair.gradle.plugins.jsass;
+package io.freefair.gradle.plugins.sass;
 
 import lombok.Getter;
+import org.gradle.api.Incubating;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.BasePlugin;
@@ -15,17 +16,16 @@ import java.io.File;
  * @author Lars Grefer
  */
 @Getter
-@Deprecated
-public class JSassJavaPlugin implements Plugin<Project> {
+@Incubating
+public class SassJavaPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-
-        project.getPlugins().apply(JSassWebjarsPlugin.class);
+        project.getPlugins().apply(SassWebjarsPlugin.class);
 
         project.getPlugins().apply(JavaPlugin.class);
 
-        File baseDestinationDir = new File(project.getBuildDir(), "jsass");
+        File baseDestinationDir = new File(project.getBuildDir(), "sass");
 
         project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
             String taskName = sourceSet.getCompileTaskName("Sass");
