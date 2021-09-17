@@ -13,7 +13,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: 'adopt'
+          distribution: 'temurin'
       - run: gpg --quiet --batch --yes --decrypt --passphrase="$PASS" --output=secring.gpg secring.gpg.gpg
         env:
           PASS: ${{ secrets.FREEFAIR_SECRING_PASS }}

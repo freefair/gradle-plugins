@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: 'adopt'
+          distribution: 'temurin'
       - run: ./gradlew uploadDocs -s
 
   deploy-example:
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: 'adopt'
+          distribution: 'temurin'
       - run: ./gradlew github:assemble -s
       - run: ./gradlew github:publish -s
       - run: cat github/build/publications/mavenJava/pom-default.xml
