@@ -3,7 +3,7 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    implementation 'io.github.classgraph:classgraph:4.8.127'
+    implementation 'io.github.classgraph:classgraph:4.8.128'
     api project(':code-generator-api')
     testImplementation project(':test-common')
 
