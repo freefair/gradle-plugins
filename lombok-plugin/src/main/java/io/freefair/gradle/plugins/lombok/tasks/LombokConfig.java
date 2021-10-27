@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@UntrackedTask(because = "lombok config bubbling traverses the file system")
 public class LombokConfig extends DefaultTask implements LombokTask {
 
     @Classpath
