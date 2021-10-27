@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.maven.javadoc;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
@@ -57,6 +58,7 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
                 SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
                 Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
 
+                aj.dependsOn(subproject.getTasks().findByName(JavaPlugin.CLASSES_TASK_NAME));
                 aj.source(javadoc.getSource());
 
                 StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
