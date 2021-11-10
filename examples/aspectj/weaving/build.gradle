@@ -11,7 +11,6 @@ apply plugin: "groovy"
 
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
@@ -24,6 +23,7 @@ dependencies {
 
     implementation "org.slf4j:slf4j-api:1.+"
 
+    implementation "org.aspectj:aspectjrt:1.9.7"
     implementation localGroovy()
 
     testImplementation "junit:junit:4.12"

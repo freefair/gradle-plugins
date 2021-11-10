@@ -45,10 +45,6 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
     }
 
     private void configureSourceSetDefaults(SourceSet sourceSet) {
-        project.afterEvaluate(p ->
-                p.getDependencies().add(sourceSet.getImplementationConfigurationName(), "org.aspectj:aspectjrt:" + aspectjBasePlugin.getAspectjExtension().getVersion().get())
-        );
-
         DefaultWeavingSourceSet weavingSourceSet = new DefaultWeavingSourceSet(sourceSet);
         new DslObject(sourceSet).getConvention().add("aspectj", weavingSourceSet);
 
@@ -69,8 +65,11 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
             FileCollection aspectpath = weavingSourceSet.getAspectPath();
             FileCollection inpath = weavingSourceSet.getInPath();
 
+            Configuration runtimeClasspath = project.getConfigurations().getByName(sourceSet.getRuntimeClasspathConfigurationName());
+            FileCollection aspectjClasspath = aspectjBasePlugin.getAspectjRuntime().inferAspectjClasspath(runtimeClasspath);
+
             project.getTasks().named(sourceSet.getCompileTaskName(language), AbstractCompile.class, compileTask -> {
-                AjcAction ajcAction = enhanceWithWeavingAction(compileTask, aspectpath, inpath, aspectjBasePlugin.getAspectjConfiguration());
+                AjcAction ajcAction = enhanceWithWeavingAction(compileTask, aspectpath, inpath, aspectjClasspath);
                 if (compileTask instanceof HasCompileOptions) {
                     HasCompileOptions compileTaskWithOptions = (HasCompileOptions) compileTask;
                     ajcAction.getOptions().getBootclasspath().from(compileTaskWithOptions.getOptions().getBootstrapClasspath());
@@ -80,7 +79,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         });
     }
 
-    private AjcAction enhanceWithWeavingAction(AbstractCompile abstractCompile, FileCollection aspectpath, FileCollection inpath, Configuration aspectjConfiguration) {
+    private AjcAction enhanceWithWeavingAction(AbstractCompile abstractCompile, FileCollection aspectpath, FileCollection inpath, FileCollection aspectjConfiguration) {
         AjcAction action = project.getObjects().newInstance(AjcAction.class);
 
         action.getOptions().getAspectpath().from(aspectpath);

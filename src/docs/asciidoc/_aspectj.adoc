@@ -22,23 +22,23 @@ This chapter describes all the plugins contained in the `aspectj-plugin` module.
 NOTE: The other two plugins implicitly apply this one.
 In most cases it's therefore unnecessary to explicitly apply it to your project.
 
-This plugin adds the `aspectj` extension and the `aspectj` configuration to the project.
+This plugin enables the automatic configuration of the `aspectjClasspath`.
 
-.Setting the AspectJ version using the `aspectj` extension.
-[source,groovy]
-----
-aspectj {
-    version = "1.9.7"
-}
-----
-
-The `aspectj` configuration contains the `aspectjtools.jar` with the specified version.
+The automatic configuration follows the same principles as described here:
+https://docs.gradle.org/{gradle_version}/userguide/groovy_plugin.html#sec:automatic_configuration_of_groovyclasspath
 
 === `io.freefair.aspectj`
 
 This plugin adds AspectJ support to the project, by adding a `aspectj` directory to every source set.
 
 Source contained in the `src/main/aspectj` directory will be compiled with `ajc` by the `compileAspectj` task.
+
+[source,groovy]
+----
+dependencies {
+    implementation "org.aspectj:aspectjrt:1.9.7"
+}
+----
 
 TIP: This is follows the same principles as the `groovy` and `scala` plugins.
 
@@ -69,6 +69,14 @@ This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`, `compil
 with an additional `ajc` action in order to perform post-compile-weaving.
 
 The output of the compilation (`javac`, etc.) becomes the `-inpath` for `ajc`.
+
+[source,groovy]
+----
+dependencies {
+    implementation "org.aspectj:aspectjrt:1.9.7"
+}
+----
+
 Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
 
 [source,groovy]
