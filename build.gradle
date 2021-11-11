@@ -105,11 +105,11 @@ allprojects {
                         }
                     }
                     ciManagement {
-                        system = 'Travis CI'
-                        url = 'https://travis-ci.org/freefair/gradle-plugins/'
+                        system = 'GitHub Actions'
+                        url = 'https://github.com/freefair/gradle-plugins/actions'
                     }
                     issueManagement {
-                        system = 'Github'
+                        system = 'GitHub Issues'
                         url = 'https://github.com/freefair/gradle-plugins/issues'
                     }
                     scm {
