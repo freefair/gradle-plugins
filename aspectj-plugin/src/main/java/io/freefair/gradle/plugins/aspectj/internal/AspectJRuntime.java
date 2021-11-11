@@ -25,23 +25,23 @@ import java.util.regex.Pattern;
  * @see org.gradle.api.tasks.GroovyRuntime
  */
 @Slf4j
-public class AspectjRuntime {
+public class AspectJRuntime {
 
     private final ProjectInternal project;
 
-    public AspectjRuntime(Project project) {
+    public AspectJRuntime(Project project) {
         this.project = (ProjectInternal) project;
     }
 
     /**
-     * Searches the specified class path for Groovy Jars ({@code groovy(-indy)}, {@code groovy-all(-indy)}) and returns a corresponding class path for executing Groovy tools such as the Groovy
-     * compiler and Groovydoc tool. The tool versions will match those of the Groovy Jars found. If no Groovy Jars are found on the specified class path, a class path with the contents of the {@code
-     * groovy} configuration will be returned.
+     * Searches the specified class path for AspectJ Jars ({@code aspectjrt}, {@code aspectjweaver}) and returns a corresponding class path for executing AspectJ tools such as the ajc
+     * compiler. The tool versions will match those of the AspectJ Jars found.
      *
      * <p>The returned class path may be empty, or may fail to resolve when asked for its contents.
      *
-     * @param classpath a class path containing Groovy Jars
-     * @return a corresponding class path for executing Groovy tools such as the Groovy compiler and Groovydoc tool
+     * @param classpath a class path containing AspectJ Jars
+     * @return a corresponding class path for executing AspectJ tools such as the AspectJ compiler
+     * @see org.gradle.api.tasks.GroovyRuntime#inferGroovyClasspath(Iterable)
      */
     public FileCollection inferAspectjClasspath(final FileCollection classpath) {
         // alternatively, we could return project.getLayout().files(Runnable)
