@@ -19,6 +19,8 @@ The documentation of the FreeFair Gradle Plugin collection {revnumber} consists 
 The latest copy of the user guide is available at https://docs.freefair.io/gradle-plugins/current/reference +
 and the corresponding javadocs can be found at https://docs.freefair.io/gradle-plugins/current/api.
 
+The source code for the plugins and this documentation can be found at https://github.com/freefair/gradle-plugins
+
 == Installation
 
 All plugins are deployed to the
