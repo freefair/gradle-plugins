@@ -109,7 +109,7 @@ The following things are configurable:
 compileJava {
     ajc {
         enabled = true //<1>
-        classpath.setFrom configurations.aspectj //<2>
+        classpath //<2>
         options {
             aspectpath.setFrom configurations.aspect //<3>
             compilerArgs = [] //<4>
@@ -119,7 +119,7 @@ compileJava {
 compileTestJava {
     ajc {
         enabled = true //<1>
-        classpath.setFrom configurations.aspectj //<2>
+        classpath //<2>
         options {
             aspectpath.setFrom configurations.testAspect //<3>
             compilerArgs = [] //<4>
@@ -128,7 +128,7 @@ compileTestJava {
 }
 ----
 <1> Specifies if ajc should run at all. Defaults to `true`
-<2> The classpath containing ajc itself (`aspectjtools.jar`). Defaults to `configurations.aspectj`
+<2> The classpath containing ajc itself (`aspectjtools.jar`). Inferred from the compile/runtime classpaths by default.
 <3> The classpath containing additional advices to weave. This directly maps to the `-aspectpath` argument of ajc.
 <4> Addittional arguments which will be passed to `ajc`.
 
