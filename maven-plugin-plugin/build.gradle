@@ -7,7 +7,7 @@ dependencies {
 
     implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.1'
     implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.1'
-    compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.1'
+    compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.2'
 
     testImplementation project(":test-common")
 }
