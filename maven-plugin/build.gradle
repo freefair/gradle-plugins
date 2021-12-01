@@ -3,7 +3,7 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    implementation 'org.apache.maven:maven-model:3.8.3'
+    implementation 'org.apache.maven:maven-model:3.8.4'
 
     api project(":okhttp-plugin")
 
