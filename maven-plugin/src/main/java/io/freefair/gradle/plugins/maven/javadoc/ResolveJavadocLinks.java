@@ -154,7 +154,7 @@ public class ResolveJavadocLinks implements Action<Task> {
         }
 
         if (group.equals("org.springframework") && artifact.startsWith("spring-")) {
-            return "https://docs.spring.io/spring/docs/" + version + "/javadoc-api/";
+            return "https://docs.spring.io/spring-framework/docs/" + version + "/javadoc-api/";
         }
 
         if (group.equals("org.springframework.boot") && artifact.startsWith("spring-boot")) {
@@ -178,7 +178,12 @@ public class ResolveJavadocLinks implements Action<Task> {
         }
 
         if (group.equals("com.squareup.okhttp3")) {
-            return "https://square.github.io/okhttp/3.x/" + artifact + "/";
+            if (version.startsWith("3.")) {
+                return "https://square.github.io/okhttp/3.x/" + artifact + "/";
+            }
+            if (version.startsWith("4.")) {
+                return "https://square.github.io/okhttp/4.x/" + artifact + "/";
+            }
         }
 
         if (group.equals("com.squareup.retrofit")) {
