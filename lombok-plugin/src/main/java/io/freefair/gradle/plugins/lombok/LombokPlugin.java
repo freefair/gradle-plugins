@@ -133,6 +133,10 @@ public class LombokPlugin implements Plugin<Project> {
 
         Map<File, TaskProvider<LombokConfig>> lombokConfigTasks = ConfigUtil.getLombokConfigTasks(project, sourceSet.getName(), sourceSet.getJava().getSrcDirs());
 
+        for (TaskProvider<LombokConfig> ctp : lombokConfigTasks.values()) {
+            ctp.configure(ct -> ct.dependsOn(sourceSet.getJava().getBuildDependencies()));
+        }
+
         TaskProvider<Task> generateConfigsTask = project.getTasks().register(sourceSet.getTaskName("generate", "EffectiveLombokConfigs"), genConfigsTask -> {
             genConfigsTask.setGroup("lombok");
             genConfigsTask.setDescription("Generate effective Lombok configurations for source-set '" + sourceSet.getName() + "'");
