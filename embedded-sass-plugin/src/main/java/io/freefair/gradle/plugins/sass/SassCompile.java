@@ -65,101 +65,102 @@ public class SassCompile extends SourceTask {
     @TaskAction
     public void compileSass() throws IOException {
 
-        SassCompiler compiler = SassCompilerFactory.bundled();
-        compiler.setOutputStyle(getOutputStyle().getOrNull());
-        compiler.setGenerateSourceMaps(sourceMapEnabled.getOrElse(true));
+        try (SassCompiler compiler = SassCompilerFactory.bundled()) {
+            compiler.setOutputStyle(getOutputStyle().getOrNull());
+            compiler.setGenerateSourceMaps(sourceMapEnabled.getOrElse(true));
 
-        compiler.setLoggingHandler(new Slf4jLoggingHandler(getLogger()));
-        compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
+            compiler.setLoggingHandler(new Slf4jLoggingHandler(getLogger()));
+            compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
 
-        fileImporters.get().forEach(compiler::registerImporter);
-        customImporters.get().forEach(compiler::registerImporter);
-        hostFunctions.get().forEach(compiler::registerFunction);
+            fileImporters.get().forEach(compiler::registerImporter);
+            customImporters.get().forEach(compiler::registerImporter);
+            hostFunctions.get().forEach(compiler::registerFunction);
 
-        if(!webjars.isEmpty()) {
-            LinkedHashSet<URL> urls = new LinkedHashSet<>();
+            if (!webjars.isEmpty()) {
+                LinkedHashSet<URL> urls = new LinkedHashSet<>();
 
-            for (File webjar : webjars) {
-                urls.add(webjar.toURI().toURL());
+                for (File webjar : webjars) {
+                    urls.add(webjar.toURI().toURL());
+                }
+
+                URLClassLoader webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
+                compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
             }
 
-            URLClassLoader webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
-            compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
-        }
+            VersionResponse version = compiler.getVersion();
+            getLogger().info("{}", version);
 
-        VersionResponse version = compiler.getVersion();
-        getLogger().info("{}", version);
+            getSource().visit(new FileVisitor() {
+                @Override
+                public void visitDir(FileVisitDetails fileVisitDetails) {
 
-        getSource().visit(new FileVisitor() {
-            @Override
-            public void visitDir(FileVisitDetails fileVisitDetails) {
+                }
 
-            }
+                @Override
+                public void visitFile(FileVisitDetails fileVisitDetails) {
+                    String name = fileVisitDetails.getName();
+                    if (name.startsWith("_"))
+                        return;
 
-            @Override
-            public void visitFile(FileVisitDetails fileVisitDetails) {
-                String name = fileVisitDetails.getName();
-                if (name.startsWith("_"))
-                    return;
+                    if (name.endsWith(".scss") || name.endsWith(".sass")) {
+                        File in = fileVisitDetails.getFile();
 
-                if (name.endsWith(".scss") || name.endsWith(".sass")) {
-                    File in = fileVisitDetails.getFile();
+                        String pathString = fileVisitDetails.getRelativePath().getPathString();
 
-                    String pathString = fileVisitDetails.getRelativePath().getPathString();
+                        pathString = pathString.substring(0, pathString.length() - 5) + ".css";
 
-                    pathString = pathString.substring(0, pathString.length() - 5) + ".css";
+                        File realOut = new File(getDestinationDir().get().getAsFile(), pathString);
+                        File realMap = new File(getDestinationDir().get().getAsFile(), pathString + ".map");
 
-                    File realOut = new File(getDestinationDir().get().getAsFile(), pathString);
-                    File realMap = new File(getDestinationDir().get().getAsFile(), pathString + ".map");
+                        try {
 
-                    try {
+                            CompileSuccess output = compiler.compileFile(in, getOutputStyle().getOrNull());
 
-                        CompileSuccess output = compiler.compileFile(in, getOutputStyle().getOrNull());
+                            if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
+                                String css = output.getCss();
 
-                        if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
-                            String css = output.getCss();
+                                if (sourceMapEnabled.get()) {
+                                    String mapUrl;
 
-                            if (sourceMapEnabled.get()) {
-                                String mapUrl;
+                                    if (sourceMapEmbed.get()) {
+                                        mapUrl = "data:application/json;base64," + Base64.getEncoder().encodeToString(output.getSourceMapBytes().toByteArray());
+                                    }
+                                    else {
+                                        mapUrl = realMap.getName();
+                                    }
 
-                                if (sourceMapEmbed.get()) {
-                                    mapUrl = "data:application/json;base64," + Base64.getEncoder().encodeToString(output.getSourceMapBytes().toByteArray());
+                                    css += "\n/*# sourceMappingURL=" + mapUrl + " */";
                                 }
-                                else {
-                                    mapUrl = realMap.getName();
-                                }
 
-                                css += "\n/*# sourceMappingURL=" + mapUrl + " */";
-                            }
-
-                            Files.write(realOut.toPath(), css.getBytes(StandardCharsets.UTF_8));
-                        }
-                        else {
-                            getLogger().error("Cannot write into {}", realOut.getParentFile());
-                            throw new GradleException("Cannot write into " + realMap.getParentFile());
-                        }
-                        if (sourceMapEnabled.get() && !sourceMapEmbed.get()) {
-                            if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
-                                Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
+                                Files.write(realOut.toPath(), css.getBytes(StandardCharsets.UTF_8));
                             }
                             else {
-                                getLogger().error("Cannot write into {}", realMap.getParentFile());
+                                getLogger().error("Cannot write into {}", realOut.getParentFile());
                                 throw new GradleException("Cannot write into " + realMap.getParentFile());
                             }
+                            if (sourceMapEnabled.get() && !sourceMapEmbed.get()) {
+                                if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
+                                    Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
+                                }
+                                else {
+                                    getLogger().error("Cannot write into {}", realMap.getParentFile());
+                                    throw new GradleException("Cannot write into " + realMap.getParentFile());
+                                }
+                            }
+                        } catch (SassCompilationFailedException e) {
+                            EmbeddedSass.OutboundMessage.CompileResponse.CompileFailure sassError = e.getCompileFailure();
+
+                            getLogger().error(sassError.getMessage());
+
+                            throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            getLogger().error(e.getLocalizedMessage());
+                            throw new UncheckedIOException(e);
                         }
-                    } catch (SassCompilationFailedException e) {
-                        EmbeddedSass.OutboundMessage.CompileResponse.CompileFailure sassError = e.getCompileFailure();
-
-                        getLogger().error(sassError.getMessage());
-
-                        throw new RuntimeException(e);
-                    } catch (IOException e) {
-                        getLogger().error(e.getLocalizedMessage());
-                        throw new UncheckedIOException(e);
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
