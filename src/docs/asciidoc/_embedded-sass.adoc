@@ -1,8 +1,8 @@
 = Embedded Sass
 
-https://github.com/larsgrefer/dart-sass-java
-https://github.com/sass/embedded-protocol
-https://github.com/sass/dart-sass-embedded
+- https://github.com/larsgrefer/dart-sass-java
+- https://github.com/sass/embedded-protocol
+- https://github.com/sass/dart-sass-embedded
 
 == JSass Plugins
 
