@@ -5,7 +5,7 @@ apply plugin: "com.gradle.plugin-publish"
 compileJava.options.headerOutputDirectory = file("build/headers")
 
 dependencies {
-    testCompile project(":test-common")
+    testImplementation project(":test-common")
 }
 
 gradlePlugin {
