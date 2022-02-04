@@ -1,4 +1,9 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
 apply plugin: "io.freefair.aspectj.post-compile-weaving"
+apply plugin: 'kotlin'
 apply plugin: "java"
 apply plugin: "io.freefair.lombok"
 apply plugin: "jacoco"
@@ -6,18 +11,30 @@ apply plugin: "groovy"
 
 
 repositories {
-    mavenLocal()
+    mavenCentral()
 }
 
-jacoco.toolVersion = "0.8.2"
+sourceSets {
+    foo //https://github.com/freefair/gradle-plugins/issues/329
+}
 
 dependencies {
     aspect project(":aspectj:aspect")
 
-    compile "org.slf4j:slf4j-api:1.+"
+    implementation "org.slf4j:slf4j-api:1.+"
 
-    compile localGroovy()
+    implementation "org.aspectj:aspectjrt:1.9.7"
+    implementation localGroovy()
 
-    testCompile "junit:junit:4.12"
-    testCompile configurations.jacocoAnt
+    testImplementation "junit:junit:4.12"
+}
+
+configurations.testImplementation.extendsFrom(configurations.jacocoAnt)
+
+compileJava {
+    ajc {
+        options {
+            compilerArgs += "-showWeaveInfo"
+        }
+    }
 }

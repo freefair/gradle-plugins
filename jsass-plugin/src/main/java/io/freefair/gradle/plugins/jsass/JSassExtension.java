@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 @Getter
 @Setter
+@Deprecated
 public class JSassExtension {
 
     private final Property<String> indent;

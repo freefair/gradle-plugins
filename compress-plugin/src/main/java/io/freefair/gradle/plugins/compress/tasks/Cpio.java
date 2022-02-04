@@ -77,7 +77,7 @@ public class Cpio extends AbstractArchiveTask {
     @SneakyThrows
     private WorkResult execute(CopyActionProcessingStream copyActionProcessingStream) {
         try (CpioArchiveOutputStream archiveOutputStream = new CpioArchiveOutputStream(
-                new FileOutputStream(getArchivePath()),
+                new FileOutputStream(getArchiveFile().get().getAsFile()),
                 format.get(),
                 blockSize.get(),
                 encoding.get()

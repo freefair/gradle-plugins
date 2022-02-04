@@ -4,7 +4,7 @@ import io.freefair.gradle.plugins.compress.internal.SevenZipArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.internal.hash.FileHasher;
-import org.gradle.internal.nativeintegration.filesystem.Chmod;
+import org.gradle.internal.file.Chmod;
 
 import java.io.File;
 
@@ -26,9 +26,10 @@ public class SevenZipFileTree extends ArchiveFileTree<SevenZipArchiveInputStream
 
         @Override
         public long getLastModified() {
-            if(getArchiveEntry().getHasLastModifiedDate()) {
+            if (getArchiveEntry().getHasLastModifiedDate()) {
                 return getArchiveEntry().getLastModifiedDate().getTime();
-            } else {
+            }
+            else {
                 return 0;
             }
         }

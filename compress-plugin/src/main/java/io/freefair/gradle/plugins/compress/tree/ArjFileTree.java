@@ -4,7 +4,7 @@ import org.apache.commons.compress.archivers.arj.ArjArchiveEntry;
 import org.apache.commons.compress.archivers.arj.ArjArchiveInputStream;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.internal.hash.FileHasher;
-import org.gradle.internal.nativeintegration.filesystem.Chmod;
+import org.gradle.internal.file.Chmod;
 
 import java.io.File;
 
@@ -28,6 +28,7 @@ public class ArjFileTree extends ArchiveFileTree<ArjArchiveInputStream, ArjArchi
             super(chmod);
         }
 
+        @SuppressWarnings("OctalInteger")
         public int getMode() {
             int unixMode = getArchiveEntry().getUnixMode() & 0777;
             if (unixMode == 0) {

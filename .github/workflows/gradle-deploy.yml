@@ -1,0 +1,43 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Deploy Docs
+
+on:
+  push:
+    branches-ignore:
+      - 'dependabot**'
+
+jobs:
+  deploy-plugin:
+    runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_freefairDocsUser: ${{ secrets.FREEFAIR_DOCS_USER }}
+      ORG_GRADLE_PROJECT_freefairDocsPass: ${{ secrets.FREEFAIR_DOCS_PASS }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - run: ./gradlew uploadDocs -s
+
+  deploy-example:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    defaults:
+      run:
+        working-directory: examples
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'temurin'
+      - run: ./gradlew github:assemble -s
+      - run: ./gradlew github:publish -s
+      - run: cat github/build/publications/mavenJava/pom-default.xml
+

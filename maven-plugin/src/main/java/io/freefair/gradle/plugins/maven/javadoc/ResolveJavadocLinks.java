@@ -14,11 +14,13 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.UnionFileCollection;
 import org.gradle.api.logging.Logger;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
-import org.gradle.jvm.internal.toolchain.JavaToolChainInternal;
-import org.gradle.jvm.toolchain.JavaToolChain;
+import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.jvm.toolchain.JavadocTool;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -58,7 +60,7 @@ public class ResolveJavadocLinks implements Action<Task> {
                         return wellKnownLink;
                     }
                     else {
-                        String javadocIoLink = String.format("https://static.javadoc.io/%s/%s/%s/", group, artifact, version);
+                        String javadocIoLink = String.format("https://www.javadoc.io/doc/%s/%s/%s/", group, artifact, version);
                         if (checkLink(javadocIoLink)) {
                             javadoc.getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
                             return javadocIoLink;
@@ -70,6 +72,24 @@ public class ResolveJavadocLinks implements Action<Task> {
                 })
                 .filter(Objects::nonNull)
                 .forEach(this::addLink);
+    }
+
+    private Stream<Configuration> findConfigurations(Object classpath) {
+        if (classpath instanceof FileCollection) {
+            return findConfigurations((FileCollection) classpath);
+        }
+        else if (classpath instanceof Provider) {
+            Provider<?> provider = (Provider<?>) classpath;
+            if (provider.isPresent()) {
+                return findConfigurations(provider.get());
+            }
+            else {
+                return Stream.empty();
+            }
+        }
+        else {
+            return Stream.empty();
+        }
     }
 
     private Stream<Configuration> findConfigurations(FileCollection classpath) {
@@ -84,8 +104,6 @@ public class ResolveJavadocLinks implements Action<Task> {
         else if (classpath instanceof ConfigurableFileCollection) {
             return ((ConfigurableFileCollection) classpath).getFrom()
                     .stream()
-                    .filter(FileCollection.class::isInstance)
-                    .map(FileCollection.class::cast)
                     .flatMap(this::findConfigurations);
 
         }
@@ -136,7 +154,7 @@ public class ResolveJavadocLinks implements Action<Task> {
         }
 
         if (group.equals("org.springframework") && artifact.startsWith("spring-")) {
-            return "https://docs.spring.io/spring/docs/" + version + "/javadoc-api/";
+            return "https://docs.spring.io/spring-framework/docs/" + version + "/javadoc-api/";
         }
 
         if (group.equals("org.springframework.boot") && artifact.startsWith("spring-boot")) {
@@ -160,7 +178,12 @@ public class ResolveJavadocLinks implements Action<Task> {
         }
 
         if (group.equals("com.squareup.okhttp3")) {
-            return "https://square.github.io/okhttp/3.x/" + artifact + "/";
+            if (version.startsWith("3.")) {
+                return "https://square.github.io/okhttp/3.x/" + artifact + "/";
+            }
+            if (version.startsWith("4.")) {
+                return "https://square.github.io/okhttp/4.x/" + artifact + "/";
+            }
         }
 
         if (group.equals("com.squareup.retrofit")) {
@@ -206,9 +229,10 @@ public class ResolveJavadocLinks implements Action<Task> {
     private String getJavaSeLink() {
         JavaVersion javaVersion = JavaVersion.current();
 
-        JavaToolChain toolChain = javadoc.getToolChain();
-        if (toolChain instanceof JavaToolChainInternal) {
-            javaVersion = ((JavaToolChainInternal) toolChain).getJavaVersion();
+        Property<JavadocTool> javadocTool = javadoc.getJavadocTool();
+        if (javadocTool.isPresent()) {
+            JavaLanguageVersion languageVersion = javadocTool.get().getMetadata().getLanguageVersion();
+            javaVersion = JavaVersion.toVersion(languageVersion.asInt());
         }
 
         if (javaVersion.isJava11Compatible()) {

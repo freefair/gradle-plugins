@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.github;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -12,7 +13,8 @@ import java.util.regex.Pattern;
 /**
  * @author Lars Grefer
  */
-@Data
+@Getter
+@Setter
 public class GithubExtension {
 
     private final static Pattern slugPattern = Pattern.compile("(.*)/(.*)");
@@ -45,7 +47,7 @@ public class GithubExtension {
 
         tag = objectFactory.property(String.class).convention("HEAD");
 
-        travis = objectFactory.property(Boolean.class);
+        travis = objectFactory.property(Boolean.class).convention(false);
     }
 
     public Provider<String> getOwner() {

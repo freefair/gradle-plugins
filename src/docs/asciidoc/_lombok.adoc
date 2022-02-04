@@ -19,7 +19,7 @@ The used Lombok version can be customized using the `lombok` extension:
 [source,groovy]
 ----
 lombok {
-    version = "1.18.8"
+    version = "1.18.20"
 }
 ----
 
@@ -30,24 +30,27 @@ This plugin simplifies the use of https://projectlombok.org/[Lombok] in Gradle b
 - Lombok is added to the `annotationProcessor` and `compileOnly` configurations of each source set
 - For each source set a `delombok` task is created.
 - The `javadoc` task will be configured to read the delombok-ed sources instead of the actual sources.
-- A `generateLombokConfig` will be added to the project, which generates the `lombok.config` file
-based on the `lombok` extension.
+- `lombok-mapstruct-binding` is added to each source-set when 'org.mapstruct:mapstruct-processor' is found.
+- The compile tasks for each source set will consider the `lombok.config`(s) in their up-to-date checks
 
-==== `lombok.config` handling
-
-.Disable `lombok.config` generation
+[NOTE]
+====
+Only the default `javadoc` https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.tasks.javadoc.Javadoc.html[Javadoc] task will be modified to work on the delombok-ed sources.
+If you create your own custom https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.tasks.javadoc.Javadoc.html[Javadoc] tasks, it's up to you to assign the correct `source`.
+The `delombok` task created by this plugin can be used as source for the javadoc task:
 [source,groovy]
 ----
-generateLombokConfig.enabled = false
-----
-
-.Modifying the generated `lombok.config` file
-[source,groovy]
-----
-lombok {
-    config['lombok.log.fieldName'] = 'LOG'
+task myJavadocs(type: Javadoc) {
+  source = delombok
 }
 ----
+====
+
+[NOTE]
+====
+In contrast to the `javadoc` task, the `sourcesJar` task is *not* adjusted to use the delomboked sources.
+This is done on purpose, so the line numbers in the `-sources.jar` match the `LineNumberTable` in the generated class files.
+====
 
 == Lombok Tasks
 
@@ -57,3 +60,4 @@ The following task are provided:
 - link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokApiJar.html[`io.freefair.gradle.plugins.lombok.tasks.LombokApiJar`]
 - link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokRuntimeJar.html[`io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar`]
 - link:../api/io/freefair/gradle/plugins/lombok/tasks/PostCompile.html[`io.freefair.gradle.plugins.lombok.tasks.PostCompile`]
+- link:../api/io/freefair/gradle/plugins/lombok/tasks/LombokConfig.html[`io.freefair.gradle.plugins.lombok.tasks.LombokConfig`]

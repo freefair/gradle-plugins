@@ -4,9 +4,9 @@ import org.gradle.api.Project;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.net.URL;
 
@@ -17,14 +17,14 @@ public class CompressFileOperationsImplTest {
 
     private CompressFileOperationsImpl compressFileOperations;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Project project = ProjectBuilder.builder().build();
         compressFileOperations = new CompressFileOperationsImpl((ProjectInternal) project);
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void arTree() {
         URL resource = getClass().getResource("/test.ar");
 

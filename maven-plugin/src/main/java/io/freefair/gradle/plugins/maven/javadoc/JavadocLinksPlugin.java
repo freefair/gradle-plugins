@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.maven.javadoc;
 import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
 import lombok.Getter;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.javadoc.Javadoc;

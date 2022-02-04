@@ -10,11 +10,12 @@ import org.apache.commons.compress.archivers.dump.DumpArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.internal.file.FileOperations;
-import org.gradle.api.internal.file.FileResolver;
-import org.gradle.api.internal.file.TemporaryFileProvider;
+import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.FileTreeAdapter;
 import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.tasks.util.PatternSet;
+import org.gradle.internal.Factory;
 import org.gradle.internal.hash.FileHasher;
 import org.gradle.internal.nativeintegration.filesystem.FileSystem;
 
@@ -29,26 +30,26 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private final FileOperations fileOperations;
 
     private final TemporaryFileProvider temporaryFileProvider;
-    private final FileResolver fileResolver;
     private final FileHasher fileHasher;
     private final FileSystem fileSystem;
     private final DirectoryFileTreeFactory directoryFileTreeFactory;
+    private final Factory<PatternSet> patternSetFactory;
 
     public CompressFileOperationsImpl(ProjectInternal project) {
         fileOperations = project.getFileOperations();
 
         temporaryFileProvider = project.getServices().get(TemporaryFileProvider.class);
-        fileResolver = project.getFileResolver();
         fileHasher = project.getServices().get(FileHasher.class);
         fileSystem = project.getServices().get(FileSystem.class);
         directoryFileTreeFactory = project.getServices().get(DirectoryFileTreeFactory.class);
+        patternSetFactory = project.getServices().getFactory(PatternSet.class);
     }
 
     @Override
     public FileTree arTree(Object arPath) {
         File file = fileOperations.file(arPath);
         ArFileTree arFileTree = new ArFileTree(file, f -> new ArArchiveInputStream(new FileInputStream(f)), getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(arFileTree, fileResolver.getPatternSetFactory());
+        return new FileTreeAdapter(arFileTree, patternSetFactory);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private FileTree arjTree(Object arjFile, ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(arjFile);
         ArjFileTree arjFileTree = new ArjFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(arjFileTree, fileResolver.getPatternSetFactory());
+        return new FileTreeAdapter(arjFileTree, patternSetFactory);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private FileTree cpioTree(Object arPath, ArchiveInputStreamProvider<CpioArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(arPath);
         ArchiveFileTree<CpioArchiveInputStream, CpioArchiveEntry> cpioFileTree = new ArchiveFileTree<>(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(cpioFileTree, fileResolver.getPatternSetFactory());
+        return new FileTreeAdapter(cpioFileTree, patternSetFactory);
     }
 
     @Override
@@ -106,7 +107,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private FileTree sevenZipTree(Object sevenZipFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(sevenZipFile);
         SevenZipFileTree sevenZipFileTree = new SevenZipFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(sevenZipFileTree, fileResolver.getPatternSetFactory());
+        return new FileTreeAdapter(sevenZipFileTree, patternSetFactory);
     }
 
     @Override
@@ -122,7 +123,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private FileTree dumpTree(Object dumpFile, ArchiveInputStreamProvider<DumpArchiveInputStream> inputStreamProvider) {
         File file = fileOperations.file(dumpFile);
         DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(dumpFileTree, fileResolver.getPatternSetFactory());
+        return new FileTreeAdapter(dumpFileTree, patternSetFactory);
     }
 
     private File getExpandDir() {

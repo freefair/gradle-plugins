@@ -32,6 +32,12 @@ public class AjcAction implements Action<Task> {
 
     private final AspectJCompileOptions options;
 
+    private final ConfigurableFileCollection additionalInpath;
+
+    public void options(Action<AspectJCompileOptions> action) {
+        action.execute(getOptions());
+    }
+
     @Getter(AccessLevel.NONE)
     private final JavaExecHandleFactory javaExecHandleFactory;
 
@@ -39,13 +45,14 @@ public class AjcAction implements Action<Task> {
     public AjcAction(ObjectFactory objectFactory, JavaExecHandleFactory javaExecHandleFactory) {
         options = new AspectJCompileOptions(objectFactory);
         classpath = objectFactory.fileCollection();
+        additionalInpath = objectFactory.fileCollection();
 
         enabled = objectFactory.property(Boolean.class).convention(true);
         this.javaExecHandleFactory = javaExecHandleFactory;
     }
 
-
-    void addToTask(Task task) {
+    @SuppressWarnings("WeakerAccess")
+    public void addToTask(Task task) {
         task.doLast("ajc", this);
         task.getExtensions().add("ajc", this);
 
@@ -85,7 +92,7 @@ public class AjcAction implements Action<Task> {
     private AspectJCompileSpec createSpec(AbstractCompile compile) {
         AspectJCompileSpec spec = new AspectJCompileSpec();
 
-        spec.setDestinationDir(compile.getDestinationDir());
+        spec.setDestinationDir(compile.getDestinationDirectory().get().getAsFile());
         spec.setWorkingDir(compile.getProject().getProjectDir());
         spec.setTempDir(compile.getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(compile.getClasspath().filter(File::exists).getFiles()));
@@ -94,8 +101,7 @@ public class AjcAction implements Action<Task> {
 
         spec.setAspectJClasspath(getClasspath());
         spec.setAspectJCompileOptions(getOptions());
-
-        spec.getAspectJCompileOptions().getInpath().from(compile.getDestinationDir());
+        spec.setAdditionalInpath(getAdditionalInpath());
 
         return spec;
     }

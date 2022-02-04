@@ -4,12 +4,8 @@ import io.freefair.gradle.plugins.github.internal.GitUtils;
 import io.freefair.gradle.plugins.github.internal.GithubClient;
 import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
 import lombok.Getter;
-import okhttp3.OkHttpClient;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.internal.project.ProjectInternal;
-import org.gradle.api.provider.Provider;
-import org.gradle.initialization.layout.ProjectCacheDir;
 
 import java.io.File;
 
@@ -41,6 +37,9 @@ public class GithubBasePlugin implements Plugin<Project> {
         githubExtension.getTravis().convention(project.provider(this::isTravis));
         githubExtension.getTag().convention(project.provider(() -> GitUtils.getTag(project)));
 
+        githubExtension.getUsername().convention(project.provider(() -> GitUtils.findGithubUsername(project)));
+        githubExtension.getToken().convention(project.provider(() -> GitUtils.findGithubToken(project)));
+
         OkHttpPlugin okHttpPlugin = project.getPlugins().apply(OkHttpPlugin.class);
 
         githubClient = new GithubClient(githubExtension, okHttpPlugin.getOkHttpClient());
@@ -48,9 +47,11 @@ public class GithubBasePlugin implements Plugin<Project> {
 
     private boolean isTravis() {
 
-        String travisEnv = System.getenv("TRAVIS");
-        if (travisEnv != null) {
-            return travisEnv.trim().equalsIgnoreCase("true");
+        if (GitUtils.currentlyRunningOnTravisCi()) {
+            return true;
+        }
+        else if (GitUtils.currentlyRunningOnGithubActions()) {
+            return false;
         }
 
         if (new File(GitUtils.findWorkingDirectory(project), ".travis.yml").isFile()) {

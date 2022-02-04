@@ -12,10 +12,10 @@ import java.io.File;
 
 @Getter
 @Setter
+@Deprecated
 public class PrepareWebjars extends DefaultTask {
 
     @OutputDirectory
-    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty outputDirectory = getProject().getObjects().directoryProperty();
 
     @InputFiles

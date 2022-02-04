@@ -5,29 +5,34 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.10.1"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.0"
-        classpath "io.freefair.gradle:maven-plugin:3.8.4"
-        classpath "io.freefair.gradle:lombok-plugin:3.8.4"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.20.0"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
+
+        def pluginVersion = "6.3.0"
+        classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
+        classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
+        classpath "io.freefair.gradle:git-plugin:$pluginVersion"
     }
 }
 
 plugins {
-    id 'org.asciidoctor.jvm.convert' version '2.2.0'
-    id 'io.freefair.git-version' version '3.8.4'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
-apply plugin: "io.codearte.nexus-staging"
+apply plugin: 'io.freefair.git-version'
+apply plugin: 'io.codearte.nexus-staging'
 
 nexusStaging {
     stagingProfileId = '7e6204597a774f'
     username = findProperty('ossrhUser')
     password = findProperty('ossrhPass')
+    delayBetweenRetriesInMillis = 5000
 }
 
 allprojects {
     repositories {
         mavenCentral()
+        gradlePluginPortal()
     }
 
     group = "io.freefair.gradle"
@@ -35,6 +40,7 @@ allprojects {
 
     plugins.withId("java") {
         javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+        javadoc.options.addBooleanOption("Xdoclint:-missing", true)
         javadoc.failOnError = false
 
         sourceCompatibility = 1.8
@@ -44,17 +50,25 @@ allprojects {
         plugins.apply "io.freefair.lombok"
         plugins.apply "io.freefair.javadoc-links"
 
-        jacocoTestReport.reports.xml.enabled = true
+        jacocoTestReport.reports.xml.required = true
+
+        java.withSourcesJar()
+        java.withJavadocJar()
+
+        test.useJUnitPlatform()
+
+        dependencies {
+            testImplementation 'org.assertj:assertj-core:3.22.0'
+            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+            testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
+            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+        }
     }
 
     plugins.withId("com.gradle.plugin-publish") {
         pluginBundle {
-            website = "https://github.com/freefair/gradle-plugins/tree/${version == 'unspecified' ? 'master' : version}${projectDir.toString() - rootDir.toString()}"
+            website = "https://docs.freefair.io/gradle-plugins/$version/reference/"
             vcsUrl = 'https://github.com/freefair/gradle-plugins'
-
-            mavenCoordinates {
-                groupId = project.group
-            }
         }
     }
 
@@ -74,7 +88,7 @@ allprojects {
                     }
                     organization {
                         name = 'FreeFair'
-                        url = 'http://joinfaces.org'
+                        url = 'https://github.com/freefair'
                     }
                     developers {
                         developer {
@@ -91,11 +105,11 @@ allprojects {
                         }
                     }
                     ciManagement {
-                        system = 'Travis CI'
-                        url = 'https://travis-ci.org/freefair/gradle-plugins/'
+                        system = 'GitHub Actions'
+                        url = 'https://github.com/freefair/gradle-plugins/actions'
                     }
                     issueManagement {
-                        system = 'Github'
+                        system = 'GitHub Issues'
                         url = 'https://github.com/freefair/gradle-plugins/issues'
                     }
                     scm {
@@ -122,6 +136,7 @@ apply plugin: "io.freefair.javadoc-links"
 
 aggregateJavadoc.failOnError = false
 aggregateJavadoc.options.links "https://docs.gradle.org/${gradle.gradleVersion}/javadoc/"
+aggregateJavadoc.options.addBooleanOption("Xdoclint:-missing", true)
 
 task docsZip(type: Zip) {
     group = 'build'
@@ -143,4 +158,8 @@ task uploadDocs(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
     file = docsZip.archiveFile
     contentType = 'application/zip'
     url = "https://docs.freefair.io/api/$project.version?path=gradle-plugins"
+}
+
+tasks.named('wrapper') {
+    distributionType = Wrapper.DistributionType.ALL
 }

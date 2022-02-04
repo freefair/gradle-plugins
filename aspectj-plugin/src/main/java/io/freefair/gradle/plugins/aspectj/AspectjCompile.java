@@ -3,7 +3,10 @@ package io.freefair.gradle.plugins.aspectj;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompileSpec;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompiler;
 import lombok.Getter;
+import org.gradle.api.Action;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileCollection;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.CompileOptions;
@@ -24,10 +27,26 @@ public class AspectjCompile extends AbstractCompile {
     @Nested
     private final AspectJCompileOptions ajcOptions = getProject().getObjects().newInstance(AspectJCompileOptions.class);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @InputFiles
+    @SkipWhenEmpty
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public FileTree getSource() {
+        return super.getSource();
+    }
+
+    @Override
+    @CompileClasspath
+    public FileCollection getClasspath() {
+        return super.getClasspath();
+    }
+
     @TaskAction
     protected void compile() {
-        getProject().delete(getDestinationDir());
+        getProject().delete(getDestinationDirectory());
 
         AspectJCompileSpec spec = createSpec();
         WorkResult result = getCompiler().execute(spec);
@@ -41,7 +60,7 @@ public class AspectjCompile extends AbstractCompile {
     private AspectJCompileSpec createSpec() {
         AspectJCompileSpec spec = new AspectJCompileSpec();
         spec.setSourceFiles(getSource());
-        spec.setDestinationDir(getDestinationDir());
+        spec.setDestinationDir(getDestinationDirectory().getAsFile().get());
         spec.setWorkingDir(getProject().getProjectDir());
         spec.setTempDir(getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(getClasspath().getFiles()));
@@ -51,6 +70,14 @@ public class AspectjCompile extends AbstractCompile {
         spec.setAspectJCompileOptions(getAjcOptions());
 
         return spec;
+    }
+
+    public void options(Action<CompileOptions> action) {
+        action.execute(getOptions());
+    }
+
+    public void ajcOptions(Action<AspectJCompileOptions> action) {
+        action.execute(getAjcOptions());
     }
 
 }

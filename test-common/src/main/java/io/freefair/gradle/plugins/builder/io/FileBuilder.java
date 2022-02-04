@@ -1,9 +1,8 @@
 package io.freefair.gradle.plugins.builder.io;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class FileBuilder {
     private File file;
@@ -86,7 +85,7 @@ public class FileBuilder {
 
     public void write() {
         try {
-            FileUtils.write(file, stringBuilder.toString(), Charset.defaultCharset());
+            Files.write(file.toPath(), stringBuilder.toString().getBytes(StandardCharsets.UTF_8));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

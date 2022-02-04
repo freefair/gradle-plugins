@@ -66,7 +66,6 @@ public class Delombok extends DefaultTask implements LombokTask {
      * Directory to save delomboked files to.
      */
     @OutputDirectory
-    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty target = getProject().getObjects().directoryProperty();
 
     /**
@@ -90,6 +89,13 @@ public class Delombok extends DefaultTask implements LombokTask {
     @Classpath
     @Optional
     private final ConfigurableFileCollection bootclasspath = getProject().files();
+
+    /**
+     * Module path (analogous to javac --module-path option)
+     */
+    @Classpath
+    @Optional
+    private final ConfigurableFileCollection modulePath = getProject().files();
 
     /**
      * Lombok will only delombok source files.
@@ -128,7 +134,7 @@ public class Delombok extends DefaultTask implements LombokTask {
             args.add("--verbose");
         }
         getFormat().forEach((key, value) -> {
-            String formatValue = key + (GUtil.isTrue(value) ? ":" + value : "");
+            String formatValue = key + (value != null && !value.isEmpty() ? ":" + value : "");
             args.add("--format=" + formatValue);
         });
         if (quiet.getOrElse(false)) {
@@ -156,6 +162,10 @@ public class Delombok extends DefaultTask implements LombokTask {
             args.add("--bootclasspath=" + escape(getBootclasspath().getAsPath()));
         }
 
+        if (!modulePath.isEmpty()) {
+            args.add("--module-path=" + escape(getModulePath().getAsPath()));
+        }
+
         if (nocopy.getOrElse(false)) {
             args.add("--nocopy");
         }
@@ -166,7 +176,7 @@ public class Delombok extends DefaultTask implements LombokTask {
 
         getProject().javaexec(delombok -> {
             delombok.setClasspath(getLombokClasspath());
-            delombok.setMain("lombok.launch.Main");
+            delombok.getMainClass().set("lombok.launch.Main");
             delombok.args("delombok");
 
             delombok.args("@" + optionsFile);

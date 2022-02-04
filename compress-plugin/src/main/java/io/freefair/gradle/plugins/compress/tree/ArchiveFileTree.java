@@ -12,23 +12,17 @@ import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.file.AbstractFileTreeElement;
-import org.gradle.api.internal.file.FileSystemSubset;
+import org.gradle.api.internal.file.archive.AbstractArchiveFileTree;
 import org.gradle.api.internal.file.archive.ZipFileTree;
-import org.gradle.api.internal.file.collections.DefaultSingletonFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
-import org.gradle.api.internal.file.collections.FileSystemMirroringFileTree;
+import org.gradle.api.provider.Provider;
+import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
-import org.gradle.internal.nativeintegration.filesystem.Chmod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -36,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @see ZipFileTree
  */
 @RequiredArgsConstructor
-public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEntry> implements FileSystemMirroringFileTree {
+public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEntry> extends AbstractArchiveFileTree {
 
     private final File archiveFile;
     private final ArchiveInputStreamProvider<IS> inputStreamProvider;
@@ -78,7 +72,8 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
                     try {
                         if (archiveEntry.isDirectory()) {
                             visitor.visitDir(details);
-                        } else {
+                        }
+                        else {
                             visitor.visitFile(details);
                         }
                     } finally {
@@ -98,27 +93,14 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
         return String.format("archive '%s'", archiveFile);
     }
 
-    @Override
-    public void registerWatchPoints(FileSystemSubset.Builder builder) {
-        builder.add(archiveFile);
-    }
-
-    /**
-     * @see ZipFileTree#visitTreeOrBackingFile(FileVisitor)
-     */
-    @Override
-    public void visitTreeOrBackingFile(FileVisitor visitor) {
-        File backingFile = archiveFile;
-        if (backingFile != null) {
-            new DefaultSingletonFileTree(backingFile).visit(visitor);
-        } else {
-            visit(visitor);
-        }
-    }
-
     private File getExpandedDir() {
         String expandedDirName = archiveFile.getName() + "_" + fileHasher.hash(archiveFile);
         return new File(tmpDir, expandedDirName);
+    }
+
+    @Override
+    protected Provider<File> getBackingFileProvider() {
+        return null;
     }
 
     @Getter

@@ -21,8 +21,20 @@ public class GitUtils {
     private static final Pattern httpsUrlPattern = Pattern.compile("https://github\\.com/(.+/.+)\\.git");
     private static final Pattern sshUrlPattern = Pattern.compile("git@github.com:(.+/.+)\\.git");
 
+    public static boolean currentlyRunningOnTravisCi() {
+        return "true".equals(System.getenv("CI")) && "true".equals(System.getenv("TRAVIS"));
+    }
+
+    public static boolean currentlyRunningOnGithubActions() {
+        return "true".equals(System.getenv("GITHUB_ACTIONS"));
+    }
+
     @Nullable
     public static String findSlug(Project project) {
+
+        if (currentlyRunningOnGithubActions()) {
+            return System.getenv("GITHUB_REPOSITORY");
+        }
 
         String travisSlug = findTravisSlug(project);
 
@@ -48,9 +60,8 @@ public class GitUtils {
     @Nullable
     public String findTravisSlug(Project project) {
 
-        String travisSlugEnv = System.getenv("TRAVIS_REPO_SLUG");
-        if (travisSlugEnv != null) {
-            return travisSlugEnv.trim();
+        if (currentlyRunningOnTravisCi()) {
+            return System.getenv("TRAVIS_REPO_SLUG");
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -84,9 +95,11 @@ public class GitUtils {
 
     public File findWorkingDirectory(Project project) {
 
-        String travisBuildDirEnv = System.getenv("TRAVIS_BUILD_DIR");
-        if (travisBuildDirEnv != null) {
-            return new File(travisBuildDirEnv);
+        if (currentlyRunningOnTravisCi()) {
+            return new File(System.getenv("TRAVIS_BUILD_DIR"));
+        }
+        else if (currentlyRunningOnGithubActions()) {
+            return new File(System.getenv("GITHUB_WORKSPACE"));
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -107,10 +120,22 @@ public class GitUtils {
     }
 
     public String getTag(Project project) {
-        String travisTagEnv = System.getenv("TRAVIS_TAG");
 
-        if (travisTagEnv != null) {
-            return travisTagEnv.trim();
+        if (currentlyRunningOnTravisCi()) {
+            String travisTagEnv = System.getenv("TRAVIS_TAG");
+
+            if (travisTagEnv != null && !travisTagEnv.isEmpty()) {
+                return travisTagEnv;
+            }
+        }
+
+        if (currentlyRunningOnGithubActions()) {
+            String githubRef = System.getenv("GITHUB_REF");
+            if (githubRef != null) {
+                if (githubRef.startsWith("refs/tags/")) {
+                    return githubRef.substring("refs/tags/".length());
+                }
+            }
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -129,5 +154,34 @@ public class GitUtils {
         }
 
         return "HEAD";
+    }
+
+    @Nullable
+    public String findGithubUsername(Project project) {
+        if (currentlyRunningOnGithubActions()) {
+            return System.getenv("GITHUB_ACTOR");
+        }
+
+        Object githubUsername = project.findProperty("githubUsername");
+        if (githubUsername != null) {
+            return githubUsername.toString();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public String findGithubToken(Project project) {
+        String github_token = System.getenv("GITHUB_TOKEN");
+        if (github_token != null) {
+            return github_token;
+        }
+
+        Object githubToken = project.findProperty("githubToken");
+        if (githubToken != null) {
+            return githubToken.toString();
+        }
+
+        return null;
     }
 }

@@ -1,0 +1,12 @@
+plugins {
+    id "io.freefair.maven-plugin"
+    id "java-library"
+}
+
+dependencies {
+    api 'org.apache.maven:maven-core:3.0'
+    api 'org.apache.maven:maven-model:3.0'
+    api 'org.apache.maven:maven-plugin-api:3.0'
+
+    compileOnly 'org.apache.maven.plugin-tools:maven-plugin-annotations:3.4'
+}

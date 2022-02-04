@@ -8,7 +8,6 @@ import org.gradle.api.provider.Property;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.File;
 import java.io.IOException;
 
 @Slf4j
@@ -27,6 +26,10 @@ public class GithubClient {
                     if (username.isPresent() && token.isPresent()) {
                         request = request.newBuilder()
                                 .header("Authorization", Credentials.basic(username.get(), token.get()))
+                                .build();
+                    } else if(token.isPresent()) {
+                        request = request.newBuilder()
+                                .header("Authorization", "Bearer " + token.get())
                                 .build();
                     }
                     return chain.proceed(request);

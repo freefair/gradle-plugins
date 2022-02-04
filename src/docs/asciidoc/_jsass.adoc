@@ -1,5 +1,8 @@
 = JSass
 
+WARNING: The JSass plugin is deprecated and should not be used anymore.
+Use the Embedded Sass plugin instead.
+
 https://gitlab.com/jsass/jsass
 
 == JSass Plugins
@@ -54,4 +57,3 @@ https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.P
 
 This plugin creates a `compileWebappSass` for the `src/main/webapp` folder of your `war` project.
 
-== JSass Tasks

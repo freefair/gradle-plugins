@@ -1,19 +1,14 @@
 package io.freefair.gradle.plugins.github;
 
-import io.freefair.gradle.plugins.github.internal.GithubService;
-import io.freefair.gradle.plugins.github.internal.License;
-import io.freefair.gradle.plugins.github.internal.Repo;
-import io.freefair.gradle.plugins.github.internal.User;
+import io.freefair.gradle.plugins.github.internal.*;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.publish.PublishingExtension;
 import org.gradle.api.publish.maven.MavenPublication;
 import org.gradle.api.publish.maven.internal.publication.MavenPomInternal;
 import org.gradle.api.publish.plugins.PublishingPlugin;
 
-import java.time.ZoneId;
-import java.util.Optional;
+import java.io.IOException;
 
 /**
  * @author Lars Grefer
@@ -25,6 +20,10 @@ public class GithubPomPlugin implements Plugin<Project> {
     private Project project;
     private GithubBasePlugin githubBasePlugin;
     private GithubService githubService;
+    private String slug;
+    private Repo repo;
+    private User user;
+    private License ghLicense;
 
     @Override
     public void apply(Project project) {
@@ -34,97 +33,106 @@ public class GithubPomPlugin implements Plugin<Project> {
         githubExtension = githubBasePlugin.getGithubExtension();
         githubService = githubBasePlugin.getGithubClient().getGithubService();
 
-        project.getPlugins().withType(PublishingPlugin.class, publishingPlugin -> {
+        project.afterEvaluate(p -> {
 
-            project.getExtensions().getByType(PublishingExtension.class).getPublications()
-                    .withType(MavenPublication.class, this::configureMavenPublication);
+            slug = githubExtension.getSlug().get();
 
+            try {
+                repo = githubService.getRepository(slug).execute().body();
+                user = githubService.getUser(githubExtension.getOwner().get()).execute().body();
+                if (repo.getLicense() != null) {
+                    ghLicense = githubService.getLicense(repo.getLicense().getUrl()).execute().body();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            project.getPlugins().withType(PublishingPlugin.class, publishingPlugin -> {
+                project.getExtensions().getByType(PublishingExtension.class).getPublications()
+                        .withType(MavenPublication.class, this::configureMavenPublication);
+
+            });
         });
     }
 
     private void configureMavenPublication(MavenPublication mavenPublication) {
         mavenPublication.pom(pom -> {
-            pom.getUrl().convention(getRepo().map(repo -> hasText(repo.getHomepage()).orElse(repo.getHtml_url())));
-            pom.getDescription().convention(getRepo().flatMap(repo -> project.provider(() -> hasText(repo.getDescription()).orElse(project.getDescription()))));
+
+            if (hasText(repo.getHomepage())) {
+                pom.getUrl().convention(repo.getHomepage());
+            }
+            else {
+                pom.getUrl().convention(repo.getHtml_url());
+            }
+
+            if (hasText(repo.getDescription())) {
+                pom.getDescription().convention(repo.getDescription());
+            }
+            else {
+                pom.getDescription().convention(project.getDescription());
+            }
+
             pom.getName().convention(project.getName());
-            pom.getInceptionYear().convention(getRepo().map(repo -> repo.getCreated_at().substring(0, 4)));
+            pom.getInceptionYear().convention(repo.getCreated_at().substring(0, 4));
 
             pom.organization(organization -> {
-                organization.getName().convention(getUser().map(user -> hasText(user.getName()).orElse(user.getLogin())));
-                organization.getUrl().convention(getUser().map(user -> hasText(user.getBlog()).orElse(user.getHtml_url())));
-            });
-
-            project.afterEvaluate(rp -> {
-                if (githubExtension.getTravis().getOrElse(false)) {
-                    pom.ciManagement(ciManagement -> {
-                        ciManagement.getSystem().convention("Travis CI");
-                        ciManagement.getUrl().convention(githubExtension.getSlug().map(slug -> String.format("https://travis-ci.org/%s/", slug)));
-                    });
+                if (hasText(user.getName())) {
+                    organization.getName().convention(user.getName());
+                }
+                else {
+                    organization.getName().convention(user.getLogin());
                 }
 
-                if (getRepo().map(Repo::isHas_issues).getOrElse(true)) {
-                    pom.issueManagement(issueManagement -> {
-                        issueManagement.getSystem().convention("GitHub Issues");
-                        issueManagement.getUrl().convention(githubExtension.getSlug().map(slug -> String.format("https://github.com/%s/issues", slug)));
-                    });
+                if (hasText(user.getBlog())) {
+                    organization.getUrl().convention(user.getBlog());
                 }
-
-                if (getLicense().isPresent() && ((MavenPomInternal) pom).getLicenses().isEmpty()) {
-                    pom.licenses(licences -> {
-                        licences.license(licence -> {
-                            licence.getName().convention(getLicense().map(License::getName));
-                            licence.getUrl().convention(getLicense().map(License::getHtml_url));
-                            licence.getComments().convention(getLicense().map(License::getDescription));
-                        });
-                    });
+                else {
+                    organization.getUrl().convention(user.getHtml_url());
                 }
             });
+
+            if (githubExtension.getTravis().getOrElse(false)) {
+                pom.ciManagement(ciManagement -> {
+                    ciManagement.getSystem().convention("Travis CI");
+                    ciManagement.getUrl().convention(String.format("https://travis-ci.org/%s/", slug));
+                });
+            }
+            else if (GitUtils.currentlyRunningOnGithubActions()) {
+                pom.ciManagement(ciManagement -> {
+                    ciManagement.getSystem().convention("GitHub Actions");
+                    ciManagement.getUrl().convention(String.format("https://github.com/%s/actions", slug));
+                });
+            }
+
+            if (repo.isHas_issues()) {
+                pom.issueManagement(issueManagement -> {
+                    issueManagement.getSystem().convention("GitHub Issues");
+                    issueManagement.getUrl().convention(String.format("https://github.com/%s/issues", slug));
+                });
+            }
+
+            if (ghLicense != null && ((MavenPomInternal) pom).getLicenses().isEmpty()) {
+                pom.licenses(licences -> {
+                    licences.license(licence -> {
+                        licence.getName().convention(ghLicense.getName());
+                        licence.getUrl().convention(ghLicense.getHtml_url());
+                        licence.getComments().convention(ghLicense.getDescription());
+                    });
+                });
+            }
 
             pom.scm(scm -> {
-                scm.getUrl().convention(getRepo().map(Repo::getHtml_url));
-                scm.getConnection().convention(getRepo().map(repo -> "scm:git:" + repo.getClone_url()));
-                scm.getDeveloperConnection().convention(scm.getConnection());
+                scm.getUrl().convention(repo.getHtml_url());
+                scm.getConnection().convention("scm:git:" + repo.getClone_url());
+                scm.getDeveloperConnection().convention("scm:git:" + repo.getSsh_url());
                 scm.getTag().convention(githubExtension.getTag());
             });
-
 
         });
     }
 
-    private Provider<Repo> getRepo() {
-        return githubExtension.getSlug().flatMap(slug ->
-                project.provider(() ->
-                        githubService.getRepository(slug).execute().body()
-                )
-        );
+    private boolean hasText(String text) {
+        return text != null && !text.isEmpty();
     }
 
-    private Provider<User> getUser() {
-        return githubExtension.getOwner().flatMap(owner ->
-                project.provider(() ->
-                        githubService.getUser(owner).execute().body()
-                )
-        );
-    }
-
-    private Provider<License> getLicense() {
-        return getRepo().flatMap(repo ->
-                project.provider(() -> {
-                    String url = Optional.ofNullable(repo.getLicense())
-                            .map(License::getUrl)
-                            .orElse(null);
-
-                    if (url != null) {
-                        return githubService.getLicense(url).execute().body();
-                    }
-                    else {
-                        return null;
-                    }
-                })
-        );
-    }
-
-    private Optional<String> hasText(String val) {
-        return Optional.ofNullable(val).flatMap(s -> s.isEmpty() ? Optional.empty() : Optional.of(s));
-    }
 }

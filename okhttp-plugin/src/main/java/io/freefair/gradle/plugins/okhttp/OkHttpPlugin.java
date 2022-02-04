@@ -29,7 +29,7 @@ public class OkHttpPlugin implements Plugin<Project> {
     public OkHttpClient getOkHttpClient() {
         if (okHttpClient == null) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(project.getLogger()::info);
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            loggingInterceptor.level(HttpLoggingInterceptor.Level.BASIC);
 
             okHttpClient = new OkHttpClient.Builder()
                     .addInterceptor(chain -> {

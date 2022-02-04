@@ -3,13 +3,13 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    compile project(':maven-plugin')
+    api project(':maven-plugin')
 
-    compile 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.0'
-    compile 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.0'
-    compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.0'
+    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.4'
+    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.4'
+    compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.4'
 
-    testCompile project(":test-common")
+    testImplementation project(":test-common")
 }
 
 gradlePlugin {

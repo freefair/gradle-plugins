@@ -1,6 +1,8 @@
 package io.freefair.gradle.plugins.aspectj;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.gradle.api.Action;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.model.ObjectFactory;
@@ -20,7 +22,8 @@ import java.util.List;
  * @see org.gradle.api.tasks.compile.GroovyCompileOptions
  * @see org.gradle.api.tasks.scala.ScalaCompileOptions
  */
-@Data
+@Getter
+@Setter
 public class AspectJCompileOptions extends AbstractOptions {
 
     /**
@@ -118,7 +121,11 @@ public class AspectJCompileOptions extends AbstractOptions {
      * Options for running the compiler in a child process.
      */
     @Internal
-    private AjcForkOptions forkOptions = new AjcForkOptions();
+    private final AjcForkOptions forkOptions = new AjcForkOptions();
+
+    public void forkOptions(Action<AjcForkOptions> action) {
+        action.execute(getForkOptions());
+    }
 
     @Inject
     public AspectJCompileOptions(ObjectFactory objectFactory) {

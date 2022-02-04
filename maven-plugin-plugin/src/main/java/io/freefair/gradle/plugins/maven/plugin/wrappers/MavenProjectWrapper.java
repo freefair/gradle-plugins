@@ -6,13 +6,15 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * {@link MavenProject} implementation backed by a {@link Project gradle project}.
@@ -23,6 +25,9 @@ public class MavenProjectWrapper extends MavenProject {
 
     private final Project project;
     private final File pomFile;
+
+    private final SourceSet main;
+    private final SourceSet test;
 
     public MavenProjectWrapper(Project project, File pomFile) throws IOException, XmlPullParserException {
         this.project = project;
@@ -35,15 +40,15 @@ public class MavenProjectWrapper extends MavenProject {
 
         getBuild().setDirectory(project.getBuildDir().getAbsolutePath());
 
-        SourceSetContainer sourceSets = project.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
+        SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
 
-        SourceSet main = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+        main = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         getBuild().setSourceDirectory(main.getJava().getSrcDirs().iterator().next().getAbsolutePath());
-        getBuild().setOutputDirectory(main.getJava().getOutputDir().getAbsolutePath());
+        getBuild().setOutputDirectory(main.getJava().getClassesDirectory().get().getAsFile().getAbsolutePath());
 
-        SourceSet test = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
+        test = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
         getBuild().setTestSourceDirectory(test.getJava().getSrcDirs().iterator().next().getAbsolutePath());
-        getBuild().setTestOutputDirectory(test.getJava().getOutputDir().getAbsolutePath());
+        getBuild().setTestOutputDirectory(test.getJava().getClassesDirectory().get().getAsFile().getAbsolutePath());
 
         setArtifact(new ProjectArtifact(this));
     }
@@ -56,5 +61,19 @@ public class MavenProjectWrapper extends MavenProject {
     @Override
     public File getBasedir() {
         return project.getProjectDir();
+    }
+
+    @Override
+    public List<String> getCompileSourceRoots() {
+        return main.getJava().getSrcDirs().stream()
+                .map(File::getAbsolutePath)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getTestCompileSourceRoots() {
+        return test.getJava().getSrcDirs().stream()
+                .map(File::getAbsolutePath)
+                .collect(Collectors.toList());
     }
 }

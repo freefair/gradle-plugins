@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
  * @see org.gradle.api.tasks.GroovySourceSet
  * @see org.gradle.api.tasks.ScalaSourceSet
  */
+@Deprecated
 public interface AspectjSourceSet extends WeavingSourceSet {
 
     /**

@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +25,8 @@ public class ProjectContext implements Serializable {
 
 	@Getter(AccessLevel.PACKAGE)
 	private Map<String, Object> configurationValues;
+
+	private String sourceSet;
 
 	public String getNamespaceFromFile(File file) {
 		String absolutePath = file.getAbsolutePath();
@@ -54,7 +56,8 @@ public class ProjectContext implements Serializable {
 	}
 
 	public byte[] readFileToByteArray(String namespace, String filename) throws IOException {
-		return FileUtils.readFileToByteArray(buildFileFromParts(inputDir, namespace, filename));
+        File file = buildFileFromParts(inputDir, namespace, filename);
+        return Files.readAllBytes(file.toPath());
 	}
 
 	public String readFile(String namespace, String filename) throws IOException {
@@ -62,7 +65,8 @@ public class ProjectContext implements Serializable {
 	}
 
 	public String readFile(String namespace, String filename, String encoding) throws IOException {
-		return FileUtils.readFileToString(buildFileFromParts(inputDir, namespace, filename), encoding);
+	    File file = buildFileFromParts(inputDir, namespace, filename);
+	    return new String(Files.readAllBytes(file.toPath()), encoding);
 	}
 
 	public void writeOutputFile(String namespace, String filename, String content) throws IOException {
@@ -73,7 +77,7 @@ public class ProjectContext implements Serializable {
 		File file = buildFileFromParts(outputDir, namespace, filename);
 		boolean mkdirs = file.getParentFile().exists() || file.getParentFile().mkdirs();
 		if (!mkdirs) throw new IOException("Cannot create directory " + file.getParent());
-		FileUtils.writeByteArrayToFile(file, content);
+		Files.write(file.toPath(), content);
 	}
 
 	private File buildFileFromParts(String namespace, String filename) {

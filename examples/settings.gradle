@@ -2,6 +2,8 @@ rootProject.name = 'gradle-plugins-examples'
 
 includeBuild '..'
 
+include ":compress"
+
 include ":war:overlay"
 include ":war:overlay2"
 include ":war:archive-classes"
@@ -10,11 +12,19 @@ include ":jsass:java"
 include ":jsass:web"
 include ":jsass:webjars"
 
+include ":embedded-sass:java"
+include ":embedded-sass:web"
+include ":embedded-sass:webjars"
+
 include ":aspectj:aspect"
 include ":aspectj:weaving"
 include ":aspectj:httpcore-nio"
+include ":aspectj:test"
 
 include ":lombok"
+include ":lombok:sonarqube"
+include ":lombok:mapstruct"
+include ":lombok:xjc"
 
 include ":javadoc"
 
@@ -25,3 +35,10 @@ include ":jacoco:sub-b"
 include ":github"
 
 include ":mkdocs"
+
+include ":code-generator:use"
+include ":code-generator:generator"
+
+include ":test-maven-plugin"
+
+include 'quicktype'

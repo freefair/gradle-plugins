@@ -4,44 +4,42 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 import io.freefair.gradle.plugins.builder.gradle.GradleConfigurationBuilder;
 import io.freefair.gradle.plugins.builder.io.FileBuilder;
-import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
 public class AbstractPluginTest {
 
-    @Rule
-    public final TemporaryFolder testProjectDir = new TemporaryFolder();
+    @TempDir
+    protected File testProjectDir;
     protected File buildFile;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
-        buildFile = testProjectDir.newFile("build.gradle");
+        buildFile = new File(testProjectDir, "build.gradle");
     }
 
     protected void loadBuildFileFromClasspath(String name) throws IOException {
         InputStream resourceAsStream = getClass().getResourceAsStream(name);
+
         Files.copy(resourceAsStream, buildFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     protected File getTemporaryDirectory() {
-        return testProjectDir.getRoot();
+        return testProjectDir;
     }
 
     protected FileBuilder createFile(String fileName) {
         try {
-            return new FileBuilder(testProjectDir.newFile(fileName));
+            return new FileBuilder(new File(testProjectDir, fileName));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -57,7 +55,7 @@ public class AbstractPluginTest {
     }
 
     private File getFile(String directory, String fileName) throws IOException {
-        File root = new File(testProjectDir.getRoot(), directory);
+        File root = new File(testProjectDir, directory);
         if (!root.exists() && !root.mkdirs())
             throw new RuntimeException("Error while creating directories");
 
@@ -83,7 +81,7 @@ public class AbstractPluginTest {
             if(!direcotry.endsWith("/"))
                 direcotry += "/";
             String path = direcotry + packageName.replace(".", "/");
-            return FileUtils.readFileToString(getFile(path, className + ".java"), Charset.defaultCharset());
+            return new String(Files.readAllBytes(getFile(path, className + ".java").toPath()));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -93,7 +91,7 @@ public class AbstractPluginTest {
         try {
             String replace = "src/" + sourceSet + "/java/" + packageName.replace(".", "/");
             File file = getFile(replace, className + ".java");
-            return FileUtils.readFileToString(file, Charset.defaultCharset());
+            return new String(Files.readAllBytes(file.toPath()));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -107,7 +105,7 @@ public class AbstractPluginTest {
         String[] parameters = Arrays.copyOf(taskNames, taskNames.length + 1);
         parameters[taskNames.length] = "--stacktrace";
         return GradleRunner.create()
-                .withProjectDir(testProjectDir.getRoot())
+                .withProjectDir(testProjectDir)
                 .withPluginClasspath()
                 .withDebug(true)
                 .withArguments(parameters).build();

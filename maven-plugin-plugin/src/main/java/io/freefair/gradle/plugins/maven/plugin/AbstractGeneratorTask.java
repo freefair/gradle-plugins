@@ -5,9 +5,6 @@ import io.freefair.gradle.plugins.maven.plugin.wrappers.MojoAnnotationScannerWra
 import io.freefair.gradle.plugins.maven.plugin.wrappers.PlexusLoggerWrapper;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.maven.artifact.factory.DefaultArtifactFactory;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
 import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.plugin.AbstractGeneratorMojo;
@@ -19,7 +16,6 @@ import org.apache.maven.tools.plugin.extractor.annotations.JavaAnnotationsMojoDe
 import org.apache.maven.tools.plugin.extractor.annotations.scanner.DefaultMojoAnnotationsScanner;
 import org.apache.maven.tools.plugin.generator.Generator;
 import org.apache.maven.tools.plugin.generator.GeneratorException;
-import org.apache.maven.tools.plugin.generator.GeneratorUtils;
 import org.apache.maven.tools.plugin.scanner.DefaultMojoScanner;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
@@ -37,7 +33,6 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +43,7 @@ import java.util.stream.Collectors;
  * @author Lars Grefer
  * @see AbstractGeneratorMojo
  */
+@SuppressWarnings("JavadocReference")
 @Getter
 @Setter
 public abstract class AbstractGeneratorTask extends DefaultTask {
@@ -147,24 +143,36 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
     @Internal
     protected abstract File getBaseDir();
 
+    /**
+     * @see AbstractGeneratorMojo#mojoScanner
+     */
     private MojoScanner getMojoScanner() {
         Map<String, MojoDescriptorExtractor> extractors = new TreeMap<>();
+
+        extractors.put("java-annotations", getMojoDescriptorExtractor());
+
+        DefaultMojoScanner defaultMojoScanner = new DefaultMojoScanner(extractors);
+        defaultMojoScanner.enableLogging(new PlexusLoggerWrapper(getLogger()));
+        return defaultMojoScanner;
+    }
+
+    private JavaAnnotationsMojoDescriptorExtractor getMojoDescriptorExtractor() {
+        PlexusLoggerWrapper plexusLoggerWrapper = new PlexusLoggerWrapper(getLogger());
+
         JavaAnnotationsMojoDescriptorExtractor mojoDescriptorExtractor = new JavaAnnotationsMojoDescriptorExtractor();
+        mojoDescriptorExtractor.enableLogging(plexusLoggerWrapper);
 
         DefaultMojoAnnotationsScanner delegate = new DefaultMojoAnnotationsScanner();
-        delegate.enableLogging(new PlexusLoggerWrapper(getLogger()));
+        delegate.enableLogging(plexusLoggerWrapper);
+
         MojoAnnotationScannerWrapper mojoAnnotationsScanner = new MojoAnnotationScannerWrapper(delegate);
         mojoAnnotationsScanner.setSourceDirectories(sourceDirectories);
         mojoAnnotationsScanner.setClassesDirectories(classesDirectories);
 
-        ArtifactResolver artifactResolver = new DefaultArtifactResolver();
-        DefaultArtifactFactory artifactFactory = new DefaultArtifactFactory();
         ArchiverManager archiverManager = new DefaultArchiverManager();
 
         Map<String, Object> values = new HashMap<>();
         values.put("mojoAnnotationsScanner", mojoAnnotationsScanner);
-        values.put("artifactResolver", artifactResolver);
-        values.put("artifactFactory", artifactFactory);
         values.put("archiverManager", archiverManager);
 
         try {
@@ -178,9 +186,6 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
             throw new RuntimeException(e);
         }
 
-        extractors.put("java-annotations", mojoDescriptorExtractor);
-        DefaultMojoScanner defaultMojoScanner = new DefaultMojoScanner(extractors);
-        defaultMojoScanner.enableLogging(new PlexusLoggerWrapper(getLogger()));
-        return defaultMojoScanner;
+        return mojoDescriptorExtractor;
     }
 }

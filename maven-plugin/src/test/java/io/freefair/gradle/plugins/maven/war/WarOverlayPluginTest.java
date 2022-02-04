@@ -8,13 +8,12 @@ import org.gradle.api.plugins.WarPlugin;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Lars Grefer
@@ -39,14 +38,13 @@ public class WarOverlayPluginTest extends AbstractPluginTest {
         loadBuildFileFromClasspath("war-overlay.gradle");
 
         BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir.getRoot())
+                .withProjectDir(testProjectDir)
                 .withArguments("war", "--stacktrace")
                 .withPluginClasspath()
                 .withDebug(true)
                 .build();
 
-        assertEquals(result.task(":war").getOutcome(), SUCCESS);
-
+        assertThat(result.task(":war").getOutcome()).isEqualTo(SUCCESS);
     }
 
     @Test
@@ -54,7 +52,7 @@ public class WarOverlayPluginTest extends AbstractPluginTest {
         loadBuildFileFromClasspath("war-overlay-ac-m.gradle");
 
         BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir.getRoot())
+                .withProjectDir(testProjectDir)
                 .withArguments("assemble")
                 .withPluginClasspath()
                 .build();

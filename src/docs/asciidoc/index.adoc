@@ -19,16 +19,18 @@ The documentation of the FreeFair Gradle Plugin collection {revnumber} consists 
 The latest copy of the user guide is available at https://docs.freefair.io/gradle-plugins/current/reference +
 and the corresponding javadocs can be found at https://docs.freefair.io/gradle-plugins/current/api.
 
+The source code for the plugins and this documentation can be found at https://github.com/freefair/gradle-plugins
+
 == Installation
 
 All plugins are deployed to the
 https://plugins.gradle.org/search?term=io.freefair[Gradle Plugin Portal].
 
-The plugins are grouped in multiple modules, each containing some of the plugins.
+The plugins are grouped in multiple modules, each containing some plugins.
 These submodules are described by the different parts of this documentation.
 
 Each plugin can be included using the Plugins DSL
-or by referencing it's containing module in the `buildscript`-block:
+or by referencing its containing module in the `buildscript`-block:
 
 .Using the plugins DSL
 [source,groovy,subs=attributes+]
@@ -62,6 +64,8 @@ Unless otherwise noted, all plugins require at least Java 8 and are targeted at 
 include::_aspectj.adoc[]
 
 include::_compress.adoc[]
+
+include::_embedded-sass.adoc[]
 
 include::_git.adoc[]
 

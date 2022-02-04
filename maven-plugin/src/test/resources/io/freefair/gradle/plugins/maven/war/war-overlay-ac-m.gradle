@@ -1,15 +1,14 @@
 plugins {
     id "io.freefair.war"
-    id "maven"
     id "maven-publish"
 }
 
 war {
-    attachClasses = true
+    attachClasses.set true
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 war {

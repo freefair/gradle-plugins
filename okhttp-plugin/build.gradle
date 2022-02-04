@@ -3,10 +3,11 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
-    compile 'com.squareup.okhttp3:okhttp:4.0.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:4.0.1'
+    api platform("com.squareup.okhttp3:okhttp-bom:4.9.3")
+    api "com.squareup.okhttp3:okhttp"
+    api "com.squareup.okhttp3:logging-interceptor"
 
-    testCompile project(":test-common")
+    testImplementation project(":test-common")
 }
 
 gradlePlugin {

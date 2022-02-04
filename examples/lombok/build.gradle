@@ -1,16 +1,23 @@
 import io.freefair.gradle.plugins.lombok.tasks.LombokApiJar
 import io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar
+plugins {
+    id "com.github.spotbugs" version "4.0.4"
+}
 
 apply plugin: "java"
 apply plugin: "io.freefair.lombok"
 
 
 dependencies {
-    compile "org.slf4j:slf4j-api:1.+"
+    implementation "org.slf4j:slf4j-api:1.+"
 }
 
-lombok {
-    config['lombok.log.fieldName'] = 'LOG'
+sourceSets {
+    main {
+        java {
+            srcDirs += ['src/main/java2']
+        }
+    }
 }
 
 task lombokApiJar (type: LombokApiJar)

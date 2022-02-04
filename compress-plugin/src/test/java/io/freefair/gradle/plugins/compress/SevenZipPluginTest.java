@@ -2,16 +2,14 @@ package io.freefair.gradle.plugins.compress;
 
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SevenZipPluginTest {
 
     private Project project;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         project = ProjectBuilder.builder().build();
     }

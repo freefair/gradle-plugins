@@ -7,6 +7,7 @@ import org.gradle.api.Project;
 /**
  * @author Lars Grefer
  */
+@Deprecated
 public class JSassBasePlugin implements Plugin<Project> {
 
     @Getter

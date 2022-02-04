@@ -19,23 +19,26 @@ This chapter describes all the plugins contained in the `aspectj-plugin` module.
 
 === `io.freefair.aspectj.base`
 
-This plugin adds the `aspectj` extension and the `aspectj` configuration to the project.
+NOTE: The other two plugins implicitly apply this one.
+In most cases it's therefore unnecessary to explicitly apply it to your project.
 
-.Setting the AspectJ version using the `aspectj` extension.
-[source,groovy]
-----
-aspectj {
-    version = "1.9.4"
-}
-----
+This plugin enables the automatic configuration of the `aspectjClasspath`.
 
-The `aspectj` configuration contains the `aspectjtools.jar` with the specified version.
+The automatic configuration follows the same principles as described here:
+https://docs.gradle.org/{gradle_version}/userguide/groovy_plugin.html#sec:automatic_configuration_of_groovyclasspath
 
 === `io.freefair.aspectj`
 
 This plugin adds AspectJ support to the project, by adding a `aspectj` directory to every source set.
 
 Source contained in the `src/main/aspectj` directory will be compiled with `ajc` by the `compileAspectj` task.
+
+[source,groovy]
+----
+dependencies {
+    implementation "org.aspectj:aspectjrt:1.9.7"
+}
+----
 
 TIP: This is follows the same principles as the `groovy` and `scala` plugins.
 
@@ -66,6 +69,14 @@ This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`, `compil
 with an additional `ajc` action in order to perform post-compile-weaving.
 
 The output of the compilation (`javac`, etc.) becomes the `-inpath` for `ajc`.
+
+[source,groovy]
+----
+dependencies {
+    implementation "org.aspectj:aspectjrt:1.9.7"
+}
+----
+
 Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
 
 [source,groovy]
@@ -98,26 +109,26 @@ The following things are configurable:
 compileJava {
     ajc {
         enabled = true //<1>
-        classpath = configurations.aspectj //<2>
+        classpath //<2>
         options {
-            aspectpath = configurations.aspect //<3>
-            compilerArgs = [] = //<4>
+            aspectpath.setFrom configurations.aspect //<3>
+            compilerArgs = [] //<4>
         }
     }
 }
 compileTestJava {
     ajc {
         enabled = true //<1>
-        classpath = configurations.aspectj //<2>
+        classpath //<2>
         options {
-            aspectpath = configurations.testAspect //<3>
+            aspectpath.setFrom configurations.testAspect //<3>
             compilerArgs = [] //<4>
         }
     }
 }
 ----
 <1> Specifies if ajc should run at all. Defaults to `true`
-<2> The classpath containing ajc itself (`aspectjtools.jar`). Defaults to `configurations.aspectj`
+<2> The classpath containing ajc itself (`aspectjtools.jar`). Inferred from the compile/runtime classpaths by default.
 <3> The classpath containing additional advices to weave. This directly maps to the `-aspectpath` argument of ajc.
 <4> Addittional arguments which will be passed to `ajc`.
 
@@ -134,7 +145,7 @@ https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html[`ajc`].
 
 [source,groovy]
 task myAjcTask(type: io.freefair.gradle.plugins.aspectj.AspectjCompile) {
-    aspectjClasspath = configurations.aspectj
+    aspectjClasspath.setFrom configurations.aspectj
     ajcOptions {
         inpath = files()
         aspectpath = files()

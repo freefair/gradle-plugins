@@ -2,10 +2,11 @@ apply plugin: "java"
 apply plugin: "io.freefair.jsass-java"
 
 dependencies {
-    compile 'org.webjars:bootstrap:4.1.1'
+    implementation 'org.webjars:bootstrap:5.0.2'
 }
 
 compileSass {
-    sourceMapEnabled = false
-    outputStyle = COMPRESSED
+    sourceMapEnabled = true
+    sourceMapEmbed = true
+    outputStyle = EXPANDED
 }

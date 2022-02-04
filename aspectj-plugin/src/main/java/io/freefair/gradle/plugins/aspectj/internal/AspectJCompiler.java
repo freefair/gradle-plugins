@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.aspectj.internal;
 import io.freefair.gradle.plugins.aspectj.AjcForkOptions;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.internal.tasks.compile.CompilationFailedException;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
@@ -14,8 +13,10 @@ import org.gradle.process.internal.JavaExecHandleBuilder;
 import org.gradle.process.internal.JavaExecHandleFactory;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
         JavaExecHandleBuilder ajc = javaExecHandleFactory.newJavaExec();
         ajc.setWorkingDir(spec.getWorkingDir());
         ajc.setClasspath(spec.getAspectJClasspath());
-        ajc.setMain("org.aspectj.tools.ajc.Main");
+        ajc.getMainClass().set("org.aspectj.tools.ajc.Main");
 
         AjcForkOptions forkOptions = spec.getAspectJCompileOptions().getForkOptions();
 
@@ -49,9 +50,19 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
         List<String> args = new LinkedList<>();
 
+        Collection<File> inpath = new LinkedHashSet<>();
+
+        if (spec.getAdditionalInpath() != null && !spec.getAdditionalInpath().isEmpty()) {
+            inpath.addAll(spec.getAdditionalInpath().getFiles());
+        }
+
         if (!spec.getAspectJCompileOptions().getInpath().isEmpty()) {
+            inpath.addAll(spec.getAspectJCompileOptions().getInpath().getFiles());
+        }
+
+        if (!inpath.isEmpty()) {
             args.add("-inpath");
-            args.add(getAsPath(spec.getAspectJCompileOptions().getInpath().getFiles()));
+            args.add(getAsPath(inpath));
         }
 
         if (!spec.getAspectJCompileOptions().getAspectpath().isEmpty()) {
@@ -135,7 +146,7 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
         File argFile = new File(spec.getTempDir(), "ajc.options");
 
-        Files.write(argFile.toPath(), args);
+        Files.write(argFile.toPath(), args, StandardCharsets.UTF_8);
 
         ajc.args("-argfile", argFile.getAbsolutePath());
 

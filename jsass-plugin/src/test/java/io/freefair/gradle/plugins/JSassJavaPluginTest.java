@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins;
 import io.freefair.gradle.plugins.jsass.JSassJavaPlugin;
 import io.freefair.gradle.plugins.jsass.SassCompile;
 import org.gradle.api.Project;
-import org.gradle.internal.impldep.com.google.common.io.Files;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,7 +11,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +42,7 @@ public class JSassJavaPluginTest {
         boolean newFile = mainCss.createNewFile();
         assertThat(newFile).isTrue();
 
-        Files.write("body { color: red; }", mainCss, Charset.defaultCharset());
+        Files.write(mainCss.toPath(), "body { color: red; }".getBytes(StandardCharsets.UTF_8));
 
         project.getPlugins().apply(JSassJavaPlugin.class);
 

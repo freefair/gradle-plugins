@@ -1,0 +1,10 @@
+apply plugin: "io.freefair.aspectj.post-compile-weaving"
+apply plugin: "java"
+
+dependencies {
+    implementation "org.aspectj:aspectjrt:1.9.7"
+
+    testImplementation "junit:junit:4.13"
+}
+
+compileTestJava.ajc.options.aspectpath.from sourceSets.main.output

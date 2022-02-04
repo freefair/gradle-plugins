@@ -15,7 +15,6 @@ public class LombokBasePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-
         lombokExtension = project.getExtensions().create("lombok", LombokExtension.class);
 
         lombokConfiguration = project.getConfigurations().create("lombok");

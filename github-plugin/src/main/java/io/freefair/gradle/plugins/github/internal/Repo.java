@@ -9,6 +9,7 @@ public class Repo {
     private String html_url;
     private String description;
     private String clone_url;
+    private String ssh_url;
     private String homepage;
     private String created_at;
 

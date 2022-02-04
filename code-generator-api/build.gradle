@@ -1,8 +1,7 @@
 plugins {
-    id "de.marcphilipp.nexus-publish" version "0.2.0"
+    id "de.marcphilipp.nexus-publish" version "0.4.0"
 }
 apply plugin: "io.freefair.maven-publish-java"
-apply plugin: "io.freefair.maven-jars"
 apply plugin: "io.freefair.maven-central.validate-poms"
 apply plugin: 'signing'
 
@@ -11,7 +10,14 @@ description = "Code Generator API"
 validatePomFileForMavenJavaPublication.ignoreFailures = false
 
 dependencies {
-    compile 'commons-io:commons-io:2.6'
+}
+
+nexusPublishing {
+    clientTimeout = Duration.ofMinutes(5)
+    connectTimeout = Duration.ofMinutes(5)
+    repositories {
+        sonatype()
+    }
 }
 
 signing {

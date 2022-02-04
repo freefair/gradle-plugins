@@ -39,6 +39,60 @@ public class GitVersionPlugin implements Plugin<Project> {
             return version;
         }
 
+        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+            String githubRef = System.getenv("GITHUB_REF");
+            if (githubRef != null) {
+                if (githubRef.startsWith("refs/tags/")) {
+                    githubRef = githubRef.substring("refs/tags/".length());
+                    logger.lifecycle("Using GitHub Tag as version: {}", githubRef);
+                    return githubRef;
+                }
+                else if (githubRef.startsWith("refs/heads/")) {
+                    githubRef = githubRef.substring("refs/heads/".length());
+                    githubRef = githubRef.replace("/", "-");
+                    String version = githubRef + "-SNAPSHOT";
+                    logger.lifecycle("Using GitHub Branch as version: {}", version);
+                    return version;
+                }
+            }
+        }
+
+        try {
+            Process execute = ProcessGroovyMethods.execute("git describe --tags --exact-match");
+            String gitTag = ProcessGroovyMethods.getText(execute).trim();
+
+            if (!gitTag.isEmpty()) {
+                logger.lifecycle("Using git tag as version: {}", gitTag);
+                return gitTag;
+            }
+        } catch (Exception e) {
+            logger.debug("Failed to get current git tag", e);
+        }
+
+        if (System.getenv("JENKINS_HOME") != null) {
+            String gitLocalBranch = System.getenv("GIT_LOCAL_BRANCH");
+            if (gitLocalBranch != null && !gitLocalBranch.isEmpty()) {
+                gitLocalBranch = gitLocalBranch.replace("/", "-");
+                String version = gitLocalBranch + "-SNAPSHOT";
+                logger.lifecycle("Using GIT_LOCAL_BRANCH as version: {}", version);
+                return version;
+            }
+            String gitBranch = System.getenv("GIT_BRANCH");
+            if (gitBranch != null && !gitBranch.isEmpty()) {
+                gitBranch = gitBranch.replace("/", "-");
+                String version = gitBranch + "-SNAPSHOT";
+                logger.lifecycle("Using GIT_BRANCH as version: {}", version);
+                return version;
+            }
+            String branchName = System.getenv("BRANCH_NAME");
+            if (branchName != null && !branchName.isEmpty()) {
+                branchName = branchName.replace("/", "-");
+                String version = branchName + "-SNAPSHOT";
+                logger.lifecycle("Using BRANCH_NAME as version: {}", version);
+                return version;
+            }
+        }
+
         try {
             Process execute = ProcessGroovyMethods.execute("git symbolic-ref --short HEAD");
             String gitBranch = ProcessGroovyMethods.getText(execute).trim();
@@ -49,7 +103,8 @@ public class GitVersionPlugin implements Plugin<Project> {
                 logger.lifecycle("Using git branch as version: {}", version);
                 return version;
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.debug("Failed to get current git branch", e);
         }
 
         return project.getVersion();

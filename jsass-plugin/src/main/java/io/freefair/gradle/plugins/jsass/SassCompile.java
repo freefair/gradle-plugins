@@ -1,15 +1,14 @@
 package io.freefair.gradle.plugins.jsass;
 
 import com.google.gson.Gson;
-import io.bit3.jsass.*;
 import io.bit3.jsass.Compiler;
+import io.bit3.jsass.*;
 import io.bit3.jsass.annotation.DebugFunction;
 import io.bit3.jsass.annotation.ErrorFunction;
 import io.bit3.jsass.annotation.WarnFunction;
 import io.bit3.jsass.importer.Importer;
 import lombok.Getter;
 import lombok.Setter;
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.gradle.api.GradleException;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.*;
@@ -21,6 +20,8 @@ import org.gradle.api.tasks.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import java.util.List;
 @Getter
 @Setter
 @CacheableTask
+@Deprecated
 public class SassCompile extends SourceTask {
 
     public SassCompile() {
@@ -45,7 +47,6 @@ public class SassCompile extends SourceTask {
     }
 
     @OutputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
     protected FileTree getOutputFiles() {
         ConfigurableFileTree files = getProject().fileTree(destinationDir);
         files.include("**/*.css");
@@ -54,7 +55,6 @@ public class SassCompile extends SourceTask {
     }
 
     @Internal
-    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty destinationDir = getProject().getObjects().directoryProperty();
 
     @TaskAction
@@ -111,7 +111,8 @@ public class SassCompile extends SourceTask {
 
                     if (sourceMapEnabled.get()) {
                         options.setSourceMapFile(fakeMap.toURI());
-                    } else {
+                    }
+                    else {
                         options.setSourceMapFile(null);
                     }
 
@@ -121,15 +122,17 @@ public class SassCompile extends SourceTask {
                         Output output = compiler.compileFile(inputPath, fakeOut.toURI(), options);
 
                         if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
-                            ResourceGroovyMethods.write(realOut, output.getCss());
-                        } else {
+                            Files.write(realOut.toPath(), output.getCss().getBytes(StandardCharsets.UTF_8));
+                        }
+                        else {
                             getLogger().error("Cannot write into {}", realOut.getParentFile());
                             throw new GradleException("Cannot write into " + realMap.getParentFile());
                         }
                         if (sourceMapEnabled.get()) {
                             if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
-                                ResourceGroovyMethods.write(realMap, output.getSourceMap());
-                            } else {
+                                Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
+                            }
+                            else {
                                 getLogger().error("Cannot write into {}", realMap.getParentFile());
                                 throw new GradleException("Cannot write into " + realMap.getParentFile());
                             }
