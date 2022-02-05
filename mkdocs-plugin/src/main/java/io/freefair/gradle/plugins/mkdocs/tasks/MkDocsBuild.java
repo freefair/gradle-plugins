@@ -5,14 +5,11 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.CommandLineArgumentProvider;
-
-import java.util.LinkedList;
+import org.gradle.process.ExecSpec;
 
 /**
  * Build the MkDocs documentation.
  */
-@SuppressWarnings("UnstableApiUsage")
 @Getter
 @CacheableTask
 public class MkDocsBuild extends MkDocs {
@@ -57,35 +54,29 @@ public class MkDocsBuild extends MkDocs {
     public MkDocsBuild() {
         super("build");
         setDescription("Build the MkDocs documentation");
+    }
 
-        getArgumentProviders().add((CommandLineArgumentProvider) () -> {
-            LinkedList<String> args = new LinkedList<>();
+    @Override
+    void setArgs(ExecSpec mkdocs) {
 
-            if (getConfigFile().isPresent()) {
-                args.add("--config-file");
-                args.add(getConfigFile().getAsFile().get().getAbsolutePath());
-            }
+        if (getConfigFile().isPresent()) {
+            mkdocs.args("--config-file", getConfigFile().getAsFile().get().getAbsolutePath());
+        }
 
-            if (getStrict().getOrElse(false)) {
-                args.add("--strict");
-            }
+        if (getStrict().getOrElse(false)) {
+            mkdocs.args("--strict");
+        }
 
-            if (getTheme().isPresent()) {
-                args.add("--theme");
-                args.add(getTheme().get());
-            }
+        if (getTheme().isPresent()) {
+            mkdocs.args("--theme", getTheme().get());
+        }
 
-            if (getThemeDir().isPresent()) {
-                args.add("--theme-dir");
-                args.add(getThemeDir().getAsFile().get().getAbsolutePath());
-            }
+        if (getThemeDir().isPresent()) {
+            mkdocs.args("--theme-dir", getThemeDir().getAsFile().get().getAbsolutePath());
+        }
 
-            if (getSiteDir().isPresent()) {
-                args.add("--site-dir");
-                args.add(getSiteDir().getAsFile().get().getAbsolutePath());
-            }
-
-            return args;
-        });
+        if (getSiteDir().isPresent()) {
+            mkdocs.args("--site-dir", getSiteDir().getAsFile().get().getAbsolutePath());
+        }
     }
 }

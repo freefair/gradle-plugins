@@ -2,8 +2,6 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
-compileJava.options.headerOutputDirectory = file("build/headers")
-
 dependencies {
     testImplementation project(":test-common")
 }
@@ -19,7 +17,7 @@ gradlePlugin {
 
 pluginBundle {
     plugins {
-        okhttp {
+        mkdocs {
             displayName = "Mkdocs Plugin"
             description = "MkDocs Plugin"
             tags = ["mkdocs"]

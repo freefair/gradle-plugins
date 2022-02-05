@@ -4,14 +4,11 @@ import lombok.Getter;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.CommandLineArgumentProvider;
-
-import java.util.LinkedList;
+import org.gradle.process.ExecSpec;
 
 /**
  * Deploy your documentation to GitHub Pages.
  */
-@SuppressWarnings("UnstableApiUsage")
 @Getter
 public class MkDocsGhDeploy extends MkDocs {
 
@@ -65,39 +62,33 @@ public class MkDocsGhDeploy extends MkDocs {
     public MkDocsGhDeploy() {
         super("gh-deploy");
         setDescription("Deploy your documentation to GitHub Pages");
+    }
 
-        getArgumentProviders().add((CommandLineArgumentProvider) () -> {
-            LinkedList<String> args = new LinkedList<>();
+    @Override
+    void setArgs(ExecSpec mkdocs) {
 
-            if (getConfigFile().isPresent()) {
-                args.add("--config-file");
-                args.add(getConfigFile().getAsFile().get().getAbsolutePath());
-            }
+        if (getConfigFile().isPresent()) {
+            mkdocs.args("--config-file", getConfigFile().getAsFile().get().getAbsolutePath());
+        }
 
-            if (getMessage().isPresent()) {
-                args.add("--message");
-                args.add(getMessage().get());
-            }
+        if (getMessage().isPresent()) {
+            mkdocs.args("--message", getMessage().get());
+        }
 
-            if (getRemoteBranch().isPresent()) {
-                args.add("--remote-branch");
-                args.add(getRemoteBranch().get());
-            }
+        if (getRemoteBranch().isPresent()) {
+            mkdocs.args("--remote-branch", getRemoteBranch().get());
+        }
 
-            if (getRemoteName().isPresent()) {
-                args.add("--remote-name");
-                args.add(getRemoteName().get());
-            }
+        if (getRemoteName().isPresent()) {
+            mkdocs.args("--remote-name", getRemoteName().get());
+        }
 
-            if (getForce().getOrElse(false)) {
-                args.add("--force");
-            }
+        if (getForce().getOrElse(false)) {
+            mkdocs.args("--force");
+        }
 
-            if (getIgnoreVersion().getOrElse(false)) {
-                args.add("--ignore-version");
-            }
-
-            return args;
-        });
+        if (getIgnoreVersion().getOrElse(false)) {
+            mkdocs.args("--ignore-version");
+        }
     }
 }

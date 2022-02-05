@@ -1,17 +1,20 @@
 package io.freefair.gradle.plugins.mkdocs.tasks;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import org.gradle.api.DefaultTask;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Console;
-import org.gradle.api.tasks.Exec;
-import org.gradle.api.tasks.Optional;
-import org.gradle.process.CommandLineArgumentProvider;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecSpec;
 
-import java.util.LinkedList;
-
-@SuppressWarnings("UnstableApiUsage")
 @Getter
-public abstract class MkDocs extends Exec {
+public abstract class MkDocs extends DefaultTask {
+
+    @Getter(AccessLevel.PROTECTED)
+    @Input
+    private final String command;
 
     /**
      * Silence warnings.
@@ -25,22 +28,28 @@ public abstract class MkDocs extends Exec {
     @Console
     private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class);
 
-    public MkDocs(String command) {
-        setExecutable("mkdocs");
-        getArgumentProviders().add((CommandLineArgumentProvider) () -> {
-            LinkedList<String> args = new LinkedList<>();
+    protected MkDocs(String command) {
+        this.command = command;
+    }
 
-            args.add(command);
+    @TaskAction
+    public void exec() {
+        getProject().exec(mkdocs -> {
+            mkdocs.setExecutable("mkdocs");
+
+            mkdocs.args(command);
 
             if (getQuiet().getOrElse(false)) {
-                args.add("--quiet");
+                mkdocs.args("--quiet");
             }
 
             if (getVerbose().getOrElse(false)) {
-                args.add("--verbose");
+                mkdocs.args("--verbose");
             }
 
-            return args;
+            setArgs(mkdocs);
         });
     }
+
+    abstract void setArgs(ExecSpec mkdocs);
 }

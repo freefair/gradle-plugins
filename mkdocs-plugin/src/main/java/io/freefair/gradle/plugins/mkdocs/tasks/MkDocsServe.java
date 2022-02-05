@@ -6,6 +6,7 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.process.CommandLineArgumentProvider;
+import org.gradle.process.ExecSpec;
 
 import java.util.LinkedList;
 
@@ -68,52 +69,44 @@ public class MkDocsServe extends MkDocs {
     @Input
     private final Property<Boolean> dirtyreload = getProject().getObjects().property(Boolean.class);
 
-    @SuppressWarnings("UnstableApiUsage")
     public MkDocsServe() {
         super("serve");
         setDescription("Run the builtin development server.");
+    }
 
-        getArgumentProviders().add((CommandLineArgumentProvider) () -> {
-            LinkedList<String> args = new LinkedList<>();
+    @Override
+    void setArgs(ExecSpec mkdocs) {
+        if (getConfigFile().isPresent()) {
+            mkdocs.args("--config-file", getConfigFile().getAsFile().get().getAbsolutePath());
+        }
 
-            if (getConfigFile().isPresent()) {
-                args.add("--config-file");
-                args.add(getConfigFile().getAsFile().get().getAbsolutePath());
+        if (getDevAddr().isPresent()) {
+            mkdocs.args("--dev-addr", getDevAddr().get());
+        }
+
+        if (getStrict().getOrElse(false)) {
+            mkdocs.args("--strict");
+        }
+
+        if (getTheme().isPresent()) {
+            mkdocs.args("--theme", getTheme().get());
+        }
+
+        if (getThemeDir().isPresent()) {
+            mkdocs.args("--theme-dir", getThemeDir().getAsFile().get().getAbsolutePath());
+        }
+
+        if (getLivereload().isPresent()) {
+            if (getLivereload().get()) {
+                mkdocs.args("--livereload");
             }
-
-            if (getDevAddr().isPresent()) {
-                args.add("--dev-addr");
-                args.add(getDevAddr().get());
+            else {
+                mkdocs.args("--no-livereload");
             }
+        }
 
-            if (getStrict().getOrElse(false)) {
-                args.add("--strict");
-            }
-
-            if (getTheme().isPresent()) {
-                args.add("--theme");
-                args.add(getTheme().get());
-            }
-
-            if (getThemeDir().isPresent()) {
-                args.add("--theme-dir");
-                args.add(getThemeDir().getAsFile().get().getAbsolutePath());
-            }
-
-            if (getLivereload().isPresent()) {
-                if (getLivereload().get()) {
-                    args.add("--livereload");
-                }
-                else {
-                    args.add("--no-livereload");
-                }
-            }
-
-            if (getLivereload().getOrElse(false)) {
-                args.add("--dirtyreload");
-            }
-
-            return args;
-        });
+        if (getDirtyreload().getOrElse(false)) {
+            mkdocs.args("--dirtyreload");
+        }
     }
 }

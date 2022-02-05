@@ -5,6 +5,7 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.process.CommandLineArgumentProvider;
+import org.gradle.process.ExecSpec;
 
 import java.util.LinkedList;
 
@@ -18,19 +19,15 @@ public class MkDocsNew extends MkDocs {
     @OutputDirectory
     private final DirectoryProperty projectDirectory = getProject().getObjects().directoryProperty();
 
-    @SuppressWarnings("UnstableApiUsage")
     public MkDocsNew() {
         super("new");
         setDescription("Create a new MkDocs project");
+    }
 
-        getArgumentProviders().add((CommandLineArgumentProvider) () -> {
-            LinkedList<String> args = new LinkedList<>();
-
-            if (getProjectDirectory().isPresent()) {
-                args.add(getProjectDirectory().getAsFile().get().getAbsolutePath());
-            }
-
-            return args;
-        });
+    @Override
+    void setArgs(ExecSpec mkdocs) {
+        if (getProjectDirectory().isPresent()) {
+            mkdocs.args(getProjectDirectory().getAsFile().get().getAbsolutePath());
+        }
     }
 }
