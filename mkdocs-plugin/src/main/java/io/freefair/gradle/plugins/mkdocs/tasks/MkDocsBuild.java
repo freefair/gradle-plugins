@@ -52,7 +52,6 @@ public class MkDocsBuild extends MkDocs {
      * The directory to output the result of the documentation build.
      */
     @OutputDirectory
-    @PathSensitive(PathSensitivity.RELATIVE)
     private final DirectoryProperty siteDir = getProject().getObjects().directoryProperty();
 
     public MkDocsBuild() {

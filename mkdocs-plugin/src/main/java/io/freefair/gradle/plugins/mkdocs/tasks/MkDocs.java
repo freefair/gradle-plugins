@@ -17,14 +17,12 @@ public abstract class MkDocs extends Exec {
      * Silence warnings.
      */
     @Console
-    @Optional
     private final Property<Boolean> quiet = getProject().getObjects().property(Boolean.class);
 
     /**
      * Enable verbose output.
      */
     @Console
-    @Optional
     private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class);
 
     public MkDocs(String command) {
@@ -45,6 +43,4 @@ public abstract class MkDocs extends Exec {
             return args;
         });
     }
-
-    public native String foo(Integer bar);
 }
