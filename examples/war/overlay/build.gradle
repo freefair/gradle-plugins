@@ -9,5 +9,5 @@ war {
 }
 
 dependencies {
-    providedCompile group: 'javax.faces', name: 'javax.faces-api', version: '2.3'
+    providedCompile group: 'javax.faces', name: 'javax.faces-api', version: '2.3-pfd'
 }
