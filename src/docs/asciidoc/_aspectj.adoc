@@ -36,7 +36,7 @@ Source contained in the `src/main/aspectj` directory will be compiled with `ajc`
 [source,groovy]
 ----
 dependencies {
-    implementation "org.aspectj:aspectjrt:1.9.7"
+    implementation "org.aspectj:aspectjrt:1.9.8.RC3"
 }
 ----
 
@@ -73,7 +73,7 @@ The output of the compilation (`javac`, etc.) becomes the `-inpath` for `ajc`.
 [source,groovy]
 ----
 dependencies {
-    implementation "org.aspectj:aspectjrt:1.9.7"
+    implementation "org.aspectj:aspectjrt:1.9.8.RC3"
 }
 ----
 
