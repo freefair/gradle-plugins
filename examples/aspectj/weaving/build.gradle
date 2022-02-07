@@ -26,7 +26,7 @@ dependencies {
     implementation "org.aspectj:aspectjrt:1.9.8.RC3"
     implementation localGroovy()
 
-    testImplementation "junit:junit:4.12"
+    testImplementation "junit:junit:4.13.2"
 }
 
 configurations.testImplementation.extendsFrom(configurations.jacocoAnt)
