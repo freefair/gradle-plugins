@@ -132,24 +132,12 @@ public class LombokPlugin implements Plugin<Project> {
             return;
         }
 
-        Map<File, TaskProvider<LombokConfig>> lombokConfigTasks = ConfigUtil.getLombokConfigTasks(project, sourceSet.getName(), sourceSet.getJava().getSrcDirs());
-
-        for (TaskProvider<LombokConfig> ctp : lombokConfigTasks.values()) {
-            ctp.configure(ct -> ct.dependsOn(sourceSet.getJava().getBuildDependencies()));
-        }
-
-        TaskProvider<Task> generateConfigsTask = project.getTasks().register(sourceSet.getTaskName("generate", "EffectiveLombokConfigs"), genConfigsTask -> {
-            genConfigsTask.setGroup("lombok");
-            genConfigsTask.setDescription("Generate effective Lombok configurations for source-set '" + sourceSet.getName() + "'");
-            lombokConfigTasks.values().forEach(genConfigsTask::dependsOn);
-        });
+        TaskProvider<LombokConfig> lombokConfigTask = ConfigUtil.getLombokConfigTask(project, sourceSet);
 
         compileTaskProvider.configure(javaCompile -> {
-            lombokConfigTasks.forEach((file, lombokConfigTaskProvider) -> {
-                javaCompile.getInputs().file(lombokConfigTaskProvider.get().getOutputFile())
-                        .withPathSensitivity(PathSensitivity.NONE)
-                        .optional();
-            });
+            javaCompile.getInputs().file(lombokConfigTask.get().getOutputFile())
+                    .withPathSensitivity(PathSensitivity.NONE)
+                    .optional();
         });
     }
 

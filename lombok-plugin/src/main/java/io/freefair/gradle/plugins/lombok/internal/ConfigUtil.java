@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.lombok.internal;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import lombok.experimental.UtilityClass;
 import org.gradle.api.Project;
+import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 @UtilityClass
 public class ConfigUtil {
 
+    @Deprecated
     public Map<File, TaskProvider<LombokConfig>> getLombokConfigTasks(Project project, String sourceSetName, Set<File> srcDirs) {
         Map<File, TaskProvider<LombokConfig>> result = new HashMap<>();
 
@@ -37,4 +39,18 @@ public class ConfigUtil {
 
         return result;
     }
+
+    public TaskProvider<LombokConfig> getLombokConfigTask(Project project, SourceSet sourceSet) {
+
+        String taskName = sourceSet.getTaskName("generate", "effectiveLombokConfig");
+
+        return project.getTasks().register(taskName, LombokConfig.class, lombokConfigTask -> {
+            lombokConfigTask.setGroup("lombok");
+            lombokConfigTask.setDescription("Generate effective Lombok configuration for source-set '" + sourceSet.getName() + "'.");
+            lombokConfigTask.getPaths().from(sourceSet.getJava().getSourceDirectories());
+            lombokConfigTask.getOutputFile().set(project.getLayout().getBuildDirectory().file("lombok/effective-config/lombok-" + sourceSet.getName() + ".config"));
+            lombokConfigTask.doLast("cleanLombokConfig", new CleanLombokConfig());
+        });
+    }
+
 }
