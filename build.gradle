@@ -43,17 +43,19 @@ allprojects {
         javadoc.options.addBooleanOption("Xdoclint:-missing", true)
         javadoc.failOnError = false
 
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        java {
+            withSourcesJar()
+            withJavadocJar()
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(8)
+            }
+        }
 
         plugins.apply "jacoco"
         plugins.apply "io.freefair.lombok"
         plugins.apply "io.freefair.javadoc-links"
 
         jacocoTestReport.reports.xml.required = true
-
-        java.withSourcesJar()
-        java.withJavadocJar()
 
         test.useJUnitPlatform()
 
