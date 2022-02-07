@@ -4,7 +4,7 @@ apply plugin: "java"
 dependencies {
     implementation "org.aspectj:aspectjrt:1.9.7"
 
-    testImplementation "junit:junit:4.13"
+    testImplementation 'junit:junit:4.13.2'
 }
 
 compileTestJava.ajc.options.aspectpath.from sourceSets.main.output
