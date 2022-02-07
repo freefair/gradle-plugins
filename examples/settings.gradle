@@ -34,6 +34,8 @@ include ":jacoco:sub-b"
 
 include ":github"
 
+include ":mkdocs"
+
 include ":code-generator:use"
 include ":code-generator:generator"
 

@@ -81,4 +81,6 @@ include::_maven.adoc[]
 
 include::_maven-plugin.adoc[]
 
+include::_mkdocs.adoc[]
+
 include::_okhttp.adoc[]
