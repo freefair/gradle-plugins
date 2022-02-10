@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.gradle.api.Action;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.NonNullApi;
-import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -30,17 +28,16 @@ import java.util.stream.Stream;
 
 @NonNullApi
 @RequiredArgsConstructor
-public class ResolveJavadocLinks implements Action<Task> {
+public class ResolveJavadocLinks {
 
     private final OkHttpClient okHttpClient;
 
     private Javadoc javadoc;
     private Logger logger;
 
-    @Override
-    public void execute(Task task) {
-        javadoc = (Javadoc) task;
+    public void resolveLinks(Javadoc javadoc) {
         logger = javadoc.getLogger();
+        this.javadoc = javadoc;
 
         addLink(getJavaSeLink());
 
