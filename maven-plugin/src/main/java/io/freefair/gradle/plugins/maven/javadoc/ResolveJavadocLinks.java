@@ -8,12 +8,8 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.internal.file.UnionFileCollection;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.provider.Property;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
@@ -24,7 +20,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 @NonNullApi
 @RequiredArgsConstructor
@@ -35,14 +30,15 @@ public class ResolveJavadocLinks {
     private Javadoc javadoc;
     private Logger logger;
 
-    public void resolveLinks(Javadoc javadoc) {
+    public void resolveLinks(Javadoc javadoc, Configuration classpath) {
         logger = javadoc.getLogger();
         this.javadoc = javadoc;
 
         addLink(getJavaSeLink());
 
-        findConfigurations(javadoc.getClasspath())
-                .flatMap(files -> files.getResolvedConfiguration().getResolvedArtifacts().stream())
+        classpath.getResolvedConfiguration()
+                .getResolvedArtifacts()
+                .stream()
                 .map(resolvedArtifact -> resolvedArtifact.getId().getComponentIdentifier())
                 .filter(ModuleComponentIdentifier.class::isInstance)
                 .map(ModuleComponentIdentifier.class::cast)
@@ -69,42 +65,6 @@ public class ResolveJavadocLinks {
                 })
                 .filter(Objects::nonNull)
                 .forEach(this::addLink);
-    }
-
-    private Stream<Configuration> findConfigurations(Object classpath) {
-        if (classpath instanceof FileCollection) {
-            return findConfigurations((FileCollection) classpath);
-        }
-        else if (classpath instanceof Provider) {
-            Provider<?> provider = (Provider<?>) classpath;
-            if (provider.isPresent()) {
-                return findConfigurations(provider.get());
-            }
-            else {
-                return Stream.empty();
-            }
-        }
-        else {
-            return Stream.empty();
-        }
-    }
-
-    private Stream<Configuration> findConfigurations(FileCollection classpath) {
-        if (classpath instanceof Configuration) {
-            return Stream.of((Configuration) classpath);
-        }
-        else if (classpath instanceof UnionFileCollection) {
-            return ((UnionFileCollection) classpath).getSources()
-                    .stream()
-                    .flatMap(this::findConfigurations);
-        }
-        else if (classpath instanceof ConfigurableFileCollection) {
-            return ((ConfigurableFileCollection) classpath).getFrom()
-                    .stream()
-                    .flatMap(this::findConfigurations);
-
-        }
-        return Stream.empty();
     }
 
     private boolean checkLink(String link) {
