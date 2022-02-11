@@ -39,9 +39,6 @@ allprojects {
     version = rootProject.version
 
     plugins.withId("java") {
-        javadoc.options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
-        javadoc.options.addBooleanOption("Xdoclint:-missing", true)
-        javadoc.failOnError = false
 
         java {
             withSourcesJar()
@@ -65,6 +62,12 @@ allprojects {
             testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
             testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
         }
+    }
+
+    tasks.withType(Javadoc).configureEach {
+        options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
+        options.addBooleanOption("Xdoclint:-missing", true)
+        failOnError = false
     }
 
     plugins.withId("com.gradle.plugin-publish") {
@@ -136,11 +139,7 @@ asciidoctor {
 apply plugin: "io.freefair.aggregate-javadoc"
 apply plugin: "io.freefair.javadoc-links"
 
-aggregateJavadoc.failOnError = false
-aggregateJavadoc.options.links "https://docs.gradle.org/${gradle.gradleVersion}/javadoc/"
-aggregateJavadoc.options.addBooleanOption("Xdoclint:-missing", true)
-
-task docsZip(type: Zip) {
+tasks.register("docsZip", Zip) {
     group = 'build'
     archiveClassifier = 'docs'
     dependsOn asciidoctor
@@ -153,7 +152,7 @@ task docsZip(type: Zip) {
     }
 }
 
-task uploadDocs(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
+tasks.register("uploadDocs", io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
     dependsOn docsZip
     username = findProperty("freefairDocsUser")
     password = findProperty("freefairDocsPass")
