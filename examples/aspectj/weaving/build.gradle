@@ -31,7 +31,7 @@ dependencies {
 
 configurations.testImplementation.extendsFrom(configurations.jacocoAnt)
 
-compileJava {
+tasks.named("compileJava").configure {
     ajc {
         options {
             compilerArgs += "-showWeaveInfo"
