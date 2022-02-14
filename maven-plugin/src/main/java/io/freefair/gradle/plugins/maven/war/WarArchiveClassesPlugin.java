@@ -3,7 +3,9 @@ package io.freefair.gradle.plugins.maven.war;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
+import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.bundling.War;
 
@@ -23,20 +25,21 @@ public class WarArchiveClassesPlugin implements Plugin<Project> {
             WarArchiveClassesConvention archiveClassesConvention = new WarArchiveClassesConvention(archiveClasses);
             war.getConvention().getPlugins().put("archiveClasses", archiveClassesConvention);
 
-            Jar warClassesJar = project.getTasks().create(war.getName() + "ClassesJar", Jar.class);
-            warClassesJar.getArchiveBaseName().convention(war.getArchiveBaseName());
-            warClassesJar.getArchiveAppendix().convention(war.getArchiveAppendix());
-            warClassesJar.getArchiveVersion().convention(war.getArchiveVersion());
-            warClassesJar.getArchiveClassifier().convention(war.getArchiveClassifier());
+            TaskProvider<Jar> warClassesJar = project.getTasks().register(war.getName() + "ClassesJar", Jar.class, jar -> {
+                jar.getArchiveBaseName().convention(war.getArchiveBaseName());
+                jar.getArchiveAppendix().convention(war.getArchiveAppendix());
+                jar.getArchiveVersion().convention(war.getArchiveVersion());
+                jar.getArchiveClassifier().convention(war.getArchiveClassifier());
+            });
 
             project.afterEvaluate(p -> {
 
-                warClassesJar.setEnabled(archiveClasses.get());
+                warClassesJar.configure(jar -> jar.setEnabled(archiveClasses.get()));
 
                 if (archiveClasses.get()) {
                     FileCollection warClasspath = war.getClasspath();
 
-                    warClassesJar.from(warClasspath != null ? warClasspath.filter(File::isDirectory) : Collections.emptyList());
+                    warClassesJar.configure(jar -> jar.from(warClasspath != null ? warClasspath.filter(File::isDirectory) : Collections.emptyList()));
 
                     war.setClasspath(warClasspath == null ? null : warClasspath.filter(File::isFile).plus(project.files(warClassesJar)));
                 }
