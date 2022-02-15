@@ -1,14 +1,18 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.process.ExecOperations;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,6 +25,11 @@ import java.util.stream.Collectors;
 @Setter
 @UntrackedTask(because = "lombok config bubbling traverses the file system")
 public class LombokConfig extends DefaultTask implements LombokTask {
+
+    @Getter(AccessLevel.NONE)
+    private final FileSystemOperations fileSystemOperations;
+    @Getter(AccessLevel.NONE)
+    private final ExecOperations execOperations;
 
     @Classpath
     private final ConfigurableFileCollection lombokClasspath = getProject().files();
@@ -60,14 +69,16 @@ public class LombokConfig extends DefaultTask implements LombokTask {
     @OutputFile
     private final RegularFileProperty outputFile = getProject().getObjects().fileProperty();
 
-    public LombokConfig() {
+    @Inject
+    public LombokConfig(FileSystemOperations fileSystemOperations, ExecOperations execOperations) {
+        this.fileSystemOperations = fileSystemOperations;
+        this.execOperations = execOperations;
         getOutputs().upToDateWhen(t -> ((LombokConfig) t).getPaths().isEmpty());
     }
 
     @TaskAction
     public void exec() throws IOException {
-
-        getProject().delete(outputFile);
+        fileSystemOperations.delete(spec -> spec.delete(outputFile).setFollowSymlinks(false));
 
         List<File> actualPaths = paths.getFiles()
                 .stream()
@@ -81,7 +92,7 @@ public class LombokConfig extends DefaultTask implements LombokTask {
 
         try (OutputStream out = new FileOutputStream(outputFile.getAsFile().get())) {
 
-            getProject().javaexec(config -> {
+            execOperations.javaexec(config -> {
                 config.setClasspath(getLombokClasspath());
                 config.getMainClass().set("lombok.launch.Main");
                 config.args("config");

@@ -5,10 +5,10 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.CommandLineArgumentProvider;
+import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
 
-import java.util.LinkedList;
+import javax.inject.Inject;
 
 /**
  * Run the builtin development server.
@@ -69,8 +69,9 @@ public class MkDocsServe extends MkDocs {
     @Input
     private final Property<Boolean> dirtyreload = getProject().getObjects().property(Boolean.class);
 
-    public MkDocsServe() {
-        super("serve");
+    @Inject
+    public MkDocsServe(ExecOperations execOperations) {
+        super(execOperations, "serve");
         setDescription("Run the builtin development server.");
     }
 

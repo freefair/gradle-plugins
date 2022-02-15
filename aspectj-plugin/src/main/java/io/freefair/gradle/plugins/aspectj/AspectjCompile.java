@@ -2,21 +2,26 @@ package io.freefair.gradle.plugins.aspectj;
 
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompileSpec;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompiler;
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.gradle.api.Action;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
-import org.gradle.api.file.FileTree;
+import org.gradle.api.file.*;
 import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.process.internal.JavaExecHandleFactory;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 @Getter
 @CacheableTask
 public class AspectjCompile extends AbstractCompile {
+
+    @Getter(AccessLevel.NONE)
+    private final FileSystemOperations fileSystemOperations;
+    @Getter(AccessLevel.NONE)
+    private final ProjectLayout projectLayout;
 
     @Classpath
     private final ConfigurableFileCollection aspectjClasspath = getProject().getObjects().fileCollection();
@@ -26,6 +31,12 @@ public class AspectjCompile extends AbstractCompile {
 
     @Nested
     private final AspectJCompileOptions ajcOptions = getProject().getObjects().newInstance(AspectJCompileOptions.class);
+
+    @Inject
+    public AspectjCompile(FileSystemOperations fileSystemOperations, ProjectLayout projectLayout) {
+        this.fileSystemOperations = fileSystemOperations;
+        this.projectLayout = projectLayout;
+    }
 
     /**
      * {@inheritDoc}
@@ -46,7 +57,7 @@ public class AspectjCompile extends AbstractCompile {
 
     @TaskAction
     protected void compile() {
-        getProject().delete(getDestinationDirectory());
+        fileSystemOperations.delete(spec -> spec.delete(getDestinationDirectory()).setFollowSymlinks(false));
 
         AspectJCompileSpec spec = createSpec();
         WorkResult result = getCompiler().execute(spec);
@@ -61,7 +72,7 @@ public class AspectjCompile extends AbstractCompile {
         AspectJCompileSpec spec = new AspectJCompileSpec();
         spec.setSourceFiles(getSource());
         spec.setDestinationDir(getDestinationDirectory().getAsFile().get());
-        spec.setWorkingDir(getProject().getProjectDir());
+        spec.setWorkingDir(projectLayout.getProjectDirectory().getAsFile());
         spec.setTempDir(getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(getClasspath().getFiles()));
         spec.setSourceCompatibility(getSourceCompatibility());

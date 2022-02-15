@@ -8,6 +8,7 @@ import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.ClasspathNormalizer;
@@ -26,6 +27,11 @@ import java.util.ArrayList;
 @NonNullApi
 public class AjcAction implements Action<Task> {
 
+    @Getter(AccessLevel.NONE)
+    private final ProjectLayout projectLayout;
+    @Getter(AccessLevel.NONE)
+    private final JavaExecHandleFactory javaExecHandleFactory;
+
     private final ConfigurableFileCollection classpath;
 
     private final Property<Boolean> enabled;
@@ -38,11 +44,9 @@ public class AjcAction implements Action<Task> {
         action.execute(getOptions());
     }
 
-    @Getter(AccessLevel.NONE)
-    private final JavaExecHandleFactory javaExecHandleFactory;
-
     @Inject
-    public AjcAction(ObjectFactory objectFactory, JavaExecHandleFactory javaExecHandleFactory) {
+    public AjcAction(ProjectLayout projectLayout, ObjectFactory objectFactory, JavaExecHandleFactory javaExecHandleFactory) {
+        this.projectLayout = projectLayout;
         options = new AspectJCompileOptions(objectFactory);
         classpath = objectFactory.fileCollection();
         additionalInpath = objectFactory.fileCollection();
@@ -93,7 +97,7 @@ public class AjcAction implements Action<Task> {
         AspectJCompileSpec spec = new AspectJCompileSpec();
 
         spec.setDestinationDir(compile.getDestinationDirectory().get().getAsFile());
-        spec.setWorkingDir(compile.getProject().getProjectDir());
+        spec.setWorkingDir(projectLayout.getProjectDirectory().getAsFile());
         spec.setTempDir(compile.getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(compile.getClasspath().filter(File::exists).getFiles()));
         spec.setTargetCompatibility(compile.getTargetCompatibility());

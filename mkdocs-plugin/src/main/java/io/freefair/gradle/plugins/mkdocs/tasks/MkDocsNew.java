@@ -4,10 +4,10 @@ import lombok.Getter;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.process.CommandLineArgumentProvider;
+import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
 
-import java.util.LinkedList;
+import javax.inject.Inject;
 
 /**
  * Create a new MkDocs project
@@ -19,8 +19,9 @@ public class MkDocsNew extends MkDocs {
     @OutputDirectory
     private final DirectoryProperty projectDirectory = getProject().getObjects().directoryProperty();
 
-    public MkDocsNew() {
-        super("new");
+    @Inject
+    public MkDocsNew(ExecOperations execOperations) {
+        super(execOperations, "new");
         setDescription("Create a new MkDocs project");
     }
 

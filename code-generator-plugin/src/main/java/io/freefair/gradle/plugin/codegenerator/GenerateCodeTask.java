@@ -7,14 +7,12 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.SneakyThrows;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
@@ -28,7 +26,9 @@ import java.util.stream.Collectors;
 @Setter
 public class GenerateCodeTask extends DefaultTask {
 
-    @Internal
+    @Getter(AccessLevel.NONE)
+    private final ProjectLayout projectLayout;
+    @Getter(AccessLevel.NONE)
     private final WorkerExecutor workerExecutor;
 
     @InputDirectory
@@ -50,7 +50,8 @@ public class GenerateCodeTask extends DefaultTask {
     private final ConfigurableFileCollection codeGeneratorClasspath = getProject().files();
 
     @Inject
-    public GenerateCodeTask(WorkerExecutor workerExecutor) {
+    public GenerateCodeTask(ProjectLayout projectLayout, WorkerExecutor workerExecutor) {
+        this.projectLayout = projectLayout;
         this.workerExecutor = workerExecutor;
     }
 
@@ -72,7 +73,7 @@ public class GenerateCodeTask extends DefaultTask {
             getLogger().debug(classesImplementing.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
         }
 
-        ProjectContext context = new ProjectContext(getProject().getProjectDir(), inputDir.getAsFile().getOrElse(this.getTemporaryDir()), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()), sourceSet.getOrElse("none"));
+        ProjectContext context = new ProjectContext(projectLayout.getProjectDirectory().getAsFile(), inputDir.getAsFile().getOrElse(this.getTemporaryDir()), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()), sourceSet.getOrElse("none"));
 
         WorkQueue workQueue = workerExecutor.classLoaderIsolation(spec -> spec.getClasspath().from(codeGeneratorClasspath));
 

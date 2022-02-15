@@ -4,7 +4,10 @@ import lombok.Getter;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
+
+import javax.inject.Inject;
 
 /**
  * Deploy your documentation to GitHub Pages.
@@ -59,8 +62,9 @@ public class MkDocsGhDeploy extends MkDocs {
     @Input
     private final Property<Boolean> ignoreVersion = getProject().getObjects().property(Boolean.class);
 
-    public MkDocsGhDeploy() {
-        super("gh-deploy");
+    @Inject
+    public MkDocsGhDeploy(ExecOperations execOperations) {
+        super(execOperations, "gh-deploy");
         setDescription("Deploy your documentation to GitHub Pages");
     }
 

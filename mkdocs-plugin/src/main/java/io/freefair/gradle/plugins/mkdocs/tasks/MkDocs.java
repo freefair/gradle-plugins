@@ -7,10 +7,14 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Console;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
 
 @Getter
 public abstract class MkDocs extends DefaultTask {
+
+    @Getter(AccessLevel.NONE)
+    private final ExecOperations execOperations;
 
     @Getter(AccessLevel.PROTECTED)
     @Input
@@ -28,13 +32,14 @@ public abstract class MkDocs extends DefaultTask {
     @Console
     private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class);
 
-    protected MkDocs(String command) {
+    protected MkDocs(ExecOperations execOperations, String command) {
+        this.execOperations = execOperations;
         this.command = command;
     }
 
     @TaskAction
     public void exec() {
-        getProject().exec(mkdocs -> {
+        execOperations.exec(mkdocs -> {
             mkdocs.setExecutable("mkdocs");
 
             mkdocs.args(command);

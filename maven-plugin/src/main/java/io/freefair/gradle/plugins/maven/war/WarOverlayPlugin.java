@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.maven.war;
 
 import groovy.lang.Closure;
+import lombok.RequiredArgsConstructor;
 import org.codehaus.groovy.runtime.StringGroovyMethods;
 import org.gradle.api.*;
 import org.gradle.api.artifacts.Configuration;
@@ -69,13 +70,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
         if (overlay.isDeferProvidedConfiguration()) {
             //Delay this to trick IntelliJ
-            //noinspection Convert2Lambda
-            overlay.getWarTask().doFirst(new Action<Task>() {
-                @Override
-                public void execute(Task w) {
-                    overlay.getWarCopySpec().exclude(element -> overlay.isProvided());
-                }
-            });
+            overlay.getWarTask().doFirst(new ExcludeProvidedAction(overlay));
         } else {
             overlay.getWarCopySpec().exclude(element -> overlay.isProvided());
         }
@@ -199,4 +194,13 @@ public class WarOverlayPlugin implements Plugin<Project> {
         return warTask.getName() + "OverlayClasspath";
     }
 
+    @RequiredArgsConstructor
+    private static class ExcludeProvidedAction implements Action<Task> {
+        private final WarOverlay overlay;
+
+        @Override
+        public void execute(Task w) {
+            overlay.getWarCopySpec().exclude(element -> overlay.isProvided());
+        }
+    }
 }

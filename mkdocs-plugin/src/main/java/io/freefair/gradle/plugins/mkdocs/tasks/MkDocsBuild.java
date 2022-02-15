@@ -5,7 +5,10 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
+
+import javax.inject.Inject;
 
 /**
  * Build the MkDocs documentation.
@@ -51,8 +54,9 @@ public class MkDocsBuild extends MkDocs {
     @OutputDirectory
     private final DirectoryProperty siteDir = getProject().getObjects().directoryProperty();
 
-    public MkDocsBuild() {
-        super("build");
+    @Inject
+    public MkDocsBuild(ExecOperations execOperations) {
+        super(execOperations, "build");
         setDescription("Build the MkDocs documentation");
     }
 

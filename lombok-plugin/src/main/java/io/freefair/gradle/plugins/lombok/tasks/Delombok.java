@@ -1,17 +1,20 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.internal.file.UnionFileTree;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.util.GUtil;
+import org.gradle.process.ExecOperations;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +28,11 @@ import java.util.stream.Collectors;
 @Setter
 @CacheableTask
 public class Delombok extends DefaultTask implements LombokTask {
+
+    @Getter(AccessLevel.NONE)
+    private final FileSystemOperations fileSystemOperations;
+    @Getter(AccessLevel.NONE)
+    private final ExecOperations execOperations;
 
     /**
      * Print the name of each file as it is being delombok-ed.
@@ -111,6 +119,12 @@ public class Delombok extends DefaultTask implements LombokTask {
     @Internal
     private final ConfigurableFileCollection input = getProject().files();
 
+    @Inject
+    public Delombok(FileSystemOperations fileSystemOperations, ExecOperations execOperations) {
+        this.fileSystemOperations = fileSystemOperations;
+        this.execOperations = execOperations;
+    }
+
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
     @SkipWhenEmpty
@@ -127,7 +141,7 @@ public class Delombok extends DefaultTask implements LombokTask {
 
     @TaskAction
     public void delombok() throws IOException {
-        getProject().delete(getTarget().getAsFile().get());
+        fileSystemOperations.delete(spec -> spec.delete(getTarget()).setFollowSymlinks(false));
 
         List<String> args = new LinkedList<>();
 
@@ -175,7 +189,7 @@ public class Delombok extends DefaultTask implements LombokTask {
 
         Files.write(optionsFile.toPath(), args);
 
-        getProject().javaexec(delombok -> {
+        execOperations.javaexec(delombok -> {
             delombok.setClasspath(getLombokClasspath());
             delombok.getMainClass().set("lombok.launch.Main");
             delombok.args("delombok");
