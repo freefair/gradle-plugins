@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.maven.plugin;
 import io.freefair.gradle.plugins.maven.plugin.wrappers.MavenProjectWrapper;
 import io.freefair.gradle.plugins.maven.plugin.wrappers.MojoAnnotationScannerWrapper;
 import io.freefair.gradle.plugins.maven.plugin.wrappers.PlexusLoggerWrapper;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
@@ -24,8 +25,10 @@ import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 
@@ -47,6 +50,9 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public abstract class AbstractGeneratorTask extends DefaultTask {
+
+    @Getter(AccessLevel.NONE)
+    private final ProjectLayout projectLayout;
 
     @InputFiles
     private final ConfigurableFileCollection sourceDirectories = getProject().files();
@@ -81,6 +87,10 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
     @Input
     private final Property<Boolean> skipErrorNoDescriptorsFound = getProject().getObjects().property(Boolean.class).convention(false);
 
+    protected AbstractGeneratorTask(ProjectLayout projectLayout) {
+        this.projectLayout = projectLayout;
+    }
+
     /**
      * @see AbstractGeneratorMojo#execute()
      */
@@ -88,7 +98,8 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
     public void generate() throws GeneratorException, IOException, XmlPullParserException, InvalidPluginDescriptorException, ExtractionException {
         PluginDescriptor pluginDescriptor = new PluginDescriptor();
 
-        MavenProject project = new MavenProjectWrapper(getProject(), getPomFile().getAsFile().get());
+        SourceSetContainer sourceSets = getProject().getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
+        MavenProject project = new MavenProjectWrapper(projectLayout, sourceSets, getPomFile().getAsFile().get());
 
         pluginDescriptor.setName(project.getName());
         pluginDescriptor.setDescription(project.getDescription());

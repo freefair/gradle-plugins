@@ -6,7 +6,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.Project;
-import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 
@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
  */
 public class MavenProjectWrapper extends MavenProject {
 
-    private final Project project;
+    private final ProjectLayout projectLayout;
     private final File pomFile;
 
     private final SourceSet main;
     private final SourceSet test;
 
-    public MavenProjectWrapper(Project project, File pomFile) throws IOException, XmlPullParserException {
-        this.project = project;
+    public MavenProjectWrapper(ProjectLayout projectLayout, SourceSetContainer sourceSets, File pomFile) throws IOException, XmlPullParserException {
+        this.projectLayout = projectLayout;
         this.pomFile = pomFile;
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
@@ -38,9 +38,7 @@ public class MavenProjectWrapper extends MavenProject {
 
         setModel(model);
 
-        getBuild().setDirectory(project.getBuildDir().getAbsolutePath());
-
-        SourceSetContainer sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
+        getBuild().setDirectory(projectLayout.getBuildDirectory().get().getAsFile().getAbsolutePath());
 
         main = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
         getBuild().setSourceDirectory(main.getJava().getSrcDirs().iterator().next().getAbsolutePath());
@@ -60,7 +58,7 @@ public class MavenProjectWrapper extends MavenProject {
 
     @Override
     public File getBasedir() {
-        return project.getProjectDir();
+        return projectLayout.getProjectDirectory().getAsFile();
     }
 
     @Override
