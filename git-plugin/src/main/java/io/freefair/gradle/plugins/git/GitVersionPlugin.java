@@ -25,21 +25,22 @@ public class GitVersionPlugin implements Plugin<Project> {
             return project.getVersion();
         }
 
-        String travisTag = System.getenv("TRAVIS_TAG");
-        if (travisTag != null && !travisTag.trim().isEmpty()) {
-            logger.lifecycle("Using TRAVIS_TAG as version: {}", travisTag);
-            return travisTag;
-        }
+        if (isTravisCi()) {
+            String travisTag = System.getenv("TRAVIS_TAG");
+            if (travisTag != null && !travisTag.trim().isEmpty()) {
+                logger.lifecycle("Using TRAVIS_TAG as version: {}", travisTag);
+                return travisTag;
+            }
 
-        String travisBranch = System.getenv("TRAVIS_BRANCH");
-        if (travisBranch != null) {
-            travisBranch = travisBranch.replace("/", "-");
-            String version = travisBranch + "-SNAPSHOT";
-            logger.lifecycle("Using TRAVIS_BRANCH as version: {}", version);
-            return version;
+            String travisBranch = System.getenv("TRAVIS_BRANCH");
+            if (travisBranch != null) {
+                travisBranch = travisBranch.replace("/", "-");
+                String version = travisBranch + "-SNAPSHOT";
+                logger.lifecycle("Using TRAVIS_BRANCH as version: {}", version);
+                return version;
+            }
         }
-
-        if ("true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"))) {
+        else if (isGithubActions()) {
             String githubRef = System.getenv("GITHUB_REF");
             if (githubRef != null) {
                 if (githubRef.startsWith("refs/tags/")) {
@@ -69,7 +70,7 @@ public class GitVersionPlugin implements Plugin<Project> {
             logger.debug("Failed to get current git tag", e);
         }
 
-        if (System.getenv("JENKINS_HOME") != null) {
+        if (isJenkins()) {
             String gitLocalBranch = System.getenv("GIT_LOCAL_BRANCH");
             if (gitLocalBranch != null && !gitLocalBranch.isEmpty()) {
                 gitLocalBranch = gitLocalBranch.replace("/", "-");
@@ -108,5 +109,17 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         return project.getVersion();
+    }
+
+    private boolean isTravisCi() {
+        return "true".equalsIgnoreCase(System.getenv("TRAVIS"));
+    }
+
+    private boolean isGithubActions() {
+        return "true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"));
+    }
+
+    private boolean isJenkins() {
+        return System.getenv("JENKINS_HOME") != null;
     }
 }
