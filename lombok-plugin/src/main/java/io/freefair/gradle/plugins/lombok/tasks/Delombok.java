@@ -114,6 +114,7 @@ public class Delombok extends DefaultTask implements LombokTask {
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
     @SkipWhenEmpty
+    @IgnoreEmptyDirectories
     protected FileTree getFilteredInput() {
         List<FileTreeInternal> collect = input.getFiles().stream()
                 .filter(File::isDirectory)
