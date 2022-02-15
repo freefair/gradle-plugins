@@ -4,7 +4,6 @@ import io.freefair.gradle.plugins.aspectj.AspectJPostCompileWeavingPlugin;
 import org.gradle.api.*;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.scala.ScalaPlugin;
 import org.gradle.testfixtures.ProjectBuilder;

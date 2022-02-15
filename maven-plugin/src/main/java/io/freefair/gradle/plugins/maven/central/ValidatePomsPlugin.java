@@ -2,8 +2,6 @@ package io.freefair.gradle.plugins.maven.central;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.Task;
-import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;

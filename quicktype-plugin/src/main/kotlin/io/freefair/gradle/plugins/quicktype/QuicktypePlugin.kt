@@ -2,20 +2,15 @@ package io.freefair.gradle.plugins.quicktype
 
 import io.freefair.gradle.plugins.quicktype.internal.DefaultQuicktypeSourceSet
 import io.freefair.gradle.plugins.quicktype.internal.QuicktypeCompile
-import org.gradle.api.*
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.compile.CompileOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 open class QuicktypePlugin : Plugin<Project> {
     private var project: Project? = null

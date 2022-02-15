@@ -3,8 +3,8 @@ package io.freefair.gradle.plugins.compress.tree;
 import org.apache.commons.compress.archivers.dump.DumpArchiveEntry;
 import org.apache.commons.compress.archivers.dump.DumpArchiveInputStream;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
-import org.gradle.internal.hash.FileHasher;
 import org.gradle.internal.file.Chmod;
+import org.gradle.internal.hash.FileHasher;
 
 import java.io.File;
 

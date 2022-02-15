@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import static org.gradle.api.plugins.BasePlugin.CLEAN_TASK_NAME;
-import static org.gradle.api.plugins.JavaPlugin.*;
+import static org.gradle.api.plugins.JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME;
+import static org.gradle.api.plugins.JavaPlugin.TEST_IMPLEMENTATION_CONFIGURATION_NAME;
 import static org.gradle.api.plugins.WarPlugin.WAR_TASK_NAME;
 
 /**

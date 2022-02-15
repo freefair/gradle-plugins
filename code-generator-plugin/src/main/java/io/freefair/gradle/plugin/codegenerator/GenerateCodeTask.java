@@ -16,7 +16,10 @@ import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.workers.*;
+import org.gradle.workers.WorkAction;
+import org.gradle.workers.WorkParameters;
+import org.gradle.workers.WorkQueue;
+import org.gradle.workers.WorkerExecutor;
 
 import javax.inject.Inject;
 import java.util.Collections;

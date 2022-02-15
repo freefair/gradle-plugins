@@ -2,12 +2,7 @@ package io.freefair.gradle.plugins.builder.gradle;
 
 import io.freefair.gradle.plugins.builder.io.FileBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class GradleConfigurationBuilder {
     private FileBuilder fileBuilder = null;

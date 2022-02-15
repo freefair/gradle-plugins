@@ -5,7 +5,6 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.Directory;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
