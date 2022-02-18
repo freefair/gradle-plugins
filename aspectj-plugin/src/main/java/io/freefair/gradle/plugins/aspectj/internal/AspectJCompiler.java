@@ -109,6 +109,11 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
             args.add(getAsPath(spec.getAspectJCompileOptions().getExtdirs().getFiles()));
         }
 
+        if (spec.getAspectJCompileOptions().getXmlConfigured().isPresent()) {
+            args.add("-xmlConfigured");
+            args.add(spec.getAspectJCompileOptions().getXmlConfigured().get().getAsFile().getAbsolutePath());
+        }
+
         if (spec.getDestinationDir() != null) {
             args.add("-d");
             args.add(spec.getDestinationDir().getAbsolutePath());

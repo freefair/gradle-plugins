@@ -75,10 +75,18 @@ public class AjcAction implements Action<Task> {
                 .withNormalizer(ClasspathNormalizer.class)
                 .optional(true);
 
+        task.getInputs().file(this.getOptions().getXmlConfigured())
+                .withPropertyName("ajcXmlConfigured")
+                .optional(true);
+
         task.getInputs().property("ajcArgs", this.getOptions().getCompilerArgs())
                 .optional(true);
 
         task.getInputs().property("ajcEnabled", this.getEnabled())
+                .optional(true);
+
+        task.getOutputs().file(this.getOptions().getOutjar())
+                .withPropertyName("ajcOutjar")
                 .optional(true);
     }
 

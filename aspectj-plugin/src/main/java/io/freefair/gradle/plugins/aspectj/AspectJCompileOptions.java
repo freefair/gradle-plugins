@@ -96,6 +96,12 @@ public class AspectJCompileOptions extends AbstractOptions {
     private final ConfigurableFileCollection extdirs;
 
     /**
+     * @see <a href="https://stackoverflow.com/a/71120602/3574494">https://stackoverflow.com/a/71120602/3574494</a>
+     */
+    @Input
+    private final RegularFileProperty xmlConfigured;
+
+    /**
      * Specify default source encoding format.
      */
     @Input
@@ -138,6 +144,7 @@ public class AspectJCompileOptions extends AbstractOptions {
         crossrefs = objectFactory.property(Boolean.class).convention(false);
         bootclasspath = objectFactory.fileCollection();
         extdirs = objectFactory.fileCollection();
+        xmlConfigured = objectFactory.fileProperty();
         encoding = objectFactory.property(String.class);
         verbose = objectFactory.property(Boolean.class).convention(false);
     }
