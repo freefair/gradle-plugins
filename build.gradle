@@ -8,7 +8,7 @@ buildscript {
         classpath "com.gradle.publish:plugin-publish-plugin:0.20.0"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
 
-        def pluginVersion = "6.4.0"
+        def pluginVersion = "6.4.1"
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
         classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
         classpath "io.freefair.gradle:git-plugin:$pluginVersion"
