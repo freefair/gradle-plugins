@@ -1,5 +1,3 @@
-evaluationDependsOn ":okhttp-plugin"
-
 apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
