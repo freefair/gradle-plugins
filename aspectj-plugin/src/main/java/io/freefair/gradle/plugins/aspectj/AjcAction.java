@@ -17,7 +17,10 @@ import org.gradle.process.internal.JavaExecHandleFactory;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+
+import static io.freefair.gradle.util.TaskUtils.*;
 
 /**
  * @author Lars Grefer
@@ -65,29 +68,15 @@ public class AjcAction implements Action<Task> {
                 .withNormalizer(ClasspathNormalizer.class)
                 .optional(false);
 
-        task.getInputs().files(this.getOptions().getAspectpath())
-                .withPropertyName("aspectpath")
-                .withNormalizer(ClasspathNormalizer.class)
-                .optional(true);
-
-        task.getInputs().files(this.getOptions().getInpath())
-                .withPropertyName("ajcInpath")
-                .withNormalizer(ClasspathNormalizer.class)
-                .optional(true);
-
-        task.getInputs().file(this.getOptions().getXmlConfigured())
-                .withPropertyName("ajcXmlConfigured")
-                .optional(true);
-
-        task.getInputs().property("ajcArgs", this.getOptions().getCompilerArgs())
-                .optional(true);
-
         task.getInputs().property("ajcEnabled", this.getEnabled())
                 .optional(true);
 
-        task.getOutputs().file(this.getOptions().getOutjar())
-                .withPropertyName("ajcOutjar")
-                .optional(true);
+        try {
+            registerNested(task, AspectJCompileOptions.class, this.getOptions(), "ajcOptions");
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

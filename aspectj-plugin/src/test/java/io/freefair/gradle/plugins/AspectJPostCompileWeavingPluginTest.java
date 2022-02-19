@@ -2,10 +2,12 @@ package io.freefair.gradle.plugins;
 
 import io.freefair.gradle.plugins.aspectj.AspectJPostCompileWeavingPlugin;
 import org.gradle.api.*;
+import org.gradle.api.internal.tasks.DefaultTaskInputs;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.scala.ScalaPlugin;
+import org.gradle.api.tasks.TaskInputs;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AspectJPostCompileWeavingPluginTest {
 
@@ -72,6 +76,9 @@ public class AspectJPostCompileWeavingPluginTest {
     }
 
     private static void assertAjcForSourceSet(Project project, String taskName) {
-        Assertions.assertTrue(isAjcActionAdded(project.getTasks().getByName(taskName)), "Missing expected AjcAction");
+        Task compileTask = project.getTasks().getByName(taskName);
+        Assertions.assertTrue(isAjcActionAdded(compileTask), "Missing expected AjcAction");
+
+        assertThat(compileTask.getInputs().getProperties()).containsKey("ajcOptions.encoding");
     }
 }

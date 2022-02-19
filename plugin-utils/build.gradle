@@ -1,0 +1,8 @@
+plugins {
+    id "java-library"
+}
+apply plugin: "io.freefair.maven-publish-java"
+
+dependencies {
+    api gradleApi()
+}

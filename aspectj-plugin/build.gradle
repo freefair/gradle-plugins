@@ -37,3 +37,7 @@ pluginBundle {
         }
     }
 }
+
+dependencies {
+    implementation project(":plugin-utils")
+}
