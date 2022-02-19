@@ -99,6 +99,7 @@ public class AspectJCompileOptions extends AbstractOptions {
      * @see <a href="https://stackoverflow.com/a/71120602/3574494">https://stackoverflow.com/a/71120602/3574494</a>
      */
     @Input
+    @Optional
     private final RegularFileProperty xmlConfigured;
 
     /**
