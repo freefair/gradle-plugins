@@ -94,6 +94,7 @@ public class LombokConfig extends DefaultTask implements LombokTask {
 
             execOperations.javaexec(config -> {
                 config.setClasspath(getLombokClasspath());
+                config.setMaxHeapSize("16M");
                 config.getMainClass().set("lombok.launch.Main");
                 config.args("config");
 
