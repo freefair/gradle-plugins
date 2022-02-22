@@ -57,6 +57,11 @@ public class AggregateJavadocPlugin implements Plugin<Project> {
                 SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
                 Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
 
+                if (!javadoc.isEnabled()) {
+                    aj.getLogger().info("Ignoring subproject {} as its javadoc task is disabled", subproject.getPath());
+                    return;
+                }
+
                 aj.dependsOn(subproject.getTasks().findByName(JavaPlugin.CLASSES_TASK_NAME));
                 aj.source(javadoc.getSource());
 
