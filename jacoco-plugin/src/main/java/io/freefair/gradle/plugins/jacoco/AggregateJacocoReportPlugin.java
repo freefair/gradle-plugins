@@ -2,12 +2,10 @@ package io.freefair.gradle.plugins.jacoco;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.file.Directory;
-import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.api.provider.Provider;
-import org.gradle.api.reporting.Report;
+import org.gradle.api.reporting.DirectoryReport;
+import org.gradle.api.reporting.SingleFileReport;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.testing.Test;
@@ -15,8 +13,6 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin;
 import org.gradle.testing.jacoco.plugins.JacocoPlugin;
 import org.gradle.testing.jacoco.plugins.JacocoPluginExtension;
 import org.gradle.testing.jacoco.tasks.JacocoReport;
-
-import java.io.File;
 
 /**
  * @author Lars Grefer
@@ -47,20 +43,16 @@ public class AggregateJacocoReportPlugin implements Plugin<Project> {
             JacocoPluginExtension reportingExtension = project.getExtensions().getByType(JacocoPluginExtension.class);
             reportTask.getReports().getHtml().getRequired().set(true);
             reportTask.getReports().all(report -> {
-                Provider<File> destination;
-                if (report.getOutputType().equals(Report.OutputType.DIRECTORY)) {
-                    destination = reportingExtension
+                if (report instanceof DirectoryReport) {
+                    ((DirectoryReport) report).getOutputLocation().convention(reportingExtension
                             .getReportsDirectory()
-                            .dir(reportTask.getName() + "/" + report.getName())
-                            .map(Directory::getAsFile);
+                            .dir(reportTask.getName() + "/" + report.getName()));
                 }
-                else {
-                    destination = reportingExtension
+                else if (report instanceof SingleFileReport) {
+                    ((SingleFileReport) report).getOutputLocation().convention(reportingExtension
                             .getReportsDirectory()
-                            .file(reportTask.getName() + "/" + reportTask.getName() + "." + report.getName())
-                            .map(RegularFile::getAsFile);
+                            .file(reportTask.getName() + "/" + reportTask.getName() + "." + report.getName()));
                 }
-                report.setDestination(destination);
             });
         });
 
