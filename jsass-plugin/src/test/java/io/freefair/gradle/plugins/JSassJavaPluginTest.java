@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by larsgrefer on 03.05.17.
  */
+@Deprecated
 public class JSassJavaPluginTest {
 
     private Project project;

@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.aspectj;
 import groovy.lang.Closure;
 import org.gradle.api.Action;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.tasks.SourceSet;
 
 import javax.annotation.Nullable;
 
@@ -10,7 +11,6 @@ import javax.annotation.Nullable;
  * @see org.gradle.api.tasks.GroovySourceSet
  * @see org.gradle.api.tasks.ScalaSourceSet
  */
-@Deprecated
 public interface AspectjSourceSet extends WeavingSourceSet {
 
     /**
@@ -18,7 +18,9 @@ public interface AspectjSourceSet extends WeavingSourceSet {
      * will be passed to the Groovy compiler for joint compilation.
      *
      * @return The Groovy/Java source. Never returns null.
+     * @deprecated Use {@link #getAspectj(SourceSet)} instead.
      */
+    @Deprecated
     SourceDirectorySet getAspectj();
 
     /**
@@ -28,7 +30,9 @@ public interface AspectjSourceSet extends WeavingSourceSet {
      *
      * @param configureClosure The closure to use to configure the Groovy source.
      * @return this
+     * @deprecated Use {@link #getAspectj(SourceSet)} instead.
      */
+    @Deprecated
     AspectjSourceSet aspectj(@Nullable Closure configureClosure);
 
     /**
@@ -38,7 +42,9 @@ public interface AspectjSourceSet extends WeavingSourceSet {
      *
      * @param configureAction The action to use to configure the Groovy source.
      * @return this
+     * @deprecated Use {@link #getAspectj(SourceSet)} instead.
      */
+    @Deprecated
     AspectjSourceSet aspectj(Action<? super SourceDirectorySet> configureAction);
 
     /**
@@ -46,5 +52,10 @@ public interface AspectjSourceSet extends WeavingSourceSet {
      *
      * @return the Groovy source. Never returns null.
      */
+    @Deprecated
     SourceDirectorySet getAllAspectj();
+
+    static AspectjSourceDirectorySet getAspectj(SourceSet sourceSet) {
+        return (AspectjSourceDirectorySet) sourceSet.getExtensions().getByName("aspectj");
+    }
 }

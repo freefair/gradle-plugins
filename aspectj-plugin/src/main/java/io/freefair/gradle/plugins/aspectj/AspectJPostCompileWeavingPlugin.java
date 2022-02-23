@@ -45,14 +45,14 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
     }
 
     private void configureSourceSetDefaults(SourceSet sourceSet) {
-        DefaultWeavingSourceSet weavingSourceSet = new DefaultWeavingSourceSet(sourceSet);
+        DefaultWeavingSourceSet weavingSourceSet = new DefaultWeavingSourceSet(sourceSet, project.getObjects());
         new DslObject(sourceSet).getConvention().add("aspectj", weavingSourceSet);
 
-        Configuration aspectpath = project.getConfigurations().create(weavingSourceSet.getAspectConfigurationName());
-        weavingSourceSet.setAspectPath(aspectpath);
+        Configuration aspectpath = project.getConfigurations().create(WeavingSourceSet.getAspectConfigurationName(sourceSet));
+        WeavingSourceSet.getAspectPath(sourceSet).from(aspectpath);
 
-        Configuration inpath = project.getConfigurations().create(weavingSourceSet.getInpathConfigurationName());
-        weavingSourceSet.setInPath(inpath);
+        Configuration inpath = project.getConfigurations().create(WeavingSourceSet.getInpathConfigurationName(sourceSet));
+        WeavingSourceSet.getInPath(sourceSet).from(inpath);
 
         project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName()).extendsFrom(aspectpath);
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
@@ -60,10 +60,8 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
     private void configurePlugin(String language) {
         sourceSets.all(sourceSet -> {
-            WeavingSourceSet weavingSourceSet = new DslObject(sourceSet).getConvention().getByType(WeavingSourceSet.class);
-
-            FileCollection aspectpath = weavingSourceSet.getAspectPath();
-            FileCollection inpath = weavingSourceSet.getInPath();
+            FileCollection aspectpath = WeavingSourceSet.getAspectPath(sourceSet);
+            FileCollection inpath = WeavingSourceSet.getInPath(sourceSet);
 
             Configuration runtimeClasspath = project.getConfigurations().getByName(sourceSet.getRuntimeClasspathConfigurationName());
             FileCollection aspectjClasspath = aspectjBasePlugin.getAspectjRuntime().inferAspectjClasspath(runtimeClasspath);

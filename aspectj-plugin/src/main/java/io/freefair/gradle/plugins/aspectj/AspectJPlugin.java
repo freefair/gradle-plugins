@@ -40,35 +40,31 @@ public class AspectJPlugin implements Plugin<Project> {
             SourceSet main = plugin.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
             SourceSet test = plugin.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
 
-            DefaultAspectjSourceSet mainAj = new DslObject(main).getConvention().getPlugin(DefaultAspectjSourceSet.class);
-            DefaultAspectjSourceSet testAj = new DslObject(test).getConvention().getPlugin(DefaultAspectjSourceSet.class);
-
-            Configuration aspectpath = project.getConfigurations().getByName(mainAj.getAspectConfigurationName());
-            Configuration testAspectpath = project.getConfigurations().getByName(testAj.getAspectConfigurationName());
+            Configuration aspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(main));
+            Configuration testAspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(test));
 
             testAspectpath.extendsFrom(aspectpath);
 
-            testAj.setAspectPath(project.getObjects().fileCollection().from(main.getOutput(), testAspectpath));
+            WeavingSourceSet.getAspectPath(test).setFrom(main.getOutput(), testAspectpath);
         });
     }
 
     private void configureSourceSet(SourceSet sourceSet) {
         DefaultAspectjSourceSet aspectjSourceSet = new DefaultAspectjSourceSet(project.getObjects(), sourceSet);
         new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectjSourceSet);
-        sourceSet.getExtensions().add(AspectjSourceDirectorySet.class, "aspectj", aspectjSourceSet.getAspectj());
 
-        final SourceDirectorySet aspectjSource = aspectjSourceSet.getAspectj();
+        final SourceDirectorySet aspectjSource = AspectjSourceSet.getAspectj(sourceSet);
         aspectjSource.srcDir("src/" + sourceSet.getName() + "/aspectj");
 
-        sourceSet.getResources().getFilter().exclude(element -> aspectjSourceSet.getAspectj().contains(element.getFile()));
+        sourceSet.getResources().getFilter().exclude(element -> AspectjSourceSet.getAspectj(sourceSet).contains(element.getFile()));
         sourceSet.getAllJava().source(aspectjSource);
         sourceSet.getAllSource().source(aspectjSource);
 
-        Configuration aspect = project.getConfigurations().create(aspectjSourceSet.getAspectConfigurationName());
-        aspectjSourceSet.setAspectPath(aspect);
+        Configuration aspect = project.getConfigurations().create(WeavingSourceSet.getAspectConfigurationName(sourceSet));
+        WeavingSourceSet.getAspectPath(sourceSet).from(aspect);
 
-        Configuration inpath = project.getConfigurations().create(aspectjSourceSet.getInpathConfigurationName());
-        aspectjSourceSet.setInPath(inpath);
+        Configuration inpath = project.getConfigurations().create(WeavingSourceSet.getInpathConfigurationName(sourceSet));
+        WeavingSourceSet.getInPath(sourceSet).from(inpath);
 
         project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName()).extendsFrom(aspect);
 
@@ -79,8 +75,8 @@ public class AspectJPlugin implements Plugin<Project> {
             compile.dependsOn(sourceSet.getCompileJavaTaskName());
             compile.setDescription("Compiles the " + sourceSet.getName() + " AspectJ source.");
             compile.setSource(aspectjSource);
-            compile.getAjcOptions().getAspectpath().from(aspectjSourceSet.getAspectPath());
-            compile.getAjcOptions().getInpath().from(aspectjSourceSet.getInPath());
+            compile.getAjcOptions().getAspectpath().from(WeavingSourceSet.getAspectPath(sourceSet));
+            compile.getAjcOptions().getInpath().from(WeavingSourceSet.getInPath(sourceSet));
         });
         JvmPluginsHelper.configureOutputDirectoryForSourceSet(sourceSet, aspectjSource, project, compileTask, compileTask.map(AspectjCompile::getOptions));
 
