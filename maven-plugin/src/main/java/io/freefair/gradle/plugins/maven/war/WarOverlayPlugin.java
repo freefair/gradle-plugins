@@ -197,11 +197,17 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
     @RequiredArgsConstructor
     private static class ExcludeProvidedAction implements Action<Task> {
-        private final WarOverlay overlay;
+        private final CopySpec warCopySpec;
+        private final boolean provided;
+
+        public ExcludeProvidedAction(WarOverlay overlay) {
+            warCopySpec = overlay.getWarCopySpec();
+            provided = overlay.isProvided();
+        }
 
         @Override
         public void execute(Task w) {
-            overlay.getWarCopySpec().exclude(element -> overlay.isProvided());
+            warCopySpec.exclude(element -> provided);
         }
     }
 }
