@@ -8,8 +8,10 @@ import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Files;
 
+/**
+ * @author Lars Grefer
+ */
 public abstract class LombokConfigAction implements WorkAction<LombokConfigParameters> {
-
 
     @SneakyThrows
     @Override
@@ -21,6 +23,5 @@ public abstract class LombokConfigAction implements WorkAction<LombokConfigParam
         try (OutputStream out = Files.newOutputStream(outputFile.toPath())) {
             lombokApi.config(out, getParameters().getArgs().get());
         }
-
     }
 }

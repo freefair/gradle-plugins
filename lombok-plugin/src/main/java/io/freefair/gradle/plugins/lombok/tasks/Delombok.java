@@ -24,6 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Applies lombok transformations without compiling your
+ * java code (so, 'unpacks' lombok annotations and such).
+ *
+ * @author Lars Grefer
+ */
 @Getter
 @Setter
 @CacheableTask

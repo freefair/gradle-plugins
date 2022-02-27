@@ -24,6 +24,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Prints the configurations for the provided paths to standard out.
+ *
+ * @author Lars Grefer
+ */
 @Getter
 @Setter
 @UntrackedTask(because = "lombok config bubbling traverses the file system")
