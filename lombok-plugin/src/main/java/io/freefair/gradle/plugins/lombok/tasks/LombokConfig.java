@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
+import io.freefair.gradle.plugins.lombok.tasks.internal.LombokConfigAction;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.process.ExecOperations;
+import org.gradle.workers.WorkerExecutor;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -18,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,8 @@ import java.util.stream.Collectors;
 @UntrackedTask(because = "lombok config bubbling traverses the file system")
 public class LombokConfig extends DefaultTask implements LombokTask {
 
+    @Getter(AccessLevel.NONE)
+    private final WorkerExecutor workerExecutor;
     @Getter(AccessLevel.NONE)
     private final FileSystemOperations fileSystemOperations;
     @Getter(AccessLevel.NONE)
@@ -69,8 +74,13 @@ public class LombokConfig extends DefaultTask implements LombokTask {
     @OutputFile
     private final RegularFileProperty outputFile = getProject().getObjects().fileProperty();
 
+    @Input
+    @Optional
+    private final Property<Boolean> fork = getProject().getObjects().property(Boolean.class);
+
     @Inject
-    public LombokConfig(FileSystemOperations fileSystemOperations, ExecOperations execOperations) {
+    public LombokConfig(WorkerExecutor workerExecutor, FileSystemOperations fileSystemOperations, ExecOperations execOperations) {
+        this.workerExecutor = workerExecutor;
         this.fileSystemOperations = fileSystemOperations;
         this.execOperations = execOperations;
         getOutputs().upToDateWhen(t -> ((LombokConfig) t).getPaths().isEmpty());
@@ -90,36 +100,50 @@ public class LombokConfig extends DefaultTask implements LombokTask {
             return;
         }
 
-        try (OutputStream out = new FileOutputStream(outputFile.getAsFile().get())) {
+        List<String> args = new LinkedList<>();
 
-            execOperations.javaexec(config -> {
-                config.setClasspath(getLombokClasspath());
-                config.setMaxHeapSize("16M");
-                config.getMainClass().set("lombok.launch.Main");
-                config.args("config");
+        if (generate.getOrElse(false)) {
+            args.add("--generate");
+        }
 
-                config.setStandardOutput(out);
+        if (verbose.getOrElse(false)) {
+            args.add("--verbose");
+        }
 
-                if (generate.getOrElse(false)) {
-                    config.args("--generate");
-                }
+        if (notMentioned.getOrElse(false)) {
+            args.add("--not-mentioned");
+        }
 
-                if (verbose.getOrElse(false)) {
-                    config.args("--verbose");
-                }
+        for (String key : keys.getOrElse(Collections.emptyList())) {
+            args.add("--key=" + key.trim());
+        }
 
-                if (notMentioned.getOrElse(false)) {
-                    config.args("--not-mentioned");
-                }
+        for (File path : actualPaths) {
+            args.add(path.getAbsolutePath());
+        }
 
-                for (String key : keys.getOrElse(Collections.emptyList())) {
-                    config.args("--key=" + key.trim());
-                }
+        if (fork.getOrElse(false)) {
+            try (OutputStream out = new FileOutputStream(outputFile.getAsFile().get())) {
 
-                for (File path : actualPaths) {
-                    config.args(path);
-                }
-            });
+                execOperations.javaexec(config -> {
+                    config.setClasspath(getLombokClasspath());
+                    config.setMaxHeapSize("16M");
+                    config.getMainClass().set("lombok.launch.Main");
+                    config.args("config");
+
+                    config.setStandardOutput(out);
+
+                    config.args(args);
+                });
+            }
+        }
+        else {
+            workerExecutor
+                    .classLoaderIsolation(cl -> cl.getClasspath().from(lombokClasspath))
+                    .submit(LombokConfigAction.class, params -> {
+                        params.getArgs().set(args);
+                        params.getOutputFile().set(outputFile);
+                    });
         }
     }
 }

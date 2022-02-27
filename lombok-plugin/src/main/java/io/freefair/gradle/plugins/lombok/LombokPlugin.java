@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.lombok;
 
-import io.freefair.gradle.plugins.lombok.internal.ConfigFileResolver;
 import io.freefair.gradle.plugins.lombok.internal.ConfigUtil;
 import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
@@ -9,8 +8,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -21,8 +18,6 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
-
-import java.io.File;
 
 @Getter
 public class LombokPlugin implements Plugin<Project> {
@@ -136,25 +131,10 @@ public class LombokPlugin implements Plugin<Project> {
         TaskProvider<LombokConfig> lombokConfigTask = ConfigUtil.getLombokConfigTask(project, sourceSet);
 
         compileTaskProvider.configure(javaCompile -> {
-            try {
-                ConfigFileResolver configFileResolver = new ConfigFileResolver(project.getObjects());
-                FileCollection configFiles = configFileResolver.findConfigFiles(sourceSet.getJava());
-                javaCompile.getInputs().files(configFiles)
-                        .withPropertyName("lombok.config")
-                        .withPathSensitivity(PathSensitivity.NAME_ONLY)
-                        .optional();
-            } catch (Exception e) {
-                if (e instanceof UnsupportedOperationException) {
-                    project.getLogger().info("lombok.config imports found", e);
-                }
-                else {
-                    project.getLogger().warn("Failed to determine lombok.config files", e);
-                }
-                javaCompile.getInputs().file(lombokConfigTask.get().getOutputFile())
-                        .withPropertyName("lombok.config")
-                        .withPathSensitivity(PathSensitivity.NONE)
-                        .optional();
-            }
+            javaCompile.getInputs().file(lombokConfigTask.get().getOutputFile())
+                    .withPropertyName("lombok.config")
+                    .withPathSensitivity(PathSensitivity.NONE)
+                    .optional();
         });
     }
 
