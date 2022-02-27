@@ -179,6 +179,10 @@ public class ResolveJavadocLinks {
             return "https://tomcat.apache.org/tomcat-" + version.substring(0, 3) + "-doc/api/";
         }
 
+        if (group.equals("org.apache.maven")) {
+            return "https://maven.apache.org/ref/" + version + "/" + artifact + "/apidocs/";
+        }
+
         return null;
     }
 
