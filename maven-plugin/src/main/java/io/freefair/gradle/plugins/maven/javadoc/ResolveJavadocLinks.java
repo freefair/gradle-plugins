@@ -18,8 +18,7 @@ import org.gradle.jvm.toolchain.JavadocTool;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @NonNullApi
 @RequiredArgsConstructor
@@ -68,35 +67,34 @@ public class ResolveJavadocLinks {
     }
 
     private boolean checkLink(String link) {
-        Request elementListRequest = new Request.Builder()
-                .url(link + "element-list")
-                .get()
-                .build();
-
         IOException exception = null;
 
-        try (Response response = okHttpClient.newCall(elementListRequest).execute()) {
-            if (response.isSuccessful()) {
-                return true;
+        for (String file : Arrays.asList("element-list", "package-list")) {
+            Request request = new Request.Builder()
+                    .url(link + file)
+                    .get()
+                    .build();
+
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    return true;
+                }
+            } catch (IOException e) {
+                logger.info("Failed to access {}", request.url(), e);
+                if (exception == null) {
+                    exception = e;
+                }
+                else {
+                    exception.addSuppressed(e);
+                }
             }
-        } catch (IOException e) {
-            exception = e;
         }
 
-        Request packageListRequest = new Request.Builder()
-                .url(link + "package-list")
-                .get()
-                .build();
-
-        try (Response response = okHttpClient.newCall(packageListRequest).execute()) {
-            return response.isSuccessful();
-        } catch (IOException e) {
-            if (exception != null) {
-                e.addSuppressed(exception);
-            }
-            logger.warn("Failed to access {}", packageListRequest.url(), e);
-            return false;
+        if (exception != null) {
+            logger.warn("Failed to check link {}", link, exception);
         }
+
+        return false;
     }
 
     @Nullable
@@ -108,6 +106,10 @@ public class ResolveJavadocLinks {
 
         if (group.equals("javax") && artifact.equals("javaee-api") && version.startsWith("8")) {
             return "https://javaee.github.io/javaee-spec/javadocs/";
+        }
+
+        if (group.equals("jakarta.platform")) {
+            return "https://jakarta.ee/specifications/platform/" + version.substring(0, version.indexOf(".")) + "/apidocs/";
         }
 
         if (group.equals("org.springframework") && artifact.startsWith("spring-")) {
