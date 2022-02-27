@@ -137,12 +137,7 @@ public class ResolveJavadocLinks {
         }
 
         if (group.equals("com.squareup.okhttp3")) {
-            if (version.startsWith("3.")) {
-                return "https://square.github.io/okhttp/3.x/" + artifact + "/";
-            }
-            if (version.startsWith("4.")) {
-                return "https://square.github.io/okhttp/4.x/" + artifact + "/";
-            }
+            return "https://square.github.io/okhttp/4.x/" + artifact + "/";
         }
 
         if (group.equals("com.squareup.retrofit")) {
