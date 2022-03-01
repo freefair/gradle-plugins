@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
-import lombok.RequiredArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -21,13 +20,18 @@ import java.io.IOException;
 import java.util.*;
 
 @NonNullApi
-@RequiredArgsConstructor
 public class ResolveJavadocLinks {
 
     private final OkHttpClient okHttpClient;
+    private final ServiceLoader<JavadocLinkProvider> javadocLinkProviders;
 
     private Javadoc javadoc;
     private Logger logger;
+
+    public ResolveJavadocLinks(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+        javadocLinkProviders = ServiceLoader.load(JavadocLinkProvider.class, this.getClass().getClassLoader());
+    }
 
     public void resolveLinks(Javadoc javadoc, Configuration classpath) {
         logger = javadoc.getLogger();
@@ -100,52 +104,17 @@ public class ResolveJavadocLinks {
     @Nullable
     private String findWellKnownLink(String group, String artifact, String version) {
 
+        javadocLinkProviders.reload();
+        for (JavadocLinkProvider javadocLinkProvider : javadocLinkProviders) {
+            logger.warn("{}", javadocLinkProvider.getClass());
+            String javadocLink = javadocLinkProvider.getJavadocLink(group, artifact, version);
+            if (javadocLink != null) {
+                return javadocLink;
+            }
+        }
+
         if (group.equals("javax") && artifact.equals("javaee-api") && version.matches("[567]\\..*")) {
             return "https://docs.oracle.com/javaee/" + version.substring(0, 1) + "/api/";
-        }
-
-        if (group.equals("javax") && artifact.equals("javaee-api") && version.startsWith("8")) {
-            return "https://javaee.github.io/javaee-spec/javadocs/";
-        }
-
-        if (group.equals("jakarta.platform")) {
-            return "https://jakarta.ee/specifications/platform/" + version.substring(0, version.indexOf(".")) + "/apidocs/";
-        }
-
-        if (group.equals("org.springframework") && artifact.startsWith("spring-")) {
-            return "https://docs.spring.io/spring-framework/docs/" + version + "/javadoc-api/";
-        }
-
-        if (group.equals("org.springframework.boot") && artifact.startsWith("spring-boot")) {
-            return "https://docs.spring.io/spring-boot/docs/" + version + "/api/";
-        }
-
-        if (group.equals("org.springframework.security") && artifact.startsWith("spring-security")) {
-            return "https://docs.spring.io/spring-security/site/docs/" + version + "/api/";
-        }
-
-        if (group.equals("org.springframework.data") && artifact.equals("spring-data-jpa")) {
-            return "https://docs.spring.io/spring-data/jpa/docs/" + version + "/api/";
-        }
-
-        if (group.equals("org.springframework.webflow") && artifact.equals("spring-webflow")) {
-            return "https://docs.spring.io/spring-webflow/docs/" + version + "/api/";
-        }
-
-        if (group.equals("com.squareup.okio") && version.startsWith("1.")) {
-            return "https://square.github.io/okio/1.x/" + artifact + "/";
-        }
-
-        if (group.equals("com.squareup.okhttp3")) {
-            return "https://square.github.io/okhttp/4.x/" + artifact + "/";
-        }
-
-        if (group.equals("com.squareup.retrofit")) {
-            return "https://square.github.io/retrofit/1.x/retrofit/";
-        }
-
-        if (group.equals("com.squareup.retrofit2")) {
-            return "https://square.github.io/retrofit/2.x/" + artifact + "/";
         }
 
         if (group.equals("org.hibernate") && artifact.equals("hibernate-core")) {
@@ -172,16 +141,10 @@ public class ResolveJavadocLinks {
             return "https://docs.joinfaces.org/" + version + "/api/";
         }
 
-        if (group.startsWith("org.apache.tomcat")) {
-            return "https://tomcat.apache.org/tomcat-" + version.substring(0, 3) + "-doc/api/";
-        }
-
-        if (group.equals("org.apache.maven")) {
-            return "https://maven.apache.org/ref/" + version + "/" + artifact + "/apidocs/";
-        }
-
         return null;
     }
+
+
 
 
     private String getJavaSeLink() {

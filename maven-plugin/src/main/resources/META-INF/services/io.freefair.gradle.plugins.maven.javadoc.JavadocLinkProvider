@@ -1,0 +1,6 @@
+io.freefair.gradle.plugins.maven.javadoc.linkproviders.JakartaEE9LinkProvider
+io.freefair.gradle.plugins.maven.javadoc.linkproviders.JakartaEE8LinkProvider
+io.freefair.gradle.plugins.maven.javadoc.linkproviders.JavaEE8LinkProvider
+io.freefair.gradle.plugins.maven.javadoc.linkproviders.SpringLinkProvider
+io.freefair.gradle.plugins.maven.javadoc.linkproviders.ApacheLinkProvider
+io.freefair.gradle.plugins.maven.javadoc.linkproviders.SquareupLinkProvider
