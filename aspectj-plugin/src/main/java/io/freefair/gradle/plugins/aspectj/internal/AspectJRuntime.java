@@ -105,6 +105,9 @@ public class AspectJRuntime {
 
     @Nullable
     private static File findAspectjtoolsJarFile(FileCollection classpath) {
+        if (classpath == null) {
+            return null;
+        }
         for (File file : classpath) {
             if (file.getName().startsWith("aspectjtools") && file.getName().endsWith(".jar")) {
                 return file;
@@ -116,6 +119,9 @@ public class AspectJRuntime {
     private static final Pattern aspectjVersionPattern = Pattern.compile("aspectj\\w+-(\\d.*).jar");
 
     private static String findAspectjVersion(FileCollection classpath) {
+        if (classpath == null) {
+            return null;
+        }
         for (File file : classpath) {
             Matcher matcher = aspectjVersionPattern.matcher(file.getName());
             if (matcher.matches()) {
