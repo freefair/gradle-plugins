@@ -23,7 +23,7 @@ dependencies {
 
     implementation "org.slf4j:slf4j-api:1.+"
 
-    implementation "org.aspectj:aspectjrt:1.9.9"
+    implementation "org.aspectj:aspectjrt:1.9.9.1"
     implementation localGroovy()
 
     testImplementation "junit:junit:4.13.2"
