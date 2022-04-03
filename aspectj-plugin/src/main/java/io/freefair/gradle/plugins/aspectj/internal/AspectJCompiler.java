@@ -94,7 +94,7 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
         }
 
         List<File> compileClasspath = spec.getCompileClasspath();
-        if (!compileClasspath.isEmpty()) {
+        if (compileClasspath != null && !compileClasspath.isEmpty()) {
             args.add("-classpath");
             args.add(getAsPath(compileClasspath));
         }
@@ -114,8 +114,10 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
             args.add(spec.getAspectJCompileOptions().getXmlConfigured().get().getAsFile().getAbsolutePath());
         }
 
-        args.add("-d");
-        args.add(spec.getDestinationDir().getAbsolutePath());
+        if (spec.getDestinationDir() != null) {
+            args.add("-d");
+            args.add(spec.getDestinationDir().getAbsolutePath());
+        }
 
         if (spec.getTargetCompatibility() != null) {
             args.add("-target");
@@ -141,9 +143,11 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
         spec.getAspectJCompileOptions().getCompilerArgumentProviders()
                 .forEach(commandLineArgumentProvider -> commandLineArgumentProvider.asArguments().forEach(args::add));
 
-        spec.getSourceFiles().forEach(sourceFile ->
-                args.add(sourceFile.getAbsolutePath())
-        );
+        if (spec.getSourceFiles() != null) {
+            spec.getSourceFiles().forEach(sourceFile ->
+                    args.add(sourceFile.getAbsolutePath())
+            );
+        }
 
         File argFile = new File(spec.getTempDir(), "ajc.options");
 
