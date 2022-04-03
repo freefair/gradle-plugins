@@ -69,7 +69,7 @@ public class PartsMatcher implements ComparingMatcher<Version> {
             }
         }
         Optional<VersionPart> first = value.getParts().stream().filter(part -> Objects.equals(part.getPrefix(), "-")).findFirst();
-        if(first.isPresent()) {
+        if(first.isPresent() && qualifier != null) {
             int index = value.getParts().indexOf(first.get());
             List<VersionPart> collect = value.getParts().stream().skip(index).collect(Collectors.toList());
             return qualifier.equalTo(new Version(collect));

@@ -1,39 +1,20 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
-import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
 import io.freefair.gradle.plugins.maven.version.Version;
-import org.jetbrains.annotations.Nullable;
 
-public class SquareupLinkProvider implements JavadocLinkProvider {
+public class SquareupLinkProvider extends AbstractLinkProvider {
 
-    @Nullable
+    public SquareupLinkProvider() {
+        addArtifactLink("com.squareup.okio", null, "1.x", "https://square.github.io/okio/1.x/${artifact}/");
+        addArtifactLink("com.squareup.okio", null, "2.x", "https://square.github.io/okio/2.x/okio/okio/");
+        addArtifactLink("com.squareup.okio", null, "3.x", "https://square.github.io/okio/3.x/okio/okio/okio/");
+        addArtifactLink("com.squareup.okhttp3", null, null, "https://square.github.io/okhttp/4.x/${artifact}/");
+        addArtifactLink("com.squareup.retrofit", null, null, "https://square.github.io/retrofit/1.x/retrofit/");
+        addArtifactLink("com.squareup.retrofit2", null, null, "https://square.github.io/retrofit/2.x/${artifact}/");
+    }
+
     @Override
-    public String getJavadocLink(String group, String artifact, Version version) {
-        if (!group.startsWith("com.squareup")) {
-            return null;
-        }
-
-        if (group.equals("com.squareup.okio")) {
-            if (version.toString().startsWith("1.")) {
-                return "https://square.github.io/okio/1.x/" + artifact + "/";
-            }
-            else {
-                return "https://square.github.io/okio/3.x/okio/okio/";
-            }
-        }
-
-        if (group.equals("com.squareup.okhttp3")) {
-            return "https://square.github.io/okhttp/4.x/" + artifact + "/";
-        }
-
-        if (group.equals("com.squareup.retrofit")) {
-            return "https://square.github.io/retrofit/1.x/retrofit/";
-        }
-
-        if (group.equals("com.squareup.retrofit2")) {
-            return "https://square.github.io/retrofit/2.x/" + artifact + "/";
-        }
-
-        return null;
+    protected boolean additionalStartChecks(String group, String artifact, Version version) {
+        return group.startsWith("com.squareup");
     }
 }

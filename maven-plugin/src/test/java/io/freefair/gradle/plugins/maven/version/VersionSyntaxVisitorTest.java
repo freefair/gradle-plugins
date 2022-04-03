@@ -79,4 +79,32 @@ public class VersionSyntaxVisitorTest {
         v = new Version("2.4.0-SNAPSHOT");
         assertThat(versionMatcher.matches(v)).isTrue();
     }
+
+    @Test
+    public void testWildcard() {
+        // Arrange
+        String version = "2.x";
+
+        // Act
+        Matcher<Version> versionMatcher = ParsingHelper.parseVersionSyntax(version);
+
+        // Assert
+        Version v = new Version("2.3.2-SNAPSHOT");
+        assertThat(versionMatcher.matches(v)).isTrue();
+
+        v = new Version("2.3.0-SNAPSHOT");
+        assertThat(versionMatcher.matches(v)).isTrue();
+
+        v = new Version("2.4.1-SNAPSHOT");
+        assertThat(versionMatcher.matches(v)).isTrue();
+
+        v = new Version("2.4.0-SNAPSHOT");
+        assertThat(versionMatcher.matches(v)).isTrue();
+
+        v = new Version("2.5.0");
+        assertThat(versionMatcher.matches(v)).isTrue();
+
+        v = new Version("3.0.0");
+        assertThat(versionMatcher.matches(v)).isFalse();
+    }
 }
