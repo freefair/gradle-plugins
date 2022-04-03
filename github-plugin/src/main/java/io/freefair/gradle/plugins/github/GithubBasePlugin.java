@@ -54,10 +54,6 @@ public class GithubBasePlugin implements Plugin<Project> {
             return false;
         }
 
-        if (new File(GitUtils.findWorkingDirectory(project), ".travis.yml").isFile()) {
-            return true;
-        }
-
-        return false;
+        return new File(GitUtils.findWorkingDirectory(project), ".travis.yml").isFile();
     }
 }

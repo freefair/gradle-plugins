@@ -96,7 +96,7 @@ public class AspectJRuntime {
             // let's override this so that delegate isn't created at autowiring time (which would mean on every build)
             @Override
             public void visitDependencies(TaskDependencyResolveContext context) {
-                if (classpath instanceof Buildable) {
+                if (classpath != null) {
                     context.add(classpath);
                 }
             }
