@@ -1,30 +1,16 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
-import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
-import org.jetbrains.annotations.Nullable;
+import io.freefair.gradle.plugins.maven.version.Version;
 
-public class ApacheLinkProvider implements JavadocLinkProvider {
+public class ApacheLinkProvider extends AbstractLinkProvider {
+    public ApacheLinkProvider() {
+        addArtifactLink("org.apache.logging.log4j", null, "2.x", "https://logging.apache.org/log4j/2.x/${artifact}/apidocs/");
+        addArtifactLink("org.apache.tomcat*", null, null, "https://tomcat.apache.org/tomcat-${version:0,3}-doc/api/");
+        addArtifactLink("org.apache.maven", null, null, "https://maven.apache.org/ref/${version}/${artifact}/apidocs/");
+    }
 
-    @Nullable
     @Override
-    public String getJavadocLink(String group, String artifact, String version) {
-        if (!group.startsWith("org.apache")) {
-            return null;
-        }
-
-        if (group.equals("org.apache.logging.log4j") && version.startsWith("2.x")) {
-            return "https://logging.apache.org/log4j/2.x/" + artifact + "/apidocs/";
-        }
-
-        if (group.startsWith("org.apache.tomcat")) {
-            return "https://tomcat.apache.org/tomcat-" + version.substring(0, 3) + "-doc/api/";
-        }
-
-        if (group.equals("org.apache.maven")) {
-            return "https://maven.apache.org/ref/" + version + "/" + artifact + "/apidocs/";
-        }
-
-
-        return null;
+    protected boolean additionalStartChecks(String group, String artifact, Version version) {
+        return group.startsWith("org.apache");
     }
 }

@@ -1,13 +1,14 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
+import io.freefair.gradle.plugins.maven.version.Version;
 import org.jetbrains.annotations.Nullable;
 
 public class SpringLinkProvider implements JavadocLinkProvider {
 
     @Nullable
     @Override
-    public String getJavadocLink(String group, String artifact, String version) {
+    public String getJavadocLink(String group, String artifact, Version version) {
         if (!group.startsWith("org.springframework")) {
             return null;
         }

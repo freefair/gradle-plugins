@@ -1,19 +1,20 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
+import io.freefair.gradle.plugins.maven.version.Version;
 import org.jetbrains.annotations.Nullable;
 
 public class SquareupLinkProvider implements JavadocLinkProvider {
 
     @Nullable
     @Override
-    public String getJavadocLink(String group, String artifact, String version) {
+    public String getJavadocLink(String group, String artifact, Version version) {
         if (!group.startsWith("com.squareup")) {
             return null;
         }
 
         if (group.equals("com.squareup.okio")) {
-            if (version.startsWith("1.")) {
+            if (version.toString().startsWith("1.")) {
                 return "https://square.github.io/okio/1.x/" + artifact + "/";
             }
             else {

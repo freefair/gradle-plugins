@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
+import io.freefair.gradle.plugins.maven.version.Version;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -47,8 +48,8 @@ public class JavaEE8LinkProvider implements JavadocLinkProvider {
 
     @Override
     @Nullable
-    public String getJavadocLink(String group, String artifact, String version) {
-        if (isJavaEE8Dependency(group, artifact, version)) {
+    public String getJavadocLink(String group, String artifact, Version version) {
+        if (isJavaEE8Dependency(group, artifact, version.toString())) {
             return "https://javaee.github.io/javaee-spec/javadocs/";
         }
 

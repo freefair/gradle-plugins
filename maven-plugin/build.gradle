@@ -1,13 +1,26 @@
 apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
+apply plugin: "antlr"
 
 dependencies {
     implementation 'org.apache.maven:maven-model:3.8.5'
 
     api project(":okhttp-plugin")
 
+    antlr 'org.antlr:antlr4:4.9.3'
+
     testImplementation project(":test-common")
+}
+
+configurations {
+    compile {
+        extendsFrom = extendsFrom.findAll { it != configurations.antlr }
+    }
+}
+
+clean.doLast {
+    file('generated-src').deleteDir()
 }
 
 gradlePlugin {

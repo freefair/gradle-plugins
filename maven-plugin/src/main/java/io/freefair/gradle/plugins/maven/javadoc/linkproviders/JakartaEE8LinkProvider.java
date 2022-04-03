@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
+import io.freefair.gradle.plugins.maven.version.Version;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class JakartaEE8LinkProvider implements JavadocLinkProvider {
 
     @Override
     @Nullable
-    public String getJavadocLink(String group, String artifact, String version) {
+    public String getJavadocLink(String group, String artifact, Version version) {
         if (isJakarta8Dependency(group, artifact, version)) {
             return "https://jakarta.ee/specifications/platform/8/apidocs/";
         }
@@ -56,9 +57,9 @@ public class JakartaEE8LinkProvider implements JavadocLinkProvider {
         return null;
     }
 
-    private boolean isJakarta8Dependency(String group, String artifact, String version) {
+    private boolean isJakarta8Dependency(String group, String artifact, Version version) {
         if (artifactVersions.containsKey(artifact)) {
-            return version.startsWith(artifactVersions.get(artifact));
+            return version.toString().startsWith(artifactVersions.get(artifact));
         }
         return false;
     }

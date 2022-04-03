@@ -1,5 +1,7 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
+import io.freefair.gradle.plugins.maven.version.ParsingHelper;
+import io.freefair.gradle.plugins.maven.version.Version;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -16,6 +18,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavadocTool;
 
 import javax.annotation.Nullable;
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.io.IOException;
 import java.util.*;
 
@@ -104,10 +107,11 @@ public class ResolveJavadocLinks {
     @Nullable
     private String findWellKnownLink(String group, String artifact, String version) {
 
+        Version v = ParsingHelper.parseVersion(version);
         javadocLinkProviders.reload();
         for (JavadocLinkProvider javadocLinkProvider : javadocLinkProviders) {
             logger.warn("{}", javadocLinkProvider.getClass());
-            String javadocLink = javadocLinkProvider.getJavadocLink(group, artifact, version);
+            String javadocLink = javadocLinkProvider.getJavadocLink(group, artifact, v);
             if (javadocLink != null) {
                 return javadocLink;
             }
@@ -143,9 +147,6 @@ public class ResolveJavadocLinks {
 
         return null;
     }
-
-
-
 
     private String getJavaSeLink() {
         JavaVersion javaVersion = JavaVersion.current();
