@@ -23,4 +23,7 @@ public interface CompressFileOperations {
 
     FileTree dumpTree(Object dumpFile);
     FileTree dumpTree(Object dumpFile, String encoding);
+
+    FileTree tarXzTree(Object tarXzFile);
+    FileTree tarLzmaTree(Object tarXzFile);
 }

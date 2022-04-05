@@ -8,12 +8,14 @@ import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.dump.DumpArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.FileTreeAdapter;
 import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.resources.ReadableResource;
 import org.gradle.api.tasks.util.PatternSet;
 import org.gradle.internal.Factory;
 import org.gradle.internal.hash.FileHasher;
@@ -124,6 +126,16 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         File file = fileOperations.file(dumpFile);
         DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(dumpFileTree, patternSetFactory);
+    }
+
+    public FileTree tarXzTree(Object tarXzFile) {
+        File file = fileOperations.file(tarXzFile);
+        return fileOperations.tarTree(new XzArchiver(file));
+    }
+
+    public FileTree tarLzmaTree(Object tarLzmaFile) {
+        File file = fileOperations.file(tarLzmaFile);
+        return fileOperations.tarTree(new LzmaArchiver(file));
     }
 
     private File getExpandDir() {

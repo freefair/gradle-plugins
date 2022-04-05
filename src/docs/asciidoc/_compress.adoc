@@ -31,9 +31,12 @@ FileTree sevenZipTree(Object sevenZipFile, char[] password);
 
 FileTree dumpTree(Object dumpFile);
 FileTree dumpTree(Object dumpFile, String encoding);
+
+FileTree tarXzTree(Object tarXzFile);
+FileTree tarLzmaTree(Object tarLzmaFile);
 ----
 
-These methods can be used to open `ar`, `arj`, `cpio`, `7z` or `dump` archives.
+These methods can be used to open `ar`, `arj`, `cpio`, `7z`, `dump`, `tar.xz` or `tar.lzma` archives.
 They work the same way as the
 https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.Project:zipTree(java.lang.Object)[`zipTree`]
 and
