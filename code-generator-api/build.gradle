@@ -1,15 +1,6 @@
 apply plugin: "io.freefair.maven-publish-java"
-apply plugin: "io.freefair.maven-central.validate-poms"
-apply plugin: 'signing'
 
 description = "Code Generator API"
 
-validatePomFileForMavenJavaPublication.ignoreFailures = false
-
 dependencies {
 }
-
-signing {
-    required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask("publish") }
-}
-

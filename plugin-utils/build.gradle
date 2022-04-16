@@ -3,6 +3,8 @@ plugins {
 }
 apply plugin: "io.freefair.maven-publish-java"
 
+description = "Gradle Plugin Utils"
+
 dependencies {
     api gradleApi()
 }

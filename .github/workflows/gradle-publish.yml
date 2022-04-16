@@ -18,7 +18,7 @@ jobs:
         env:
           PASS: ${{ secrets.FREEFAIR_SECRING_PASS }}
       - name: Publish package
-        run: ./gradlew --no-parallel code-generator-api:publishToSonatype publishPlugins uploadDocs closeAndReleaseStagingRepository -Psigning.secretKeyRingFile=$GITHUB_WORKSPACE/secring.gpg -Psigning.password=$SIGNING_PASSWORD -Psigning.keyId=$SIGNING_KEY_ID
+        run: ./gradlew --no-parallel publishMavenJavaPublicationToSonatypeRepository publishPlugins uploadDocs closeAndReleaseStagingRepository -Psigning.secretKeyRingFile=$GITHUB_WORKSPACE/secring.gpg -Psigning.password=$SIGNING_PASSWORD -Psigning.keyId=$SIGNING_KEY_ID
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_PASSWORD }}

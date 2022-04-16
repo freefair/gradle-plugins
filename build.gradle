@@ -78,6 +78,13 @@ allprojects {
     }
 
     plugins.withId("maven-publish") {
+        project.apply plugin: 'signing'
+        project.apply plugin: 'io.freefair.maven-central.validate-poms'
+
+        signing {
+            required { !version.endsWith('SNAPSHOT') }
+        }
+
         publishing {
             publications.withType(MavenPublication) {
                 pom {
