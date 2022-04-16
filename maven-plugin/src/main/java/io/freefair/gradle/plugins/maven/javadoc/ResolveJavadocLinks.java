@@ -141,6 +141,14 @@ public class ResolveJavadocLinks {
             return "https://docs.joinfaces.org/" + version + "/api/";
         }
 
+        if (group.equals("org.projectlombok")) {
+            return "https://projectlombok.org/api/";
+        }
+
+        if (group.equals("org.jetbrains.kotlin")) {
+            return "https://kotlinlang.org/api/latest/jvm/stdlib/";
+        }
+
         return null;
     }
 
