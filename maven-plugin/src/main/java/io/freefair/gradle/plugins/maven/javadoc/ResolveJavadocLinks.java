@@ -106,7 +106,7 @@ public class ResolveJavadocLinks {
 
         javadocLinkProviders.reload();
         for (JavadocLinkProvider javadocLinkProvider : javadocLinkProviders) {
-            logger.warn("{}", javadocLinkProvider.getClass());
+            logger.info("{}", javadocLinkProvider.getClass());
             String javadocLink = javadocLinkProvider.getJavadocLink(group, artifact, version);
             if (javadocLink != null) {
                 return javadocLink;
