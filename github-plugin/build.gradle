@@ -2,40 +2,33 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of GitHub related Gradle plugins"
+
 gradlePlugin {
     plugins {
         githubBase {
             id = "io.freefair.github.base"
             implementationClass = "io.freefair.gradle.plugins.github.GithubBasePlugin"
+            displayName = "GitHub Base Plugin"
+            description = "GitHub Base Plugin"
         }
         githubPom {
             id = "io.freefair.github.pom"
             implementationClass = "io.freefair.gradle.plugins.github.GithubPomPlugin"
+            displayName = "GitHub Pom Plugin"
+            description = "GitHub Pom Plugin"
         }
         githubPackageRegistryMavenPublish {
             id = "io.freefair.github.package-registry-maven-publish"
             implementationClass = "io.freefair.gradle.plugins.github.GithubPackageRegistryMavenPublishPlugin"
+            displayName = "GitHub Package Registry Maven Publish Plugin"
+            description = "GitHub Package Registry Maven Publish Plugin"
         }
     }
 }
 
 pluginBundle {
     tags = ['github']
-
-    plugins {
-        githubBase {
-            displayName = "GitHub Base Plugin"
-            description = "GitHub Base Plugin"
-        }
-        githubPom {
-            displayName = "GitHub Pom Plugin"
-            description = "GitHub Pom Plugin"
-        }
-        githubPackageRegistryMavenPublish {
-            displayName = "GitHub Package Registry Maven Publish Plugin"
-            description = "GitHub Package Registry Maven Publish Plugin"
-        }
-    }
 }
 
 dependencies {

@@ -6,6 +6,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of Quicktype related Gradle plugins"
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "com.github.node-gradle:gradle-node-plugin:3.2.1"
@@ -22,16 +24,12 @@ gradlePlugin {
         quicktype {
             id = "io.freefair.quicktype"
             implementationClass = "io.freefair.gradle.plugins.quicktype.QuicktypePlugin"
+            displayName = "Quicktype Plugin"
+            description = "A Gradle plugin for automatically generating models with quicktype on build"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        quicktype {
-            displayName = "Quicktype Plugin"
-            description = "A Gradle plugin for automatically generating models with quicktype on build"
-            tags = ["quicktype-plugin"]
-        }
-    }
+    tags = ["quicktype-plugin"]
 }

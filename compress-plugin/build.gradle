@@ -3,56 +3,45 @@ apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 apply plugin: "groovy"
 
+description = "Collection of Apache Commons Compress related Gradle plugins"
+
 gradlePlugin {
     plugins {
         compress {
             id = "io.freefair.compress"
             implementationClass = "io.freefair.gradle.plugins.compress.CompressPlugin"
+            displayName = "commons-compress Plugin"
+            description = "Allows reading and writing archive formats supported by commons-compress"
         }
         sevenZip {
             id = "io.freefair.compress.7z"
             implementationClass = "io.freefair.gradle.plugins.compress.SevenZipPlugin"
+            displayName = "7zip Plugin"
+            description = "7zip Plugin"
         }
         ar {
             id = "io.freefair.compress.ar"
             implementationClass = "io.freefair.gradle.plugins.compress.ArPlugin"
+            displayName = "ar Plugin"
+            description = "ar Plugin"
         }
         cpio {
             id = "io.freefair.compress.cpio"
             implementationClass = "io.freefair.gradle.plugins.compress.CpioPlugin"
+            displayName = "cpio Plugin"
+            description = "cpio Plugin"
         }
         trees {
             id = "io.freefair.compress.trees"
             implementationClass = "io.freefair.gradle.plugins.compress.CompressTreePlugin"
+            displayName = "commons-compress fileTree Plugin"
+            description = "Allows to open formats supported by commons-compress as FileTree"
         }
     }
 }
 
 pluginBundle {
-    tags = ['jSass', 'sass', 'scss']
-
-    plugins {
-        compress {
-            displayName = "commons-compress Plugin"
-            description = "Allows reading and writing archive formats supported by commons-compress"
-        }
-        sevenZip {
-            displayName = "7zip Plugin"
-            description = "7zip Plugin"
-        }
-        ar {
-            displayName = "ar Plugin"
-            description = "ar Plugin"
-        }
-        cpio {
-            displayName = "cpio Plugin"
-            description = "cpio Plugin"
-        }
-        trees {
-            displayName = "commons-compress fileTree Plugin"
-            description = "Allows to open formats supported by commons-compress as FileTree"
-        }
-    }
+    tags = ['commons-compress']
 }
 
 dependencies {

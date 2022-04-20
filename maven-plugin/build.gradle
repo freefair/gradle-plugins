@@ -2,6 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of Maven related Gradle plugins"
+
 dependencies {
     implementation 'org.apache.maven:maven-model:3.8.5'
 
@@ -15,124 +17,98 @@ gradlePlugin {
         war {
             id = "io.freefair.war"
             implementationClass = "io.freefair.gradle.plugins.maven.war.WarPlugin"
+            displayName = "War Plugin"
+            description = "Maven-like extensions for the normal war plugin"
         }
         warOverlay {
             id = "io.freefair.war-overlay"
             implementationClass = "io.freefair.gradle.plugins.maven.war.WarOverlayPlugin"
+            displayName = "War Overlay Plugin"
+            description = "Maven-like overlays for war tasks."
         }
         warAttachClasses {
             id = "io.freefair.war-attach-classes"
             implementationClass = "io.freefair.gradle.plugins.maven.war.WarAttachClassesPlugin"
+            displayName = "War Attach Classes Plugin"
+            description = "Maven-like attachClasses option for the war task."
         }
-        warAttachClasses {
+        warArchiveClasses {
             id = "io.freefair.war-archive-classes"
             implementationClass = "io.freefair.gradle.plugins.maven.war.WarArchiveClassesPlugin"
+            displayName = "War Archive Classes Plugin"
+            description = "Maven-like archiveClasses options for war tasks."
         }
         aggregateJavadoc {
             id = "io.freefair.aggregate-javadoc"
             implementationClass = "io.freefair.gradle.plugins.maven.javadoc.AggregateJavadocPlugin"
+            displayName = "Aggregate Javadoc Plugin"
+            description = "Generate Javadoc over multiple projects"
         }
         aggregateJavadocJar {
             id = "io.freefair.aggregate-javadoc-jar"
             implementationClass = "io.freefair.gradle.plugins.maven.javadoc.AggregateJavadocJarPlugin"
+            displayName = "Aggregate Javadoc Jar Plugin"
+            description = "Generate Javadoc over multiple projects"
         }
         javadocLinks {
             id = "io.freefair.javadoc-links"
             implementationClass = "io.freefair.gradle.plugins.maven.javadoc.JavadocLinksPlugin"
+            displayName = "Maven Jars Plugin"
+            description = 'Link your javadoc against your dependencies'
         }
         javadocUtf8 {
             id = "io.freefair.javadoc-utf-8"
             implementationClass = "io.freefair.gradle.plugins.maven.javadoc.JavadocUtf8Plugin"
+            displayName = "Javadoc UTF-8 Plugin"
+            description = "Set the output encoding of your javadoc tasks to 'UTF-8'"
         }
         javadocs {
             id = "io.freefair.javadocs"
             implementationClass = "io.freefair.gradle.plugins.maven.javadoc.JavadocsPlugin"
+            displayName = "Javadoc Plugin"
+            description = 'Bundle of all our javadoc plugins'
         }
         mavenPublishJava {
             id = "io.freefair.maven-publish-java"
             implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishJavaPlugin"
+            displayName = "maven-publish Java"
+            description = "Creates a mavenJava publication"
         }
         mavenPublishWar {
             id = "io.freefair.maven-publish-war"
             implementationClass = "io.freefair.gradle.plugins.maven.MavenPublishWarPlugin"
+            displayName = "maven-publish War"
+            description = "Creates a mavenWeb publication"
         }
         optional {
             id = "io.freefair.maven-optional"
             implementationClass = "io.freefair.gradle.plugins.maven.OptionalPlugin"
+            displayName = "Maven optional Plugin"
+            description = "Adds a maven-like 'optional' configuration to your gradle build"
         }
         centralValidatePoms {
             id = "io.freefair.maven-central.validate-poms"
             implementationClass = "io.freefair.gradle.plugins.maven.central.ValidatePomsPlugin"
+            displayName = "Maven Central POM validation plugin"
+            description = "Verify that your generated POM's fullfill the requirements for maven central"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        war {
-            displayName = "War Plugin"
-            description = "Maven-like extensions for the normal war plugin"
-            tags = ['war']
-        }
-        warOverlay {
-            displayName = "War Overlay Plugin"
-            description = "Maven-like overlays for war tasks."
-            tags = ['war', 'maven', 'overlay']
-        }
-        warAttachClasses {
-            displayName = "War Attach Classes Plugin"
-            description = "Maven-like attachClasses option for the war task."
-            tags = ['war', 'maven', 'attachClasses']
-        }
-        warAttachClasses {
-            displayName = "War Archive Classes Plugin"
-            description = "Maven-like archiveClasses options for war tasks."
-            tags = ['war', 'maven', 'archiveClasses']
-        }
-        aggregateJavadoc {
-            displayName = "Aggregate Javadoc Plugin"
-            description = "Generate Javadoc over multiple projects"
-            tags = ['maven', 'javadoc', 'aggregate']
-        }
-        aggregateJavadocJar {
-            displayName = "Aggregate Javadoc Jar Plugin"
-            description = "Generate Javadoc over multiple projects"
-            tags = ['maven', 'javadoc', 'aggregate', "jar"]
-        }
-        javadocLinks {
-            displayName = "Maven Jars Plugin"
-            description = 'Link your javadoc against your dependencies'
-            tags = ['javadoc', 'links', 'javadoc.io']
-        }
-        javadocUtf8 {
-            displayName = "Javadoc UTF-8 Plugin"
-            description = "Set the output encoding of your javadoc tasks to 'UTF-8'"
-            tags = ['javadoc', 'utf-8']
-        }
-        javadocs {
-            displayName = "Javadoc Plugin"
-            description = 'Bundle of all our javadoc plugins'
-            tags = ['javadoc']
-        }
-        mavenPublishJava {
-            displayName = "maven-publish Java"
-            description = "Creates a mavenJava publication"
-            tags = ["maven-publish", "java"]
-        }
-        mavenPublishWar {
-            displayName = "maven-publish War"
-            description = "Creates a mavenWeb publication"
-            tags = ["maven-publish", "war"]
-        }
-        optional {
-            displayName = "Maven optional Plugin"
-            description = "Adds a maven-like 'optional' configuration to your gradle build"
-            tags = ["maven", "optional"]
-        }
-        centralValidatePoms {
-            displayName = "Maven Central POM validation plugin"
-            description = "Verify that your generated POM's fullfill the requirements for maven central"
-            tags = ["maven-central"]
-        }
-    }
+    pluginTags = [
+        war: ['war'],
+        warOverlay: ['war', 'maven', 'overlay'],
+        warAttachClasses: ['war', 'maven', 'attachClasses'],
+        warArchiveClasses: ['war', 'maven', 'archiveClasses'],
+        aggregateJavadoc: ['maven', 'javadoc', 'aggregate'],
+        aggregateJavadocJar: ['maven', 'javadoc', 'aggregate', "jar"],
+        javadocLinks: ['javadoc', 'links', 'javadoc.io'],
+        javadocUtf8: ['javadoc', 'utf-8'],
+        javadocs: ['javadoc'],
+        mavenPublishJava: ["maven-publish", "java"],
+        mavenPublishWar: ["maven-publish", "war"],
+        optional: ["maven", "optional"],
+        centralValidatePoms: ["maven-central"]
+    ]
 }

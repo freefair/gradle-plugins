@@ -5,7 +5,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.21.0"
+        classpath "com.gradle.publish:plugin-publish-plugin:1.0.0-rc-1"
 
         def pluginVersion = "6.4.2"
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"

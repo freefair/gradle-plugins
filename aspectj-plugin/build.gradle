@@ -2,40 +2,33 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of AspectJ related Gradle plugins"
+
 gradlePlugin {
     plugins {
         aspectjBase {
             id = "io.freefair.aspectj.base"
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJBasePlugin"
+            displayName = "AspectJ Base Plugin"
+            description = "AspectJ Base Plugin"
         }
         aspectjPostCompileWeaving {
             id = "io.freefair.aspectj.post-compile-weaving"
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPostCompileWeavingPlugin"
+            displayName = "AspectJ Post-Compile Weaving Plugin"
+            description = "AspectJ Weaving Plugin"
         }
         aspectj {
             id = "io.freefair.aspectj"
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPlugin"
+            displayName = "AspectJ Plugin"
+            description = "AspectJ Plugin"
         }
     }
 }
 
 pluginBundle {
     tags = ['aspectj']
-
-    plugins {
-        aspectjBase {
-            displayName = "AspectJ Base Plugin"
-            description = "AspectJ Base Plugin"
-        }
-        aspectjPostCompileWeaving {
-            displayName = "AspectJ Post-Compile Weaving Plugin"
-            description = "AspectJ Weaving Plugin"
-        }
-        aspectj {
-            displayName = "AspectJ Plugin"
-            description = "AspectJ Plugin"
-        }
-    }
 }
 
 dependencies {

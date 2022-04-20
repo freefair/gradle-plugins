@@ -2,6 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of JaCoCo related Gradle plugins"
+
 dependencies {
     compileOnly "org.jacoco:org.jacoco.ant:${org.gradle.testing.jacoco.plugins.JacocoPlugin.DEFAULT_JACOCO_VERSION}"
 }
@@ -11,16 +13,12 @@ gradlePlugin {
         aggregateJacocoReport {
             id = "io.freefair.aggregate-jacoco-report"
             implementationClass = "io.freefair.gradle.plugins.jacoco.AggregateJacocoReportPlugin"
+            displayName = "Aggregate Jacoco Report Plugin"
+            description = "Aggregate Jacoco Report Plugin"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        aggregateJacocoReport {
-            displayName = "Aggregate Jacoco Report Plugin"
-            description = "Aggregate Jacoco Report Plugin"
-            tags = ["jacoco"]
-        }
-    }
+    tags = ["jacoco"]
 }

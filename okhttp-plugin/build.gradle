@@ -2,6 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of OkHttp related Gradle plugins"
+
 dependencies {
     api platform("com.squareup.okhttp3:okhttp-bom:4.9.3")
     api "com.squareup.okhttp3:okhttp"
@@ -15,16 +17,12 @@ gradlePlugin {
         okhttp {
             id = "io.freefair.okhttp"
             implementationClass = "io.freefair.gradle.plugins.okhttp.OkHttpPlugin"
+            displayName = "OkHttp Plugin"
+            description = "A Gradle plugin for building maven plugins"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        okhttp {
-            displayName = "OkHttp Plugin"
-            description = "A Gradle plugin for building maven plugins"
-            tags = ["maven-plugin"]
-        }
-    }
+    tags = ["maven-plugin"]
 }

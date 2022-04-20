@@ -2,6 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of Lombok related Gradle plugins"
+
 dependencies {
     testImplementation project(":test-common")
     testImplementation 'org.projectlombok:lombok:1.18.22'
@@ -13,16 +15,12 @@ gradlePlugin {
         lombok {
             id = "io.freefair.lombok"
             implementationClass = "io.freefair.gradle.plugins.lombok.LombokPlugin"
+            displayName = "Lombok Plugin"
+            description = "Automatic lombok and delombok configuration"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        lombok {
-            displayName = "Lombok Plugin"
-            description = "Automatic lombok and delombok configuration"
-            tags = ["lombok"]
-        }
-    }
+    tags = ["lombok"]
 }

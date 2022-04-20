@@ -2,6 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "A plugin for executing specified code generators"
+
 dependencies {
     implementation 'io.github.classgraph:classgraph:4.8.144'
     api project(':code-generator-api')
@@ -24,16 +26,12 @@ gradlePlugin {
         codeGenerator {
             id = "io.freefair.code-generator"
             implementationClass = "io.freefair.gradle.plugin.codegenerator.CodeGeneratorPlugin"
+            displayName = "Code Generator Plugin"
+            description = "A plugin for executing specified code generators"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        codeGenerator {
-            displayName = "Code Generator Plugin"
-            description = "A plugin for executing specified code generators"
-            tags = ['code', 'generation', 'codegeneration', 'generate']
-        }
-    }
+    tags = ['code', 'generation', 'codegeneration', 'generate']
 }

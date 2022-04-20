@@ -2,6 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of Maven Plugin related Gradle plugins"
+
 dependencies {
     api project(':maven-plugin')
 
@@ -17,16 +19,12 @@ gradlePlugin {
         mavenPlugin {
             id = "io.freefair.maven-plugin"
             implementationClass = "io.freefair.gradle.plugins.maven.plugin.MavenPluginPlugin"
+            displayName = "maven-plugin Plugin"
+            description = "A Gradle plugin for building maven plugins"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        mavenPlugin {
-            displayName = "maven-plugin Plugin"
-            description = "A Gradle plugin for building maven plugins"
-            tags = ["maven-plugin"]
-        }
-    }
+    tags = ["maven-plugin"]
 }

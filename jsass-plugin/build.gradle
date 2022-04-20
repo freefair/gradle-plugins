@@ -2,48 +2,39 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of JSass related Gradle plugins"
+
 gradlePlugin {
     plugins {
         jSassBase {
             id = "io.freefair.jsass-base"
             implementationClass = "io.freefair.gradle.plugins.jsass.JSassBasePlugin"
+            displayName = "jSass Base Plugin"
+            description = "jSass Base Plugin"
         }
         jSassJava {
             id = "io.freefair.jsass-java"
             implementationClass = "io.freefair.gradle.plugins.jsass.JSassJavaPlugin"
+            displayName = "jSass Java Plugin"
+            description = "Compiles SASS and SCSS in your java resources (src/*/resources)"
         }
         jSassWar {
             id = "io.freefair.jsass-war"
             implementationClass = "io.freefair.gradle.plugins.jsass.JSassWarPlugin"
+            displayName = "jSass War Plugin"
+            description = "Compiles SASS and SCSS in your webapp resources (src/main/webapp)"
         }
         jSassWebjars {
             id = "io.freefair.jsass-webjars"
             implementationClass = "io.freefair.gradle.plugins.jsass.JSassWebjarsPlugin"
+            displayName = "jSass webjars support"
+            description = "Webjars dependency support"
         }
     }
 }
 
 pluginBundle {
     tags = ['jSass', 'sass', 'scss']
-
-    plugins {
-        jSassBase {
-            displayName = "jSass Base Plugin"
-            description = "jSass Base Plugin"
-        }
-        jSassJava {
-            displayName = "jSass Java Plugin"
-            description = "Compiles SASS and SCSS in your java resources (src/*/resources)"
-        }
-        jSassWar {
-            displayName = "jSass War Plugin"
-            description = "Compiles SASS and SCSS in your webapp resources (src/main/webapp)"
-        }
-        jSassWebjars {
-            displayName = "jSass webjars support"
-            description = "Webjars dependency support"
-        }
-    }
 }
 
 dependencies {

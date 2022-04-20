@@ -2,6 +2,8 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
+description = "Collection of MkDocs related Gradle plugins"
+
 dependencies {
     testImplementation project(":test-common")
 }
@@ -11,16 +13,12 @@ gradlePlugin {
         mkdocs {
             id = "io.freefair.mkdocs"
             implementationClass = "io.freefair.gradle.plugins.mkdocs.MkDocsPlugin"
+            displayName = "Mkdocs Plugin"
+            description = "MkDocs Plugin"
         }
     }
 }
 
 pluginBundle {
-    plugins {
-        mkdocs {
-            displayName = "Mkdocs Plugin"
-            description = "MkDocs Plugin"
-            tags = ["mkdocs"]
-        }
-    }
+    tags = ["mkdocs"]
 }
