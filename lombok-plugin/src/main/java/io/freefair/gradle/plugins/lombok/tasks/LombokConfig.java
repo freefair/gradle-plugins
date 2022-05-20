@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
-@UntrackedTask(because = "lombok config bubbling traverses the file system")
 public class LombokConfig extends DefaultTask implements LombokTask {
 
     @Getter(AccessLevel.NONE)
@@ -72,15 +71,10 @@ public class LombokConfig extends DefaultTask implements LombokTask {
     /**
      * Paths to java files or directories the configuration is to be printed for.
      */
-    @InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
     private final ConfigurableFileCollection paths = getProject().getObjects().fileCollection();
 
-    @OutputFile
     private final RegularFileProperty outputFile = getProject().getObjects().fileProperty();
 
-    @Input
-    @Optional
     private final Property<Boolean> fork = getProject().getObjects().property(Boolean.class);
 
     @Inject
@@ -88,10 +82,26 @@ public class LombokConfig extends DefaultTask implements LombokTask {
         this.workerExecutor = workerExecutor;
         this.fileSystemOperations = fileSystemOperations;
         this.execOperations = execOperations;
-        getOutputs().upToDateWhen(t -> ((LombokConfig) t).getPaths().isEmpty());
     }
 
-    @TaskAction
+    @InputFiles
+    @PathSensitive(PathSensitivity.ABSOLUTE)
+    public ConfigurableFileCollection getPaths() {
+      return paths;
+    }
+
+    @OutputFile
+    public RegularFileProperty getOutputFile() {
+      return outputFile;
+    }
+
+    @Input
+    @Optional
+    public Property<Boolean> getFork() {
+      return fork;
+    }
+
+  @TaskAction
     public void exec() throws IOException {
         fileSystemOperations.delete(spec -> spec.delete(outputFile).setFollowSymlinks(false));
 
