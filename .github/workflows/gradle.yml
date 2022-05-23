@@ -24,12 +24,8 @@ jobs:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
 
-      - name: Print tool versions
-        run: |
-          java -version
-          ./gradlew --version
-      - run: ./gradlew assemble -s
-      - run: ./gradlew check -s
+      - run: ./gradlew -V assemble -s
+      - run: ./gradlew -V check -s
       - name: Upload Coverage Reports
         run: |
           ./gradlew jacocoTestReport
