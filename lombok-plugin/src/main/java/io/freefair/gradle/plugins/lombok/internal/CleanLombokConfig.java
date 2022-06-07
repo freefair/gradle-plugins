@@ -2,7 +2,6 @@ package io.freefair.gradle.plugins.lombok.internal;
 
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import lombok.SneakyThrows;
-import lombok.var;
 import org.gradle.api.Action;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
@@ -12,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Lars Grefer
@@ -27,7 +27,7 @@ class CleanLombokConfig implements Action<Task> {
         Path file = lombokConfig.getOutputFile().get().getAsFile().toPath();
 
         List<String> filtered;
-        try (var lines = Files.lines(file)) {
+        try (Stream<String> lines = Files.lines(file)) {
             filtered = lines.filter(line -> line.contains("="))
                     .sorted()
                     .distinct()

@@ -67,7 +67,6 @@ allprojects {
     tasks.withType(Javadoc).configureEach {
         options.links "https://docs.gradle.org/$gradle.gradleVersion/javadoc/"
         options.addBooleanOption("Xdoclint:-missing", true)
-        failOnError = false
     }
 
     plugins.withId("com.gradle.plugin-publish") {
