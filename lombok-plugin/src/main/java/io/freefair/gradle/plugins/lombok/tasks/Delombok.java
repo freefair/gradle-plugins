@@ -12,6 +12,7 @@ import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.internal.file.UnionFileTree;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.ExecOperations;
 
 import javax.inject.Inject;
@@ -39,6 +40,10 @@ public class Delombok extends DefaultTask implements LombokTask {
     private final FileSystemOperations fileSystemOperations;
     @Getter(AccessLevel.NONE)
     private final ExecOperations execOperations;
+
+    @Nested
+    @Optional
+    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
 
     /**
      * Print the name of each file as it is being delombok-ed.
@@ -196,6 +201,9 @@ public class Delombok extends DefaultTask implements LombokTask {
         Files.write(optionsFile.toPath(), args);
 
         execOperations.javaexec(delombok -> {
+            if (launcher.isPresent()) {
+                delombok.setExecutable(launcher.get().getExecutablePath().getAsFile().getAbsolutePath());
+            }
             delombok.setClasspath(getLombokClasspath());
             delombok.getMainClass().set("lombok.launch.Main");
             delombok.args("delombok");

@@ -48,6 +48,9 @@ public class LombokRuntimeJar extends LombokJarTask {
     @Override
     public void copy() {
         execOperations.javaexec(runtimeJar -> {
+            if (getLauncher().isPresent()) {
+                runtimeJar.setExecutable(getLauncher().get().getExecutablePath().getAsFile().getAbsolutePath());
+            }
             runtimeJar.setClasspath(getLombokClasspath());
             runtimeJar.getMainClass().set("lombok.launch.Main");
             runtimeJar.args("createRuntime");

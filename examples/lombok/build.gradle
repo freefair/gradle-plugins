@@ -20,5 +20,11 @@ sourceSets {
     }
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 task lombokApiJar (type: LombokApiJar)
 task lombokRuntimeJar (type: LombokRuntimeJar)

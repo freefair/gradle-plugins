@@ -41,6 +41,9 @@ public class LombokApiJar extends LombokJarTask {
 
         File destinationDir = getDestinationDirectory().getAsFile().get();
         processOperations.javaexec(apiJar -> {
+            if (getLauncher().isPresent()) {
+                apiJar.setExecutable(getLauncher().get().getExecutablePath().getAsFile().getAbsolutePath());
+            }
             apiJar.setClasspath(getLombokClasspath());
             apiJar.getMainClass().set("lombok.launch.Main");
             apiJar.args("publicApi", destinationDir.getAbsolutePath());

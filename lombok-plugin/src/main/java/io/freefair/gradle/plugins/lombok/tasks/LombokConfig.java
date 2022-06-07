@@ -11,6 +11,7 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.ExecOperations;
 import org.gradle.workers.WorkerExecutor;
 
@@ -40,6 +41,10 @@ public class LombokConfig extends DefaultTask implements LombokTask {
     private final FileSystemOperations fileSystemOperations;
     @Getter(AccessLevel.NONE)
     private final ExecOperations execOperations;
+
+    @Nested
+    @Optional
+    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
 
     @Classpath
     private final ConfigurableFileCollection lombokClasspath = getProject().files();
@@ -131,6 +136,9 @@ public class LombokConfig extends DefaultTask implements LombokTask {
             try (OutputStream out = new FileOutputStream(outputFile.getAsFile().get())) {
 
                 execOperations.javaexec(config -> {
+                    if (launcher.isPresent()) {
+                        config.setExecutable(launcher.get().getExecutablePath().getAsFile().getAbsolutePath());
+                    }
                     config.setClasspath(getLombokClasspath());
                     config.setMaxHeapSize("16M");
                     config.getMainClass().set("lombok.launch.Main");

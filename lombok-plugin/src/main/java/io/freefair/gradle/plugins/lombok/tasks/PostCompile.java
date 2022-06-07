@@ -6,6 +6,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.ExecOperations;
 
 import javax.inject.Inject;
@@ -21,6 +22,10 @@ public class PostCompile extends DefaultTask implements LombokTask {
 
     @Getter(AccessLevel.NONE)
     private final ExecOperations execOperations;
+
+    @Nested
+    @Optional
+    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
 
     @Classpath
     private final ConfigurableFileCollection lombokClasspath = getProject().files();
@@ -41,6 +46,9 @@ public class PostCompile extends DefaultTask implements LombokTask {
     @TaskAction
     public void postCompile() {
         execOperations.javaexec(postCompile -> {
+            if (launcher.isPresent()) {
+                postCompile.setExecutable(launcher.get().getExecutablePath().getAsFile().getAbsolutePath());
+            }
             postCompile.setClasspath(getLombokClasspath());
             postCompile.getMainClass().set("lombok.launch.Main");
             postCompile.args("post-compile");

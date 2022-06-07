@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.lombok;
 import io.freefair.gradle.plugins.lombok.internal.ConfigUtil;
 import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
+import io.freefair.gradle.plugins.lombok.tasks.LombokTask;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -13,11 +14,14 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
 import org.gradle.api.tasks.javadoc.Javadoc;
+import org.gradle.jvm.toolchain.JavaLauncher;
+import org.gradle.jvm.toolchain.JavaToolchainService;
 
 @Getter
 public class LombokPlugin implements Plugin<Project> {
@@ -44,6 +48,12 @@ public class LombokPlugin implements Plugin<Project> {
 
     private void configureJavaPluginDefaults() {
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+
+        project.getTasks().withType(LombokTask.class, lombokTask -> {
+            JavaToolchainService javaToolchainService = project.getExtensions().getByType(JavaToolchainService.class);
+            Provider<JavaLauncher> launcherProvider = javaToolchainService.launcherFor(javaPluginExtension.getToolchain());
+            lombokTask.getLauncher().convention(launcherProvider);
+        });
 
         javaPluginExtension.getSourceSets().all(this::configureSourceSetDefaults);
 
