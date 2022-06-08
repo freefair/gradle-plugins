@@ -45,11 +45,9 @@ public class ValidatePomsPlugin implements Plugin<Project> {
                 });
             });
 
-            project.afterEvaluate(p -> {
-                validateMavenPom.configure(v -> {
-                    v.dependsOn(generateMavenPom);
-                    v.getPomFile().set(generateMavenPom.getDestination());
-                });
+            validateMavenPom.configure(v -> {
+                v.dependsOn(generateMavenPom);
+                v.getPomFile().set(project.getLayout().file(project.provider(generateMavenPom::getDestination)));
             });
         });
     }
