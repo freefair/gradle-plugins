@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.6.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.0'
 }
 
 apply plugin: "maven-publish"
@@ -11,7 +11,7 @@ description = "Collection of Quicktype related Gradle plugins"
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "com.github.node-gradle:gradle-node-plugin:3.3.0"
-    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.0"
 
     testImplementation project(":test-common")
     testImplementation "org.jetbrains.kotlin:kotlin-test"
