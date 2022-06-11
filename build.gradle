@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:1.0.0-rc-2"
 
-        def pluginVersion = "6.4.3.1"
+        def pluginVersion = "6.5.0-rc1"
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
         classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
         classpath "io.freefair.gradle:git-plugin:$pluginVersion"
