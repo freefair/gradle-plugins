@@ -14,6 +14,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.ClasspathNormalizer;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.process.internal.JavaExecHandleFactory;
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -85,20 +86,30 @@ public class AjcAction implements Action<Task> {
             return;
         }
 
-        AspectJCompileSpec spec = createSpec((AbstractCompile) task);
+        AspectJCompileSpec spec = createSpec(task);
 
         new AspectJCompiler(javaExecHandleFactory).execute(spec);
     }
 
-    private AspectJCompileSpec createSpec(AbstractCompile compile) {
+    private AspectJCompileSpec createSpec(Task compile) {
         AspectJCompileSpec spec = new AspectJCompileSpec();
 
-        spec.setDestinationDir(compile.getDestinationDirectory().get().getAsFile());
+        if (compile instanceof AbstractCompile) {
+            AbstractCompile abstractCompile = (AbstractCompile) compile;
+            spec.setDestinationDir(abstractCompile.getDestinationDirectory().get().getAsFile());
+            spec.setCompileClasspath(new ArrayList<>(abstractCompile.getClasspath().filter(File::exists).getFiles()));
+            spec.setTargetCompatibility(abstractCompile.getTargetCompatibility());
+            spec.setSourceCompatibility(abstractCompile.getSourceCompatibility());
+        }
+        else if (compile instanceof KotlinJvmCompile) {
+            KotlinJvmCompile kotlinJvmCompile = (KotlinJvmCompile) compile;
+            spec.setDestinationDir(kotlinJvmCompile.getDestinationDirectory().get().getAsFile());
+            spec.setCompileClasspath(new ArrayList<>(kotlinJvmCompile.getLibraries().filter(File::exists).getFiles()));
+            spec.setTargetCompatibility(kotlinJvmCompile.getKotlinOptions().getJvmTarget());
+        }
+
         spec.setWorkingDir(projectLayout.getProjectDirectory().getAsFile());
         spec.setTempDir(compile.getTemporaryDir());
-        spec.setCompileClasspath(new ArrayList<>(compile.getClasspath().filter(File::exists).getFiles()));
-        spec.setTargetCompatibility(compile.getTargetCompatibility());
-        spec.setSourceCompatibility(compile.getSourceCompatibility());
 
         spec.setAspectJClasspath(getClasspath());
         spec.setAspectJCompileOptions(getOptions());
