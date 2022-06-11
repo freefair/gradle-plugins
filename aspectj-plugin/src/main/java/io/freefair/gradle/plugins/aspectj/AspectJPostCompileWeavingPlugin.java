@@ -4,6 +4,7 @@ import io.freefair.gradle.plugins.aspectj.internal.DefaultWeavingSourceSet;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.plugins.DslObject;
@@ -16,6 +17,7 @@ import org.gradle.api.plugins.scala.ScalaPlugin;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.compile.AbstractCompile;
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile;
 
 @NonNullApi
 public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
@@ -66,7 +68,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
             Configuration runtimeClasspath = project.getConfigurations().getByName(sourceSet.getRuntimeClasspathConfigurationName());
             FileCollection aspectjClasspath = aspectjBasePlugin.getAspectjRuntime().inferAspectjClasspath(runtimeClasspath);
 
-            project.getTasks().named(sourceSet.getCompileTaskName(language), AbstractCompile.class, compileTask -> {
+            project.getTasks().named(sourceSet.getCompileTaskName(language), compileTask -> {
                 AjcAction ajcAction = enhanceWithWeavingAction(compileTask, aspectpath, inpath, aspectjClasspath);
                 if (compileTask instanceof HasCompileOptions) {
                     HasCompileOptions compileTaskWithOptions = (HasCompileOptions) compileTask;
@@ -77,15 +79,20 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         });
     }
 
-    private AjcAction enhanceWithWeavingAction(AbstractCompile abstractCompile, FileCollection aspectpath, FileCollection inpath, FileCollection aspectjConfiguration) {
+    private AjcAction enhanceWithWeavingAction(Task compileTask, FileCollection aspectpath, FileCollection inpath, FileCollection aspectjConfiguration) {
         AjcAction action = project.getObjects().newInstance(AjcAction.class);
 
         action.getOptions().getAspectpath().from(aspectpath);
         action.getOptions().getInpath().from(inpath);
-        action.getAdditionalInpath().from(abstractCompile.getDestinationDirectory());
+        if (compileTask instanceof AbstractCompile) {
+            action.getAdditionalInpath().from(((AbstractCompile) compileTask).getDestinationDirectory());
+        }
+        else if (compileTask instanceof KotlinJvmCompile) {
+            action.getAdditionalInpath().from(((KotlinJvmCompile) compileTask).getDestinationDirectory());
+        }
         action.getClasspath().from(aspectjConfiguration);
 
-        action.addToTask(abstractCompile);
+        action.addToTask(compileTask);
 
         return action;
     }
