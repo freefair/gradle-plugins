@@ -5,7 +5,14 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class GitVersionPlugin implements Plugin<Project> {
+
+    private static final Pattern releaseBranchPattern = Pattern.compile("release-(\\d+.*)");
+    private static final Pattern hotfixBranchPattern = Pattern.compile("hotfix-(\\d+.*)");
+    private static final Pattern vTagPattern = Pattern.compile("v(\\d+.*)");
 
     private Project project;
     private Logger logger;
@@ -19,6 +26,35 @@ public class GitVersionPlugin implements Plugin<Project> {
         project.allprojects(p -> p.setVersion(project.getVersion()));
     }
 
+    protected String resolveBranchVersion(String branch) {
+        String baseVersion = branch;
+
+        Matcher matcher = releaseBranchPattern.matcher(branch);
+        if (matcher.matches()) {
+            baseVersion = matcher.group(1);
+        }
+
+        matcher = hotfixBranchPattern.matcher(branch);
+        if (matcher.matches()) {
+            baseVersion = matcher.group(1);
+        }
+
+        baseVersion = baseVersion.replace("/", "-");
+
+        return baseVersion + "-SNAPSHOT";
+    }
+
+    protected String resolveTagVersion(String tag) {
+        String version = tag;
+
+        Matcher matcher = vTagPattern.matcher(tag);
+        if (matcher.matches()) {
+            version = matcher.group(1);
+        }
+
+        return version;
+    }
+
     private Object resolveVersion() {
         if (!"unspecified".equals(project.getVersion().toString())) {
             logger.lifecycle("Using explicit version {}", project.getVersion());
@@ -28,15 +64,15 @@ public class GitVersionPlugin implements Plugin<Project> {
         if (isTravisCi()) {
             String travisTag = System.getenv("TRAVIS_TAG");
             if (travisTag != null && !travisTag.trim().isEmpty()) {
-                logger.lifecycle("Using TRAVIS_TAG as version: {}", travisTag);
-                return travisTag;
+                String version = resolveTagVersion(travisTag);
+                logger.lifecycle("Using TRAVIS_TAG '{}' as version: {}", travisTag, version);
+                return version;
             }
 
             String travisBranch = System.getenv("TRAVIS_BRANCH");
             if (travisBranch != null) {
-                travisBranch = travisBranch.replace("/", "-");
-                String version = travisBranch + "-SNAPSHOT";
-                logger.lifecycle("Using TRAVIS_BRANCH as version: {}", version);
+                String version = resolveBranchVersion(travisBranch);
+                logger.lifecycle("Using TRAVIS_BRANCH '{}' as version: {}", travisBranch, version);
                 return version;
             }
         }
@@ -45,14 +81,14 @@ public class GitVersionPlugin implements Plugin<Project> {
             if (githubRef != null) {
                 if (githubRef.startsWith("refs/tags/")) {
                     githubRef = githubRef.substring("refs/tags/".length());
-                    logger.lifecycle("Using GitHub Tag as version: {}", githubRef);
-                    return githubRef;
+                    String version = resolveTagVersion(githubRef);
+                    logger.lifecycle("Using GitHub Tag '{}' as version: {}", githubRef, version);
+                    return version;
                 }
                 else if (githubRef.startsWith("refs/heads/")) {
                     githubRef = githubRef.substring("refs/heads/".length());
-                    githubRef = githubRef.replace("/", "-");
-                    String version = githubRef + "-SNAPSHOT";
-                    logger.lifecycle("Using GitHub Branch as version: {}", version);
+                    String version = resolveBranchVersion(githubRef);
+                    logger.lifecycle("Using GitHub Branch '{}' as version: {}", githubRef, version);
                     return version;
                 }
             }
@@ -63,7 +99,8 @@ public class GitVersionPlugin implements Plugin<Project> {
             String gitTag = ProcessGroovyMethods.getText(execute).trim();
 
             if (!gitTag.isEmpty()) {
-                logger.lifecycle("Using git tag as version: {}", gitTag);
+                String version = resolveTagVersion(gitTag);
+                logger.lifecycle("Using git tag '{}' as version: {}", gitTag, version);
                 return gitTag;
             }
         } catch (Exception e) {
@@ -73,23 +110,20 @@ public class GitVersionPlugin implements Plugin<Project> {
         if (isJenkins()) {
             String gitLocalBranch = System.getenv("GIT_LOCAL_BRANCH");
             if (gitLocalBranch != null && !gitLocalBranch.isEmpty()) {
-                gitLocalBranch = gitLocalBranch.replace("/", "-");
-                String version = gitLocalBranch + "-SNAPSHOT";
-                logger.lifecycle("Using GIT_LOCAL_BRANCH as version: {}", version);
+                String version = resolveBranchVersion(gitLocalBranch);
+                logger.lifecycle("Using GIT_LOCAL_BRANCH '{}' as version: {}", gitLocalBranch, version);
                 return version;
             }
             String gitBranch = System.getenv("GIT_BRANCH");
             if (gitBranch != null && !gitBranch.isEmpty()) {
-                gitBranch = gitBranch.replace("/", "-");
-                String version = gitBranch + "-SNAPSHOT";
-                logger.lifecycle("Using GIT_BRANCH as version: {}", version);
+                String version = resolveBranchVersion(gitBranch);
+                logger.lifecycle("Using GIT_BRANCH '{}' as version: {}", gitBranch, version);
                 return version;
             }
             String branchName = System.getenv("BRANCH_NAME");
             if (branchName != null && !branchName.isEmpty()) {
-                branchName = branchName.replace("/", "-");
-                String version = branchName + "-SNAPSHOT";
-                logger.lifecycle("Using BRANCH_NAME as version: {}", version);
+                String version = resolveBranchVersion(branchName);
+                logger.lifecycle("Using BRANCH_NAME '{}' as version: {}", branchName, version);
                 return version;
             }
         }
@@ -99,9 +133,8 @@ public class GitVersionPlugin implements Plugin<Project> {
             String gitBranch = ProcessGroovyMethods.getText(execute).trim();
 
             if (!gitBranch.isEmpty()) {
-                gitBranch = gitBranch.replace("/", "-");
-                String version = gitBranch + "-SNAPSHOT";
-                logger.lifecycle("Using git branch as version: {}", version);
+                String version = resolveBranchVersion(gitBranch);
+                logger.lifecycle("Using git branch '{}' as version: {}", gitBranch, version);
                 return version;
             }
         } catch (Exception e) {
