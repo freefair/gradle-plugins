@@ -93,6 +93,21 @@ public class GitVersionPlugin implements Plugin<Project> {
                 }
             }
         }
+        else if (isCircleCi()) {
+            String circleTag = System.getenv("CIRCLE_TAG");
+            if (circleTag != null && !circleTag.trim().isEmpty()) {
+                String version = resolveTagVersion(circleTag);
+                logger.lifecycle("Using CIRCLE_TAG '{}' as version: {}", circleTag, version);
+                return version;
+            }
+
+            String circleBranch = System.getenv("CIRCLE_BRANCH");
+            if (circleBranch != null) {
+                String version = resolveBranchVersion(circleBranch);
+                logger.lifecycle("Using CIRCLE_BRANCH '{}' as version: {}", circleBranch, version);
+                return version;
+            }
+        }
 
         try {
             Process execute = ProcessGroovyMethods.execute("git describe --tags --exact-match");
@@ -146,6 +161,10 @@ public class GitVersionPlugin implements Plugin<Project> {
 
     private boolean isTravisCi() {
         return "true".equalsIgnoreCase(System.getenv("TRAVIS"));
+    }
+
+    private boolean isCircleCi() {
+        return "true".equalsIgnoreCase(System.getenv("CIRCLECI"));
     }
 
     private boolean isGithubActions() {
