@@ -14,9 +14,12 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.scala.ScalaPlugin;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.compile.AbstractCompile;
+import org.gradle.jvm.toolchain.JavaLauncher;
+import org.gradle.jvm.toolchain.JavaToolchainService;
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile;
 
 @NonNullApi
@@ -25,6 +28,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
     private Project project;
     private AspectJBasePlugin aspectjBasePlugin;
     private SourceSetContainer sourceSets;
+    private Provider<JavaLauncher> defaultLauncher;
 
     @Override
     public void apply(Project project) {
@@ -36,7 +40,11 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         aspectjBasePlugin = project.getPlugins().apply(AspectJBasePlugin.class);
 
         project.getPlugins().apply(JavaBasePlugin.class);
-        sourceSets = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
+        JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+        sourceSets = javaPluginExtension.getSourceSets();
+
+        JavaToolchainService service = project.getExtensions().getByType(JavaToolchainService.class);
+        defaultLauncher = service.launcherFor(javaPluginExtension.getToolchain());
 
         sourceSets.all(this::configureSourceSetDefaults);
 
@@ -81,6 +89,8 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
     private AjcAction enhanceWithWeavingAction(Task compileTask, FileCollection aspectpath, FileCollection inpath, FileCollection aspectjConfiguration) {
         AjcAction action = project.getObjects().newInstance(AjcAction.class);
+
+        action.getLauncher().convention(defaultLauncher);
 
         action.getOptions().getAspectpath().from(aspectpath);
         action.getOptions().getInpath().from(inpath);

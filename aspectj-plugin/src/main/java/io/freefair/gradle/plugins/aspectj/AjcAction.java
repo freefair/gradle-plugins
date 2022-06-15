@@ -12,7 +12,10 @@ import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.ClasspathNormalizer;
+import org.gradle.api.tasks.Nested;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.compile.AbstractCompile;
+import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.internal.JavaExecHandleFactory;
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile;
 
@@ -44,6 +47,10 @@ public class AjcAction implements Action<Task> {
 
     private final ConfigurableFileCollection additionalInpath;
 
+    @Nested
+    @Optional
+    private final Property<JavaLauncher> launcher;
+
     public void options(Action<AspectJCompileOptions> action) {
         action.execute(getOptions());
     }
@@ -54,6 +61,8 @@ public class AjcAction implements Action<Task> {
         options = new AspectJCompileOptions(objectFactory);
         classpath = objectFactory.fileCollection();
         additionalInpath = objectFactory.fileCollection();
+
+        launcher = objectFactory.property(JavaLauncher.class);
 
         enabled = objectFactory.property(Boolean.class).convention(true);
         this.javaExecHandleFactory = javaExecHandleFactory;
@@ -114,6 +123,8 @@ public class AjcAction implements Action<Task> {
         spec.setAspectJClasspath(getClasspath());
         spec.setAspectJCompileOptions(getOptions());
         spec.setAdditionalInpath(getAdditionalInpath());
+
+        spec.setLauncher(launcher.getOrNull());
 
         return spec;
     }

@@ -6,9 +6,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.file.*;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.CompileOptions;
+import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.internal.JavaExecHandleFactory;
 
 import javax.inject.Inject;
@@ -31,6 +33,10 @@ public class AspectjCompile extends AbstractCompile {
 
     @Nested
     private final AspectJCompileOptions ajcOptions = getProject().getObjects().newInstance(AspectJCompileOptions.class);
+
+    @Nested
+    @Optional
+    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
 
     @Inject
     public AspectjCompile(FileSystemOperations fileSystemOperations, ProjectLayout projectLayout) {
@@ -79,6 +85,7 @@ public class AspectjCompile extends AbstractCompile {
         spec.setTargetCompatibility(getTargetCompatibility());
         spec.setAspectJClasspath(getAspectjClasspath());
         spec.setAspectJCompileOptions(getAjcOptions());
+        spec.setLauncher(launcher.getOrNull());
 
         return spec;
     }

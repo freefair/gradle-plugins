@@ -10,8 +10,11 @@ import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JvmPluginsHelper;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.jvm.toolchain.JavaLauncher;
+import org.gradle.jvm.toolchain.JavaToolchainService;
 
 /**
  * @see org.gradle.api.plugins.GroovyBasePlugin
@@ -20,6 +23,8 @@ import org.gradle.api.tasks.TaskProvider;
 public class AspectJPlugin implements Plugin<Project> {
 
     private Project project;
+
+    private Provider<JavaLauncher> defaultLauncher;
 
     @Override
     public void apply(Project project) {
@@ -34,6 +39,9 @@ public class AspectJPlugin implements Plugin<Project> {
         JavaPluginExtension plugin = project.getExtensions().getByType(JavaPluginExtension.class);
 
         plugin.getSourceSets().all(this::configureSourceSet);
+
+        JavaToolchainService service = project.getExtensions().getByType(JavaToolchainService.class);
+        defaultLauncher = service.launcherFor(plugin.getToolchain());
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
 
@@ -73,6 +81,7 @@ public class AspectJPlugin implements Plugin<Project> {
         final TaskProvider<AspectjCompile> compileTask = project.getTasks().register(sourceSet.getCompileTaskName("aspectj"), AspectjCompile.class, compile -> {
             JvmPluginsHelper.configureForSourceSet(sourceSet, aspectjSource, compile, compile.getOptions(), project);
             compile.dependsOn(sourceSet.getCompileJavaTaskName());
+            compile.getLauncher().convention(defaultLauncher);
             compile.setDescription("Compiles the " + sourceSet.getName() + " AspectJ source.");
             compile.setSource(aspectjSource);
             compile.getAjcOptions().getAspectpath().from(WeavingSourceSet.getAspectPath(sourceSet));

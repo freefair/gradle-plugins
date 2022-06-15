@@ -38,6 +38,11 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
     @SneakyThrows
     private ExecHandle createCompilerHandle(AspectJCompileSpec spec) {
         JavaExecHandleBuilder ajc = javaExecHandleFactory.newJavaExec();
+
+        if (spec.getLauncher() != null) {
+            ajc.setExecutable(spec.getLauncher().getExecutablePath().getAsFile().getAbsolutePath());
+        }
+
         ajc.setWorkingDir(spec.getWorkingDir());
         ajc.setClasspath(spec.getAspectJClasspath());
         ajc.getMainClass().set("org.aspectj.tools.ajc.Main");
