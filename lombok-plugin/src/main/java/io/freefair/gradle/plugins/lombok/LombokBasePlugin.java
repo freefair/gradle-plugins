@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.lombok;
 
+import io.freefair.gradle.plugins.lombok.internal.ConfigUtil;
 import io.freefair.gradle.plugins.lombok.tasks.LombokJarTask;
 import io.freefair.gradle.plugins.lombok.tasks.LombokTask;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class LombokBasePlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         lombokExtension = project.getExtensions().create("lombok", LombokExtension.class);
+        lombokExtension.getDisableConfig().convention(ConfigUtil.isDisableConfig(project));
 
         lombokConfiguration = project.getConfigurations().create("lombok");
         lombokConfiguration.defaultDependencies(dependencySet -> dependencySet.add(
