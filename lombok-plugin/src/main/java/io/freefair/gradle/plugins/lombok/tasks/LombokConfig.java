@@ -1,9 +1,11 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
+import io.freefair.gradle.plugins.lombok.internal.ConfigUtil;
 import io.freefair.gradle.plugins.lombok.tasks.internal.LombokConfigAction;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileSystemOperations;
@@ -11,18 +13,18 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Optional;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.ExecOperations;
 import org.gradle.workers.WorkerExecutor;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +34,6 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
-@UntrackedTask(because = "lombok config bubbling traverses the file system")
 public class LombokConfig extends DefaultTask implements LombokTask {
 
     @Getter(AccessLevel.NONE)
@@ -93,7 +94,31 @@ public class LombokConfig extends DefaultTask implements LombokTask {
         this.workerExecutor = workerExecutor;
         this.fileSystemOperations = fileSystemOperations;
         this.execOperations = execOperations;
-        getOutputs().upToDateWhen(t -> ((LombokConfig) t).getPaths().isEmpty());
+        getOutputs().upToDateWhen(t -> ((LombokConfig) t).getConfigFiles() != null);
+    }
+
+    @InputFiles
+    @Optional
+    @Nullable
+    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @SneakyThrows
+    protected Set<File> getConfigFiles() {
+        if (paths.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        Set<File> configFiles = new HashSet<>();
+
+        for (File path : paths) {
+            Set<File> filesForPath = ConfigUtil.resolveConfigFilesForPath(path);
+            if (filesForPath == null) {
+                //Imports Used
+                return null;
+            }
+            configFiles.addAll(filesForPath);
+        }
+
+        return configFiles;
     }
 
     @TaskAction
