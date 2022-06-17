@@ -6,7 +6,10 @@ import org.gradle.api.provider.Property;
 import org.gradle.workers.WorkParameters;
 
 /**
+ * {@link WorkParameters} for {@link PlantumlAction}.
+ *
  * @author Lars Grefer
+ * @see PlantumlPlugin
  */
 public interface PlantumlParameters extends WorkParameters {
 

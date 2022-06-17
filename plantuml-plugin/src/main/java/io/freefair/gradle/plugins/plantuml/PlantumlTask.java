@@ -3,8 +3,10 @@ package io.freefair.gradle.plugins.plantuml;
 import lombok.Getter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
 import javax.inject.Inject;
@@ -16,6 +18,8 @@ import java.io.File;
 public class PlantumlTask extends SourceTask {
 
     private final WorkerExecutor workerExecutor;
+
+    private final FileSystemOperations fileSystemOperations;
 
     @Getter
     @Classpath
@@ -39,28 +43,29 @@ public class PlantumlTask extends SourceTask {
     private final Property<String> includePattern = getProject().getObjects().property(String.class).convention("**/*.puml");
 
     @Inject
-    public PlantumlTask(WorkerExecutor workerExecutor) {
-        this.setGroup("plantuml");
+    public PlantumlTask(WorkerExecutor workerExecutor, FileSystemOperations fileSystemOperations) {
+        this.fileSystemOperations = fileSystemOperations;
         this.workerExecutor = workerExecutor;
+        this.setGroup("plantuml");
     }
 
     @TaskAction
     public void execute() {
 
-        getProject().delete(outputDirectory);
+        fileSystemOperations.delete(deleteSpec -> deleteSpec.delete(outputDirectory));
+
+        WorkQueue workQueue = workerExecutor.processIsolation(process -> {
+            process.getClasspath().from(plantumlClasspath);
+            process.getForkOptions().systemProperty("java.awt.headless", true);
+        });
 
         for (File file : getSource().matching(p -> p.include(includePattern.get()))) {
-            workerExecutor
-                    .processIsolation(iso -> {
-                        iso.getClasspath().from(plantumlClasspath);
-                        iso.getForkOptions().systemProperty("java.awt.headless", true);
-                    })
-                    .submit(PlantumlAction.class, params -> {
-                        params.getInputFile().set(file);
-                        params.getOutputDirectory().set(outputDirectory);
-                        params.getFileFormat().set(fileFormat);
-                        params.getWithMetadata().set(withMetadata);
-                    });
+            workQueue.submit(PlantumlAction.class, params -> {
+                params.getInputFile().set(file);
+                params.getOutputDirectory().set(outputDirectory);
+                params.getFileFormat().set(fileFormat);
+                params.getWithMetadata().set(withMetadata);
+            });
         }
     }
 }

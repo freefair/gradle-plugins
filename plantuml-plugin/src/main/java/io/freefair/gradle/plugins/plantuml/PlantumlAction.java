@@ -7,7 +7,10 @@ import net.sourceforge.plantuml.SourceFileReader;
 import org.gradle.workers.WorkAction;
 
 /**
+ * Gradle {@link WorkAction} for PlantUML {@link SourceFileReader}.
+ *
  * @author Lars Grefer
+ * @see SourceFileReader
  */
 public abstract class PlantumlAction implements WorkAction<PlantumlParameters> {
 
@@ -21,6 +24,7 @@ public abstract class PlantumlAction implements WorkAction<PlantumlParameters> {
                 .getOrElse(FileFormat.PNG);
 
         FileFormatOption fileFormatOption = new FileFormatOption(fileFormat, getParameters().getWithMetadata().get());
+
         SourceFileReader sourceFileReader = new SourceFileReader(
                 getParameters().getInputFile().getAsFile().get(),
                 getParameters().getOutputDirectory().getAsFile().get(),
