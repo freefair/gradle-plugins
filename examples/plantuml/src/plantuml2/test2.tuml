@@ -1,6 +1,4 @@
 @startuml
-!include include/test-i.iuml
-
 Alice -> Bob: Authentication Request
 Bob --> Alice: Authentication Response
 

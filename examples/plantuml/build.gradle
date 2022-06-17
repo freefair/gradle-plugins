@@ -1,4 +1,17 @@
+import io.freefair.gradle.plugins.plantuml.PlantumlTask
+
 plugins {
     id "io.freefair.plantuml"
 }
 
+plantUml {
+    fileFormat = "PNG"
+    outputDirectory = file("dist")
+}
+
+tasks.register("plantUml2", PlantumlTask) {
+    it.source("src/plantuml2")
+    it.includePattern = "**/*.tuml"
+    it.fileFormat = "SVG"
+    it.outputDirectory = file("dist2")
+}

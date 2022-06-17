@@ -33,8 +33,13 @@ public class PlantumlTask extends SourceTask {
     @Input
     private final Property<Boolean> withMetadata = getProject().getObjects().property(Boolean.class).convention(true);
 
+    @Getter
+    @Input
+    private final Property<String> includePattern = getProject().getObjects().property(String.class).convention("**/*.puml");
+
     @Inject
     public PlantumlTask(WorkerExecutor workerExecutor) {
+        this.setGroup("plantuml");
         this.workerExecutor = workerExecutor;
     }
 
@@ -43,7 +48,7 @@ public class PlantumlTask extends SourceTask {
 
         getProject().delete(outputDirectory);
 
-        for (File file : getSource()) {
+        for (File file : getSource().matching(p -> p.include(includePattern.get()))) {
             workerExecutor.classLoaderIsolation(iso -> iso.getClasspath().from(plantumlClasspath))
                     .submit(PlantumlAction.class, params -> {
                         params.getInputFile().set(file);
