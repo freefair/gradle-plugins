@@ -12,7 +12,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        okhttp {
+        plantuml {
             id = "io.freefair.plantuml"
             implementationClass = "io.freefair.gradle.plugins.plantuml.PlantumlPlugin"
             displayName = "PlantUML Plugin"
