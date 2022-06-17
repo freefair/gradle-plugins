@@ -27,7 +27,8 @@ public class PlantumlTask extends SourceTask {
 
     @Getter
     @Input
-    private final Property<String> fileFormat = getProject().getObjects().property(String.class).convention("SVG");
+    @Optional
+    private final Property<String> fileFormat = getProject().getObjects().property(String.class);
 
     @Getter
     @Input
