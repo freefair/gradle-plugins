@@ -6,12 +6,12 @@ plugins {
 
 plantUml {
     fileFormat = "PNG"
-    outputDirectory = file("dist")
+    outputDirectory = layout.buildDirectory.dir("dist")
 }
 
 tasks.register("plantUml2", PlantumlTask) {
-    it.source("src/plantuml2")
-    it.includePattern = "**/*.tuml"
-    it.fileFormat = "SVG"
-    it.outputDirectory = file("dist2")
+    source("src/plantuml2")
+    includePattern = "**/*.tuml"
+    fileFormat = "SVG"
+    outputDirectory = layout.buildDirectory.dir("dist2")
 }
