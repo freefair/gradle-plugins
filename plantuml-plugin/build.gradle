@@ -8,6 +8,7 @@ dependencies {
     //noinspection GradlePackageUpdate
     compileOnly 'net.sourceforge.plantuml:plantuml:1.2022.5'
 
+    testImplementation 'net.sourceforge.plantuml:plantuml:1.2022.5'
 }
 
 gradlePlugin {
