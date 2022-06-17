@@ -50,7 +50,11 @@ public class PlantumlTask extends SourceTask {
         getProject().delete(outputDirectory);
 
         for (File file : getSource().matching(p -> p.include(includePattern.get()))) {
-            workerExecutor.classLoaderIsolation(iso -> iso.getClasspath().from(plantumlClasspath))
+            workerExecutor
+                    .processIsolation(iso -> {
+                        iso.getClasspath().from(plantumlClasspath);
+                        iso.getForkOptions().systemProperty("java.awt.headless", true);
+                    })
                     .submit(PlantumlAction.class, params -> {
                         params.getInputFile().set(file);
                         params.getOutputDirectory().set(outputDirectory);
