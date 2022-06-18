@@ -1,0 +1,6 @@
+@startuml
+
+Bob -> Alice: Test
+Alice --> Bob: return Test
+
+@enduml

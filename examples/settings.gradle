@@ -42,3 +42,4 @@ include ":code-generator:generator"
 include ":test-maven-plugin"
 
 include 'quicktype'
+include 'plantuml'

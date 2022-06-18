@@ -1,0 +1,27 @@
+apply plugin: "maven-publish"
+apply plugin: "java-gradle-plugin"
+apply plugin: "com.gradle.plugin-publish"
+
+description = "Gradle Plugin for PlantUML"
+
+dependencies {
+    //noinspection GradlePackageUpdate
+    compileOnly 'net.sourceforge.plantuml:plantuml:1.2022.5'
+
+    testRuntimeOnly 'net.sourceforge.plantuml:plantuml:1.2022.5'
+}
+
+gradlePlugin {
+    plugins {
+        plantuml {
+            id = "io.freefair.plantuml"
+            implementationClass = "io.freefair.gradle.plugins.plantuml.PlantumlPlugin"
+            displayName = "PlantUML Plugin"
+            description = "PlantUML Plugin"
+        }
+    }
+}
+
+pluginBundle {
+    tags = ["plantuml"]
+}
