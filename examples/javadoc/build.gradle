@@ -2,7 +2,7 @@ apply plugin: "java"
 apply plugin: "io.freefair.javadocs"
 
 dependencies {
-    implementation platform("org.springframework.boot:spring-boot-dependencies:2.7.0")
+    implementation platform("org.springframework.boot:spring-boot-dependencies:2.7.1")
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.boot:spring-boot-starter-web"
 }
