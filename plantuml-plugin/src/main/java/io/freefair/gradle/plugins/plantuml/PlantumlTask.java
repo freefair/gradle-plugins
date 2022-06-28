@@ -42,6 +42,10 @@ public class PlantumlTask extends SourceTask {
     @Input
     private final Property<String> includePattern = getProject().getObjects().property(String.class).convention("**/*.puml");
 
+    @Getter
+    @Input
+    private final Property<Boolean> deleteOutputBeforeBuild = getProject().getObjects().property(Boolean.class).convention(true);
+
     @Inject
     public PlantumlTask(WorkerExecutor workerExecutor, FileSystemOperations fileSystemOperations) {
         this.fileSystemOperations = fileSystemOperations;
@@ -52,7 +56,9 @@ public class PlantumlTask extends SourceTask {
     @TaskAction
     public void execute() {
 
-        fileSystemOperations.delete(deleteSpec -> deleteSpec.delete(outputDirectory));
+        if(deleteOutputBeforeBuild.get()) {
+            fileSystemOperations.delete(deleteSpec -> deleteSpec.delete(outputDirectory));
+        }
 
         WorkQueue workQueue = workerExecutor.processIsolation(process -> {
             process.getClasspath().from(plantumlClasspath);

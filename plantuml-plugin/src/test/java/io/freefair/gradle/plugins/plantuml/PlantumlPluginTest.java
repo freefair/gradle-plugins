@@ -39,6 +39,21 @@ class PlantumlPluginTest {
 
         task.source(getClass().getClassLoader().getResource("puml-files").getPath());
 
+        task.getDeleteOutputBeforeBuild().set(true);
+
+        assertThrows(UnsupportedOperationException.class, task::execute);
+    }
+
+    @Test
+    void executeWithoutDelete() {
+        project.getPlugins().apply(PlantumlPlugin.class);
+
+        PlantumlTask task = project.getTasks().withType(PlantumlTask.class).getByName("plantUml");
+
+        task.source(getClass().getClassLoader().getResource("puml-files").getPath());
+
+        task.getDeleteOutputBeforeBuild().set(false);
+
         assertThrows(UnsupportedOperationException.class, task::execute);
     }
 
