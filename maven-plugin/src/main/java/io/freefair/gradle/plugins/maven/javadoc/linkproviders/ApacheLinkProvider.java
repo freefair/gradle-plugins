@@ -12,7 +12,7 @@ public class ApacheLinkProvider implements JavadocLinkProvider {
             return null;
         }
 
-        if (group.equals("org.apache.logging.log4j") && version.startsWith("2.x")) {
+        if (group.equals("org.apache.logging.log4j") && version.startsWith("2.")) {
             return "https://logging.apache.org/log4j/2.x/" + artifact + "/apidocs/";
         }
 
