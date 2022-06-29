@@ -115,6 +115,7 @@ public class AjcAction implements Action<Task> {
             spec.setDestinationDir(kotlinJvmCompile.getDestinationDirectory().get().getAsFile());
             spec.setCompileClasspath(new ArrayList<>(kotlinJvmCompile.getLibraries().filter(File::exists).getFiles()));
             spec.setTargetCompatibility(kotlinJvmCompile.getKotlinOptions().getJvmTarget());
+            spec.setSourceCompatibility(kotlinJvmCompile.getKotlinOptions().getJvmTarget());
         }
 
         spec.setWorkingDir(projectLayout.getProjectDirectory().getAsFile());
