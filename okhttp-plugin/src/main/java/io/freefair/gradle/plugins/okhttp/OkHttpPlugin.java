@@ -1,13 +1,13 @@
 package io.freefair.gradle.plugins.okhttp;
 
-import okhttp3.*;
+import io.freefair.gradle.plugins.okhttp.internal.CacheControlInterceptor;
+import okhttp3.CacheControl;
+import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 
 /**
  * @author Lars Grefer
@@ -18,12 +18,17 @@ public class OkHttpPlugin implements Plugin<Project> {
     private OkHttpClient okHttpClient;
     private OkHttpCachePlugin okHttpCachePlugin;
     private Project project;
+    private OkHttpExtension okHttpExtension;
 
     @Override
     public void apply(Project project) {
         this.project = project;
 
         okHttpCachePlugin = project.getRootProject().getPlugins().apply(OkHttpCachePlugin.class);
+
+        okHttpExtension = project.getExtensions().create("okHttp", OkHttpExtension.class);
+        okHttpExtension.getLoggingLevel().convention(project.provider(this::getLevel));
+
     }
 
     public OkHttpClient getOkHttpClient() {
@@ -33,11 +38,14 @@ public class OkHttpPlugin implements Plugin<Project> {
                     .cache(okHttpCachePlugin.getCache());
 
             if (project.getGradle().getStartParameter().isOffline()) {
-                builder = builder.addInterceptor(new ForceCacheInterceptor());
+                builder = builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_CACHE));
+            }
+            else if (project.getGradle().getStartParameter().isRefreshDependencies()) {
+                builder = builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_NETWORK));
             }
 
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(project.getLogger()::info);
-            loggingInterceptor.level(HttpLoggingInterceptor.Level.BASIC);
+            loggingInterceptor.level(okHttpExtension.getLoggingLevel().get());
             builder = builder.addInterceptor(loggingInterceptor);
 
             okHttpClient = builder.build();
@@ -45,16 +53,18 @@ public class OkHttpPlugin implements Plugin<Project> {
         return okHttpClient;
     }
 
-    private static class ForceCacheInterceptor implements Interceptor {
-        @Nonnull
-        @Override
-        public Response intercept(@Nonnull Chain chain) throws IOException {
-            Request newRequest = chain.request()
-                    .newBuilder()
-                    .cacheControl(CacheControl.FORCE_CACHE)
-                    .build();
-
-            return chain.proceed(newRequest);
+    private HttpLoggingInterceptor.Level getLevel() {
+        if (project.getLogger().isTraceEnabled()) {
+            return HttpLoggingInterceptor.Level.BODY;
         }
+        else if (project.getLogger().isDebugEnabled()) {
+            return HttpLoggingInterceptor.Level.HEADERS;
+        }
+        else if (project.getLogger().isInfoEnabled()) {
+            return HttpLoggingInterceptor.Level.BASIC;
+        }
+
+        return HttpLoggingInterceptor.Level.NONE;
     }
+
 }

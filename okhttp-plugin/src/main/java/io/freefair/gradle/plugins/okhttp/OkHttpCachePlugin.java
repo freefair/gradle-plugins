@@ -16,6 +16,7 @@ public class OkHttpCachePlugin implements Plugin<Project> {
 
     @Getter
     private Cache cache;
+    private OkHttpCacheExtension extension;
 
     @Override
     public void apply(Project project) {
@@ -24,9 +25,19 @@ public class OkHttpCachePlugin implements Plugin<Project> {
             throw new IllegalStateException();
         }
 
+        extension = project.getExtensions().create("okHttpCache", OkHttpCacheExtension.class);
+
         ProjectCacheDir projectCacheDir = ((ProjectInternal) project).getServices().get(ProjectCacheDir.class);
 
-        cache = new Cache(new File(projectCacheDir.getDir(), getClass().getName()), 50 * 1024 * 1024);
+        File directory = new File(projectCacheDir.getDir(), getClass().getName());
+        extension.getDirectory().set(directory);
+        extension.getMaxSize().set(50L * 1024 * 1024);
+    }
 
+    public synchronized Cache getCache() {
+        if(cache == null) {
+            cache = new Cache(extension.getDirectory().get().getAsFile(), extension.getMaxSize().get());
+        }
+        return cache;
     }
 }
