@@ -9,6 +9,12 @@ An HTTP & HTTP/2 client for Android and Java applications
 
 This plugin provides an `OkHttpClient` instance which can be used by other tasks and plugins.
 
+----
+okHttp {
+    loggingLevel = okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
+}
+----
+
 == OkHttp Tasks
 
 [#OkHttpRequestTask]
@@ -25,7 +31,7 @@ common properties:
 === `DownloadFile`
 
 ----
-task myDownload(type: io.freefair.gradle.plugins.okhttp.tasks.DownloadFile) {
+tasks.register("myDownload", io.freefair.gradle.plugins.okhttp.tasks.DownloadFile) {
     url = "https://example.com/foo.txt"
     outputFile = file("build/foo.txt")
 }
@@ -36,7 +42,7 @@ NOTE: See also <<OkHttpRequestTask>>
 === `UploadFile`
 
 ----
-task myUpload(type: io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
+tasks.register("myUpload", io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
     url = "https://example.com/foo.txt"
     file = file("build/file.txt")
     contentType = "text/plain"
