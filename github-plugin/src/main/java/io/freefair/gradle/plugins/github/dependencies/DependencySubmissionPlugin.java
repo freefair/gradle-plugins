@@ -59,9 +59,11 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
             t.doLast(t2 -> {
                 GithubService githubService = basePlugin.getGithubClient().getGithubService();
 
-                Snapshot snapshot;
                 try (FileReader fileReader = new FileReader(githubDependencySnapshot.get().getOutputFile().getAsFile().get())) {
-                    snapshot = new Gson().fromJson(fileReader, Snapshot.class);
+                    Snapshot snapshot = new Gson().fromJson(fileReader, Snapshot.class);
+                    t.getLogger().lifecycle("Job: {}", snapshot.getJob());
+                    t.getLogger().info("Detector: {}", snapshot.getDetector());
+
                     Call<UploadSnapshotResponse> stringCall = githubService.uploadDependencySnapshot(basePlugin.getGithubExtension().getOwner().get(), basePlugin.getGithubExtension().getRepo().get(), snapshot);
 
                     Response<UploadSnapshotResponse> execute = stringCall.execute();
