@@ -49,6 +49,11 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
                 gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("TRAVIS_JOB_NAME"), project.getName()));
                 gds.getJobHtmlUrl().set(System.getenv("TRAVIS_JOB_WEB_URL"));
             }
+            else if (GitUtil.isCircleCi()) {
+                gds.getJobId().set(System.getenv("CIRCLE_WORKFLOW_JOB_ID"));
+                gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("CIRCLE_JOB"), project.getName()));
+                gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("CIRCLE_BUILD_URL"), project.getName()));
+            }
         });
 
         project.allprojects(this::configureProject);

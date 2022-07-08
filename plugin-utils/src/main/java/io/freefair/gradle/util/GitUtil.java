@@ -32,6 +32,14 @@ public class GitUtil {
             return System.getenv("GITHUB_SHA");
         }
 
+        if (isTravisCi()) {
+            return System.getenv("TRAVIS_COMMIT");
+        }
+
+        if (isCircleCi()) {
+            return System.getenv("CIRCLE_SHA1");
+        }
+
         return execute(project, "git", "rev-parse", "HEAD");
     }
 
