@@ -10,7 +10,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.artifacts.result.ResolvedComponentResult;
 import org.gradle.api.artifacts.result.ResolvedDependencyResult;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.provider.Property;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
@@ -29,10 +29,10 @@ public abstract class DependencyManifestTask extends DefaultTask {
     public abstract RegularFileProperty getOutputFile();
 
     @Input
-    public abstract Property<ResolvedComponentResult> getCompileClasspath();
+    public abstract ListProperty<ResolvedComponentResult> getDevelopmentClasspaths();
 
     @Input
-    public abstract Property<ResolvedComponentResult> getRuntimeClasspath();
+    public abstract ListProperty<ResolvedComponentResult> getRuntimeClasspaths();
 
     private transient Manifest manifest;
 
@@ -51,23 +51,27 @@ public abstract class DependencyManifestTask extends DefaultTask {
         }
         manifest.setFile(new Manifest.File(filePath));
 
-        getCompileClasspath().get().getDependencies().stream()
-                .filter(dep -> !dep.isConstraint())
-                .filter(ResolvedDependencyResult.class::isInstance)
-                .map(ResolvedDependencyResult.class::cast)
-                .map(resolvedDependencyResult -> getGithubDependency(resolvedDependencyResult.getSelected(), "development"))
-                .forEach(dep -> {
-                    dep.setRelationship("direct");
-                });
+        for (ResolvedComponentResult developmentClasspath : getDevelopmentClasspaths().get()) {
+            developmentClasspath.getDependencies().stream()
+                    .filter(dep -> !dep.isConstraint())
+                    .filter(ResolvedDependencyResult.class::isInstance)
+                    .map(ResolvedDependencyResult.class::cast)
+                    .map(resolvedDependencyResult -> getGithubDependency(resolvedDependencyResult.getSelected(), "development"))
+                    .forEach(dep -> {
+                        dep.setRelationship("direct");
+                    });
+        }
 
-        getRuntimeClasspath().get().getDependencies().stream()
-                .filter(dep -> !dep.isConstraint())
-                .filter(ResolvedDependencyResult.class::isInstance)
-                .map(ResolvedDependencyResult.class::cast)
-                .map(d -> getGithubDependency(d.getSelected(), "runtime"))
-                .forEach(dep -> {
-                    dep.setRelationship("direct");
-                });
+        for (ResolvedComponentResult runtimeClasspath : getRuntimeClasspaths().get()) {
+            runtimeClasspath.getDependencies().stream()
+                    .filter(dep -> !dep.isConstraint())
+                    .filter(ResolvedDependencyResult.class::isInstance)
+                    .map(ResolvedDependencyResult.class::cast)
+                    .map(d -> getGithubDependency(d.getSelected(), "runtime"))
+                    .forEach(dep -> {
+                        dep.setRelationship("direct");
+                    });
+        }
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(manifest);
@@ -108,7 +112,6 @@ public abstract class DependencyManifestTask extends DefaultTask {
                 .withVersion(selected.getModuleVersion().getVersion())
                 .build()
                 .toString();
-
     }
 
 }

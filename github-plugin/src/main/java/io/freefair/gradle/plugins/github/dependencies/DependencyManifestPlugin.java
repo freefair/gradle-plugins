@@ -14,19 +14,24 @@ public class DependencyManifestPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+
+        manifestTaskProvider = project.getTasks().register("githubDependenciesManifest", DependencyManifestTask.class, dependencyManifestTask -> {
+            dependencyManifestTask.setGroup("github");
+            dependencyManifestTask.getOutputFile().set(project.getLayout().getBuildDirectory().file("github/dependency-manifest.json"));
+
+            Configuration classpath = project.getBuildscript().getConfigurations().getByName("classpath");
+            dependencyManifestTask.getDevelopmentClasspaths().add(classpath.getIncoming().getResolutionResult().getRootComponent());
+        });
+
         project.getPlugins().withId("java", java -> {
 
-            manifestTaskProvider = project.getTasks().register("githubDependenciesManifest", DependencyManifestTask.class, dependencyManifestTask -> {
-                dependencyManifestTask.setGroup("github");
-                dependencyManifestTask.getOutputFile().set(project.getLayout().getBuildDirectory().file("github/dependency-manifest.json"));
-
+            manifestTaskProvider.configure(dependencyManifestTask -> {
                 Configuration compileClasspath = project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME);
-                dependencyManifestTask.getCompileClasspath().set(compileClasspath.getIncoming().getResolutionResult().getRootComponent());
+                dependencyManifestTask.getDevelopmentClasspaths().add(compileClasspath.getIncoming().getResolutionResult().getRootComponent());
 
                 Configuration runtimeClasspath = project.getConfigurations().getByName(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME);
-                dependencyManifestTask.getRuntimeClasspath().set(runtimeClasspath.getIncoming().getResolutionResult().getRootComponent());
+                dependencyManifestTask.getRuntimeClasspaths().add(runtimeClasspath.getIncoming().getResolutionResult().getRootComponent());
             });
-
         });
     }
 }

@@ -75,13 +75,12 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
     }
 
     private void configureProject(Project project) {
-        project.getPlugins().withId("java", jp -> {
-            DependencyManifestPlugin manifestPlugin = project.getPlugins().apply(DependencyManifestPlugin.class);
 
-            githubDependencySnapshot.configure(gds -> {
-                gds.source(manifestPlugin.getManifestTaskProvider());
-            });
+        DependencyManifestPlugin manifestPlugin = project.getPlugins().apply(DependencyManifestPlugin.class);
 
+        githubDependencySnapshot.configure(gds -> {
+            gds.source(manifestPlugin.getManifestTaskProvider());
         });
+
     }
 }
