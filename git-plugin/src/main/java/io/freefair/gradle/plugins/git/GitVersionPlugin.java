@@ -5,6 +5,8 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
 
+import io.freefair.gradle.util.GitUtil;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,7 +63,7 @@ public class GitVersionPlugin implements Plugin<Project> {
             return project.getVersion();
         }
 
-        if (isTravisCi()) {
+        if (GitUtil.isTravisCi()) {
             String travisTag = System.getenv("TRAVIS_TAG");
             if (travisTag != null && !travisTag.trim().isEmpty()) {
                 String version = resolveTagVersion(travisTag);
@@ -76,7 +78,7 @@ public class GitVersionPlugin implements Plugin<Project> {
                 return version;
             }
         }
-        else if (isGithubActions()) {
+        else if (GitUtil.isGithubActions()) {
             String githubRef = System.getenv("GITHUB_REF");
             if (githubRef != null) {
                 if (githubRef.startsWith("refs/tags/")) {
@@ -93,7 +95,7 @@ public class GitVersionPlugin implements Plugin<Project> {
                 }
             }
         }
-        else if (isCircleCi()) {
+        else if (GitUtil.isCircleCi()) {
             String circleTag = System.getenv("CIRCLE_TAG");
             if (circleTag != null && !circleTag.trim().isEmpty()) {
                 String version = resolveTagVersion(circleTag);
@@ -122,7 +124,7 @@ public class GitVersionPlugin implements Plugin<Project> {
             logger.debug("Failed to get current git tag", e);
         }
 
-        if (isJenkins()) {
+        if (GitUtil.isJenkins()) {
             String gitLocalBranch = System.getenv("GIT_LOCAL_BRANCH");
             if (gitLocalBranch != null && !gitLocalBranch.isEmpty()) {
                 String version = resolveBranchVersion(gitLocalBranch);
@@ -159,19 +161,4 @@ public class GitVersionPlugin implements Plugin<Project> {
         return project.getVersion();
     }
 
-    private boolean isTravisCi() {
-        return "true".equalsIgnoreCase(System.getenv("TRAVIS"));
-    }
-
-    private boolean isCircleCi() {
-        return "true".equalsIgnoreCase(System.getenv("CIRCLECI"));
-    }
-
-    private boolean isGithubActions() {
-        return "true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"));
-    }
-
-    private boolean isJenkins() {
-        return System.getenv("JENKINS_HOME") != null;
-    }
 }

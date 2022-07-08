@@ -24,6 +24,7 @@ buildscript {
 apply plugin: "io.freefair.git-version"
 apply plugin: "io.freefair.aggregate-javadoc"
 apply plugin: "io.freefair.javadoc-links"
+apply plugin: "io.freefair.github.dependency-submission"
 
 allprojects {
     repositories {

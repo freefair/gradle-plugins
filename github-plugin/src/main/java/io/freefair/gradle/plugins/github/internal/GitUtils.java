@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.github.internal;
 
+import io.freefair.gradle.util.GitUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.Project;
@@ -21,18 +22,10 @@ public class GitUtils {
     private static final Pattern httpsUrlPattern = Pattern.compile("https://github\\.com/(.+/.+)\\.git");
     private static final Pattern sshUrlPattern = Pattern.compile("git@github.com:(.+/.+)\\.git");
 
-    public static boolean currentlyRunningOnTravisCi() {
-        return "true".equals(System.getenv("CI")) && "true".equals(System.getenv("TRAVIS"));
-    }
-
-    public static boolean currentlyRunningOnGithubActions() {
-        return "true".equals(System.getenv("GITHUB_ACTIONS"));
-    }
-
     @Nullable
     public static String findSlug(Project project) {
 
-        if (currentlyRunningOnGithubActions()) {
+        if (GitUtil.isGithubActions()) {
             return System.getenv("GITHUB_REPOSITORY");
         }
 
@@ -60,7 +53,7 @@ public class GitUtils {
     @Nullable
     public String findTravisSlug(Project project) {
 
-        if (currentlyRunningOnTravisCi()) {
+        if (GitUtil.isTravisCi()) {
             return System.getenv("TRAVIS_REPO_SLUG");
         }
 
@@ -80,39 +73,22 @@ public class GitUtils {
     }
 
     public String getRemoteUrl(Project project, String remote) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        ExecResult execResult = project.exec(execSpec -> {
-            execSpec.workingDir(project.getProjectDir());
-            execSpec.commandLine("git", "ls-remote", "--get-url", remote);
-            execSpec.setStandardOutput(outputStream);
-        });
-
-        execResult.rethrowFailure().assertNormalExitValue();
-
-        return outputStream.toString().trim();
+        return GitUtil.execute(project, "git", "ls-remote", "--get-url", remote);
     }
 
     public File findWorkingDirectory(Project project) {
 
-        if (currentlyRunningOnTravisCi()) {
+        if (GitUtil.isTravisCi()) {
             return new File(System.getenv("TRAVIS_BUILD_DIR"));
         }
-        else if (currentlyRunningOnGithubActions()) {
+        else if (GitUtil.isGithubActions()) {
             return new File(System.getenv("GITHUB_WORKSPACE"));
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        String git = GitUtil.execute(project, "git", "rev-parse", "--show-toplevel");
 
-        ExecResult execResult = project.exec(execSpec -> {
-            execSpec.workingDir(project.getProjectDir());
-            execSpec.commandLine("git", "rev-parse", "--show-toplevel");
-            execSpec.setStandardOutput(outputStream);
-            execSpec.setIgnoreExitValue(true);
-        });
-
-        if (execResult.getExitValue() == 0) {
-            return new File(outputStream.toString().trim());
+        if (git != null) {
+            return new File(git);
         }
         else {
             return null;
@@ -121,7 +97,7 @@ public class GitUtils {
 
     public String getTag(Project project) {
 
-        if (currentlyRunningOnTravisCi()) {
+        if (GitUtil.isTravisCi()) {
             String travisTagEnv = System.getenv("TRAVIS_TAG");
 
             if (travisTagEnv != null && !travisTagEnv.isEmpty()) {
@@ -129,7 +105,7 @@ public class GitUtils {
             }
         }
 
-        if (currentlyRunningOnGithubActions()) {
+        if (GitUtil.isGithubActions()) {
             String githubRef = System.getenv("GITHUB_REF");
             if (githubRef != null) {
                 if (githubRef.startsWith("refs/tags/")) {
@@ -138,19 +114,10 @@ public class GitUtils {
             }
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        String gitTag = GitUtil.execute(project, "git", "tag", "--points-at", "HEAD");
 
-        ExecResult execResult = project.exec(execSpec -> {
-            execSpec.workingDir(project.getProjectDir());
-            execSpec.commandLine("git", "tag", "--points-at", "HEAD");
-            execSpec.setStandardOutput(outputStream);
-        });
-
-        if (execResult.getExitValue() == 0) {
-            String gitTag = outputStream.toString().trim();
-            if (!gitTag.isEmpty()) {
-                return gitTag;
-            }
+        if (gitTag != null) {
+            return gitTag;
         }
 
         return "HEAD";
@@ -158,7 +125,7 @@ public class GitUtils {
 
     @Nullable
     public String findGithubUsername(Project project) {
-        if (currentlyRunningOnGithubActions()) {
+        if (GitUtil.isGithubActions()) {
             return System.getenv("GITHUB_ACTOR");
         }
 

@@ -63,6 +63,12 @@ allprojects {
             testImplementation 'org.mockito:mockito-core:4.6.1'
             testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
         }
+
+        tasks.named('jar') {
+            manifest {
+                attributes 'Implementation-Version': "$project.version"
+            }
+        }
     }
 
     tasks.withType(Javadoc).configureEach {

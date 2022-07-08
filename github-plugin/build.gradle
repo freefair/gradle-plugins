@@ -24,6 +24,14 @@ gradlePlugin {
             displayName = "GitHub Package Registry Maven Publish Plugin"
             description = "GitHub Package Registry Maven Publish Plugin"
         }
+        githubDependencyManifest {
+            id = "io.freefair.github.dependency-manifest"
+            implementationClass = "io.freefair.gradle.plugins.github.dependencies.DependencyManifestPlugin"
+        }
+        githubDependencySubmission {
+            id = "io.freefair.github.dependency-submission"
+            implementationClass = "io.freefair.gradle.plugins.github.dependencies.DependencySubmissionPlugin"
+        }
     }
 }
 
@@ -36,7 +44,10 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
+    implementation 'com.github.package-url:packageurl-java:1.4.1'
+
     api project(":okhttp-plugin")
+    implementation project(":plugin-utils")
 
     testImplementation project(":maven-plugin")
 }

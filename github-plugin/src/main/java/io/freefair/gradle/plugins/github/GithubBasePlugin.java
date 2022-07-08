@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.github;
 import io.freefair.gradle.plugins.github.internal.GitUtils;
 import io.freefair.gradle.plugins.github.internal.GithubClient;
 import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
+import io.freefair.gradle.util.GitUtil;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -47,10 +48,10 @@ public class GithubBasePlugin implements Plugin<Project> {
 
     private boolean isTravis() {
 
-        if (GitUtils.currentlyRunningOnTravisCi()) {
+        if (GitUtil.isTravisCi()) {
             return true;
         }
-        else if (GitUtils.currentlyRunningOnGithubActions()) {
+        else if (GitUtil.isGithubActions()) {
             return false;
         }
 

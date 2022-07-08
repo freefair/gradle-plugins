@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.github;
 
 import io.freefair.gradle.plugins.github.internal.*;
+import io.freefair.gradle.util.GitUtil;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.publish.PublishingExtension;
@@ -97,7 +98,7 @@ public class GithubPomPlugin implements Plugin<Project> {
                     ciManagement.getUrl().convention(String.format("https://travis-ci.org/%s/", slug));
                 });
             }
-            else if (GitUtils.currentlyRunningOnGithubActions()) {
+            else if (GitUtil.isGithubActions()) {
                 pom.ciManagement(ciManagement -> {
                     ciManagement.getSystem().convention("GitHub Actions");
                     ciManagement.getUrl().convention(String.format("https://github.com/%s/actions", slug));

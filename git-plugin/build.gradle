@@ -20,5 +20,7 @@ pluginBundle {
 }
 
 dependencies {
+    implementation project(":plugin-utils")
+
     testImplementation project(":test-common")
 }
