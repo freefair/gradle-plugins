@@ -14,7 +14,6 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.tooling.model.ProjectIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -31,6 +30,7 @@ public abstract class DependencyManifestTask extends DefaultTask {
 
     @Input
     public abstract Property<ResolvedComponentResult> getCompileClasspath();
+
     @Input
     public abstract Property<ResolvedComponentResult> getRuntimeClasspath();
 
@@ -52,17 +52,19 @@ public abstract class DependencyManifestTask extends DefaultTask {
         manifest.setFile(new Manifest.File(filePath));
 
         getCompileClasspath().get().getDependencies().stream()
+                .filter(dep -> !dep.isConstraint())
                 .filter(ResolvedDependencyResult.class::isInstance)
                 .map(ResolvedDependencyResult.class::cast)
-                .map(resolvedDependencyResult -> getGithubDependency(resolvedDependencyResult, "development"))
+                .map(resolvedDependencyResult -> getGithubDependency(resolvedDependencyResult.getSelected(), "development"))
                 .forEach(dep -> {
                     dep.setRelationship("direct");
                 });
 
         getRuntimeClasspath().get().getDependencies().stream()
+                .filter(dep -> !dep.isConstraint())
                 .filter(ResolvedDependencyResult.class::isInstance)
                 .map(ResolvedDependencyResult.class::cast)
-                .map(d -> getGithubDependency(d, "runtime"))
+                .map(d -> getGithubDependency(d.getSelected(), "runtime"))
                 .forEach(dep -> {
                     dep.setRelationship("direct");
                 });
@@ -74,25 +76,25 @@ public abstract class DependencyManifestTask extends DefaultTask {
     }
 
     @NotNull
-    private Manifest.Dependency getGithubDependency(ResolvedDependencyResult resolvedDependencyResult, String scope) {
+    private Manifest.Dependency getGithubDependency(ResolvedComponentResult componentResult, String scope) {
 
-        String packageUrl = getPackageUrl(resolvedDependencyResult.getSelected());
+        String packageUrl = getPackageUrl(componentResult);
 
         Manifest.Dependency githubDep = manifest.getResolved().computeIfAbsent(packageUrl, Manifest.Dependency::new);
 
         githubDep.setRelationship("indirect");
         githubDep.setScope(scope);
 
-        if (!resolvedDependencyResult.getRequested().getAttributes().toString().contains("org.gradle.category=platform")) {
-            List<String> collect = resolvedDependencyResult.getSelected().getDependencies().stream()
-                    .filter(ResolvedDependencyResult.class::isInstance)
-                    .map(ResolvedDependencyResult.class::cast)
-                    .map(d -> getGithubDependency(d, scope))
-                    .map(Manifest.Dependency::getPackage_url)
-                    .collect(Collectors.toList());
+        List<String> collect = componentResult.getDependencies().stream()
+                .filter(dep -> !dep.isConstraint())
+                .filter(ResolvedDependencyResult.class::isInstance)
+                .map(ResolvedDependencyResult.class::cast)
+                .map(d -> getGithubDependency(d.getSelected(), scope))
+                .map(Manifest.Dependency::getPackage_url)
+                .collect(Collectors.toList());
 
-            githubDep.setDependencies(collect);
-        }
+        githubDep.setDependencies(collect);
+
 
         return githubDep;
     }

@@ -6,6 +6,7 @@ import io.freefair.gradle.plugins.github.internal.Detector;
 import io.freefair.gradle.plugins.github.internal.Job;
 import io.freefair.gradle.plugins.github.internal.Manifest;
 import io.freefair.gradle.plugins.github.internal.Snapshot;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
@@ -41,6 +42,11 @@ public abstract class DependencySnapshotTask extends SourceTask {
     @Optional
     public abstract Property<String> getJobHtmlUrl();
 
+    @Override
+    @PathSensitive(PathSensitivity.NONE)
+    public FileTree getSource() {
+        return super.getSource();
+    }
 
     @TaskAction
     public void buildSnapshot() throws IOException {

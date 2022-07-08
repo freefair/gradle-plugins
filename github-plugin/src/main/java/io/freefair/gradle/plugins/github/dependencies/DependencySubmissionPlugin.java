@@ -27,7 +27,7 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
         githubDependencySnapshot = project.getTasks().register("githubDependencySnapshot", DependencySnapshotTask.class, gds -> {
             gds.getSha().convention(project.provider(() -> GitUtil.getSha(project)));
             gds.getRef().convention(project.provider(() -> GitUtil.getRef(project)));
-            gds.getOutputFile().convention(project.getLayout().getBuildDirectory().file("github/snapshot.json"));
+            gds.getOutputFile().convention(project.getLayout().getBuildDirectory().file("github/dependency-snapshot.json"));
 
             gds.getJobCorrelator().convention(project.getName());
 
