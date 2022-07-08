@@ -27,10 +27,14 @@ gradlePlugin {
         githubDependencyManifest {
             id = "io.freefair.github.dependency-manifest"
             implementationClass = "io.freefair.gradle.plugins.github.dependencies.DependencyManifestPlugin"
+            displayName = "GitHub Dependency Manifest Plugin"
+            description = "GitHub Dependency Manifest Plugin"
         }
         githubDependencySubmission {
             id = "io.freefair.github.dependency-submission"
             implementationClass = "io.freefair.gradle.plugins.github.dependencies.DependencySubmissionPlugin"
+            displayName = "GitHub Dependency Submission Plugin"
+            description = "Uploads the projects Dependencies to GitHub using the Dependency submission API"
         }
     }
 }
