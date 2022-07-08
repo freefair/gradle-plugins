@@ -54,4 +54,5 @@ jobs:
           distribution: 'temurin'
 
       - run: ./gradlew -V assemble -s
+      - run: ./gradlew -V uploadGithubDependenciesSnapshot -s
       - run: ./gradlew -V check -s
