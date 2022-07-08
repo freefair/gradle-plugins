@@ -14,6 +14,7 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.util.internal.DefaultGradleVersion;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -46,10 +47,12 @@ public abstract class DependencyManifestTask extends DefaultTask {
         File gitDir = GitUtils.findWorkingDirectory(getProject());
 
         String filePath = getProject().getBuildFile().getCanonicalPath().replace(gitDir.getCanonicalPath(), "");
-        if (filePath.startsWith("/")) {
+        if (filePath.startsWith(File.separator)) {
             filePath = filePath.substring(1);
         }
         manifest.setFile(new Manifest.File(filePath));
+
+        addGradleDependency();
 
         for (ResolvedComponentResult developmentClasspath : getDevelopmentClasspaths().get()) {
             developmentClasspath.getDependencies().stream()
@@ -77,6 +80,13 @@ public abstract class DependencyManifestTask extends DefaultTask {
         String json = gson.toJson(manifest);
         Files.write(getOutputFile().getAsFile().get().toPath(), json.getBytes(StandardCharsets.UTF_8));
 
+    }
+
+    private void addGradleDependency() {
+        Manifest.Dependency gradleDep = new Manifest.Dependency(getPackageUrl(DefaultGradleVersion.current()));
+        gradleDep.setScope("development");
+        gradleDep.setRelationship("direct");
+        manifest.getResolved().put(gradleDep.getPackage_url(), gradleDep);
     }
 
     @NotNull
@@ -110,6 +120,17 @@ public abstract class DependencyManifestTask extends DefaultTask {
                 .withNamespace(selected.getModuleVersion().getGroup())
                 .withName(selected.getModuleVersion().getName())
                 .withVersion(selected.getModuleVersion().getVersion())
+                .build()
+                .toString();
+    }
+
+    @SneakyThrows
+    private String getPackageUrl(DefaultGradleVersion gradleVersion) {
+        return PackageURLBuilder.aPackageURL()
+                .withType("github")
+                .withNamespace("gradle")
+                .withName("gradle")
+                .withVersion(gradleVersion.getGitRevision())
                 .build()
                 .toString();
     }
