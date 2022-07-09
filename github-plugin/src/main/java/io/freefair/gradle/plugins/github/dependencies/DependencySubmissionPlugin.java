@@ -1,19 +1,10 @@
 package io.freefair.gradle.plugins.github.dependencies;
 
-import com.google.gson.Gson;
 import io.freefair.gradle.plugins.github.GithubBasePlugin;
-import io.freefair.gradle.plugins.github.internal.GithubService;
-import io.freefair.gradle.plugins.github.internal.Snapshot;
-import io.freefair.gradle.plugins.github.internal.UploadSnapshotResponse;
 import io.freefair.gradle.util.GitUtil;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskProvider;
-import retrofit2.Call;
-import retrofit2.Response;
-
-import java.io.FileReader;
-import java.io.IOException;
 
 public class DependencySubmissionPlugin implements Plugin<Project> {
 
@@ -58,27 +49,12 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
 
         project.allprojects(this::configureProject);
 
-        project.getTasks().register("uploadGithubDependenciesSnapshot", t -> {
-            t.dependsOn(githubDependencySnapshot);
-            t.getInputs().file(githubDependencySnapshot.map(DependencySnapshotTask::getOutputFile));
-            t.doLast(t2 -> {
-                GithubService githubService = basePlugin.getGithubClient().getGithubService();
+        TaskProvider<UploadSnapshotTask> uploadGithubDependenciesSnapshot = project.getTasks().register("uploadGithubDependenciesSnapshot", UploadSnapshotTask.class, basePlugin.getGithubClient());
+        uploadGithubDependenciesSnapshot.configure(t -> {
+            t.getSnapshotFile().set(githubDependencySnapshot.flatMap(DependencySnapshotTask::getOutputFile));
 
-                try (FileReader fileReader = new FileReader(githubDependencySnapshot.get().getOutputFile().getAsFile().get())) {
-                    Snapshot snapshot = new Gson().fromJson(fileReader, Snapshot.class);
-                    t.getLogger().lifecycle("Job: {}", snapshot.getJob());
-                    t.getLogger().lifecycle("Ref: {}, Sha: {}", snapshot.getRef(), snapshot.getSha());
-                    t.getLogger().info("Detector: {}", snapshot.getDetector());
-
-                    Call<UploadSnapshotResponse> stringCall = githubService.uploadDependencySnapshot(basePlugin.getGithubExtension().getOwner().get(), basePlugin.getGithubExtension().getRepo().get(), snapshot);
-
-                    Response<UploadSnapshotResponse> execute = stringCall.execute();
-                    t.getLogger().lifecycle(execute.body().getMessage());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-            });
+            t.getOwner().convention(basePlugin.getGithubExtension().getOwner());
+            t.getRepo().convention(basePlugin.getGithubExtension().getRepo());
         });
     }
 
