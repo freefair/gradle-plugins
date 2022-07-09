@@ -12,7 +12,6 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.TaskExecutionException;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -43,7 +42,8 @@ public abstract class UploadSnapshotTask extends DefaultTask {
         GithubService githubService = githubClient.getGithubService();
 
         try (FileReader fileReader = new FileReader(getSnapshotFile().getAsFile().get())) {
-            Snapshot snapshot = new Gson().fromJson(fileReader, Snapshot.class);
+            Gson gson = new Gson();
+            Snapshot snapshot = gson.fromJson(fileReader, Snapshot.class);
             getLogger().lifecycle("Job: {}", snapshot.getJob());
             getLogger().lifecycle("Ref: {}, Sha: {}", snapshot.getRef(), snapshot.getSha());
             getLogger().info("Detector: {}", snapshot.getDetector());
@@ -53,6 +53,10 @@ public abstract class UploadSnapshotTask extends DefaultTask {
             Response<UploadSnapshotResponse> execute = stringCall.execute();
             if (execute.isSuccessful()) {
                 getLogger().lifecycle(execute.body().getMessage());
+            }
+            else if (execute.code() == 403) {
+                getLogger().warn("Upload Failed due to missing permissions");
+                getLogger().info(execute.errorBody().string());
             }
             else {
                 getLogger().error("{} {}", execute.code(), execute.message());
