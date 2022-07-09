@@ -2,7 +2,6 @@ buildscript {
     dependencies {
         classpath "io.freefair.gradle:compress-plugin"
         classpath "io.freefair.gradle:lombok-plugin"
-        classpath "io.freefair.gradle:jsass-plugin"
         classpath "io.freefair.gradle:embedded-sass-plugin"
         classpath "io.freefair.gradle:maven-plugin"
         classpath "io.freefair.gradle:maven-plugin-plugin"

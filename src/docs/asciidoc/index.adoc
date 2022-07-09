@@ -73,8 +73,6 @@ include::_github.adoc[]
 
 include::_jacoco.adoc[]
 
-include::_jsass.adoc[]
-
 include::_lombok.adoc[]
 
 include::_maven.adoc[]

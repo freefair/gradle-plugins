@@ -8,10 +8,6 @@ include ":war:overlay"
 include ":war:overlay2"
 include ":war:archive-classes"
 
-include ":jsass:java"
-include ":jsass:web"
-include ":jsass:webjars"
-
 include ":embedded-sass:java"
 include ":embedded-sass:web"
 include ":embedded-sass:webjars"
