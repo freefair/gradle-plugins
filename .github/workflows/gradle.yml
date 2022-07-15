@@ -36,14 +36,13 @@ jobs:
 
   build-examples:
     name: Build example projects
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
         java: [ 11, 17 ]
-        os: [macos-latest, windows-latest]
     defaults:
       run:
         working-directory: examples
