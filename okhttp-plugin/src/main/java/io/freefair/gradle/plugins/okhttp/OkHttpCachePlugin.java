@@ -35,7 +35,7 @@ public class OkHttpCachePlugin implements Plugin<Project> {
     }
 
     public synchronized Cache getCache() {
-        if(cache == null) {
+        if (cache == null) {
             cache = new Cache(extension.getDirectory().get().getAsFile(), extension.getMaxSize().get());
         }
         return cache;
