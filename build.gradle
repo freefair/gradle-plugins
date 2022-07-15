@@ -11,6 +11,7 @@ buildscript {
         classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
         classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
         classpath "io.freefair.gradle:git-plugin:$pluginVersion"
+        classpath "io.freefair.gradle:github-plugin:$pluginVersion"
     }
 }
 
@@ -20,6 +21,7 @@ plugins {
 }
 
 apply plugin: 'io.freefair.git-version'
+apply plugin: "io.freefair.github.dependency-submission"
 
 nexusPublishing {
     repositories {

@@ -25,6 +25,9 @@ jobs:
           distribution: 'temurin'
 
       - run: ./gradlew -V assemble -s
+      - run: ./gradlew -V uploadGithubDependenciesSnapshot -s
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: ./gradlew -V check -s
       - name: Upload Coverage Reports
         run: |
