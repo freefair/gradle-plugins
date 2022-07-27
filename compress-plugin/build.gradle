@@ -54,5 +54,5 @@ dependencies {
     testImplementation platform("org.spockframework:spock-bom:2.1-groovy-3.0")
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-junit4'
-    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.9.0'
 }
