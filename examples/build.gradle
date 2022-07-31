@@ -31,5 +31,11 @@ allprojects {
     }
 
     group = "io.freefair.gradle.example"
+
+    plugins.withId("java") {
+        dependencies {
+            implementation platform("org.junit:junit-bom:5.9.0")
+        }
+    }
 }
 
