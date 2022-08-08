@@ -27,7 +27,7 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 public class LombokPlugin implements Plugin<Project> {
 
     private static final String LOMBOK_MAPSTRUCT_VERSION = "0.2.0";
-    private static final String SPOTBUG_DEFAULT_VERSION = "4.1.3";
+    private static final String SPOTBUGS_DEFAULT_VERSION = "4.7.1";
 
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
@@ -116,7 +116,7 @@ public class LombokPlugin implements Plugin<Project> {
 
     private String resolveSpotBugVersion() {
         if (!project.getPlugins().hasPlugin("com.github.spotbugs")) {
-            return SPOTBUG_DEFAULT_VERSION;
+            return SPOTBUGS_DEFAULT_VERSION;
         }
 
         Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
