@@ -7,6 +7,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.internal.plugins.DslObject
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.internal.JvmPluginsHelper
 import org.gradle.api.tasks.SourceSet
@@ -17,9 +18,8 @@ open class QuicktypePlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         this.project = project;
-        if (!project.plugins.hasPlugin("com.github.node-gradle.node")) {
-            project.pluginManager.apply("com.github.node-gradle.node")
-        }
+        project.pluginManager.apply("com.github.node-gradle.node")
+        project.pluginManager.apply(JavaPlugin::class.java)
 
         val javaExtension = project.extensions.getByType(JavaPluginExtension::class.java)
         javaExtension.sourceSets.all { configureSourceSet(it) }
