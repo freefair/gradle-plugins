@@ -38,10 +38,10 @@ public class AspectJPlugin implements Plugin<Project> {
 
         JavaPluginExtension plugin = project.getExtensions().getByType(JavaPluginExtension.class);
 
-        plugin.getSourceSets().all(this::configureSourceSet);
-
         JavaToolchainService service = project.getExtensions().getByType(JavaToolchainService.class);
         defaultLauncher = service.launcherFor(plugin.getToolchain());
+
+        plugin.getSourceSets().all(this::configureSourceSet);
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
 
