@@ -21,7 +21,7 @@ sourceSets {
 dependencies {
     aspect project(":aspectj:aspect")
 
-    implementation "org.slf4j:slf4j-api:1.+"
+    implementation "org.slf4j:slf4j-api:2.+"
 
     implementation "org.aspectj:aspectjrt:1.9.9.1"
     implementation localGroovy()
