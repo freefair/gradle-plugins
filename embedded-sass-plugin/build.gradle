@@ -38,7 +38,7 @@ pluginBundle {
 }
 
 dependencies {
-    api 'de.larsgrefer.sass:sass-embedded-host:1.6.1'
+    api 'de.larsgrefer.sass:sass-embedded-host:1.7.0'
     implementation 'org.webjars:webjars-locator-core:0.52'
 
     testImplementation project(":test-common")
