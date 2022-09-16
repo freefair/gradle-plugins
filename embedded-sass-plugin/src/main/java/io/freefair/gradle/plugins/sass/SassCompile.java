@@ -68,6 +68,7 @@ public class SassCompile extends SourceTask {
         try (SassCompiler compiler = SassCompilerFactory.bundled()) {
             compiler.setOutputStyle(getOutputStyle().getOrNull());
             compiler.setGenerateSourceMaps(sourceMapEnabled.getOrElse(true));
+            compiler.setSourceMapIncludeSources(sourceMapContents.getOrElse(false));
 
             compiler.setLoggingHandler(new Slf4jLoggingHandler(getLogger()));
             compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
