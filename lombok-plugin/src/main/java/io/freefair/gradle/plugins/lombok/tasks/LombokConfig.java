@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,8 +79,7 @@ public class LombokConfig extends DefaultTask implements LombokTask {
     /**
      * Paths to java files or directories the configuration is to be printed for.
      */
-    @InputFiles
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @Internal
     private final ConfigurableFileCollection paths = getProject().getObjects().fileCollection();
 
     @OutputFile
@@ -95,6 +95,14 @@ public class LombokConfig extends DefaultTask implements LombokTask {
         this.fileSystemOperations = fileSystemOperations;
         this.execOperations = execOperations;
         getOutputs().upToDateWhen(t -> ((LombokConfig) t).getConfigFiles() != null);
+    }
+
+    @Input
+    protected List<String> getInputPaths() {
+        return getPaths().getFiles()
+                .stream()
+                .map(File::getPath)
+                .collect(Collectors.toList());
     }
 
     @InputFiles
@@ -158,7 +166,7 @@ public class LombokConfig extends DefaultTask implements LombokTask {
         }
 
         if (fork.getOrElse(false)) {
-            try (OutputStream out = new FileOutputStream(outputFile.getAsFile().get())) {
+            try (OutputStream out = Files.newOutputStream(outputFile.getAsFile().get().toPath())) {
 
                 execOperations.javaexec(config -> {
                     if (launcher.isPresent()) {
