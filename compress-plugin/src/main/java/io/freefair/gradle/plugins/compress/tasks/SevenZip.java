@@ -26,14 +26,14 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class SevenZip extends AbstractArchiveTask {
+public abstract class SevenZip extends AbstractArchiveTask {
 
     @Input
-    private final Property<SevenZMethod> contentCompression = getProject().getObjects().property(SevenZMethod.class);
+    public abstract Property<SevenZMethod> getContentCompression();
 
     public SevenZip() {
         getArchiveExtension().convention("7z");
-        contentCompression.set(SevenZMethod.LZMA2);
+        getContentCompression().set(SevenZMethod.LZMA2);
     }
 
     @Override
@@ -45,8 +45,8 @@ public class SevenZip extends AbstractArchiveTask {
     private WorkResult execute(CopyActionProcessingStream stream) {
         try (SevenZOutputFile outputFile = new SevenZOutputFile(getArchiveFile().get().getAsFile())) {
 
-            if (contentCompression.isPresent()) {
-                outputFile.setContentCompression(contentCompression.get());
+            if (getContentCompression().isPresent()) {
+                outputFile.setContentCompression(getContentCompression().get());
             }
 
             stream.process(new StreamAction(outputFile));

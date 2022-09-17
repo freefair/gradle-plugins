@@ -6,27 +6,22 @@ import org.apache.commons.compress.compressors.deflate.DeflateParameters;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
-import org.gradle.workers.WorkerExecutor;
 
-import javax.inject.Inject;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 
-@SuppressWarnings("UnstableApiUsage")
 @Getter
-public class Deflate extends CompressorTask<Deflate.DeflateWorkParameters> {
+public abstract class Deflate extends CompressorTask<Deflate.DeflateWorkParameters> {
 
     @Input
     @Optional
-    private final Property<Integer> compressionLevel = getProject().getObjects().property(Integer.class);
+    public abstract Property<Integer> getCompressionLevel();
 
     @Input
     @Optional
-    private final Property<Boolean> withZlibHeader = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getWithZlibHeader();
 
-    @Inject
-    public Deflate(WorkerExecutor workerExecutor) {
-        super(workerExecutor);
+    public Deflate() {
         getFileExtension().convention("deflate");
     }
 

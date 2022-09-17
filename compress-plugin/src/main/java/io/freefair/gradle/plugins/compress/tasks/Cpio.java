@@ -28,41 +28,41 @@ import java.io.IOException;
 @Getter
 @Setter
 @Slf4j
-public class Cpio extends AbstractArchiveTask {
+public abstract class Cpio extends AbstractArchiveTask {
 
     @Input
     private final Property<Short> format = getProject().getObjects().property(Short.class);
 
     @Input
-    private final Property<Integer> blockSize = getProject().getObjects().property(Integer.class);
+    public abstract Property<Integer> getBlockSize();
 
     @Input
-    private final Property<String> encoding = getProject().getObjects().property(String.class);
+    public abstract Property<String> getEncoding();
 
     public Cpio() {
         getArchiveExtension().convention("cpio");
-        format.convention(CpioConstants.FORMAT_NEW);
-        blockSize.convention(CpioConstants.BLOCK_SIZE);
-        encoding.convention(CharsetNames.US_ASCII);
+        getFormat().convention(CpioConstants.FORMAT_NEW);
+        getBlockSize().convention(CpioConstants.BLOCK_SIZE);
+        getEncoding().convention(CharsetNames.US_ASCII);
     }
 
     public void setFormat(String format) {
         switch (format.toUpperCase()) {
             case "NEW":
             case "FORMAT_NEW":
-                this.format.set(CpioConstants.FORMAT_NEW);
+                getFormat().set(CpioConstants.FORMAT_NEW);
                 return;
             case "NEW_CRC":
             case "FORMAT_NEW_CRC":
-                this.format.set(CpioConstants.FORMAT_NEW_CRC);
+                getFormat().set(CpioConstants.FORMAT_NEW_CRC);
                 return;
             case "OLD_ASCII":
             case "FORMAT_OLD_ASCII":
-                this.format.set(CpioConstants.FORMAT_OLD_ASCII);
+                getFormat().set(CpioConstants.FORMAT_OLD_ASCII);
                 return;
             case "OLD_BINARY":
             case "FORMAT_OLD_BINARY":
-                this.format.set(CpioConstants.FORMAT_OLD_BINARY);
+                getFormat().set(CpioConstants.FORMAT_OLD_BINARY);
                 return;
             default:
                 throw new IllegalArgumentException("Unknown format: " + format);
@@ -78,9 +78,9 @@ public class Cpio extends AbstractArchiveTask {
     private WorkResult execute(CopyActionProcessingStream copyActionProcessingStream) {
         try (CpioArchiveOutputStream archiveOutputStream = new CpioArchiveOutputStream(
                 new FileOutputStream(getArchiveFile().get().getAsFile()),
-                format.get(),
-                blockSize.get(),
-                encoding.get()
+                getFormat().get(),
+                getBlockSize().get(),
+                getEncoding().get()
         )) {
             copyActionProcessingStream.process(new StreamAction(archiveOutputStream, getFormat().get()));
 

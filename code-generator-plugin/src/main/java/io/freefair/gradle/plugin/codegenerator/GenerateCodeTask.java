@@ -7,7 +7,10 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -27,42 +30,36 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class GenerateCodeTask extends DefaultTask {
+public abstract class GenerateCodeTask extends DefaultTask {
 
-    @Getter(AccessLevel.NONE)
-    private final ProjectLayout projectLayout;
-    @Getter(AccessLevel.NONE)
-    private final WorkerExecutor workerExecutor;
+    @Inject
+    protected abstract ProjectLayout getProjectLayout();
+    @Inject
+    protected abstract WorkerExecutor getWorkerExecutor();
 
     @InputDirectory
     @Optional
-    private final DirectoryProperty inputDir = getProject().getObjects().directoryProperty();
+    public abstract DirectoryProperty getInputDir();
 
     @OutputDirectory
-    private final DirectoryProperty outputDir = getProject().getObjects().directoryProperty();
+    public abstract DirectoryProperty getOutputDir();
 
     @Input
     @Optional
-    private final MapProperty<String, Object> configurationValues = getProject().getObjects().mapProperty(String.class, Object.class);
+    public abstract MapProperty<String, Object> getConfigurationValues();
 
     @Input
-    private final Property<String> sourceSet = getProject().getObjects().property(String.class);
+    public abstract Property<String> getSourceSet();
 
     @InputFiles
     @Classpath
-    private final ConfigurableFileCollection codeGeneratorClasspath = getProject().files();
-
-    @Inject
-    public GenerateCodeTask(ProjectLayout projectLayout, WorkerExecutor workerExecutor) {
-        this.projectLayout = projectLayout;
-        this.workerExecutor = workerExecutor;
-    }
+    public abstract ConfigurableFileCollection getCodeGeneratorClasspath();
 
     @TaskAction
     public void generate() {
 
         ScanResult scan = new ClassGraph()
-                .overrideClasspath(codeGeneratorClasspath)
+                .overrideClasspath(getCodeGeneratorClasspath())
                 .enableClassInfo()
                 .enableAnnotationInfo()
                 .scan();
@@ -76,9 +73,9 @@ public class GenerateCodeTask extends DefaultTask {
             getLogger().debug(classesImplementing.stream().map(ClassInfo::getName).collect(Collectors.joining(",")));
         }
 
-        ProjectContext context = new ProjectContext(projectLayout.getProjectDirectory().getAsFile(), inputDir.getAsFile().getOrElse(this.getTemporaryDir()), outputDir.getAsFile().get(), configurationValues.getOrElse(Collections.emptyMap()), sourceSet.getOrElse("none"));
+        ProjectContext context = new ProjectContext(getProjectLayout().getProjectDirectory().getAsFile(), getInputDir().getAsFile().getOrElse(this.getTemporaryDir()), getOutputDir().getAsFile().get(), getConfigurationValues().getOrElse(Collections.emptyMap()), getSourceSet().getOrElse("none"));
 
-        WorkQueue workQueue = workerExecutor.classLoaderIsolation(spec -> spec.getClasspath().from(codeGeneratorClasspath));
+        WorkQueue workQueue = getWorkerExecutor().classLoaderIsolation(spec -> spec.getClasspath().from(getCodeGeneratorClasspath()));
 
         for (ClassInfo classInfo : classesWithAnnotation) {
             workQueue.submit(UnitOfWork.class, parameters -> {

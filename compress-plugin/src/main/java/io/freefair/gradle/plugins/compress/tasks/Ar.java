@@ -26,21 +26,21 @@ import java.io.IOException;
 @Getter
 @Setter
 @Slf4j
-public class Ar extends AbstractArchiveTask {
+public abstract class Ar extends AbstractArchiveTask {
 
     @Input
     private final Property<Integer> longFileMode = getProject().getObjects().property(Integer.class);
 
     public Ar() {
         getArchiveExtension().convention("ar");
-        longFileMode.convention(ArArchiveOutputStream.LONGFILE_ERROR);
+        getLongFileMode().convention(ArArchiveOutputStream.LONGFILE_ERROR);
     }
 
     public void setLongFileMode(String longFileMode) {
         if (longFileMode.equalsIgnoreCase("LONGFILE_ERROR") || longFileMode.equalsIgnoreCase("ERROR")) {
-            this.longFileMode.set(ArArchiveOutputStream.LONGFILE_ERROR);
+            getLongFileMode().set(ArArchiveOutputStream.LONGFILE_ERROR);
         } else if (longFileMode.equalsIgnoreCase("LONGFILE_BSD") || longFileMode.equalsIgnoreCase("BSD")) {
-            this.longFileMode.set(ArArchiveOutputStream.LONGFILE_BSD);
+            getLongFileMode().set(ArArchiveOutputStream.LONGFILE_BSD);
         } else {
             throw new IllegalArgumentException("Expected 'LONGFILE_ERROR'/'ERROR' or 'LONGFILE_BSD'/'BSD', but was '" + longFileMode + "'");
         }
@@ -55,7 +55,7 @@ public class Ar extends AbstractArchiveTask {
     private WorkResult execute(CopyActionProcessingStream copyActionProcessingStream) {
         try (ArArchiveOutputStream archiveOutputStream = new ArArchiveOutputStream(new FileOutputStream(getArchiveFile().get().getAsFile()))) {
 
-            archiveOutputStream.setLongFileMode(this.longFileMode.get());
+            archiveOutputStream.setLongFileMode(getLongFileMode().get());
 
             copyActionProcessingStream.process(new StreamAction(archiveOutputStream));
 

@@ -39,7 +39,7 @@ import java.util.LinkedHashSet;
 @Setter
 @CacheableTask
 @Incubating
-public class SassCompile extends SourceTask {
+public abstract class SassCompile extends SourceTask {
 
     public SassCompile() {
         include("**/*.scss");
@@ -53,34 +53,34 @@ public class SassCompile extends SourceTask {
 
     @OutputFiles
     protected FileTree getOutputFiles() {
-        ConfigurableFileTree files = getProject().fileTree(destinationDir);
+        ConfigurableFileTree files = getProject().fileTree(getDestinationDir());
         files.include("**/*.css");
         files.include("**/*.css.map");
         return files;
     }
 
     @Internal
-    private final DirectoryProperty destinationDir = getProject().getObjects().directoryProperty();
+    public abstract DirectoryProperty getDestinationDir();
 
     @TaskAction
     public void compileSass() throws IOException {
 
         try (SassCompiler compiler = SassCompilerFactory.bundled()) {
             compiler.setOutputStyle(getOutputStyle().getOrNull());
-            compiler.setGenerateSourceMaps(sourceMapEnabled.getOrElse(true));
-            compiler.setSourceMapIncludeSources(sourceMapContents.getOrElse(false));
+            compiler.setGenerateSourceMaps(getSourceMapEnabled().getOrElse(true));
+            compiler.setSourceMapIncludeSources(getSourceMapContents().getOrElse(false));
 
             compiler.setLoggingHandler(new Slf4jLoggingHandler(getLogger()));
             compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
 
-            fileImporters.get().forEach(compiler::registerImporter);
-            customImporters.get().forEach(compiler::registerImporter);
-            hostFunctions.get().forEach(compiler::registerFunction);
+            getFileImporters().get().forEach(compiler::registerImporter);
+            getCustomImporters().get().forEach(compiler::registerImporter);
+            getHostFunctions().get().forEach(compiler::registerFunction);
 
-            if (!webjars.isEmpty()) {
+            if (!getWebjars().isEmpty()) {
                 LinkedHashSet<URL> urls = new LinkedHashSet<>();
 
-                for (File webjar : webjars) {
+                for (File webjar : getWebjars()) {
                     urls.add(webjar.toURI().toURL());
                 }
 
@@ -120,10 +120,10 @@ public class SassCompile extends SourceTask {
                             if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
                                 String css = output.getCss();
 
-                                if (sourceMapEnabled.get()) {
+                                if (getSourceMapEnabled().get()) {
                                     String mapUrl;
 
-                                    if (sourceMapEmbed.get()) {
+                                    if (getSourceMapEmbed().get()) {
                                         mapUrl = "data:application/json;base64," + Base64.getEncoder().encodeToString(output.getSourceMapBytes().toByteArray());
                                     }
                                     else {
@@ -139,7 +139,7 @@ public class SassCompile extends SourceTask {
                                 getLogger().error("Cannot write into {}", realOut.getParentFile());
                                 throw new GradleException("Cannot write into " + realMap.getParentFile());
                             }
-                            if (sourceMapEnabled.get() && !sourceMapEmbed.get()) {
+                            if (getSourceMapEnabled().get() && !getSourceMapEmbed().get()) {
                                 if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
                                     Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
                                 }
@@ -169,23 +169,23 @@ public class SassCompile extends SourceTask {
      */
     @Input
     @Optional
-    private ListProperty<HostFunction> hostFunctions = getProject().getObjects().listProperty(HostFunction.class);
+    public abstract ListProperty<HostFunction> getHostFunctions();
 
     @Input
     @Optional
-    private ListProperty<FileImporter> fileImporters = getProject().getObjects().listProperty(FileImporter.class);
+    public abstract ListProperty<FileImporter> getFileImporters();
 
     /**
      * Custom import functions.
      */
     @Input
     @Optional
-    private ListProperty<CustomImporter> customImporters = getProject().getObjects().listProperty(CustomImporter.class);
+    public abstract ListProperty<CustomImporter> getCustomImporters();
 
     @InputFiles
     @Optional
     @PathSensitive(PathSensitivity.RELATIVE)
-    private final ConfigurableFileCollection webjars = getProject().files();
+    public abstract ConfigurableFileCollection getWebjars();
 
     /**
      * SassList of paths.
@@ -193,13 +193,13 @@ public class SassCompile extends SourceTask {
     @InputFiles
     @Optional
     @PathSensitive(PathSensitivity.RELATIVE)
-    private final ConfigurableFileCollection includePaths = getProject().files();
+    public abstract ConfigurableFileCollection getIncludePaths();
 
     /**
      * Disable sourceMappingUrl in css output.
      */
     @Input
-    private final Property<Boolean> omitSourceMapUrl = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getOmitSourceMapUrl();
 
     /**
      * Output style for the generated css code.
@@ -211,22 +211,22 @@ public class SassCompile extends SourceTask {
      * Embed include contents in maps.
      */
     @Input
-    private final Property<Boolean> sourceMapContents = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getSourceMapContents();
 
     /**
      * Embed sourceMappingUrl as data uri.
      */
     @Input
-    private final Property<Boolean> sourceMapEmbed = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getSourceMapEmbed();
 
     @Input
-    private final Property<Boolean> sourceMapEnabled = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getSourceMapEnabled();
 
     @Input
     @Optional
-    private final Property<URI> sourceMapRoot = getProject().getObjects().property(URI.class);
+    public abstract Property<URI> getSourceMapRoot();
 
     public void setOutputStyle(String outputStyle) {
-        this.outputStyle.set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
+        getOutputStyle().set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
     }
 }

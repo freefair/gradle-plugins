@@ -18,15 +18,15 @@ import java.util.ArrayList;
 
 @Getter
 @CacheableTask
-public class AspectjCompile extends AbstractCompile {
+public abstract class AspectjCompile extends AbstractCompile {
 
-    @Getter(AccessLevel.NONE)
-    private final FileSystemOperations fileSystemOperations;
-    @Getter(AccessLevel.NONE)
-    private final ProjectLayout projectLayout;
+    @Inject
+    protected abstract FileSystemOperations getFileSystemOperations();
+    @Inject
+    protected abstract ProjectLayout getProjectLayout();
 
     @Classpath
-    private final ConfigurableFileCollection aspectjClasspath = getProject().getObjects().fileCollection();
+    public abstract ConfigurableFileCollection getAspectjClasspath();
 
     @Nested
     private final CompileOptions options = getProject().getObjects().newInstance(CompileOptions.class);
@@ -36,13 +36,7 @@ public class AspectjCompile extends AbstractCompile {
 
     @Nested
     @Optional
-    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
-
-    @Inject
-    public AspectjCompile(FileSystemOperations fileSystemOperations, ProjectLayout projectLayout) {
-        this.fileSystemOperations = fileSystemOperations;
-        this.projectLayout = projectLayout;
-    }
+    public abstract Property<JavaLauncher> getLauncher();
 
     /**
      * {@inheritDoc}
@@ -63,7 +57,7 @@ public class AspectjCompile extends AbstractCompile {
 
     @TaskAction
     protected void compile() {
-        fileSystemOperations.delete(spec -> spec.delete(getDestinationDirectory()).setFollowSymlinks(false));
+        getFileSystemOperations().delete(spec -> spec.delete(getDestinationDirectory()).setFollowSymlinks(false));
 
         AspectJCompileSpec spec = createSpec();
         WorkResult result = getCompiler().execute(spec);
@@ -78,14 +72,14 @@ public class AspectjCompile extends AbstractCompile {
         AspectJCompileSpec spec = new AspectJCompileSpec();
         spec.setSourceFiles(getSource());
         spec.setDestinationDir(getDestinationDirectory().getAsFile().get());
-        spec.setWorkingDir(projectLayout.getProjectDirectory().getAsFile());
+        spec.setWorkingDir(getProjectLayout().getProjectDirectory().getAsFile());
         spec.setTempDir(getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(getClasspath().getFiles()));
         spec.setSourceCompatibility(getSourceCompatibility());
         spec.setTargetCompatibility(getTargetCompatibility());
         spec.setAspectJClasspath(getAspectjClasspath());
         spec.setAspectJCompileOptions(getAjcOptions());
-        spec.setLauncher(launcher.getOrNull());
+        spec.setLauncher(getLauncher().getOrNull());
 
         return spec;
     }
