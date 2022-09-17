@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEntry> extends AbstractArchiveFileTree {
 
-    private final File archiveFile;
+    private final Provider<File> fileProvider;
     private final ArchiveInputStreamProvider<IS> inputStreamProvider;
     private final File tmpDir;
     private final Chmod chmod;
@@ -49,6 +49,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
 
     @Override
     public void visit(FileVisitor visitor) {
+        File archiveFile = fileProvider.get();
         if (!archiveFile.exists()) {
             throw new InvalidUserDataException(String.format("Cannot expand %s as it does not exist.", getDisplayName()));
         }
@@ -90,17 +91,18 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
 
     @Override
     public String getDisplayName() {
-        return String.format("archive '%s'", archiveFile);
+        return String.format("archive '%s'", fileProvider.getOrNull());
     }
 
     private File getExpandedDir() {
+        File archiveFile = fileProvider.get();
         String expandedDirName = archiveFile.getName() + "_" + fileHasher.hash(archiveFile);
         return new File(tmpDir, expandedDirName);
     }
 
     @Override
     protected Provider<File> getBackingFileProvider() {
-        return null;
+        return fileProvider;
     }
 
     @Getter
@@ -125,7 +127,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
 
         @Override
         public String getDisplayName() {
-            return String.format("%s %s!%s", archiveEntry.getClass().getSimpleName(), archiveFile, archiveEntry.getName());
+            return String.format("%s %s!%s", archiveEntry.getClass().getSimpleName(), fileProvider.get(), archiveEntry.getName());
         }
 
         @Override
@@ -170,7 +172,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
 
             // As last resort: Reopen the Archive and skip forward to our ArchiveEntry
             try {
-                IS archiveInputStream = inputStreamProvider.openFile(archiveFile);
+                IS archiveInputStream = inputStreamProvider.openFile(fileProvider.get());
 
                 ArchiveEntry tmp;
 
@@ -180,7 +182,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
                     }
                 }
 
-                throw new IOException(archiveEntry.getName() + " not found in " + archiveFile);
+                throw new IOException(archiveEntry.getName() + " not found in " + fileProvider.get());
 
             } catch (ArchiveException e) {
                 throw new IOException(e);

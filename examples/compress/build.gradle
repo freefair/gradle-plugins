@@ -1,4 +1,6 @@
-
+plugins {
+    id "io.freefair.compress"
+}
 
 task foo(type: io.freefair.gradle.plugins.compress.tasks.GZip) {
     source "src/main/resources"
@@ -16,4 +18,17 @@ task bar(type: io.freefair.gradle.plugins.compress.tasks.Deflate) {
     compressionLevel = 9
 
     destinationDir = file("$buildDir/bar")
+}
+task baz(type: io.freefair.gradle.plugins.compress.tasks.SevenZip) {
+    from "src/main/resources"
+    from "$rootDir/../compress-plugin/src/main/java"
+
+    archiveFile.set project.layout.buildDirectory.file("baz.7z")
+}
+
+// https://github.com/freefair/gradle-plugins/issues/579
+task example(type: Sync) {
+    dependsOn baz
+    from commonsCompress.sevenZipTree("$buildDir/baz.7z")
+    into "$buildDir/579"
 }

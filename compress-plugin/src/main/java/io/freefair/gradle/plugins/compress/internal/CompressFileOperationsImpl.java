@@ -8,15 +8,20 @@ import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.dump.DumpArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.gradle.api.file.FileTree;
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.internal.file.DefaultFileOperations;
 import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.file.collections.FileTreeAdapter;
 import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.internal.project.ProjectInternal;
+import org.gradle.api.internal.provider.ProviderInternal;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.resources.ReadableResource;
 import org.gradle.api.tasks.util.PatternSet;
+import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.hash.FileHasher;
 import org.gradle.internal.nativeintegration.filesystem.FileSystem;
@@ -24,8 +29,13 @@ import org.gradle.internal.nativeintegration.filesystem.FileSystem;
 import java.io.File;
 import java.io.FileInputStream;
 
+import static org.gradle.api.internal.lambdas.SerializableLambdas.transformer;
+
 /**
  * @author Lars Grefer
+ *
+ * @see FileOperations
+ * @see DefaultFileOperations
  */
 public class CompressFileOperationsImpl implements CompressFileOperations {
 
@@ -36,6 +46,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private final FileSystem fileSystem;
     private final DirectoryFileTreeFactory directoryFileTreeFactory;
     private final Factory<PatternSet> patternSetFactory;
+    private final ProviderFactory providers;
 
     public CompressFileOperationsImpl(ProjectInternal project) {
         fileOperations = project.getFileOperations();
@@ -45,11 +56,12 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         fileSystem = project.getServices().get(FileSystem.class);
         directoryFileTreeFactory = project.getServices().get(DirectoryFileTreeFactory.class);
         patternSetFactory = project.getServices().getFactory(PatternSet.class);
+        providers = project.getServices().get(ProviderFactory.class);
     }
 
     @Override
     public FileTree arTree(Object arPath) {
-        File file = fileOperations.file(arPath);
+        Provider<File> file = asFileProvider(arPath);
         ArFileTree arFileTree = new ArFileTree(file, f -> new ArArchiveInputStream(new FileInputStream(f)), getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(arFileTree, patternSetFactory);
     }
@@ -65,7 +77,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     }
 
     private FileTree arjTree(Object arjFile, ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider) {
-        File file = fileOperations.file(arjFile);
+        Provider<File> file = asFileProvider(arjFile);
         ArjFileTree arjFileTree = new ArjFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(arjFileTree, patternSetFactory);
     }
@@ -91,7 +103,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     }
 
     private FileTree cpioTree(Object arPath, ArchiveInputStreamProvider<CpioArchiveInputStream> inputStreamProvider) {
-        File file = fileOperations.file(arPath);
+        Provider<File> file = asFileProvider(arPath);
         ArchiveFileTree<CpioArchiveInputStream, CpioArchiveEntry> cpioFileTree = new ArchiveFileTree<>(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(cpioFileTree, patternSetFactory);
     }
@@ -107,7 +119,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     }
 
     private FileTree sevenZipTree(Object sevenZipFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {
-        File file = fileOperations.file(sevenZipFile);
+        Provider<File> file = asFileProvider(sevenZipFile);
         SevenZipFileTree sevenZipFileTree = new SevenZipFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(sevenZipFileTree, patternSetFactory);
     }
@@ -123,7 +135,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     }
 
     private FileTree dumpTree(Object dumpFile, ArchiveInputStreamProvider<DumpArchiveInputStream> inputStreamProvider) {
-        File file = fileOperations.file(dumpFile);
+        Provider<File> file = asFileProvider(dumpFile);
         DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
         return new FileTreeAdapter(dumpFileTree, patternSetFactory);
     }
@@ -142,4 +154,27 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         return temporaryFileProvider.newTemporaryFile("expandedArchives");
     }
 
+    /**
+     * @see DefaultFileOperations#asFileProvider(Object)
+     */
+    private Provider<File> asFileProvider(Object path) {
+        if (path instanceof ReadableResource) {
+            return providers.provider(() -> null);
+        }
+        if (path instanceof Provider) {
+            ProviderInternal<?> provider = (ProviderInternal<?>) path;
+            Class<?> type = provider.getType();
+            if (type != null) {
+                if (File.class.isAssignableFrom(type)) {
+                    return Cast.uncheckedCast(path);
+                }
+                if (RegularFile.class.isAssignableFrom(type)) {
+                    Provider<RegularFile> regularFileProvider = Cast.uncheckedCast(provider);
+                    return regularFileProvider.map(transformer(RegularFile::getAsFile));
+                }
+            }
+            return provider.map(transformer(fileOperations::file));
+        }
+        return providers.provider(() -> fileOperations.file(path));
+    }
 }

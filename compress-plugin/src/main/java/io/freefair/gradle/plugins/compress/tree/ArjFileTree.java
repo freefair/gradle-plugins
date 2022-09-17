@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.compress.tree;
 import org.apache.commons.compress.archivers.arj.ArjArchiveEntry;
 import org.apache.commons.compress.archivers.arj.ArjArchiveInputStream;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
+import org.gradle.api.provider.Provider;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
 
@@ -13,7 +14,7 @@ import java.io.File;
  */
 public class ArjFileTree extends ArchiveFileTree<ArjArchiveInputStream, ArjArchiveEntry> {
 
-    public ArjFileTree(File archiveFile, ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider, File tmpDir, Chmod chmod, DirectoryFileTreeFactory directoryFileTreeFactory, FileHasher fileHasher) {
+    public ArjFileTree(Provider<File> archiveFile, ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider, File tmpDir, Chmod chmod, DirectoryFileTreeFactory directoryFileTreeFactory, FileHasher fileHasher) {
         super(archiveFile, inputStreamProvider, tmpDir, chmod, directoryFileTreeFactory, fileHasher);
     }
 
