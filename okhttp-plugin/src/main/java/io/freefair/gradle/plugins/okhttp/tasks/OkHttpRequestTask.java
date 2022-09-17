@@ -1,8 +1,6 @@
 package io.freefair.gradle.plugins.okhttp.tasks;
 
 import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
-import lombok.Getter;
-import lombok.Setter;
 import okhttp3.*;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
@@ -17,23 +15,21 @@ import java.io.IOException;
 /**
  * @author Lars Grefer
  */
-@Getter
-@Setter
 public abstract class OkHttpRequestTask extends DefaultTask {
 
     @Input
-    private final Property<String> url = getProject().getObjects().property(String.class);
+    public abstract Property<String> getUrl();
 
     @Input
-    private final MapProperty<String, String> headers = getProject().getObjects().mapProperty(String.class, String.class);
-
-    @Input
-    @Optional
-    private final Property<String> username = getProject().getObjects().property(String.class);
+    public abstract MapProperty<String, String> getHeaders();
 
     @Input
     @Optional
-    private final Property<String> password = getProject().getObjects().property(String.class);
+    public abstract Property<String> getUsername();
+
+    @Input
+    @Optional
+    public abstract Property<String> getPassword();
 
     @TaskAction
     public void executeRequest() throws IOException {
@@ -65,14 +61,14 @@ public abstract class OkHttpRequestTask extends DefaultTask {
 
     public Request.Builder buildRequest(Request.Builder builder) {
 
-        headers.get().forEach(builder::header);
+        getHeaders().get().forEach(builder::header);
 
-        if (username.isPresent() && password.isPresent()) {
-            builder.header("Authorization", Credentials.basic(this.username.get(), this.password.get()));
+        if (getUsername().isPresent() && getPassword().isPresent()) {
+            builder.header("Authorization", Credentials.basic(getUsername().get(), getPassword().get()));
         }
 
-        if (url.isPresent()) {
-            builder.url(url.get());
+        if (getUrl().isPresent()) {
+            builder.url(getUrl().get());
         }
 
         return builder;

@@ -1,7 +1,5 @@
 package io.freefair.gradle.plugins.okhttp.tasks;
 
-import lombok.Getter;
-import lombok.Setter;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import org.gradle.api.file.RegularFileProperty;
@@ -12,15 +10,13 @@ import javax.annotation.Nullable;
 /**
  * @author Lars Grefer
  */
-@Getter
-@Setter
-public class UploadFile extends HttpPut {
+public abstract class UploadFile extends HttpPut {
 
     @InputFile
-    private final RegularFileProperty file = getProject().getObjects().fileProperty();
+    public abstract RegularFileProperty getFile();
 
     @Override
     public RequestBody getRequestBody(@Nullable MediaType contentType) {
-        return RequestBody.create(file.getAsFile().get(), contentType);
+        return RequestBody.create(getFile().getAsFile().get(), contentType);
     }
 }

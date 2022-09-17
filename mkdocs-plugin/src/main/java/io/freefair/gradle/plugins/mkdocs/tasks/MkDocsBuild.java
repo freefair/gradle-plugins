@@ -1,21 +1,16 @@
 package io.freefair.gradle.plugins.mkdocs.tasks;
 
-import lombok.Getter;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
-
-import javax.inject.Inject;
 
 /**
  * Build the MkDocs documentation.
  */
-@Getter
 @CacheableTask
-public class MkDocsBuild extends MkDocs {
+public abstract class MkDocsBuild extends MkDocs {
 
     /**
      * Provide a specific MkDocs config.
@@ -23,7 +18,7 @@ public class MkDocsBuild extends MkDocs {
     @Optional
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
-    private final RegularFileProperty configFile = getProject().getObjects().fileProperty();
+    public abstract RegularFileProperty getConfigFile();
 
     /**
      * Enable strict mode.
@@ -31,14 +26,14 @@ public class MkDocsBuild extends MkDocs {
      */
     @Optional
     @Input
-    private final Property<Boolean> strict = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getStrict();
 
     /**
      * The theme to use when building your documentation.
      */
     @Optional
     @Input
-    private final Property<String> theme = getProject().getObjects().property(String.class);
+    public abstract Property<String> getTheme();
 
     /**
      * The theme directory to use when building your documentation.
@@ -46,17 +41,16 @@ public class MkDocsBuild extends MkDocs {
     @Optional
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
-    private final DirectoryProperty themeDir = getProject().getObjects().directoryProperty();
+    public abstract DirectoryProperty getThemeDir();
 
     /**
      * The directory to output the result of the documentation build.
      */
     @OutputDirectory
-    private final DirectoryProperty siteDir = getProject().getObjects().directoryProperty();
+    public abstract DirectoryProperty getSiteDir();
 
-    @Inject
-    public MkDocsBuild(ExecOperations execOperations) {
-        super(execOperations, "build");
+    public MkDocsBuild() {
+        super("build");
         setDescription("Build the MkDocs documentation");
     }
 

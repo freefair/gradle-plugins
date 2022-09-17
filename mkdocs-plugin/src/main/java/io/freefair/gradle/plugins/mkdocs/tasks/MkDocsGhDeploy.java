@@ -1,19 +1,14 @@
 package io.freefair.gradle.plugins.mkdocs.tasks;
 
-import lombok.Getter;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
-
-import javax.inject.Inject;
 
 /**
  * Deploy your documentation to GitHub Pages.
  */
-@Getter
-public class MkDocsGhDeploy extends MkDocs {
+public abstract class MkDocsGhDeploy extends MkDocs {
 
     /**
      * Provide a specific MkDocs config.
@@ -21,7 +16,7 @@ public class MkDocsGhDeploy extends MkDocs {
     @Optional
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
-    private final RegularFileProperty configFile = getProject().getObjects().fileProperty();
+    public abstract RegularFileProperty getConfigFile();
 
     /**
      * A commit message to use when committing to the Github Pages remote branch.
@@ -29,7 +24,7 @@ public class MkDocsGhDeploy extends MkDocs {
      */
     @Optional
     @Input
-    private final Property<String> message = getProject().getObjects().property(String.class);
+    public abstract Property<String> getMessage();
 
     /**
      * The remote branch to commit to for Github Pages.
@@ -37,7 +32,7 @@ public class MkDocsGhDeploy extends MkDocs {
      */
     @Optional
     @Input
-    private final Property<String> remoteBranch = getProject().getObjects().property(String.class);
+    public abstract Property<String> getRemoteBranch();
 
     /**
      * The remote name to commit to for Github Pages.
@@ -45,14 +40,14 @@ public class MkDocsGhDeploy extends MkDocs {
      */
     @Optional
     @Input
-    private final Property<String> remoteName = getProject().getObjects().property(String.class);
+    public abstract Property<String> getRemoteName();
 
     /**
      * Force the push to the repository.
      */
     @Optional
     @Input
-    private final Property<Boolean> force = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getForce();
 
     /**
      * Ignore check that build is not being deployed
@@ -60,11 +55,10 @@ public class MkDocsGhDeploy extends MkDocs {
      */
     @Optional
     @Input
-    private final Property<Boolean> ignoreVersion = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getIgnoreVersion();
 
-    @Inject
-    public MkDocsGhDeploy(ExecOperations execOperations) {
-        super(execOperations, "gh-deploy");
+    public MkDocsGhDeploy() {
+        super("gh-deploy");
         setDescription("Deploy your documentation to GitHub Pages");
     }
 

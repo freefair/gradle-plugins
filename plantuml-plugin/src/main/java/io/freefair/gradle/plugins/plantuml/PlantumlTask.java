@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.plantuml;
 
-import lombok.Getter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
@@ -15,62 +14,58 @@ import java.io.File;
 /**
  * @author Lars Grefer
  */
-public class PlantumlTask extends SourceTask {
-
-    private final WorkerExecutor workerExecutor;
-
-    private final FileSystemOperations fileSystemOperations;
-
-    @Getter
-    @Classpath
-    private final ConfigurableFileCollection plantumlClasspath = getProject().files();
-
-    @Getter
-    @OutputDirectory
-    private final DirectoryProperty outputDirectory = getProject().getObjects().directoryProperty();
-
-    @Getter
-    @Input
-    @Optional
-    private final Property<String> fileFormat = getProject().getObjects().property(String.class);
-
-    @Getter
-    @Input
-    private final Property<Boolean> withMetadata = getProject().getObjects().property(Boolean.class).convention(true);
-
-    @Getter
-    @Input
-    private final Property<String> includePattern = getProject().getObjects().property(String.class).convention("**/*.puml");
-
-    @Getter
-    @Input
-    private final Property<Boolean> deleteOutputBeforeBuild = getProject().getObjects().property(Boolean.class).convention(true);
+public abstract class PlantumlTask extends SourceTask {
 
     @Inject
-    public PlantumlTask(WorkerExecutor workerExecutor, FileSystemOperations fileSystemOperations) {
-        this.fileSystemOperations = fileSystemOperations;
-        this.workerExecutor = workerExecutor;
+    protected abstract WorkerExecutor getWorkerExecutor();
+
+    @Inject
+    protected abstract FileSystemOperations getFileSystemOperations();
+
+    @Classpath
+    public abstract ConfigurableFileCollection getPlantumlClasspath();
+
+    @OutputDirectory
+    public abstract DirectoryProperty getOutputDirectory();
+
+    @Input
+    @Optional
+    public abstract Property<String> getFileFormat();
+
+    @Input
+    public abstract Property<Boolean> getWithMetadata();
+
+    @Input
+    public abstract Property<String> getIncludePattern();
+
+    @Input
+    public abstract Property<Boolean> getDeleteOutputBeforeBuild();
+
+    public PlantumlTask() {
         this.setGroup("plantuml");
+        getWithMetadata().convention(true);
+        getIncludePattern().convention("**/*.puml");
+        getDeleteOutputBeforeBuild().convention(true);
     }
 
     @TaskAction
     public void execute() {
 
-        if(deleteOutputBeforeBuild.get()) {
-            fileSystemOperations.delete(deleteSpec -> deleteSpec.delete(outputDirectory));
+        if(getDeleteOutputBeforeBuild().get()) {
+            getFileSystemOperations().delete(deleteSpec -> deleteSpec.delete(getOutputDirectory()));
         }
 
-        WorkQueue workQueue = workerExecutor.processIsolation(process -> {
-            process.getClasspath().from(plantumlClasspath);
+        WorkQueue workQueue = getWorkerExecutor().processIsolation(process -> {
+            process.getClasspath().from(getPlantumlClasspath());
             process.getForkOptions().systemProperty("java.awt.headless", true);
         });
 
-        for (File file : getSource().matching(p -> p.include(includePattern.get()))) {
+        for (File file : getSource().matching(p -> p.include(getIncludePattern().get()))) {
             workQueue.submit(PlantumlAction.class, params -> {
                 params.getInputFile().set(file);
-                params.getOutputDirectory().set(outputDirectory);
-                params.getFileFormat().set(fileFormat);
-                params.getWithMetadata().set(withMetadata);
+                params.getOutputDirectory().set(getOutputDirectory());
+                params.getFileFormat().set(getFileFormat());
+                params.getWithMetadata().set(getWithMetadata());
             });
         }
     }

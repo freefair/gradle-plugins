@@ -1,20 +1,15 @@
 package io.freefair.gradle.plugins.mkdocs.tasks;
 
-import lombok.Getter;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
-
-import javax.inject.Inject;
 
 /**
  * Run the builtin development server.
  */
-@Getter
-public class MkDocsServe extends MkDocs {
+public abstract class MkDocsServe extends MkDocs {
 
     /**
      * Provide a specific MkDocs config.
@@ -22,7 +17,7 @@ public class MkDocsServe extends MkDocs {
     @Optional
     @InputFile
     @PathSensitive(PathSensitivity.RELATIVE)
-    private final RegularFileProperty configFile = getProject().getObjects().fileProperty();
+    public abstract RegularFileProperty getConfigFile();
 
     /**
      * IP address and port to serve documentation locally
@@ -30,7 +25,7 @@ public class MkDocsServe extends MkDocs {
      */
     @Input
     @Optional
-    private final Property<String> devAddr = getProject().getObjects().property(String.class).convention("localhost:8080");
+    public abstract Property<String> getDevAddr();
 
     /**
      * Enable strict mode.
@@ -38,28 +33,28 @@ public class MkDocsServe extends MkDocs {
      */
     @Optional
     @Input
-    private final Property<Boolean> strict = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getStrict();
 
     /**
      * The theme to use when building your documentation.
      */
     @Optional
     @Input
-    private final Property<String> theme = getProject().getObjects().property(String.class);
+    public abstract Property<String> getTheme();
 
     /**
      * The theme directory to use when building your documentation.
      */
     @Optional
     @InputDirectory
-    private final DirectoryProperty themeDir = getProject().getObjects().directoryProperty();
+    public abstract DirectoryProperty getThemeDir();
 
     /**
      * Enable the live reloading in the development server
      */
     @Optional
     @Input
-    private final Property<Boolean> livereload = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getLivereload();
 
     /**
      * Enable the live reloading in the development server,
@@ -67,12 +62,12 @@ public class MkDocsServe extends MkDocs {
      */
     @Optional
     @Input
-    private final Property<Boolean> dirtyreload = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getDirtyreload();
 
-    @Inject
-    public MkDocsServe(ExecOperations execOperations) {
-        super(execOperations, "serve");
+    public MkDocsServe() {
+        super("serve");
         setDescription("Run the builtin development server.");
+        getDevAddr().convention("localhost:8080");
     }
 
     @Override

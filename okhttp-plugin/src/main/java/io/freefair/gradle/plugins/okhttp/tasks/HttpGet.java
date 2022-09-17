@@ -5,7 +5,7 @@ import okhttp3.Request;
 /**
  * @author Lars Grefer
  */
-public class HttpGet extends OkHttpRequestTask {
+public abstract class HttpGet extends OkHttpRequestTask {
 
     @Override
     public Request.Builder buildRequest(Request.Builder builder) {

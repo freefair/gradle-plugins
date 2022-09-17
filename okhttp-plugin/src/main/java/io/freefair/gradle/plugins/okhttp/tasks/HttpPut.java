@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.okhttp.tasks;
 
-import lombok.Getter;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -13,17 +12,16 @@ import javax.annotation.Nullable;
 /**
  * @author Lars Grefer
  */
-@Getter
 public abstract class HttpPut extends OkHttpRequestTask {
 
     @Input
     @Optional
-    private final Property<String> contentType = getProject().getObjects().property(String.class);
+    public abstract Property<String> getContentType();
 
     @Override
     public Request.Builder buildRequest(Request.Builder builder) {
         return super.buildRequest(builder)
-                .put(getRequestBody(contentType.map(MediaType::get).getOrNull()));
+                .put(getRequestBody(getContentType().map(MediaType::get).getOrNull()));
     }
 
     public abstract RequestBody getRequestBody(@Nullable MediaType contentType);

@@ -10,11 +10,13 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecSpec;
 
+import javax.inject.Inject;
+
 @Getter
 public abstract class MkDocs extends DefaultTask {
 
-    @Getter(AccessLevel.NONE)
-    private final ExecOperations execOperations;
+    @Inject
+    protected abstract ExecOperations getExecOperations();
 
     @Getter(AccessLevel.PROTECTED)
     @Input
@@ -32,14 +34,13 @@ public abstract class MkDocs extends DefaultTask {
     @Console
     private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class);
 
-    protected MkDocs(ExecOperations execOperations, String command) {
-        this.execOperations = execOperations;
+    protected MkDocs(String command) {
         this.command = command;
     }
 
     @TaskAction
     public void exec() {
-        execOperations.exec(mkdocs -> {
+        getExecOperations().exec(mkdocs -> {
             mkdocs.setExecutable("mkdocs");
 
             mkdocs.args(command);
