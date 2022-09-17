@@ -17,15 +17,10 @@ import java.io.File;
  * @see org.apache.maven.plugin.plugin.DescriptorGeneratorMojo
  */
 @Getter
-public class DescriptorGeneratorTask extends AbstractGeneratorTask {
+public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
 
     @OutputDirectory
-    private final DirectoryProperty outputDirectory = getProject().getObjects().directoryProperty();
-
-    @Inject
-    public DescriptorGeneratorTask(ProjectLayout projectLayout) {
-        super(projectLayout);
-    }
+    public abstract DirectoryProperty getOutputDirectory();
 
     @Override
     @Internal
@@ -36,6 +31,6 @@ public class DescriptorGeneratorTask extends AbstractGeneratorTask {
     @Override
     @Internal
     protected File getBaseDir() {
-        return outputDirectory.dir("META-INF/maven").get().getAsFile();
+        return getOutputDirectory().dir("META-INF/maven").get().getAsFile();
     }
 }

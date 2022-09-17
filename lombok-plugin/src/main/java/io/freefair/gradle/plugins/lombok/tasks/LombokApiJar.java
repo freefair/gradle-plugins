@@ -1,7 +1,5 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
-import lombok.AccessLevel;
-import lombok.Getter;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.internal.ProcessOperations;
@@ -18,29 +16,25 @@ import java.io.File;
  *
  * @author Lars Grefer
  */
-@Getter
 @NonNullApi
 @CacheableTask
-public class LombokApiJar extends LombokJarTask {
-
-    @Getter(AccessLevel.NONE)
-    private final FileSystemOperations fileSystemOperations;
-    @Getter(AccessLevel.NONE)
-    private final ProcessOperations processOperations;
+public abstract class LombokApiJar extends LombokJarTask {
 
     @Inject
-    public LombokApiJar(FileSystemOperations fileSystemOperations, ProcessOperations processOperations) {
-        this.fileSystemOperations = fileSystemOperations;
-        this.processOperations = processOperations;
+    protected abstract FileSystemOperations getFileSystemOperations();
+    @Inject
+    protected abstract ProcessOperations getProcessOperations();
+
+    public LombokApiJar() {
         getArchiveAppendix().convention("api");
     }
 
     @TaskAction
     public void copy() {
-        fileSystemOperations.delete(spec -> spec.delete(getArchiveFile()).setFollowSymlinks(false));
+        getFileSystemOperations().delete(spec -> spec.delete(getArchiveFile()).setFollowSymlinks(false));
 
         File destinationDir = getDestinationDirectory().getAsFile().get();
-        processOperations.javaexec(apiJar -> {
+        getProcessOperations().javaexec(apiJar -> {
             if (getLauncher().isPresent()) {
                 apiJar.setExecutable(getLauncher().get().getExecutablePath().getAsFile().getAbsolutePath());
             }

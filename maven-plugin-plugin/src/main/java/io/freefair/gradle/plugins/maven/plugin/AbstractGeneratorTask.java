@@ -3,9 +3,6 @@ package io.freefair.gradle.plugins.maven.plugin;
 import io.freefair.gradle.plugins.maven.plugin.wrappers.MavenProjectWrapper;
 import io.freefair.gradle.plugins.maven.plugin.wrappers.MojoAnnotationScannerWrapper;
 import io.freefair.gradle.plugins.maven.plugin.wrappers.PlexusLoggerWrapper;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.maven.plugin.descriptor.InvalidPluginDescriptorException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.plugin.AbstractGeneratorMojo;
@@ -33,6 +30,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -47,21 +45,19 @@ import java.util.stream.Collectors;
  * @see AbstractGeneratorMojo
  */
 @SuppressWarnings("JavadocReference")
-@Getter
-@Setter
 public abstract class AbstractGeneratorTask extends DefaultTask {
 
-    @Getter(AccessLevel.NONE)
-    private final ProjectLayout projectLayout;
+    @Inject
+    protected abstract ProjectLayout getProjectLayout();
 
     @InputFiles
-    private final ConfigurableFileCollection sourceDirectories = getProject().files();
+    public abstract ConfigurableFileCollection getSourceDirectories();
 
     @InputFiles
-    private final ConfigurableFileCollection classesDirectories = getProject().files();
+    public abstract ConfigurableFileCollection getClassesDirectories();
 
     @InputFile
-    private final RegularFileProperty pomFile = getProject().getObjects().fileProperty();
+    public abstract RegularFileProperty getPomFile();
 
     /**
      * The file encoding of the source files.
@@ -70,7 +66,7 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
      */
     @Optional
     @Input
-    private final Property<String> encoding = getProject().getObjects().property(String.class);
+    public abstract Property<String> getEncoding();
 
     /**
      * The goal prefix that will appear before the ":".
@@ -79,16 +75,16 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
      */
     @Optional
     @Input
-    private final Property<String> goalPrefix = getProject().getObjects().property(String.class);
+    public abstract Property<String> getGoalPrefix();
 
     /**
      * @see AbstractGeneratorMojo#skipErrorNoDescriptorsFound
      */
     @Input
-    private final Property<Boolean> skipErrorNoDescriptorsFound = getProject().getObjects().property(Boolean.class).convention(false);
+    public abstract Property<Boolean> getSkipErrorNoDescriptorsFound();
 
-    protected AbstractGeneratorTask(ProjectLayout projectLayout) {
-        this.projectLayout = projectLayout;
+    public AbstractGeneratorTask() {
+        getSkipErrorNoDescriptorsFound().convention(false);
     }
 
     /**
@@ -99,14 +95,14 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
         PluginDescriptor pluginDescriptor = new PluginDescriptor();
 
         SourceSetContainer sourceSets = getProject().getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
-        MavenProject project = new MavenProjectWrapper(projectLayout, sourceSets, getPomFile().getAsFile().get());
+        MavenProject project = new MavenProjectWrapper(getProjectLayout(), sourceSets, getPomFile().getAsFile().get());
 
         pluginDescriptor.setName(project.getName());
         pluginDescriptor.setDescription(project.getDescription());
         pluginDescriptor.setGroupId(project.getGroupId());
         pluginDescriptor.setVersion(project.getVersion());
         pluginDescriptor.setArtifactId(project.getArtifactId());
-        pluginDescriptor.setGoalPrefix(goalPrefix.getOrElse(PluginDescriptor.getGoalPrefixFromArtifactId(project.getArtifactId())));
+        pluginDescriptor.setGoalPrefix(getGoalPrefix().getOrElse(PluginDescriptor.getGoalPrefixFromArtifactId(project.getArtifactId())));
 
         List<ComponentDependency> deps = getRuntimeDependencies();
         pluginDescriptor.setDependencies(deps);
@@ -177,8 +173,8 @@ public abstract class AbstractGeneratorTask extends DefaultTask {
         delegate.enableLogging(plexusLoggerWrapper);
 
         MojoAnnotationScannerWrapper mojoAnnotationsScanner = new MojoAnnotationScannerWrapper(delegate);
-        mojoAnnotationsScanner.setSourceDirectories(sourceDirectories);
-        mojoAnnotationsScanner.setClassesDirectories(classesDirectories);
+        mojoAnnotationsScanner.setSourceDirectories(getSourceDirectories());
+        mojoAnnotationsScanner.setClassesDirectories(getClassesDirectories());
 
         ArchiverManager archiverManager = new DefaultArchiverManager();
 

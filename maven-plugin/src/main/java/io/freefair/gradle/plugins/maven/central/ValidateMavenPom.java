@@ -21,11 +21,10 @@ import java.util.Collection;
 /**
  * @author Lars Grefer
  */
-@Getter
-public class ValidateMavenPom extends DefaultTask implements VerificationTask {
+public abstract class ValidateMavenPom extends DefaultTask implements VerificationTask {
 
     @InputFile
-    private final RegularFileProperty pomFile = getProject().getObjects().fileProperty();
+    public abstract RegularFileProperty getPomFile();
 
     @Input
     private final Property<Boolean> ignoreFailures = getProject().getObjects().property(Boolean.class).convention(false);
@@ -37,7 +36,7 @@ public class ValidateMavenPom extends DefaultTask implements VerificationTask {
     public void check() throws IOException, XmlPullParserException {
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = reader.read(new FileReader(pomFile.getAsFile().get()));
+        Model model = reader.read(new FileReader(getPomFile().getAsFile().get()));
 
         if (isEmpty(model.getGroupId())) {
             logError("groupId");
@@ -109,7 +108,7 @@ public class ValidateMavenPom extends DefaultTask implements VerificationTask {
 
     private void logError(String element) {
         errorFound = true;
-        getLogger().error("No {} found in {}", element, pomFile.getAsFile().get());
+        getLogger().error("No {} found in {}", element, getPomFile().getAsFile().get());
     }
 
     private boolean isEmpty(String string) {

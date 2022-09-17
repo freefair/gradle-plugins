@@ -2,7 +2,6 @@ package io.freefair.gradle.plugins.lombok.tasks;
 
 import io.freefair.gradle.plugins.lombok.internal.ConfigUtil;
 import io.freefair.gradle.plugins.lombok.tasks.internal.LombokConfigAction;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -12,8 +11,8 @@ import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.*;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.ExecOperations;
 import org.gradle.workers.WorkerExecutor;
@@ -21,7 +20,6 @@ import org.gradle.workers.WorkerExecutor;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -35,65 +33,64 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
-public class LombokConfig extends DefaultTask implements LombokTask {
+public abstract class LombokConfig extends DefaultTask implements LombokTask {
 
-    @Getter(AccessLevel.NONE)
-    private final WorkerExecutor workerExecutor;
-    @Getter(AccessLevel.NONE)
-    private final FileSystemOperations fileSystemOperations;
-    @Getter(AccessLevel.NONE)
-    private final ExecOperations execOperations;
+    @Inject
+    protected abstract WorkerExecutor getWorkerExecutor();
+    @Inject
+    protected abstract FileSystemOperations getFileSystemOperations();
+    @Inject
+    protected abstract ExecOperations getExecOperations();
 
     @Nested
     @Optional
-    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
+    public abstract Property<JavaLauncher> getLauncher();
 
     @Classpath
-    private final ConfigurableFileCollection lombokClasspath = getProject().files();
+    public abstract ConfigurableFileCollection getLombokClasspath();
 
     /**
      * Generates a list containing all the available configuration parameters.
      */
     @Input
-    private final Property<Boolean> generate = getProject().getObjects().property(Boolean.class).convention(false);
+    public abstract Property<Boolean> getGenerate();
 
     /**
      * Displays more information.
      */
     @Input
-    private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class).convention(false);
+    public abstract Property<Boolean> getVerbose();
 
     /**
      * Also display files that don't mention the key.
      */
     @Input
-    private final Property<Boolean> notMentioned = getProject().getObjects().property(Boolean.class).convention(false);
+    public abstract Property<Boolean> getNotMentioned();
 
     /**
      * Limit the result to these keys.
      */
     @Input
     @Optional
-    private final ListProperty<String> keys = getProject().getObjects().listProperty(String.class);
+    public abstract ListProperty<String> getKeys();
 
     /**
      * Paths to java files or directories the configuration is to be printed for.
      */
     @Internal
-    private final ConfigurableFileCollection paths = getProject().getObjects().fileCollection();
+    public abstract ConfigurableFileCollection getPaths();
 
     @OutputFile
-    private final RegularFileProperty outputFile = getProject().getObjects().fileProperty();
+    public abstract RegularFileProperty getOutputFile();
 
     @Input
     @Optional
-    private final Property<Boolean> fork = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getFork();
 
-    @Inject
-    public LombokConfig(WorkerExecutor workerExecutor, FileSystemOperations fileSystemOperations, ExecOperations execOperations) {
-        this.workerExecutor = workerExecutor;
-        this.fileSystemOperations = fileSystemOperations;
-        this.execOperations = execOperations;
+    public LombokConfig() {
+        getGenerate().convention(false);
+        getVerbose().convention(false);
+        getNotMentioned().convention(false);
         getOutputs().upToDateWhen(t -> ((LombokConfig) t).getConfigFiles() != null);
     }
 
@@ -111,13 +108,13 @@ public class LombokConfig extends DefaultTask implements LombokTask {
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @SneakyThrows
     protected Set<File> getConfigFiles() {
-        if (paths.isEmpty()) {
+        if (getPaths().isEmpty()) {
             return Collections.emptySet();
         }
 
         Set<File> configFiles = new HashSet<>();
 
-        for (File path : paths) {
+        for (File path : getPaths()) {
             Set<File> filesForPath = ConfigUtil.resolveConfigFilesForPath(path);
             if (filesForPath == null) {
                 //Imports Used
@@ -131,33 +128,33 @@ public class LombokConfig extends DefaultTask implements LombokTask {
 
     @TaskAction
     public void exec() throws IOException {
-        fileSystemOperations.delete(spec -> spec.delete(outputFile).setFollowSymlinks(false));
+        getFileSystemOperations().delete(spec -> spec.delete(getOutputFile()).setFollowSymlinks(false));
 
-        List<File> actualPaths = paths.getFiles()
+        List<File> actualPaths = getPaths().getFiles()
                 .stream()
                 .filter(File::exists)
                 .collect(Collectors.toList());
 
-        if (actualPaths.isEmpty() && !generate.get()) {
-            outputFile.get().getAsFile().createNewFile();
+        if (actualPaths.isEmpty() && !getGenerate().get()) {
+            getOutputFile().get().getAsFile().createNewFile();
             return;
         }
 
         List<String> args = new LinkedList<>();
 
-        if (generate.getOrElse(false)) {
+        if (getGenerate().getOrElse(false)) {
             args.add("--generate");
         }
 
-        if (verbose.getOrElse(false)) {
+        if (getVerbose().getOrElse(false)) {
             args.add("--verbose");
         }
 
-        if (notMentioned.getOrElse(false)) {
+        if (getNotMentioned().getOrElse(false)) {
             args.add("--not-mentioned");
         }
 
-        for (String key : keys.getOrElse(Collections.emptyList())) {
+        for (String key : getKeys().getOrElse(Collections.emptyList())) {
             args.add("--key=" + key.trim());
         }
 
@@ -165,12 +162,12 @@ public class LombokConfig extends DefaultTask implements LombokTask {
             args.add(path.getAbsolutePath());
         }
 
-        if (fork.getOrElse(false)) {
-            try (OutputStream out = Files.newOutputStream(outputFile.getAsFile().get().toPath())) {
+        if (getFork().getOrElse(false)) {
+            try (OutputStream out = Files.newOutputStream(getOutputFile().getAsFile().get().toPath())) {
 
-                execOperations.javaexec(config -> {
-                    if (launcher.isPresent()) {
-                        config.setExecutable(launcher.get().getExecutablePath().getAsFile().getAbsolutePath());
+                getExecOperations().javaexec(config -> {
+                    if (getLauncher().isPresent()) {
+                        config.setExecutable(getLauncher().get().getExecutablePath().getAsFile().getAbsolutePath());
                     }
                     config.setClasspath(getLombokClasspath());
                     config.setMaxHeapSize("16M");
@@ -184,11 +181,11 @@ public class LombokConfig extends DefaultTask implements LombokTask {
             }
         }
         else {
-            workerExecutor
-                    .classLoaderIsolation(cl -> cl.getClasspath().from(lombokClasspath))
+            getWorkerExecutor()
+                    .classLoaderIsolation(cl -> cl.getClasspath().from(getLombokClasspath()))
                     .submit(LombokConfigAction.class, params -> {
                         params.getArgs().set(args);
-                        params.getOutputFile().set(outputFile);
+                        params.getOutputFile().set(getOutputFile());
                     });
         }
     }

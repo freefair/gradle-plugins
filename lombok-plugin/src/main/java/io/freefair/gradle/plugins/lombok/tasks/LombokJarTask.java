@@ -16,11 +16,11 @@ import javax.annotation.Nonnull;
 public abstract class LombokJarTask extends AbstractArchiveTask implements LombokTask {
 
     @Classpath
-    private final ConfigurableFileCollection lombokClasspath = getProject().files();
+    public abstract ConfigurableFileCollection getLombokClasspath();
 
     @Nested
     @Optional
-    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
+    public abstract Property<JavaLauncher> getLauncher();
 
     LombokJarTask() {
         getArchiveExtension().set("jar");

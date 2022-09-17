@@ -1,7 +1,5 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
-import lombok.AccessLevel;
-import lombok.Getter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.provider.Property;
@@ -16,48 +14,46 @@ import javax.inject.Inject;
  *
  * @author Lars Grefer
  */
-@Getter
 @CacheableTask
-public class PostCompile extends DefaultTask implements LombokTask {
+public abstract class PostCompile extends DefaultTask implements LombokTask {
 
-    @Getter(AccessLevel.NONE)
-    private final ExecOperations execOperations;
+    @Inject
+    protected abstract ExecOperations getExecOperations();
 
     @Nested
     @Optional
-    private final Property<JavaLauncher> launcher = getProject().getObjects().property(JavaLauncher.class);
+    public abstract Property<JavaLauncher> getLauncher();
 
     @Classpath
-    private final ConfigurableFileCollection lombokClasspath = getProject().files();
+    public abstract ConfigurableFileCollection getLombokClasspath();
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
     @SkipWhenEmpty
-    private final ConfigurableFileCollection classFiles = getProject().files();
+    public abstract ConfigurableFileCollection getClassFiles();
 
     @Console
-    private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class).convention(false);
+    public abstract Property<Boolean> getVerbose();
 
-    @Inject
-    public PostCompile(ExecOperations execOperations) {
-        this.execOperations = execOperations;
+    public PostCompile() {
+        getVerbose().convention(false);
     }
 
     @TaskAction
     public void postCompile() {
-        execOperations.javaexec(postCompile -> {
-            if (launcher.isPresent()) {
-                postCompile.setExecutable(launcher.get().getExecutablePath().getAsFile().getAbsolutePath());
+        getExecOperations().javaexec(postCompile -> {
+            if (getLauncher().isPresent()) {
+                postCompile.setExecutable(getLauncher().get().getExecutablePath().getAsFile().getAbsolutePath());
             }
             postCompile.setClasspath(getLombokClasspath());
             postCompile.getMainClass().set("lombok.launch.Main");
             postCompile.args("post-compile");
 
-            if (verbose.get()) {
+            if (getVerbose().get()) {
                 postCompile.args("--verbose");
             }
 
-            classFiles.forEach(file -> postCompile.args(file.getAbsolutePath()));
+            getClassFiles().forEach(file -> postCompile.args(file.getAbsolutePath()));
         });
     }
 }
