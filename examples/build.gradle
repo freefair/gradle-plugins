@@ -34,7 +34,7 @@ allprojects {
 
     plugins.withId("java") {
         dependencies {
-            implementation platform("org.junit:junit-bom:5.9.0")
+            implementation platform("org.junit:junit-bom:5.9.1")
         }
     }
 }
