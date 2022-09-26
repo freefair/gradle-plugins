@@ -6,7 +6,7 @@ description = "Gradle Plugin for PlantUML"
 
 dependencies {
     //noinspection GradlePackageUpdate
-    compileOnly 'net.sourceforge.plantuml:plantuml:1.2022.7'
+    compileOnly 'net.sourceforge.plantuml:plantuml:1.2022.8'
 
     testRuntimeOnly 'net.sourceforge.plantuml:plantuml:1.2022.7'
 }
