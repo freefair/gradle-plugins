@@ -85,7 +85,7 @@ public class LombokPlugin implements Plugin<Project> {
         project.afterEvaluate(p -> {
             handleMapstructSupport(sourceSet);
 
-            handleLombokConfig(sourceSet, compileTaskProvider);
+            handleLombokConfig(sourceSet, compileTaskProvider, delombokTaskProvider);
 
             delombokTaskProvider.configure(delombok -> {
                 delombok.getEncoding().set(compileTaskProvider.get().getOptions().getEncoding());
@@ -133,7 +133,7 @@ public class LombokPlugin implements Plugin<Project> {
         delombok.getFormat().put("pretty", null);
     }
 
-    private void handleLombokConfig(SourceSet sourceSet, TaskProvider<JavaCompile> compileTaskProvider) {
+    private void handleLombokConfig(SourceSet sourceSet, TaskProvider<JavaCompile> compileTaskProvider, TaskProvider<Delombok> delombokTaskProvider) {
         if (lombokBasePlugin.getLombokExtension().getDisableConfig().get()) {
             return;
         }
@@ -142,6 +142,13 @@ public class LombokPlugin implements Plugin<Project> {
 
         compileTaskProvider.configure(javaCompile -> {
             javaCompile.getInputs().file(lombokConfigTask.get().getOutputFile())
+                    .withPropertyName("lombok.config")
+                    .withPathSensitivity(PathSensitivity.NONE)
+                    .optional();
+        });
+
+        delombokTaskProvider.configure(delombok -> {
+            delombok.getInputs().file(lombokConfigTask.get().getOutputFile())
                     .withPropertyName("lombok.config")
                     .withPathSensitivity(PathSensitivity.NONE)
                     .optional();
