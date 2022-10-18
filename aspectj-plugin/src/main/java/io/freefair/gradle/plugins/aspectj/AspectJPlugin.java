@@ -4,6 +4,7 @@ import io.freefair.gradle.plugins.aspectj.internal.DefaultAspectjSourceSet;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaBasePlugin;
@@ -64,7 +65,10 @@ public class AspectJPlugin implements Plugin<Project> {
         final SourceDirectorySet aspectjSource = AspectjSourceSet.getAspectj(sourceSet);
         aspectjSource.srcDir("src/" + sourceSet.getName() + "/aspectj");
 
-        sourceSet.getResources().getFilter().exclude(element -> AspectjSourceSet.getAspectj(sourceSet).contains(element.getFile()));
+        // Explicitly capture only a FileCollection in the lambda below for compatibility with configuration-cache.
+        //noinspection UnnecessaryLocalVariable
+        FileCollection aspectjSourceFileCollection = aspectjSource;
+        sourceSet.getResources().getFilter().exclude(element -> aspectjSourceFileCollection.contains(element.getFile()));
         sourceSet.getAllJava().source(aspectjSource);
         sourceSet.getAllSource().source(aspectjSource);
 
