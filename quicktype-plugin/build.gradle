@@ -10,7 +10,7 @@ description = "Collection of Quicktype related Gradle plugins"
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect"
-    implementation "com.github.node-gradle:gradle-node-plugin:3.4.0"
+    implementation "com.github.node-gradle:gradle-node-plugin:3.5.0"
     implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
 
     testImplementation project(":test-common")
