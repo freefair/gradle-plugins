@@ -45,7 +45,7 @@ pluginBundle {
 }
 
 dependencies {
-    api 'org.apache.commons:commons-compress:1.21'
+    api 'org.apache.commons:commons-compress:1.22'
     implementation 'org.tukaani:xz:1.9'
 
     implementation 'org.brotli:dec:0.1.2'
