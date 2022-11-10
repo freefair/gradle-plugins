@@ -7,7 +7,7 @@ description = "Collection of Maven Plugin related Gradle plugins"
 dependencies {
     api project(':maven-plugin')
 
-    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.4'
+    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.7.0'
     implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.4'
     compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.4'
 
