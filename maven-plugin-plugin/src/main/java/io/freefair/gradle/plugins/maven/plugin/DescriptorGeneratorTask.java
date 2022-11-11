@@ -20,9 +20,6 @@ import org.apache.maven.tools.plugin.generator.GeneratorException;
 import org.apache.maven.tools.plugin.generator.PluginDescriptorFilesGenerator;
 import org.apache.maven.tools.plugin.scanner.DefaultMojoScanner;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
-import org.codehaus.plexus.archiver.jar.JarUnArchiver;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.DefaultArchiverManager;
 import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -32,15 +29,16 @@ import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -165,18 +163,12 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
         mojoAnnotationsScanner.setSourceDirectories(getSourceDirectories());
         mojoAnnotationsScanner.setClassesDirectories(getClassesDirectories());
 
-        ArchiverManager archiverManager = new DefaultArchiverManager(
-                Collections.emptyMap(),
-                Collections.singletonMap("jar", JarUnArchiver::new),
-                Collections.emptyMap()
-        );
-
         JavadocInlineTagsToXhtmlConverter javadocInlineTagsToXhtmlConverter = new JavadocInlineTagsToXhtmlConverter(MavenHelper.getJavadocInlineTagToHtmlConverters());
         JavadocBlockTagsToXhtmlConverter javadocBlockTagsToXhtmlConverter = new JavadocBlockTagsToXhtmlConverter(javadocInlineTagsToXhtmlConverter, MavenHelper.getJavadocBlockTagToHtmlConverters());
 
         Map<String, Object> values = new HashMap<>();
         values.put("mojoAnnotationsScanner", mojoAnnotationsScanner);
-        values.put("archiverManager", archiverManager);
+        values.put("archiverManager", MavenHelper.getArchiverManager());
         values.put("javadocInlineTagsToHtmlConverter", javadocInlineTagsToXhtmlConverter);
         values.put("javadocBlockTagsToHtmlConverter", javadocBlockTagsToXhtmlConverter);
 

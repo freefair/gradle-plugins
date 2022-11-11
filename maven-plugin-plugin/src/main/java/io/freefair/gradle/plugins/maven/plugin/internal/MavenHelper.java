@@ -4,7 +4,11 @@ import lombok.experimental.UtilityClass;
 import org.apache.maven.tools.plugin.extractor.annotations.converter.tag.block.JavadocBlockTagToHtmlConverter;
 import org.apache.maven.tools.plugin.extractor.annotations.converter.tag.block.SeeTagConverter;
 import org.apache.maven.tools.plugin.extractor.annotations.converter.tag.inline.*;
+import org.codehaus.plexus.archiver.jar.JarUnArchiver;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.DefaultArchiverManager;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,5 +34,13 @@ public class MavenHelper {
         map.put("see", new SeeTagConverter());
 
         return map;
+    }
+
+    public static ArchiverManager getArchiverManager() {
+        return new DefaultArchiverManager(
+                Collections.emptyMap(),
+                Collections.singletonMap("jar", JarUnArchiver::new),
+                Collections.emptyMap()
+        );
     }
 }
