@@ -9,7 +9,6 @@ import org.gradle.api.publish.maven.tasks.GenerateMavenPom;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.compile.JavaCompile;
-import org.gradle.language.jvm.tasks.ProcessResources;
 
 /**
  * A Gradle plugin for building Maven plugins.
@@ -35,16 +34,17 @@ public class MavenPluginPlugin implements Plugin<Project> {
 
         TaskProvider<GenerateMavenPom> generateMavenPom = project.getTasks().named("generatePomFileForMavenJavaPublication", GenerateMavenPom.class);
 
+        SourceSet main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
+
         TaskProvider<DescriptorGeneratorTask> descriptorGeneratorTaskProvider = project.getTasks().register("generateMavenPluginDescriptor", DescriptorGeneratorTask.class, generateMavenPluginDescriptor -> {
 
             generateMavenPluginDescriptor.dependsOn(generateMavenPom);
-            generateMavenPluginDescriptor.getPomFile().set(generateMavenPom.get().getDestination());
+            generateMavenPluginDescriptor.getPomFile().fileProvider(generateMavenPom.map(GenerateMavenPom::getDestination));
 
             generateMavenPluginDescriptor.getOutputDirectory().set(
-                    project.getLayout().getBuildDirectory().dir("maven-plugin")
+                    project.getLayout().getBuildDirectory().dir("generated/resources/maven-plugin-descriptor")
             );
 
-            SourceSet main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
             generateMavenPluginDescriptor.getSourceDirectories().from(main.getAllJava().getSourceDirectories());
             JavaCompile javaCompile = (JavaCompile) project.getTasks().getByName(main.getCompileJavaTaskName());
 
@@ -52,7 +52,6 @@ public class MavenPluginPlugin implements Plugin<Project> {
             generateMavenPluginDescriptor.getEncoding().convention(javaCompile.getOptions().getEncoding());
         });
 
-        project.getTasks().named(JavaPlugin.PROCESS_RESOURCES_TASK_NAME, ProcessResources.class)
-                .configure(processResources -> processResources.from(descriptorGeneratorTaskProvider));
+        main.getResources().srcDir(descriptorGeneratorTaskProvider);
     }
 }

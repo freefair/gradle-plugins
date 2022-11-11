@@ -2,14 +2,16 @@ apply plugin: "maven-publish"
 apply plugin: "java-gradle-plugin"
 apply plugin: "com.gradle.plugin-publish"
 
-description = "Collection of Maven Plugin related Gradle plugins"
+description = "Gradle Plugin for building Maven Plugins"
+
+def mavenPluginToolsVersion = "3.7.0"
 
 dependencies {
     api project(':maven-plugin')
 
-    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-generators:3.6.4'
-    implementation 'org.apache.maven.plugin-tools:maven-plugin-tools-annotations:3.6.4'
-    compileOnly 'org.apache.maven.plugins:maven-plugin-plugin:3.6.4'
+    implementation "org.apache.maven.plugin-tools:maven-plugin-tools-generators:$mavenPluginToolsVersion"
+    implementation "org.apache.maven.plugin-tools:maven-plugin-tools-annotations:$mavenPluginToolsVersion"
+    compileOnly "org.apache.maven.plugins:maven-plugin-plugin:$mavenPluginToolsVersion"
 
     testImplementation project(":test-common")
 }
