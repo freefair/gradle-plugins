@@ -22,24 +22,3 @@ jobs:
           java-version: 17
           distribution: 'temurin'
       - run: ./gradlew uploadDocs -s
-
-  deploy-example:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    defaults:
-      run:
-        working-directory: examples
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v2
-        with:
-          java-version: 11
-          distribution: 'temurin'
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-      - run: ./gradlew github:assemble -s
-      - run: ./gradlew github:publish -s
-      - run: cat github/build/publications/mavenJava/pom-default.xml
-
