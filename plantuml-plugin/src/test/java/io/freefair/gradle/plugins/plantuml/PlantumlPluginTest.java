@@ -22,6 +22,7 @@ class PlantumlPluginTest {
     @BeforeEach
     void init() {
         project = ProjectBuilder.builder().build();
+        project.getRepositories().mavenCentral();
     }
 
     @Test
