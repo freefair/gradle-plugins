@@ -3,7 +3,12 @@ package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ApacheLinkProvider implements JavadocLinkProvider {
+
+    private static final Pattern tomcatVersionPattern = Pattern.compile("(\\d+\\.\\d+)\\..*");
 
     @Nullable
     @Override
@@ -17,7 +22,10 @@ public class ApacheLinkProvider implements JavadocLinkProvider {
         }
 
         if (group.startsWith("org.apache.tomcat")) {
-            return "https://tomcat.apache.org/tomcat-" + version.substring(0, 3) + "-doc/api/";
+            Matcher matcher = tomcatVersionPattern.matcher(version);
+            if (matcher.matches()) {
+                return "https://tomcat.apache.org/tomcat-" + matcher.group(1) + "-doc/api/";
+            }
         }
 
         if (group.equals("org.apache.maven")) {
