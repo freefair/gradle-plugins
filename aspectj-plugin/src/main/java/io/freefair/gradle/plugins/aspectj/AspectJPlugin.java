@@ -33,6 +33,13 @@ public class AspectJPlugin implements Plugin<Project> {
             throw new IllegalStateException("Another aspectj plugin (which is excludes this one) has already been applied to the project.");
         }
 
+        project.getPlugins().withId("com.android.application", ignored -> {
+            throw new IllegalStateException("The 'io.freefair.aspectj' plugin is not compatible with android projects");
+        });
+        project.getPlugins().withId("com.android.library", ignored -> {
+            throw new IllegalStateException("The 'io.freefair.aspectj' plugin is not compatible with android projects");
+        });
+
         this.project = project;
         project.getPlugins().apply(AspectJBasePlugin.class);
         project.getPlugins().apply(JavaBasePlugin.class);
