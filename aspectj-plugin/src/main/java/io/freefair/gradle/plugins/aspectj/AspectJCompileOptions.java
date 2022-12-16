@@ -32,7 +32,7 @@ public class AspectJCompileOptions extends AbstractOptions {
      * Path is a single argument containing a list of paths to zip files or directories.
      */
     @InputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @Classpath
     @SkipWhenEmpty
     private final ConfigurableFileCollection inpath;
 

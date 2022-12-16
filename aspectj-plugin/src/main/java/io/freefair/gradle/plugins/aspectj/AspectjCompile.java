@@ -2,7 +2,6 @@ package io.freefair.gradle.plugins.aspectj;
 
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompileSpec;
 import io.freefair.gradle.plugins.aspectj.internal.AspectJCompiler;
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.file.*;
@@ -22,6 +21,7 @@ public abstract class AspectjCompile extends AbstractCompile {
 
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
+
     @Inject
     protected abstract ProjectLayout getProjectLayout();
 
@@ -49,6 +49,16 @@ public abstract class AspectjCompile extends AbstractCompile {
         return super.getSource();
     }
 
+    /**
+     * Make the destinationDirectory optional. outjar could also be used.
+     */
+    @Override
+    @Optional
+    @OutputDirectory
+    public DirectoryProperty getDestinationDirectory() {
+        return super.getDestinationDirectory();
+    }
+
     @Override
     @CompileClasspath
     public FileCollection getClasspath() {
@@ -57,7 +67,13 @@ public abstract class AspectjCompile extends AbstractCompile {
 
     @TaskAction
     protected void compile() {
-        getFileSystemOperations().delete(spec -> spec.delete(getDestinationDirectory()).setFollowSymlinks(false));
+        if (!getDestinationDirectory().isPresent() && !getAjcOptions().getOutjar().isPresent()) {
+            throw new IllegalStateException("Neither destinationDirectory, nor outjar are set.");
+        }
+
+        if (getDestinationDirectory().isPresent()) {
+            getFileSystemOperations().delete(spec -> spec.delete(getDestinationDirectory()).setFollowSymlinks(false));
+        }
 
         AspectJCompileSpec spec = createSpec();
         WorkResult result = getCompiler().execute(spec);
@@ -68,10 +84,12 @@ public abstract class AspectjCompile extends AbstractCompile {
         return new AspectJCompiler(getServices().get(JavaExecHandleFactory.class));
     }
 
-    private AspectJCompileSpec createSpec() {
+    protected AspectJCompileSpec createSpec() {
         AspectJCompileSpec spec = new AspectJCompileSpec();
         spec.setSourceFiles(getSource());
-        spec.setDestinationDir(getDestinationDirectory().getAsFile().get());
+        if (getDestinationDirectory().isPresent()) {
+            spec.setDestinationDir(getDestinationDirectory().getAsFile().get());
+        }
         spec.setWorkingDir(getProjectLayout().getProjectDirectory().getAsFile());
         spec.setTempDir(getTemporaryDir());
         spec.setCompileClasspath(new ArrayList<>(getClasspath().getFiles()));
