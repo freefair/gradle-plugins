@@ -31,7 +31,6 @@ public class AspectJCompileOptions extends AbstractOptions {
      * The output will include these classes, possibly as woven with any applicable aspects.
      * Path is a single argument containing a list of paths to zip files or directories.
      */
-    @InputFiles
     @Classpath
     @SkipWhenEmpty
     private final ConfigurableFileCollection inpath;
