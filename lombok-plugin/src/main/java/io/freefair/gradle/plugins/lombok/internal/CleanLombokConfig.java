@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  * @author Lars Grefer
  */
 @NonNullApi
-class CleanLombokConfig implements Action<Task> {
+public class CleanLombokConfig implements Action<Task> {
 
     @Override
     @SneakyThrows(IOException.class)
