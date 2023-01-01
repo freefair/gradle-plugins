@@ -33,5 +33,5 @@ pluginBundle {
 
 dependencies {
     implementation project(":plugin-utils")
-    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin-api:1.7.22"
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion"
 }
