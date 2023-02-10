@@ -5,7 +5,7 @@ apply plugin: "com.gradle.plugin-publish"
 description = "Collection of Maven related Gradle plugins"
 
 dependencies {
-    implementation 'org.apache.maven:maven-model:3.8.7'
+    implementation 'org.apache.maven:maven-model:3.9.0'
 
     api project(":okhttp-plugin")
 
