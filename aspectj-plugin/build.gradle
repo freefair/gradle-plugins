@@ -11,24 +11,23 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJBasePlugin"
             displayName = "AspectJ Base Plugin"
             description = "AspectJ Base Plugin"
+            tags.set(['aspectj'])
         }
         aspectjPostCompileWeaving {
             id = "io.freefair.aspectj.post-compile-weaving"
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPostCompileWeavingPlugin"
             displayName = "AspectJ Post-Compile Weaving Plugin"
             description = "AspectJ Weaving Plugin"
+            tags.set(['aspectj'])
         }
         aspectj {
             id = "io.freefair.aspectj"
             implementationClass = "io.freefair.gradle.plugins.aspectj.AspectJPlugin"
             displayName = "AspectJ Plugin"
             description = "AspectJ Plugin"
+            tags.set(['aspectj'])
         }
     }
-}
-
-pluginBundle {
-    tags = ['aspectj']
 }
 
 dependencies {

@@ -4,14 +4,15 @@ import io.freefair.gradle.plugins.compress.internal.SevenZipArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.provider.Provider;
+import org.gradle.cache.internal.DecompressionCache;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
 
 import java.io.File;
 
 public class SevenZipFileTree extends ArchiveFileTree<SevenZipArchiveInputStream, SevenZArchiveEntry> {
-    public SevenZipFileTree(Provider<File> archiveFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider, File tmpDir, Chmod chmod, DirectoryFileTreeFactory directoryFileTreeFactory, FileHasher fileHasher) {
-        super(archiveFile, inputStreamProvider, tmpDir, chmod, directoryFileTreeFactory, fileHasher);
+    public SevenZipFileTree(Provider<File> archiveFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider, Chmod chmod, DirectoryFileTreeFactory directoryFileTreeFactory, FileHasher fileHasher, DecompressionCache decompressionCache) {
+        super(archiveFile, inputStreamProvider, chmod, directoryFileTreeFactory, fileHasher, decompressionCache);
     }
 
     @Override

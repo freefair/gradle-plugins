@@ -28,10 +28,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugin.codegenerator.CodeGeneratorPlugin"
             displayName = "Code Generator Plugin"
             description = "A plugin for executing specified code generators"
+            tags.set(['code', 'generation', 'codegeneration', 'generate'])
         }
     }
-}
-
-pluginBundle {
-    tags = ['code', 'generation', 'codegeneration', 'generate']
 }

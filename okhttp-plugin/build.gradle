@@ -19,10 +19,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.okhttp.OkHttpPlugin"
             displayName = "OkHttp Plugin"
             description = "A Gradle plugin for building maven plugins"
+            tags.set(['okhttp'])
         }
     }
-}
-
-pluginBundle {
-    tags = ["maven-plugin"]
 }

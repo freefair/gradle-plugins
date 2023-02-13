@@ -11,30 +11,30 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.sass.SassBasePlugin"
             displayName = "sass Base Plugin"
             description = "sass Base Plugin"
+            tags.set(['dart-sass', 'sass', 'scss'])
         }
         sassJava {
             id = "io.freefair.sass-java"
             implementationClass = "io.freefair.gradle.plugins.sass.SassJavaPlugin"
             displayName = "sass Java Plugin"
             description = "Compiles SASS and SCSS in your java resources (src/*/resources)"
+            tags.set(['dart-sass', 'sass', 'scss'])
         }
         sassWar {
             id = "io.freefair.sass-war"
             implementationClass = "io.freefair.gradle.plugins.sass.SassWarPlugin"
             displayName = "sass War Plugin"
             description = "Compiles SASS and SCSS in your webapp resources (src/main/webapp)"
+            tags.set(['dart-sass', 'sass', 'scss'])
         }
         sassWebjars {
             id = "io.freefair.sass-webjars"
             implementationClass = "io.freefair.gradle.plugins.sass.SassWebjarsPlugin"
             displayName = "sass webjars support"
             description = "Webjars dependency support"
+            tags.set(['dart-sass', 'sass', 'scss'])
         }
     }
-}
-
-pluginBundle {
-    tags = ['dart-sass', 'sass', 'scss']
 }
 
 dependencies {

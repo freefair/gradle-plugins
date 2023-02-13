@@ -17,10 +17,13 @@ import org.gradle.api.internal.file.collections.FileTreeAdapter;
 import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.internal.provider.ProviderInternal;
+import org.gradle.api.internal.tasks.TaskDependencyFactory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.resources.ReadableResource;
 import org.gradle.api.tasks.util.PatternSet;
+import org.gradle.cache.internal.DecompressionCache;
+import org.gradle.cache.internal.DecompressionCacheFactory;
 import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.hash.FileHasher;
@@ -46,7 +49,9 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private final FileSystem fileSystem;
     private final DirectoryFileTreeFactory directoryFileTreeFactory;
     private final Factory<PatternSet> patternSetFactory;
+    private final TaskDependencyFactory taskDependencyFactory;
     private final ProviderFactory providers;
+    private final DecompressionCacheFactory decompressionCacheFactory;
 
     public CompressFileOperationsImpl(ProjectInternal project) {
         fileOperations = project.getFileOperations();
@@ -56,14 +61,16 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         fileSystem = project.getServices().get(FileSystem.class);
         directoryFileTreeFactory = project.getServices().get(DirectoryFileTreeFactory.class);
         patternSetFactory = project.getServices().getFactory(PatternSet.class);
+        taskDependencyFactory = project.getServices().get(TaskDependencyFactory.class);
         providers = project.getServices().get(ProviderFactory.class);
+        decompressionCacheFactory = project.getServices().get(DecompressionCacheFactory.class);
     }
 
     @Override
     public FileTree arTree(Object arPath) {
         Provider<File> file = asFileProvider(arPath);
-        ArFileTree arFileTree = new ArFileTree(file, f -> new ArArchiveInputStream(new FileInputStream(f)), getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(arFileTree, patternSetFactory);
+        ArFileTree arFileTree = new ArFileTree(file, f -> new ArArchiveInputStream(new FileInputStream(f)), fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        return new FileTreeAdapter(arFileTree, taskDependencyFactory, patternSetFactory);
     }
 
     @Override
@@ -78,8 +85,8 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree arjTree(Object arjFile, ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(arjFile);
-        ArjFileTree arjFileTree = new ArjFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(arjFileTree, patternSetFactory);
+        ArjFileTree arjFileTree = new ArjFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        return new FileTreeAdapter(arjFileTree, taskDependencyFactory, patternSetFactory);
     }
 
     @Override
@@ -104,8 +111,8 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree cpioTree(Object arPath, ArchiveInputStreamProvider<CpioArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(arPath);
-        ArchiveFileTree<CpioArchiveInputStream, CpioArchiveEntry> cpioFileTree = new ArchiveFileTree<>(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(cpioFileTree, patternSetFactory);
+        ArchiveFileTree<CpioArchiveInputStream, CpioArchiveEntry> cpioFileTree = new ArchiveFileTree<>(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        return new FileTreeAdapter(cpioFileTree, taskDependencyFactory, patternSetFactory);
     }
 
     @Override
@@ -120,8 +127,8 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree sevenZipTree(Object sevenZipFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(sevenZipFile);
-        SevenZipFileTree sevenZipFileTree = new SevenZipFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(sevenZipFileTree, patternSetFactory);
+        SevenZipFileTree sevenZipFileTree = new SevenZipFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        return new FileTreeAdapter(sevenZipFileTree, taskDependencyFactory, patternSetFactory);
     }
 
     @Override
@@ -136,8 +143,8 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree dumpTree(Object dumpFile, ArchiveInputStreamProvider<DumpArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(dumpFile);
-        DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, getExpandDir(), fileSystem, directoryFileTreeFactory, fileHasher);
-        return new FileTreeAdapter(dumpFileTree, patternSetFactory);
+        DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        return new FileTreeAdapter(dumpFileTree, taskDependencyFactory, patternSetFactory);
     }
 
     public FileTree tarXzTree(Object tarXzFile) {
@@ -148,10 +155,6 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     public FileTree tarLzmaTree(Object tarLzmaFile) {
         File file = fileOperations.file(tarLzmaFile);
         return fileOperations.tarTree(new LzmaArchiver(file));
-    }
-
-    private File getExpandDir() {
-        return temporaryFileProvider.newTemporaryFile("expandedArchives");
     }
 
     /**

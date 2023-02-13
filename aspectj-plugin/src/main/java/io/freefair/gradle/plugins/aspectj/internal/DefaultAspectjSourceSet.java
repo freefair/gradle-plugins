@@ -44,7 +44,7 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
     public AspectjSourceDirectorySet getAspectj() {
         DeprecationLogger.deprecateProperty(AspectjSourceSet.class, "aspectj")
                 .replaceWith("AspectjSourceSet.getAspectj(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return AspectjSourceSet.getAspectj(getSourceSet());
@@ -61,7 +61,7 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
     public AspectjSourceSet aspectj(@Nullable Closure configureClosure) {
         DeprecationLogger.deprecateProperty(AspectjSourceSet.class, "aspectj")
                 .replaceWith("AspectjSourceSet.getAspectj(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         ConfigureUtil.configure(configureClosure, getAspectj());
@@ -73,7 +73,7 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
     public AspectjSourceSet aspectj(Action<? super SourceDirectorySet> configureAction) {
         DeprecationLogger.deprecateProperty(AspectjSourceSet.class, "aspectj")
                 .replaceWith("AspectjSourceSet.getAspectj(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         configureAction.execute(getAspectj());

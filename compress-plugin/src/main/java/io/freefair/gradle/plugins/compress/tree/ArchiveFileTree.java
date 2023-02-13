@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.compress.tree;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -12,11 +11,11 @@ import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.file.FileVisitor;
 import org.gradle.api.file.RelativePath;
 import org.gradle.api.internal.file.AbstractFileTreeElement;
-import org.gradle.api.internal.file.archive.AbstractArchiveFileTree;
 import org.gradle.api.internal.file.archive.ZipFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.provider.Provider;
+import org.gradle.cache.internal.DecompressionCache;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
 
@@ -29,15 +28,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Lars Grefer
  * @see ZipFileTree
  */
-@RequiredArgsConstructor
 public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEntry> extends AbstractArchiveFileTree {
 
     private final Provider<File> fileProvider;
     private final ArchiveInputStreamProvider<IS> inputStreamProvider;
-    private final File tmpDir;
     private final Chmod chmod;
     private final DirectoryFileTreeFactory directoryFileTreeFactory;
     private final FileHasher fileHasher;
+
+    public ArchiveFileTree(
+            Provider<File> zipFile,
+            ArchiveInputStreamProvider<IS> inputStreamProvider,
+            Chmod chmod,
+            DirectoryFileTreeFactory directoryFileTreeFactory,
+            FileHasher fileHasher,
+            DecompressionCache decompressionCache
+    ) {
+        super(decompressionCache);
+        this.fileProvider = zipFile;
+        this.inputStreamProvider = inputStreamProvider;
+        this.chmod = chmod;
+        this.directoryFileTreeFactory = directoryFileTreeFactory;
+        this.fileHasher = fileHasher;
+    }
 
     ArchiveEntryFileTreeElement createDetails(Chmod chmod) {
         return new ArchiveEntryFileTreeElement(chmod);
@@ -97,7 +110,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
     private File getExpandedDir() {
         File archiveFile = fileProvider.get();
         String expandedDirName = archiveFile.getName() + "_" + fileHasher.hash(archiveFile);
-        return new File(tmpDir, expandedDirName);
+        return new File(decompressionCache.getBaseDir(), expandedDirName);
     }
 
     @Override

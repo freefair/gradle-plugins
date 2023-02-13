@@ -29,7 +29,7 @@ public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType 
     public String getAspectConfigurationName() {
         DeprecationLogger.deprecateMethod(WeavingSourceSet.class, "getAspectConfigurationName()")
                 .replaceWith("getAspectConfigurationName(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return WeavingSourceSet.getAspectConfigurationName(sourceSet);
@@ -40,7 +40,7 @@ public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType 
     public String getInpathConfigurationName() {
         DeprecationLogger.deprecateMethod(WeavingSourceSet.class, "getInpathConfigurationName()")
                 .replaceWith("getInpathConfigurationName(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return WeavingSourceSet.getInpathConfigurationName(sourceSet);
@@ -51,7 +51,7 @@ public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType 
     public ConfigurableFileCollection getAspectPath() {
         DeprecationLogger.deprecateProperty(WeavingSourceSet.class, "aspectPath")
                 .replaceWith("WeavingSourceSet.getAspectPath(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return WeavingSourceSet.getAspectPath(sourceSet);
@@ -62,7 +62,7 @@ public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType 
     public void setAspectPath(FileCollection aspectPath) {
         DeprecationLogger.deprecateProperty(WeavingSourceSet.class, "aspectPath")
                 .replaceWith("WeavingSourceSet.getAspectPath(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         getAspectPath().setFrom(aspectPath);
@@ -72,7 +72,7 @@ public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType 
     public ConfigurableFileCollection getInPath() {
         DeprecationLogger.deprecateProperty(WeavingSourceSet.class, "inPath")
                 .replaceWith("WeavingSourceSet.getInPath(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return WeavingSourceSet.getInPath(sourceSet);
@@ -83,7 +83,7 @@ public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType 
     public void setInPath(FileCollection inPath) {
         DeprecationLogger.deprecateProperty(WeavingSourceSet.class, "inPath")
                 .replaceWith("WeavingSourceSet.getInPath(SourceSet sourceSet)")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         getInPath().setFrom(inPath);

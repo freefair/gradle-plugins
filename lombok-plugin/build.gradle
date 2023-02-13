@@ -17,10 +17,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.lombok.LombokPlugin"
             displayName = "Lombok Plugin"
             description = "Automatic lombok and delombok configuration"
+            tags.set(['lombok'])
         }
     }
-}
-
-pluginBundle {
-    tags = ["lombok"]
 }

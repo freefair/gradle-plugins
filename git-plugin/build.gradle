@@ -11,12 +11,9 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.git.GitVersionPlugin"
             displayName = "Git Version Plugin"
             description = "This plugin sets your latest git tag as project version"
+            tags.set(['git', 'version'])
         }
     }
-}
-
-pluginBundle {
-    tags = ['git', 'version']
 }
 
 dependencies {

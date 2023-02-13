@@ -23,10 +23,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.maven.plugin.MavenPluginPlugin"
             displayName = "maven-plugin Plugin"
             description = "A Gradle plugin for building maven plugins"
+            tags.set(["maven-plugin"])
         }
     }
-}
-
-pluginBundle {
-    tags = ["maven-plugin"]
 }

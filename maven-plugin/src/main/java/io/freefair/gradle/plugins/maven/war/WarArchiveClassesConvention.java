@@ -18,7 +18,7 @@ public class WarArchiveClassesConvention {
 
     public boolean isArchiveClasses() {
         DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "archiveClasses")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return this.archiveClasses.get();
@@ -26,7 +26,7 @@ public class WarArchiveClassesConvention {
 
     public void setArchiveClasses(boolean archiveClasses) {
         DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "archiveClasses")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         this.archiveClasses.convention(archiveClasses);

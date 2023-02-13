@@ -30,7 +30,7 @@ public class WarAttachClassesConvention {
 
     public boolean isAttachClasses() {
         DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "attachClasses")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return this.attachClasses.get();
@@ -38,7 +38,7 @@ public class WarAttachClassesConvention {
 
     public String getClassesClassifier() {
         DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "classesClassifier")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         return this.classesClassifier.get();
@@ -46,7 +46,7 @@ public class WarAttachClassesConvention {
 
     public void setAttachClasses(boolean attachClasses) {
         DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "attachClasses")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         this.attachClasses.convention(attachClasses);
@@ -55,7 +55,7 @@ public class WarAttachClassesConvention {
 
     public void setClassesClassifier(String classesClassifier) {
         DeprecationLogger.deprecateProperty(WarArchiveClassesConvention.class, "classesClassifier")
-                .willBeRemovedInGradle8()
+                .willBeRemovedInGradle9()
                 .undocumented()
                 .nagUser();
         this.classesClassifier.convention(classesClassifier);

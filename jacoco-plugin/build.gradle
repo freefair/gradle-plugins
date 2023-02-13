@@ -15,10 +15,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.jacoco.AggregateJacocoReportPlugin"
             displayName = "Aggregate Jacoco Report Plugin"
             description = "Aggregate Jacoco Report Plugin"
+            tags.set(['jacoco'])
         }
     }
-}
-
-pluginBundle {
-    tags = ["jacoco"]
 }

@@ -26,10 +26,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.quicktype.QuicktypePlugin"
             displayName = "Quicktype Plugin"
             description = "A Gradle plugin for automatically generating models with quicktype on build"
+            tags.set(["quicktype-plugin"])
         }
     }
-}
-
-pluginBundle {
-    tags = ["quicktype-plugin"]
 }

@@ -18,10 +18,7 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.plantuml.PlantumlPlugin"
             displayName = "PlantUML Plugin"
             description = "PlantUML Plugin"
+            tags.set(["plantuml"])
         }
     }
-}
-
-pluginBundle {
-    tags = ["plantuml"]
 }

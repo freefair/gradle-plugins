@@ -12,36 +12,37 @@ gradlePlugin {
             implementationClass = "io.freefair.gradle.plugins.compress.CompressPlugin"
             displayName = "commons-compress Plugin"
             description = "Allows reading and writing archive formats supported by commons-compress"
+            tags.set(['commons-compress'])
         }
         sevenZip {
             id = "io.freefair.compress.7z"
             implementationClass = "io.freefair.gradle.plugins.compress.SevenZipPlugin"
             displayName = "7zip Plugin"
             description = "7zip Plugin"
+            tags.set(['commons-compress'])
         }
         ar {
             id = "io.freefair.compress.ar"
             implementationClass = "io.freefair.gradle.plugins.compress.ArPlugin"
             displayName = "ar Plugin"
             description = "ar Plugin"
+            tags.set(['commons-compress'])
         }
         cpio {
             id = "io.freefair.compress.cpio"
             implementationClass = "io.freefair.gradle.plugins.compress.CpioPlugin"
             displayName = "cpio Plugin"
             description = "cpio Plugin"
+            tags.set(['commons-compress'])
         }
         trees {
             id = "io.freefair.compress.trees"
             implementationClass = "io.freefair.gradle.plugins.compress.CompressTreePlugin"
             displayName = "commons-compress fileTree Plugin"
             description = "Allows to open formats supported by commons-compress as FileTree"
+            tags.set(['commons-compress'])
         }
     }
-}
-
-pluginBundle {
-    tags = ['commons-compress']
 }
 
 dependencies {
