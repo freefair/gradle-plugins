@@ -3,10 +3,7 @@ package io.freefair.gradle.plugins.lombok.tasks;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.FileSystemOperations;
-import org.gradle.api.file.FileTree;
+import org.gradle.api.file.*;
 import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.internal.file.UnionFileTree;
 import org.gradle.api.provider.Property;
@@ -132,13 +129,20 @@ public abstract class Delombok extends DefaultTask implements LombokTask {
     @SkipWhenEmpty
     @IgnoreEmptyDirectories
     protected FileTree getFilteredInput() {
-        List<FileTreeInternal> collect = getInput().getFiles().stream()
-                .filter(File::isDirectory)
-                .map(dir -> getProject().fileTree(dir))
-                .map(FileTreeInternal.class::cast)
-                .collect(Collectors.toList());
+        ConfigurableFileTree fileTree = null;
 
-        return new UnionFileTree("actual " + getName() + " input", collect);
+        for (File file : getInput().getFiles()) {
+            if (file.isDirectory()) {
+                if (fileTree == null) {
+                    fileTree = getProject().fileTree(file);
+                }
+                else {
+                    fileTree.from(file);
+                }
+            }
+        }
+
+        return fileTree;
     }
 
     @TaskAction
