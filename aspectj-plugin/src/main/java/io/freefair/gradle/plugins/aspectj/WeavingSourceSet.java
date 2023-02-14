@@ -9,42 +9,6 @@ public interface WeavingSourceSet {
     String ASPECT_PATH_EXTENSION_NAME = "aspectPath";
     String IN_PATH_EXTENSION_NAME = "inPath";
 
-    /**
-     * @deprecated Use {@link #getAspectConfigurationName(SourceSet)} instead.
-     */
-    @Deprecated
-    String getAspectConfigurationName();
-
-    /**
-     * @deprecated Use {@link #getInpathConfigurationName(SourceSet)} instead.
-     */
-    @Deprecated
-    String getInpathConfigurationName();
-
-    /**
-     * @deprecated Use {@link #getAspectPath(SourceSet)} instead.
-     */
-    @Deprecated
-    FileCollection getAspectPath();
-
-    /**
-     * @deprecated Use {@link #getAspectPath(SourceSet)} and {@link ConfigurableFileCollection#from(Object...)} instead.
-     */
-    @Deprecated
-    void setAspectPath(FileCollection aspectPath);
-
-    /**
-     * @deprecated Use {@link #getInPath(SourceSet)} instead.
-     */
-    @Deprecated
-    FileCollection getInPath();
-
-    /**
-     * @deprecated Use {@link #getInPath(SourceSet)} and {@link ConfigurableFileCollection#from(Object...)} instead.
-     */
-    @Deprecated
-    void setInPath(FileCollection inPath);
-
     static String getAspectConfigurationName(SourceSet sourceSet) {
         return sourceSet.getTaskName("", "aspect");
     }

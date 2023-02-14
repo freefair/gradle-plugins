@@ -18,10 +18,7 @@ public class WarAttachClassesPlugin implements Plugin<Project> {
         Property<Boolean> attachClasses = project.getObjects().property(Boolean.class).convention(false);
         Property<String> classesClassifier = project.getObjects().property(String.class).convention("classes");
 
-        WarAttachClassesConvention attachClassesConvention = new WarAttachClassesConvention(attachClasses, classesClassifier);
-
         project.getTasks().named(WarPlugin.WAR_TASK_NAME, War.class, war -> {
-            war.getConvention().getPlugins().put("attachClasses", attachClassesConvention);
             war.getExtensions().add("attachClasses", attachClasses);
             war.getExtensions().add("classesClassifier", classesClassifier);
         });

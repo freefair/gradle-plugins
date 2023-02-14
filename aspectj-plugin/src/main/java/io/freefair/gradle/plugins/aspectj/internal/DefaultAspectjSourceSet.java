@@ -39,47 +39,6 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
         sourceSet.getExtensions().add("allAspectj", allAspectj);
     }
 
-    @Deprecated
-    @Override
-    public AspectjSourceDirectorySet getAspectj() {
-        DeprecationLogger.deprecateProperty(AspectjSourceSet.class, "aspectj")
-                .replaceWith("AspectjSourceSet.getAspectj(SourceSet sourceSet)")
-                .willBeRemovedInGradle9()
-                .undocumented()
-                .nagUser();
-        return AspectjSourceSet.getAspectj(getSourceSet());
-    }
-
-    @Deprecated
-    @Override
-    public SourceDirectorySet getAllAspectj() {
-        return (SourceDirectorySet) getSourceSet().getExtensions().getByName("allAspectj");
-    }
-
-    @Deprecated
-    @Override
-    public AspectjSourceSet aspectj(@Nullable Closure configureClosure) {
-        DeprecationLogger.deprecateProperty(AspectjSourceSet.class, "aspectj")
-                .replaceWith("AspectjSourceSet.getAspectj(SourceSet sourceSet)")
-                .willBeRemovedInGradle9()
-                .undocumented()
-                .nagUser();
-        ConfigureUtil.configure(configureClosure, getAspectj());
-        return this;
-    }
-
-    @Deprecated
-    @Override
-    public AspectjSourceSet aspectj(Action<? super SourceDirectorySet> configureAction) {
-        DeprecationLogger.deprecateProperty(AspectjSourceSet.class, "aspectj")
-                .replaceWith("AspectjSourceSet.getAspectj(SourceSet sourceSet)")
-                .willBeRemovedInGradle9()
-                .undocumented()
-                .nagUser();
-        configureAction.execute(getAspectj());
-        return this;
-    }
-
     @Override
     public TypeOf<?> getPublicType() {
         return TypeOf.typeOf(AspectjSourceSet.class);

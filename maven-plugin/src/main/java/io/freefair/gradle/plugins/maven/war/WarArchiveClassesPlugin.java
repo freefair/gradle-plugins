@@ -21,9 +21,6 @@ public class WarArchiveClassesPlugin implements Plugin<Project> {
             Property<Boolean> archiveClasses = project.getObjects().property(Boolean.class).convention(false);
             war.getExtensions().add("archiveClasses", archiveClasses);
 
-            WarArchiveClassesConvention archiveClassesConvention = new WarArchiveClassesConvention(archiveClasses);
-            war.getConvention().getPlugins().put("archiveClasses", archiveClassesConvention);
-
             TaskProvider<Jar> warClassesJar = project.getTasks().register(war.getName() + "ClassesJar", Jar.class, jar -> {
                 jar.getArchiveBaseName().convention(war.getArchiveBaseName());
                 jar.getArchiveAppendix().convention(war.getArchiveAppendix());
