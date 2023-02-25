@@ -18,7 +18,12 @@ public class ApacheLinkProvider implements JavadocLinkProvider {
         }
 
         if (group.equals("org.apache.logging.log4j") && version.startsWith("2.")) {
-            return "https://logging.apache.org/log4j/2.x/" + artifact + "/apidocs/";
+            if (artifact.equals("log4j-api")) {
+                return "https://logging.apache.org/log4j/2.x/javadoc/log4j-api/";
+            }
+            else if (artifact.equals("log4j-core")) {
+                return "https://logging.apache.org/log4j/2.x/javadoc/log4j-core/";
+            }
         }
 
         if (group.startsWith("org.apache.tomcat")) {
