@@ -13,6 +13,8 @@ Javadoc https://docs.freefair.io/gradle-plugins/current/api/
 
 |Plugin Version |Gradle Version |Java Version | Kotlin Version 
 |---            |---            |---          |---
+|8.0.x          |8.0            |8 - 18       |
+|6.6.x          |7.6            |8 - 18       | 1.7.x 
 |6.5.x          |7.5            |8 - 18       | 1.7.x 
 |6.4.x          |7.4            |8 - 17       | 1.3.x - 1.6.x 
 |6.3.x          |7.3            |8 - 17       | 1.3.x - 1.6.x 
