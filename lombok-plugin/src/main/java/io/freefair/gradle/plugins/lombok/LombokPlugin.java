@@ -9,6 +9,10 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
+import org.gradle.api.attributes.Bundling;
+import org.gradle.api.attributes.Category;
+import org.gradle.api.attributes.DocsType;
+import org.gradle.api.attributes.VerificationType;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -57,9 +61,18 @@ public class LombokPlugin implements Plugin<Project> {
 
         javaPluginExtension.getSourceSets().all(this::configureSourceSetDefaults);
 
+        SourceSet mainSourceSet = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+        Object mainDelombokTask = mainSourceSet.getExtensions().getByName("delombokTask");
+
         project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class, javadoc -> {
-            SourceSet mainSourceSet = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-            javadoc.setSource(mainSourceSet.getExtensions().getByName("delombokTask"));
+            javadoc.setSource(mainDelombokTask);
+        });
+
+        Configuration mainSourceElements = project.getConfigurations().getByName("mainSourceElements");
+
+        mainSourceElements.getOutgoing().getVariants().create("delombok", delombokVariant -> {
+            delombokVariant.artifact(mainDelombokTask, cpa -> cpa.setType("directory"));
+            delombokVariant.getAttributes().attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.getObjects().named(DocsType.class, DocsType.SOURCES));
         });
 
         project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginExtension));

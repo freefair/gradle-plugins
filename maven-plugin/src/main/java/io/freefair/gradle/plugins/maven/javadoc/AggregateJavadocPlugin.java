@@ -3,87 +3,87 @@ package io.freefair.gradle.plugins.maven.javadoc;
 import lombok.Getter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.attributes.Bundling;
+import org.gradle.api.attributes.Category;
+import org.gradle.api.attributes.DocsType;
+import org.gradle.api.attributes.VerificationType;
+import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.plugins.jvm.internal.JvmPluginServices;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.javadoc.Javadoc;
-import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 
-import java.io.File;
-import java.util.Optional;
-import java.util.concurrent.Callable;
+import javax.inject.Inject;
 
 @Getter
-public class AggregateJavadocPlugin implements Plugin<Project> {
+public abstract class AggregateJavadocPlugin implements Plugin<Project> {
 
-    private TaskProvider<Javadoc> aggregateJavadoc;
-    private ConfigurableFileCollection aggregateClasspath;
+    private TaskProvider<Javadoc> javadocTask;
+    private Configuration javadocConfiguration;
+    private Configuration javadocSources;
+    private Configuration javadocClasspath;
+    private TaskProvider<Jar> javadocJar;
+
+    @Inject
+    public abstract JvmPluginServices getJvmPluginServices();
 
     @Override
     public void apply(Project project) {
+        project.getPlugins().apply(JavaBasePlugin.class);
 
-        aggregateClasspath = project.files();
-
-        aggregateJavadoc = project.getTasks().register("aggregateJavadoc", Javadoc.class, aggregateJavadoc -> {
-            aggregateJavadoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
-            aggregateJavadoc.getConventionMapping().map("destinationDir", new Callable<Object>() {
-                @Override
-                public Object call() {
-                    File docsDir = Optional.ofNullable(project.getExtensions().findByType(JavaPluginExtension.class))
-                            .map(JavaPluginExtension::getDocsDir)
-                            .map(directoryProperty -> directoryProperty.get().getAsFile())
-                            .orElse(new File(project.getBuildDir(), "docs"));
-                    return new File(docsDir, "aggregateJavadoc");
-                }
-            });
-            aggregateJavadoc.setClasspath(aggregateClasspath);
+        project.getPlugins().withType(JavaPlugin.class, jp -> {
+            throw new IllegalStateException("The aggregate-javadoc plugin should not be used on a java project");
         });
 
-        project.allprojects(subproject -> {
-            subproject.afterEvaluate(this::handleSubproject);
+        createConfigurations(project);
+
+        javadocTask = project.getTasks().register("javadoc", Javadoc.class);
+
+        javadocTask.configure(jd -> {
+            jd.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP);
+            jd.source(javadocSources);
+            jd.include("**/*.java");
+            jd.setClasspath(javadocClasspath);
+
+            jd.setFailOnError(false);
+        });
+
+        javadocJar = project.getTasks().register("javadocJar", Jar.class, jar -> {
+            jar.setGroup(BasePlugin.BUILD_GROUP);
+            jar.from(javadocTask);
+            jar.getArchiveClassifier().convention("javadoc");
+        });
+
+        project.getArtifacts().add(javadocConfiguration.getName(), javadocJar);
+
+        javadocConfiguration.getOutgoing().getVariants().create("javadocDirectory", dirVariant -> {
+            dirVariant.artifact(javadocTask, cpa -> cpa.setType("directory"));
         });
     }
 
-    private void handleSubproject(Project subproject) {
-        subproject.getPlugins().withType(JavaPlugin.class, jp -> {
+    private void createConfigurations(Project project) {
+        javadocConfiguration = project.getConfigurations().create("javadoc");
+        javadocConfiguration.setCanBeConsumed(true);
+        javadocConfiguration.setCanBeResolved(false);
+        javadocConfiguration.getAttributes().attribute(Category.CATEGORY_ATTRIBUTE, project.getObjects().named(Category.class, Category.DOCUMENTATION));
+        javadocConfiguration.getAttributes().attribute(Bundling.BUNDLING_ATTRIBUTE, project.getObjects().named(Bundling.class, Bundling.EMBEDDED));
+        javadocConfiguration.getAttributes().attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.getObjects().named(DocsType.class, DocsType.JAVADOC));
 
-            AggregateJavadocClientPlugin clientPlugin = subproject.getPlugins().apply(AggregateJavadocClientPlugin.class);
-            aggregateClasspath.from(clientPlugin.getJavadocClasspath());
+        javadocSources = project.getConfigurations().create("javadocSources");
+        javadocSources.setTransitive(false);
+        javadocSources.setCanBeConsumed(false);
+        javadocSources.setCanBeResolved(true);
+        javadocSources.getAttributes().attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.getObjects().named(DocsType.class, DocsType.SOURCES));
+        javadocSources.getAttributes().attribute(VerificationType.VERIFICATION_TYPE_ATTRIBUTE, project.getObjects().named(VerificationType.class, VerificationType.MAIN_SOURCES));
+        javadocSources.extendsFrom(javadocConfiguration);
 
-            aggregateJavadoc.configure(aj -> {
-                SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
-                Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
-
-                if (!javadoc.isEnabled()) {
-                    aj.getLogger().info("Ignoring subproject {} as its javadoc task is disabled", subproject.getPath());
-                    return;
-                }
-
-                aj.dependsOn(subproject.getTasks().findByName(JavaPlugin.CLASSES_TASK_NAME));
-                aj.source(javadoc.getSource());
-
-                StandardJavadocDocletOptions options = (StandardJavadocDocletOptions) javadoc.getOptions();
-                StandardJavadocDocletOptions aggregateOptions = (StandardJavadocDocletOptions) aj.getOptions();
-
-                options.getLinks().forEach(link -> {
-                    if (!aggregateOptions.getLinks().contains(link)) {
-                        aggregateOptions.getLinks().add(link);
-                    }
-                });
-                options.getLinksOffline().forEach(link -> {
-                    if (!aggregateOptions.getLinksOffline().contains(link)) {
-                        aggregateOptions.getLinksOffline().add(link);
-                    }
-                });
-                options.getJFlags().forEach(jFlag -> {
-                    if (!aggregateOptions.getJFlags().contains(jFlag)) {
-                        aggregateOptions.getJFlags().add(jFlag);
-                    }
-                });
-            });
-        });
+        javadocClasspath = project.getConfigurations().create("javadocClasspath");
+        javadocClasspath.setCanBeConsumed(false);
+        javadocClasspath.setCanBeResolved(true);
+        getJvmPluginServices().configureAsRuntimeClasspath(javadocClasspath);
+        javadocClasspath.extendsFrom(javadocConfiguration);
     }
 }

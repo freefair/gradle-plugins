@@ -23,6 +23,15 @@ public class JavadocLinksPlugin implements Plugin<Project> {
 
         OkHttpPlugin okHttpPlugin = project.getPlugins().apply(OkHttpPlugin.class);
 
+        project.getPlugins().withType(AggregateJavadocPlugin.class, ajp -> {
+            project.afterEvaluate(p -> {
+                ajp.getJavadocTask().configure(jd -> {
+                    ResolveJavadocLinks rjd = new ResolveJavadocLinks(okHttpPlugin.getOkHttpClient());
+                    rjd.resolveLinks(jd, ajp.getJavadocClasspath());
+                });
+            });
+        });
+
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
             TaskProvider<Javadoc> javadoc = project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class);
 

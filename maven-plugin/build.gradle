@@ -43,6 +43,13 @@ gradlePlugin {
             tags.set(['war', 'maven', 'archiveClasses'])
         }
         aggregateJavadoc {
+            id = "io.freefair.aggregate-javadoc-legacy"
+            implementationClass = "io.freefair.gradle.plugins.maven.javadoc.LegacyAggregateJavadocPlugin"
+            displayName = "Aggregate Javadoc Plugin"
+            description = "Generate Javadoc over multiple projects"
+            tags.set(['maven', 'javadoc', 'aggregate'])
+        }
+        aggregateJavadoc2 {
             id = "io.freefair.aggregate-javadoc"
             implementationClass = "io.freefair.gradle.plugins.maven.javadoc.AggregateJavadocPlugin"
             displayName = "Aggregate Javadoc Plugin"

@@ -1,0 +1,13 @@
+apply plugin: "io.freefair.aggregate-javadoc"
+apply plugin: "io.freefair.javadoc-links"
+
+dependencies {
+    javadoc project(":javadoc")
+    javadoc project(":lombok")
+
+    rootProject.subprojects { subproject ->
+        subproject.plugins.withId("java") {
+            javadoc subproject
+        }
+    }
+}

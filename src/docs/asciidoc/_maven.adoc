@@ -110,6 +110,34 @@ It will also add a `aggregateJavadocJar` task, if the <<_io_freefair_aggregate_j
 
 === `io.freefair.aggregate-javadoc`
 
+This plugin can be used to generate the aggregated javadocs of multiple projects.
+It is inspired by the https://maven.apache.org/plugins/maven-javadoc-plugin/aggregate-mojo.html[`aggregate` mojo of the javadoc-maven-plugin].
+
+This plugin is designed to be used in multi-module Gradle builds. It can either be applied directly to the root project or to a separate subproject.
+
+The projects which sources should be included into the aggregated javadocs have to be added as dependencies to the `javadoc` configuration:
+
+[source,groovy]
+----
+dependencies {
+    // Option 1: List projects explicitly
+    javadoc project(":moduleA")
+    javadoc project(":moduleB")
+
+    //Option 2: Add all java projects automatically
+    rootProject.subprojects { subproject ->
+        subproject.plugins.withId("java") {
+            javadoc subproject
+        }
+    }
+}
+----
+
+
+=== `io.freefair.aggregate-javadoc-legacy`
+
+NOTE: This is the old `io.freefair.aggregate-javadoc` plugin which was deprecated and replaced with version 8.0.
+
 This plugin adds a `aggregateJavadoc` task to the project which will generate the aggregated javadoc for the project itself
 and all of its subprojects (which have the `java` plugin applied).
 

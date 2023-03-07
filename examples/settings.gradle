@@ -23,6 +23,7 @@ include ":lombok:mapstruct"
 include ":lombok:xjc"
 
 include ":javadoc"
+include ":javadoc-aggregate"
 
 include ":jacoco"
 include ":jacoco:sub-a"

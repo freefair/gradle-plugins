@@ -9,15 +9,16 @@ import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
 
+@Deprecated
 public class AggregateJavadocJarPlugin implements Plugin<Project> {
 
     private TaskProvider<Jar> aggregateJavadocJar;
 
     @Override
     public void apply(Project project) {
-        project.getPlugins().apply(AggregateJavadocPlugin.class);
+        project.getPlugins().apply(LegacyAggregateJavadocPlugin.class);
 
-        project.getPlugins().withType(AggregateJavadocPlugin.class, aggregateJavadocPlugin -> {
+        project.getPlugins().withType(LegacyAggregateJavadocPlugin.class, aggregateJavadocPlugin -> {
             aggregateJavadocJar = project.getTasks().register("aggregateJavadocJar", Jar.class, aggregateJavadocJar -> {
                 aggregateJavadocJar.from(aggregateJavadocPlugin.getAggregateJavadoc());
                 aggregateJavadocJar.getArchiveClassifier().set("javadoc");
