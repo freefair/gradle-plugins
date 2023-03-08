@@ -26,6 +26,7 @@ public class WarArchiveClassesPlugin implements Plugin<Project> {
                 jar.getArchiveAppendix().convention(war.getArchiveAppendix());
                 jar.getArchiveVersion().convention(war.getArchiveVersion());
                 jar.getArchiveClassifier().convention(war.getArchiveClassifier());
+                jar.getDestinationDirectory().set(war.getTemporaryDir());
             });
 
             project.afterEvaluate(p -> {
