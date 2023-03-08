@@ -7,7 +7,7 @@ dependencies {
 
     rootProject.subprojects { subproject ->
         subproject.plugins.withId("java") {
-            javadoc subproject
+            //javadoc subproject
         }
     }
 }

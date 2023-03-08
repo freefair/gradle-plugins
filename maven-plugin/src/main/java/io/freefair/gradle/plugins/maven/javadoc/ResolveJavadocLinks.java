@@ -3,12 +3,19 @@ package io.freefair.gradle.plugins.maven.javadoc;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.codehaus.groovy.runtime.ResourceGroovyMethods;
+import org.gradle.api.DefaultTask;
 import org.gradle.api.JavaVersion;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
-import org.gradle.api.logging.Logger;
+import org.gradle.api.artifacts.result.ResolvedArtifactResult;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
@@ -16,33 +23,48 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion;
 import org.gradle.jvm.toolchain.JavadocTool;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @NonNullApi
-public class ResolveJavadocLinks {
+public abstract class ResolveJavadocLinks extends DefaultTask {
+
+    @OutputFile
+    public abstract RegularFileProperty getOutputFile();
+
+    @Nested
+    public abstract Property<JavadocTool> getJavadocTool();
+
+    @Input
+    public abstract ListProperty<ComponentArtifactIdentifier> getArtifactIds();
 
     private final OkHttpClient okHttpClient;
     private final ServiceLoader<JavadocLinkProvider> javadocLinkProviders;
 
-    private Javadoc javadoc;
-    private Logger logger;
+    public void setClasspath(Configuration configuration) {
+        Provider<Set<ResolvedArtifactResult>> resolvedArtifacts = configuration.getIncoming().getArtifacts().getResolvedArtifacts();
+        getArtifactIds().set(resolvedArtifacts.map(artifacts -> artifacts.stream().map(ResolvedArtifactResult::getId).collect(Collectors.toList())));
+    }
 
+    @Inject
     public ResolveJavadocLinks(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
         javadocLinkProviders = ServiceLoader.load(JavadocLinkProvider.class, this.getClass().getClassLoader());
     }
 
-    public void resolveLinks(Javadoc javadoc, Configuration classpath) {
-        logger = javadoc.getLogger();
-        this.javadoc = javadoc;
+    @TaskAction
+    public void resolveLinks() throws IOException {
 
-        addLink(getJavaSeLink());
+        LinkedHashSet<String> links = new LinkedHashSet<>();
 
-        classpath.getResolvedConfiguration()
-                .getResolvedArtifacts()
+        links.add(getJavaSeLink());
+
+        getArtifactIds().get()
                 .stream()
-                .map(resolvedArtifact -> resolvedArtifact.getId().getComponentIdentifier())
+                .map(ComponentArtifactIdentifier::getComponentIdentifier)
                 .filter(ModuleComponentIdentifier.class::isInstance)
                 .map(ModuleComponentIdentifier.class::cast)
                 .map(moduleComponentIdentifier -> {
@@ -52,13 +74,13 @@ public class ResolveJavadocLinks {
 
                     String wellKnownLink = findWellKnownLink(group, artifact, version);
                     if (wellKnownLink != null) {
-                        javadoc.getLogger().info("Using well known link '{}' for '{}:{}:{}'", wellKnownLink, group, artifact, version);
+                        getLogger().info("Using well known link '{}' for '{}:{}:{}'", wellKnownLink, group, artifact, version);
                         return wellKnownLink;
                     }
                     else {
                         String javadocIoLink = String.format("https://www.javadoc.io/doc/%s/%s/%s/", group, artifact, version);
                         if (checkLink(javadocIoLink)) {
-                            javadoc.getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
+                            getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
                             return javadocIoLink;
                         }
                         else {
@@ -67,7 +89,13 @@ public class ResolveJavadocLinks {
                     }
                 })
                 .filter(Objects::nonNull)
-                .forEach(this::addLink);
+                .forEach(links::add);
+
+        try (PrintWriter printWriter = ResourceGroovyMethods.newPrintWriter(getOutputFile().get().getAsFile())) {
+            for (String link : links) {
+                printWriter.printf("-link '%s'%n", link);
+            }
+        }
     }
 
     private boolean checkLink(String link) {
@@ -84,7 +112,7 @@ public class ResolveJavadocLinks {
                     return true;
                 }
             } catch (IOException e) {
-                logger.info("Failed to access {}", request.url(), e);
+                getLogger().info("Failed to access {}", request.url(), e);
                 if (exception == null) {
                     exception = e;
                 }
@@ -95,7 +123,7 @@ public class ResolveJavadocLinks {
         }
 
         if (exception != null) {
-            logger.warn("Failed to check link {}", link, exception);
+            getLogger().warn("Failed to check link {}", link, exception);
         }
 
         return false;
@@ -106,7 +134,7 @@ public class ResolveJavadocLinks {
 
         javadocLinkProviders.reload();
         for (JavadocLinkProvider javadocLinkProvider : javadocLinkProviders) {
-            logger.info("{}", javadocLinkProvider.getClass());
+            getLogger().info("{}", javadocLinkProvider.getClass());
             String javadocLink = javadocLinkProvider.getJavadocLink(group, artifact, version);
             if (javadocLink != null) {
                 return javadocLink;
@@ -158,9 +186,8 @@ public class ResolveJavadocLinks {
     private String getJavaSeLink() {
         JavaVersion javaVersion = JavaVersion.current();
 
-        Property<JavadocTool> javadocTool = javadoc.getJavadocTool();
-        if (javadocTool.isPresent()) {
-            JavaLanguageVersion languageVersion = javadocTool.get().getMetadata().getLanguageVersion();
+        if (getJavadocTool().isPresent()) {
+            JavaLanguageVersion languageVersion = getJavadocTool().get().getMetadata().getLanguageVersion();
             javaVersion = JavaVersion.toVersion(languageVersion.asInt());
         }
 
@@ -172,19 +199,4 @@ public class ResolveJavadocLinks {
         }
     }
 
-    private void addLink(String link) {
-        MinimalJavadocOptions options = javadoc.getOptions();
-        if (options instanceof StandardJavadocDocletOptions) {
-            StandardJavadocDocletOptions docletOptions = (StandardJavadocDocletOptions) options;
-            List<String> links = docletOptions.getLinks();
-
-            if (links == null || !links.contains(link)) {
-                logger.debug("Adding '{}' to {}", link, javadoc);
-                docletOptions.links(link);
-            }
-            else {
-                logger.info("Not adding '{}' to {} because it's already present", link, javadoc);
-            }
-        }
-    }
 }
