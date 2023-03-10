@@ -10,6 +10,9 @@ import io.freefair.gradle.util.GitUtil;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Lars Grefer
+ */
 public class GitVersionPlugin implements Plugin<Project> {
 
     private static final Pattern releaseBranchPattern = Pattern.compile("release-(\\d+.*)");
