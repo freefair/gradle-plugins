@@ -5,7 +5,7 @@ apply plugin: "com.gradle.plugin-publish"
 description = "A plugin for executing specified code generators"
 
 dependencies {
-    implementation 'io.github.classgraph:classgraph:4.8.156'
+    implementation 'io.github.classgraph:classgraph:4.8.157'
     api project(':code-generator-api')
     testImplementation project(':test-common')
 
