@@ -1,34 +1,25 @@
 package io.freefair.gradle.plugins.lombok;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
-
-import javax.inject.Inject;
 
 /**
  * @author Lars Grefer
  * @see LombokPlugin
  */
-@Getter
-@Setter
-public class LombokExtension {
+public abstract class LombokExtension {
 
     public static final String LOMBOK_VERSION = "1.18.26";
 
     /**
      * The version of Lombok which will be used.
      */
-    private final Property<String> version;
+    public abstract Property<String> getVersion();
 
-    private final Property<Boolean> disableConfig;
+    public abstract Property<Boolean> getDisableConfig();
 
-    @Inject
-    public LombokExtension(ObjectFactory objectFactory) {
-        version = objectFactory.property(String.class).convention(LOMBOK_VERSION);
-        disableConfig = objectFactory.property(Boolean.class);
+    public LombokExtension() {
+        getVersion().convention(LOMBOK_VERSION);
 
-        disableConfig.convention(System.getProperty("lombok.disableConfig") != null);
+        getDisableConfig().convention(System.getProperty("lombok.disableConfig") != null);
     }
 }

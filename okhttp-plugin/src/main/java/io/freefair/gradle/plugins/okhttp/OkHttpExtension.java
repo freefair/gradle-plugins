@@ -1,19 +1,10 @@
 package io.freefair.gradle.plugins.okhttp;
 
-import lombok.Data;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 
-import javax.inject.Inject;
+public abstract class OkHttpExtension {
 
-@Data
-public class OkHttpExtension {
+    public abstract Property<HttpLoggingInterceptor.Level> getLoggingLevel();
 
-    private final Property<HttpLoggingInterceptor.Level> loggingLevel;
-
-    @Inject
-    public OkHttpExtension(ObjectFactory objectFactory) {
-        loggingLevel = objectFactory.property(HttpLoggingInterceptor.Level.class);
-    }
 }

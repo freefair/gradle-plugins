@@ -2,11 +2,9 @@ package io.freefair.gradle.plugins.github;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 
-import javax.inject.Inject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,43 +13,36 @@ import java.util.regex.Pattern;
  */
 @Getter
 @Setter
-public class GithubExtension {
+public abstract class GithubExtension {
 
     private final static Pattern slugPattern = Pattern.compile("(.*)/(.*)");
 
     /**
      * The Identifier of the GitHub Repository as {@code owner/repo}
      */
-    private final Property<String> slug;
+    public abstract Property<String> getSlug();
 
     /**
      * The username used for auhentication.
      */
-    private final Property<String> username;
+    public abstract Property<String> getUsername();
 
     /**
      * The token used for authentication.
      */
-    private final Property<String> token;
+    public abstract Property<String> getToken();
 
-    private final Property<String> tag;
+    public abstract Property<String> getTag();
 
-    private final Property<Boolean> travis;
+    public abstract Property<Boolean> getTravis();
 
-    @Inject
-    public GithubExtension(ObjectFactory objectFactory) {
-        slug = objectFactory.property(String.class);
-
-        username = objectFactory.property(String.class);
-        token = objectFactory.property(String.class);
-
-        tag = objectFactory.property(String.class).convention("HEAD");
-
-        travis = objectFactory.property(Boolean.class).convention(false);
+    public GithubExtension() {
+        getTag().convention("HEAD");
+        getTravis().convention(false);
     }
 
     public Provider<String> getOwner() {
-        return slug.map(sl -> {
+        return getSlug().map(sl -> {
             Matcher matcher = slugPattern.matcher(sl);
             if (matcher.matches()) {
                 return matcher.group(1);
@@ -61,11 +52,11 @@ public class GithubExtension {
     }
 
     public void setOwner(String owner) {
-        slug.set(owner + "/" + getRepo().getOrElse(""));
+        getSlug().set(owner + "/" + getRepo().getOrElse(""));
     }
 
     public Provider<String> getRepo() {
-        return slug.map(sl -> {
+        return getSlug().map(sl -> {
             Matcher matcher = slugPattern.matcher(sl);
             if (matcher.matches()) {
                 return matcher.group(2);
@@ -75,6 +66,6 @@ public class GithubExtension {
     }
 
     public void setRepo(String repo) {
-        slug.set(getOwner().getOrElse("") + "/" + repo);
+        getSlug().set(getOwner().getOrElse("") + "/" + repo);
     }
 }

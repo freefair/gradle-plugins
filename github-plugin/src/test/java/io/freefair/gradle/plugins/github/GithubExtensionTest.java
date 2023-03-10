@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.github;
 
+import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,9 +13,8 @@ class GithubExtensionTest {
 
     @BeforeEach
     void setUp() {
-        githubExtension = new GithubExtension(
-                ProjectBuilder.builder().build().getObjects()
-        );
+        Project build = ProjectBuilder.builder().build();
+        githubExtension = build.getExtensions().create("github", GithubExtension.class);
     }
 
     @Test

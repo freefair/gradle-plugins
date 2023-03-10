@@ -1,55 +1,39 @@
 package io.freefair.gradle.plugins.sass;
 
-import lombok.Data;
 import org.gradle.api.Incubating;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Property;
 import sass.embedded_protocol.EmbeddedSass.OutputStyle;
 
-import javax.inject.Inject;
-
-@Data
 @Incubating
-public class SassExtension {
+public abstract class SassExtension {
 
-    private final Property<Boolean> omitSourceMapUrl;
+    public abstract Property<Boolean> getOmitSourceMapUrl();
 
     /**
      * Output style for the generated css code.
      */
-    private final Property<OutputStyle> outputStyle;
+    public abstract Property<OutputStyle> getOutputStyle();
 
     /**
      * Embed include contents in maps.
      */
-    private final Property<Boolean> sourceMapContents;
+    public abstract Property<Boolean> getSourceMapContents();
 
     /**
      * Embed sourceMappingUrl as data uri.
      */
-    private final Property<Boolean> sourceMapEmbed;
+    public abstract Property<Boolean> getSourceMapEmbed();
 
-    private final Property<Boolean> sourceMapEnabled;
+    public abstract Property<Boolean> getSourceMapEnabled();
 
-    @Inject
-    public SassExtension(ObjectFactory objectFactory) {
-
-        omitSourceMapUrl = objectFactory.property(Boolean.class);
-        omitSourceMapUrl.convention(false);
-
-        outputStyle = objectFactory.property(OutputStyle.class);
-        outputStyle.convention(OutputStyle.EXPANDED);
-
-        sourceMapContents = objectFactory.property(Boolean.class);
-        sourceMapContents.convention(false);
-
-        sourceMapEmbed = objectFactory.property(Boolean.class);
-        sourceMapEmbed.convention(false);
-
-        sourceMapEnabled = objectFactory.property(Boolean.class);
-        sourceMapEnabled.convention(true);
+    public SassExtension() {
+        getOmitSourceMapUrl().convention(false);
+        getOutputStyle().convention(OutputStyle.EXPANDED);
+        getSourceMapContents().convention(false);
+        getSourceMapEmbed().convention(false);
+        getSourceMapEnabled().convention(true);
 
         ExtraPropertiesExtension extraProperties = new DslObject(this).getExtensions().getExtraProperties();
         for (OutputStyle value : OutputStyle.values()) {
@@ -57,7 +41,4 @@ public class SassExtension {
         }
     }
 
-    public void setOutputStyle(String outputStyle) {
-        this.outputStyle.set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
-    }
 }
