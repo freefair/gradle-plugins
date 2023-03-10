@@ -34,3 +34,5 @@ include "git-plugin"
 include "mkdocs-plugin"
 include "quicktype-plugin"
 include "plantuml-plugin"
+
+include "gradle-plugin-platform"

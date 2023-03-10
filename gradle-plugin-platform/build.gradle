@@ -1,0 +1,25 @@
+plugins {
+    id "java-platform"
+    id "maven-publish"
+}
+
+dependencies {
+    constraints {
+        rootProject.allprojects { subproject ->
+            subproject.plugins.withId("java") {
+                api subproject
+            }
+        }
+    }
+}
+
+publishing {
+    publications {
+        bom(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
+}
+
+
+
