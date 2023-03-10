@@ -1,5 +1,7 @@
+import kotlin.KotlinVersion
+
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 apply plugin: "maven-publish"
@@ -11,7 +13,7 @@ description = "Collection of Quicktype related Gradle plugins"
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "com.github.node-gradle:gradle-node-plugin:3.5.1"
-    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:${KotlinVersion.CURRENT}"
 
     testImplementation project(":test-common")
     testImplementation "org.jetbrains.kotlin:kotlin-test"

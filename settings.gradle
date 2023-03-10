@@ -1,3 +1,11 @@
+import kotlin.KotlinVersion
+
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version "${KotlinVersion.CURRENT}"
+    }
+}
+
 plugins {
     id("com.gradle.enterprise") version("3.12.1")
 }
