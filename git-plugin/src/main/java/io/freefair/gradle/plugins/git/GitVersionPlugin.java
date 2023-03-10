@@ -115,7 +115,7 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         try {
-            Process execute = ProcessGroovyMethods.execute("git describe --tags --exact-match");
+            Process execute = ProcessGroovyMethods.execute("git describe --tags --exact-match --dirty=-SNAPSHOT");
             String gitTag = ProcessGroovyMethods.getText(execute).trim();
 
             if (!gitTag.isEmpty()) {
