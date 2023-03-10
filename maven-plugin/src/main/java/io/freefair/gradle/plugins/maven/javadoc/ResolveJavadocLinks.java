@@ -3,9 +3,7 @@ package io.freefair.gradle.plugins.maven.javadoc;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.codehaus.groovy.runtime.ResourceGroovyMethods;
 import org.gradle.api.DefaultTask;
-import org.gradle.api.JavaVersion;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
@@ -16,20 +14,22 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.*;
-import org.gradle.api.tasks.javadoc.Javadoc;
-import org.gradle.external.javadoc.MinimalJavadocOptions;
-import org.gradle.external.javadoc.StandardJavadocDocletOptions;
-import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.external.javadoc.JavadocOptionFileOption;
+import org.gradle.external.javadoc.internal.JavadocOptionFile;
 import org.gradle.jvm.toolchain.JavadocTool;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Lars Grefer
+ */
 @NonNullApi
+@CacheableTask
 public abstract class ResolveJavadocLinks extends DefaultTask {
 
     @OutputFile
@@ -42,58 +42,77 @@ public abstract class ResolveJavadocLinks extends DefaultTask {
     public abstract ListProperty<ComponentArtifactIdentifier> getArtifactIds();
 
     private final OkHttpClient okHttpClient;
-    private final ServiceLoader<JavadocLinkProvider> javadocLinkProviders;
+
+    private final List<JavadocLinkProvider> javadocLinkProviders;
+
+    @Inject
+    public ResolveJavadocLinks(OkHttpClient okHttpClient) {
+        this.okHttpClient = okHttpClient;
+
+        this.javadocLinkProviders = new ArrayList<>();
+        for (JavadocLinkProvider javadocLinkProvider : ServiceLoader.load(JavadocLinkProvider.class, this.getClass().getClassLoader())) {
+            getLogger().info("{}", javadocLinkProvider.getClass());
+            javadocLinkProviders.add(javadocLinkProvider);
+        }
+
+        File temporaryDir = getTemporaryDir();
+        File file = new File(temporaryDir, "javadoc-links.options");
+        getOutputFile().set(file);
+    }
+
+    @Input
+    protected List<String> getLinkProviderNames() {
+        return javadocLinkProviders.stream()
+                .map(javadocLinkProvider -> javadocLinkProvider.getClass().getName())
+                .sorted()
+                .collect(Collectors.toList());
+    }
 
     public void setClasspath(Configuration configuration) {
         Provider<Set<ResolvedArtifactResult>> resolvedArtifacts = configuration.getIncoming().getArtifacts().getResolvedArtifacts();
         getArtifactIds().set(resolvedArtifacts.map(artifacts -> artifacts.stream().map(ResolvedArtifactResult::getId).collect(Collectors.toList())));
     }
 
-    @Inject
-    public ResolveJavadocLinks(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
-        javadocLinkProviders = ServiceLoader.load(JavadocLinkProvider.class, this.getClass().getClassLoader());
-    }
-
     @TaskAction
     public void resolveLinks() throws IOException {
 
-        LinkedHashSet<String> links = new LinkedHashSet<>();
-
-        links.add(getJavaSeLink());
-
-        getArtifactIds().get()
+        List<String> links = getArtifactIds().get()
                 .stream()
                 .map(ComponentArtifactIdentifier::getComponentIdentifier)
                 .filter(ModuleComponentIdentifier.class::isInstance)
                 .map(ModuleComponentIdentifier.class::cast)
-                .map(moduleComponentIdentifier -> {
-                    String group = moduleComponentIdentifier.getGroup();
-                    String artifact = moduleComponentIdentifier.getModule();
-                    String version = moduleComponentIdentifier.getVersion();
-
-                    String wellKnownLink = findWellKnownLink(group, artifact, version);
-                    if (wellKnownLink != null) {
-                        getLogger().info("Using well known link '{}' for '{}:{}:{}'", wellKnownLink, group, artifact, version);
-                        return wellKnownLink;
-                    }
-                    else {
-                        String javadocIoLink = String.format("https://www.javadoc.io/doc/%s/%s/%s/", group, artifact, version);
-                        if (checkLink(javadocIoLink)) {
-                            getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
-                            return javadocIoLink;
-                        }
-                        else {
-                            return null;
-                        }
-                    }
-                })
+                .parallel()
+                .map(this::toJavadocLink)
                 .filter(Objects::nonNull)
-                .forEach(links::add);
+                .distinct()
+                .collect(Collectors.toList());
 
-        try (PrintWriter printWriter = ResourceGroovyMethods.newPrintWriter(getOutputFile().get().getAsFile())) {
-            for (String link : links) {
-                printWriter.printf("-link '%s'%n", link);
+        JavadocOptionFile javadocOptionFile = new JavadocOptionFile();
+        JavadocOptionFileOption<List<String>> linkOption = javadocOptionFile.addMultilineStringsOption("link");
+        linkOption.setValue(links);
+
+        javadocOptionFile.write(getOutputFile().getAsFile().get());
+    }
+
+    @Nullable
+    private String toJavadocLink(ModuleComponentIdentifier moduleComponentIdentifier) {
+        String group = moduleComponentIdentifier.getGroup();
+        String artifact = moduleComponentIdentifier.getModule();
+        String version = moduleComponentIdentifier.getVersion();
+
+        String wellKnownLink = findWellKnownLink(group, artifact, version);
+        if (wellKnownLink != null) {
+            getLogger().info("Using well known link '{}' for '{}:{}:{}'", wellKnownLink, group, artifact, version);
+            return wellKnownLink;
+        }
+        else {
+            String javadocIoLink = String.format("https://www.javadoc.io/doc/%s/%s/%s/", group, artifact, version);
+            if (checkLink(javadocIoLink)) {
+                getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
+                return javadocIoLink;
+            }
+            else {
+                return null;
             }
         }
     }
@@ -132,9 +151,7 @@ public abstract class ResolveJavadocLinks extends DefaultTask {
     @Nullable
     private String findWellKnownLink(String group, String artifact, String version) {
 
-        javadocLinkProviders.reload();
         for (JavadocLinkProvider javadocLinkProvider : javadocLinkProviders) {
-            getLogger().info("{}", javadocLinkProvider.getClass());
             String javadocLink = javadocLinkProvider.getJavadocLink(group, artifact, version);
             if (javadocLink != null) {
                 return javadocLink;
@@ -178,25 +195,6 @@ public abstract class ResolveJavadocLinks extends DefaultTask {
         }
 
         return null;
-    }
-
-
-
-
-    private String getJavaSeLink() {
-        JavaVersion javaVersion = JavaVersion.current();
-
-        if (getJavadocTool().isPresent()) {
-            JavaLanguageVersion languageVersion = getJavadocTool().get().getMetadata().getLanguageVersion();
-            javaVersion = JavaVersion.toVersion(languageVersion.asInt());
-        }
-
-        if (javaVersion.isJava11Compatible()) {
-            return "https://docs.oracle.com/en/java/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
-        }
-        else {
-            return "https://docs.oracle.com/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
-        }
     }
 
 }

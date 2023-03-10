@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.maven.javadoc;
 
 import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
 import lombok.Getter;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -13,8 +14,6 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.external.javadoc.MinimalJavadocOptions;
 import org.gradle.external.javadoc.StandardJavadocDocletOptions;
-
-import java.io.File;
 
 @Getter
 public class JavadocLinksPlugin implements Plugin<Project> {
@@ -31,6 +30,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         project.getPlugins().withType(AggregateJavadocPlugin.class, ajp -> {
 
             project.afterEvaluate(p -> {
+                this.addJavaSeLink(ajp.getJavadocTask());
                 this.addLinks(ajp.getJavadocTask(), ajp.getJavadocClasspath());
             });
         });
@@ -42,6 +42,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
             Configuration compileClasspath = project.getConfigurations().getByName(main.getCompileClasspathConfigurationName());
 
             project.afterEvaluate(p -> {
+                this.addJavaSeLink(javadoc);
                 this.addLinks(javadoc, compileClasspath);
             });
         });
@@ -54,9 +55,6 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         resolveJavadocLinks.configure(rjd -> {
             rjd.getJavadocTool().convention(javadocTaskProvider.get().getJavadocTool());
             rjd.setClasspath(classpath);
-
-            File destinationDir = rjd.getTemporaryDir();
-            rjd.getOutputFile().set(new File(destinationDir, "links.txt"));
         });
 
         javadocTaskProvider.configure(javadoc -> {
@@ -73,6 +71,19 @@ public class JavadocLinksPlugin implements Plugin<Project> {
             }
         });
 
+    }
+
+    private void addJavaSeLink(TaskProvider<Javadoc> javadocTaskProvider) {
+
+        javadocTaskProvider.configure(jd -> {
+            JavaVersion javaVersion = JavadocLinkUtil.getJavaVersion(jd);
+            String link = JavadocLinkUtil.getJavaSeLink(javaVersion);
+
+            MinimalJavadocOptions options = jd.getOptions();
+            if (options instanceof StandardJavadocDocletOptions) {
+                ((StandardJavadocDocletOptions) options).links(link);
+            }
+        });
     }
 
 }
