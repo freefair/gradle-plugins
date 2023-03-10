@@ -3,6 +3,8 @@ plugins {
     id "maven-publish"
 }
 
+description = "Dependency Management for the FreeFair Gradle plugin collection"
+
 dependencies {
     constraints {
         rootProject.allprojects { subproject ->
