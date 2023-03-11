@@ -19,6 +19,7 @@ publishing {
     publications {
         bom(MavenPublication) {
             from components.javaPlatform
+            signing.sign it
         }
     }
 }
