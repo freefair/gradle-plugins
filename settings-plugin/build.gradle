@@ -5,6 +5,8 @@ plugins {
     id "maven-publish"
 }
 
+description = "Gradle Settings Plugins"
+
 gradlePlugin {
     plugins {
         pluginManagement {

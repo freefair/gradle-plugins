@@ -1,6 +1,8 @@
 apply plugin: "java-library"
 
 dependencies {
+    api platform("org.junit:junit-bom:5.9.2")
+
     api "org.junit.jupiter:junit-jupiter-api"
     api "org.assertj:assertj-core:3.24.2"
     api gradleApi()
