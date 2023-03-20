@@ -76,6 +76,7 @@ public abstract class AggregateJavadocPlugin implements Plugin<Project> {
         javadocSources.setTransitive(false);
         javadocSources.setCanBeConsumed(false);
         javadocSources.setCanBeResolved(true);
+        javadocSources.getAttributes().attribute(Category.CATEGORY_ATTRIBUTE, project.getObjects().named(Category.class, Category.VERIFICATION));
         javadocSources.getAttributes().attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.getObjects().named(DocsType.class, DocsType.SOURCES));
         javadocSources.getAttributes().attribute(VerificationType.VERIFICATION_TYPE_ATTRIBUTE, project.getObjects().named(VerificationType.class, VerificationType.MAIN_SOURCES));
         javadocSources.extendsFrom(javadocConfiguration);
