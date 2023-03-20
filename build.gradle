@@ -6,22 +6,16 @@ buildscript {
     }
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:1.1.0"
-
-        def pluginVersion = "6.6.3"
-        classpath "io.freefair.gradle:maven-plugin:$pluginVersion"
-        classpath "io.freefair.gradle:lombok-plugin:$pluginVersion"
-        classpath "io.freefair.gradle:git-plugin:$pluginVersion"
-        classpath "io.freefair.gradle:github-plugin:$pluginVersion"
     }
 }
 
 plugins {
-    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'io.freefair.git-version'
+    id 'io.freefair.github.dependency-submission'
+    id 'io.freefair.maven-central.validate-poms' apply false
+    id 'io.freefair.lombok' apply false
     id "io.github.gradle-nexus.publish-plugin" version "1.3.0"
 }
-
-apply plugin: 'io.freefair.git-version'
-apply plugin: "io.freefair.github.dependency-submission"
 
 nexusPublishing {
     repositories {
@@ -147,39 +141,6 @@ allprojects {
             }
         }
     }
-}
-
-asciidoctor {
-    baseDirFollowsSourceDir()
-
-    attributes gradle_version: gradle.gradleVersion
-
-    inputs.dir("src/docs/asciidoc")
-}
-
-apply plugin: "io.freefair.aggregate-javadoc"
-apply plugin: "io.freefair.javadoc-links"
-
-tasks.register("docsZip", Zip) {
-    group = 'build'
-    archiveClassifier = 'docs'
-    dependsOn asciidoctor
-
-    into("api") {
-        from aggregateJavadoc
-    }
-    into("reference") {
-        from asciidoctor.outputDir
-    }
-}
-
-tasks.register("uploadDocs", io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
-    dependsOn docsZip
-    username = findProperty("freefairDocsUser")
-    password = findProperty("freefairDocsPass")
-    file = docsZip.archiveFile
-    contentType = 'application/zip'
-    url = "https://docs.freefair.io/api/$project.version?path=gradle-plugins"
 }
 
 tasks.named('wrapper') {

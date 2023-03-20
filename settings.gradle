@@ -1,8 +1,19 @@
 import kotlin.KotlinVersion
 
 pluginManagement {
+    def freefairGradleVersion= "8.0.0-rc4"
     plugins {
+        id "io.freefair.git-version" version "$freefairGradleVersion"
+        id "io.freefair.lombok" version "$freefairGradleVersion"
+        id "io.freefair.javadocs" version "$freefairGradleVersion"
+        id "io.freefair.maven-publish-java" version "$freefairGradleVersion"
+        id "io.freefair.github.dependency-submission" version "$freefairGradleVersion"
+        id "io.freefair.maven-central.validate-poms" version "$freefairGradleVersion"
         id 'org.jetbrains.kotlin.jvm' version "${KotlinVersion.CURRENT}"
+    }
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
     }
 }
 
@@ -23,6 +34,7 @@ gradleEnterprise {
 rootProject.name = 'gradle-plugins'
 
 include "test-common"
+include "documentation"
 
 include "plugin-utils"
 
