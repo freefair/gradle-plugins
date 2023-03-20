@@ -61,6 +61,8 @@ apply plugin: "io.freefair.lombok"
 
 Unless otherwise noted, all plugins require at least Java 8 and are targeted at Gradle {gradle_version}.
 
+include::_settings.adoc[]
+
 include::_aspectj.adoc[]
 
 include::_compress.adoc[]

@@ -1,15 +1,10 @@
-= Git
+= Settings
 
-== Git Plugins
+== Settings Plugins
 
-This chapter describes all the plugins contained in the `git-plugin` module.
+This chapter describes all the plugins contained in the `settings-plugin` module.
 
-=== `io.freefair.git-version`
+=== `io.freefair.settings.plugin-versions`
 
-This plugin sets the project version according to the current git tag or branch.
+This plugin allows you to use all other plugins, without defining their version.
 
-It should only be applied to the root project.
-
-== Git Tasks
-
-This module does not contain any tasks.
