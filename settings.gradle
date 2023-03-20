@@ -55,4 +55,6 @@ include "mkdocs-plugin"
 include "quicktype-plugin"
 include "plantuml-plugin"
 
+include "settings-plugin"
+
 include "gradle-plugin-platform"

@@ -1,0 +1,28 @@
+import io.freefair.gradle.plugins.build.ListPluginIds
+
+plugins {
+    id "java-gradle-plugin"
+    id "maven-publish"
+}
+
+gradlePlugin {
+    plugins {
+        pluginManagement {
+            id = "io.freefair.settings.plugin-versions"
+            implementationClass = "io.freefair.gradle.plugins.settings.PluginVersionsPlugin"
+            displayName = "FreeFair Plugin Version Management Plugin"
+            description = "Apply this to your settings.gradle to get default versions for all FreeFair Gradle Plugins"
+            tags.set(["plugin-management", "freefair"])
+        }
+    }
+}
+
+tasks.register("listPluginIds", ListPluginIds) {
+    outputFile = file("build/plugin-ids")
+}
+
+tasks.named("processResources", ProcessResources).configure {
+    into("META-INF/freefair") {
+        from(tasks.named("listPluginIds"))
+    }
+}
