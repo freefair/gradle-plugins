@@ -1,7 +1,7 @@
 import kotlin.KotlinVersion
 
 pluginManagement {
-    def freefairGradleVersion= "8.0.0-rc4"
+    def freefairGradleVersion= "8.0.1"
     plugins {
         id "io.freefair.git-version" version "$freefairGradleVersion"
         id "io.freefair.lombok" version "$freefairGradleVersion"
