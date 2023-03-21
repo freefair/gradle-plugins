@@ -1,6 +1,7 @@
 plugins {
     id "java-gradle-plugin"
     id "maven-publish"
+    id "com.gradle.plugin-publish"
 }
 
 description = "Gradle Settings Plugins"
