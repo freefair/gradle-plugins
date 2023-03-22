@@ -1,14 +1,7 @@
 import kotlin.KotlinVersion
 
 pluginManagement {
-    def freefairGradleVersion= "8.0.0-rc4"
     plugins {
-        id "io.freefair.git-version" version "$freefairGradleVersion"
-        id "io.freefair.lombok" version "$freefairGradleVersion"
-        id "io.freefair.javadocs" version "$freefairGradleVersion"
-        id "io.freefair.maven-publish-java" version "$freefairGradleVersion"
-        id "io.freefair.github.dependency-submission" version "$freefairGradleVersion"
-        id "io.freefair.maven-central.validate-poms" version "$freefairGradleVersion"
         id 'org.jetbrains.kotlin.jvm' version "${KotlinVersion.CURRENT}"
     }
     repositories {
@@ -18,6 +11,7 @@ pluginManagement {
 }
 
 plugins {
+    id "io.freefair.settings.plugin-versions" version "8.0.1"
     id("com.gradle.enterprise") version("3.12.1")
 }
 
