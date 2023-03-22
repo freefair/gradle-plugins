@@ -5,6 +5,7 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.jvm.toolchain.JavaLanguageVersion;
+import org.gradle.util.GradleVersion;
 
 /**
  * @author Lars Grefer
@@ -35,5 +36,13 @@ public class JavadocLinkUtil {
         else {
             return "https://docs.oracle.com/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
         }
+    }
+
+    public static String getGradleApiLink(GradleVersion gradleVersion) {
+        if (gradleVersion == null) {
+            gradleVersion = GradleVersion.current();
+        }
+
+        return "https://docs.gradle.org/" + gradleVersion.getVersion() + "/javadoc/";
     }
 }

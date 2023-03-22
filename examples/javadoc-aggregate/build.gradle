@@ -10,4 +10,6 @@ dependencies {
             //javadoc subproject
         }
     }
+
+    javadocClasspath gradleApi()
 }

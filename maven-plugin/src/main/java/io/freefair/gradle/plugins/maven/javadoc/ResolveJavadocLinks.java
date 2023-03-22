@@ -7,16 +7,20 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
+import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.artifacts.result.ResolvedArtifactResult;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.internal.artifacts.dsl.dependencies.DependencyFactoryInternal;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.*;
 import org.gradle.external.javadoc.JavadocOptionFileOption;
 import org.gradle.external.javadoc.internal.JavadocOptionFile;
+import org.gradle.internal.component.local.model.OpaqueComponentIdentifier;
 import org.gradle.jvm.toolchain.JavadocTool;
+import org.gradle.util.GradleVersion;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -76,7 +80,7 @@ public abstract class ResolveJavadocLinks extends DefaultTask {
     @TaskAction
     public void resolveLinks() throws IOException {
 
-        List<String> links = getArtifactIds().get()
+        Set<String> links = getArtifactIds().get()
                 .stream()
                 .map(ComponentArtifactIdentifier::getComponentIdentifier)
                 .filter(ModuleComponentIdentifier.class::isInstance)
@@ -84,14 +88,24 @@ public abstract class ResolveJavadocLinks extends DefaultTask {
                 .parallel()
                 .map(this::toJavadocLink)
                 .filter(Objects::nonNull)
-                .distinct()
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+
+        if (containsGradleApi()) {
+            links.add(JavadocLinkUtil.getGradleApiLink(GradleVersion.current()));
+        }
 
         JavadocOptionFile javadocOptionFile = new JavadocOptionFile();
         JavadocOptionFileOption<List<String>> linkOption = javadocOptionFile.addMultilineStringsOption("link");
-        linkOption.setValue(links);
+        linkOption.setValue(links.stream().sorted().collect(Collectors.toList()));
 
         javadocOptionFile.write(getOutputFile().getAsFile().get());
+    }
+
+    private boolean containsGradleApi() {
+        return getArtifactIds().get().stream()
+                .map(ComponentArtifactIdentifier::getComponentIdentifier)
+                .filter(componentIdentifier -> componentIdentifier instanceof OpaqueComponentIdentifier)
+                .anyMatch(componentIdentifier -> ((OpaqueComponentIdentifier) componentIdentifier).getClassPathNotation() == DependencyFactoryInternal.ClassPathNotation.GRADLE_API);
     }
 
     @Nullable
