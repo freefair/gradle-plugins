@@ -21,7 +21,7 @@ dependencies {
 
     javadocClasspath "org.jacoco:org.jacoco.ant:${org.gradle.testing.jacoco.plugins.JacocoPlugin.DEFAULT_JACOCO_VERSION}"
     javadocClasspath "org.apache.maven.plugins:maven-plugin-plugin:3.8.1"
-    javadocClasspath 'net.sourceforge.plantuml:plantuml:1.2023.4'
+    javadocClasspath 'net.sourceforge.plantuml:plantuml:1.2023.5'
 }
 
 tasks.register("docsZip", Zip) {
