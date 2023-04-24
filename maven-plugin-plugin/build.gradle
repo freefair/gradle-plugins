@@ -4,7 +4,7 @@ apply plugin: "com.gradle.plugin-publish"
 
 description = "Gradle Plugin for building Maven Plugins"
 
-def mavenPluginToolsVersion = "3.8.1"
+def mavenPluginToolsVersion = "3.8.2"
 
 dependencies {
     api project(':maven-plugin')
