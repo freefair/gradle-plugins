@@ -7,10 +7,12 @@ import io.freefair.gradle.plugins.github.internal.GitUtils;
 import io.freefair.gradle.plugins.github.internal.Manifest;
 import lombok.SneakyThrows;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.artifacts.result.ResolvedComponentResult;
 import org.gradle.api.artifacts.result.ResolvedDependencyResult;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
@@ -35,22 +37,37 @@ public abstract class DependencyManifestTask extends DefaultTask {
     @Input
     public abstract ListProperty<ResolvedComponentResult> getRuntimeClasspaths();
 
+    @Input
+    public abstract Property<String> getManifestName();
+
+    @Input
+    public abstract Property<String> getManifestFileSourceLocation();
+
     private transient Manifest manifest;
+
+    @SneakyThrows
+    public void configureDefaults(Project project) {
+
+        getManifestName().convention(project.getPath());
+
+        File gitDir = GitUtils.findWorkingDirectory(getProject());
+
+        String filePath = project.getBuildFile().getCanonicalPath().replace(gitDir.getCanonicalPath(), "");
+        if (filePath.startsWith(File.separator)) {
+            filePath = filePath.substring(1);
+        }
+
+        getManifestFileSourceLocation().convention(filePath);
+
+    }
 
     @TaskAction
     public void writeManifest() throws IOException {
 
         manifest = new Manifest();
 
-        manifest.setName(getProject().getPath());
-
-        File gitDir = GitUtils.findWorkingDirectory(getProject());
-
-        String filePath = getProject().getBuildFile().getCanonicalPath().replace(gitDir.getCanonicalPath(), "");
-        if (filePath.startsWith(File.separator)) {
-            filePath = filePath.substring(1);
-        }
-        manifest.setFile(new Manifest.File(filePath));
+        manifest.setName(getManifestName().get());
+        manifest.setFile(new Manifest.File(getManifestFileSourceLocation().get()));
 
         addGradleDependency();
 

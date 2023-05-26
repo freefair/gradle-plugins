@@ -21,6 +21,7 @@ public class DependencyManifestPlugin implements Plugin<Project> {
         manifestTaskProvider = project.getTasks().register("githubDependenciesManifest", DependencyManifestTask.class, dependencyManifestTask -> {
             dependencyManifestTask.setGroup("github");
             dependencyManifestTask.getOutputFile().set(project.getLayout().getBuildDirectory().file("github/dependency-manifest.json"));
+            dependencyManifestTask.configureDefaults(project);
 
             Configuration classpath = project.getBuildscript().getConfigurations().getByName("classpath");
             dependencyManifestTask.getDevelopmentClasspaths().add(classpath.getIncoming().getResolutionResult().getRootComponent());
