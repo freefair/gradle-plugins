@@ -15,7 +15,7 @@ public class PlantumlPlugin implements Plugin<Project> {
         Configuration plantuml = project.getConfigurations().create("plantuml");
 
         plantuml.defaultDependencies(s -> {
-            s.add(project.getDependencies().create("net.sourceforge.plantuml:plantuml:1.2023.6"));
+            s.add(project.getDependencies().create("net.sourceforge.plantuml:plantuml:1.2023.8"));
         });
 
         project.getTasks().withType(PlantumlTask.class).configureEach(plantumlTask -> {
