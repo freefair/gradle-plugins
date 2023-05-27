@@ -30,11 +30,7 @@ public class AggregateJavadocJarPlugin implements Plugin<Project> {
 
             project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
                 aggregateJavadocJar.configure(aggregateJavadocJar -> {
-
                     aggregateJavadocJar.getArchiveClassifier().convention("aggregateJavadoc");
-                    aggregateJavadocJar.getDestinationDirectory().set(
-                            project.getExtensions().getByType(JavaPluginExtension.class).getDocsDir().dir("aggregateJavadoc")
-                    );
                 });
             });
 

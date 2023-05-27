@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 
 @Getter
+@Deprecated
 public class LegacyAggregateJavadocPlugin implements Plugin<Project> {
 
     private TaskProvider<Javadoc> aggregateJavadoc;
