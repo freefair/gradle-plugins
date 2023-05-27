@@ -90,24 +90,6 @@ war {
 ----
 <1> Whether a JAR file will be created for the classes in the webapp. Using this optional configuration parameter will make the compiled classes to be archived into a JAR file and the classes directory will then be excluded from the webapp.
 
-
-=== `io.freefair.maven-jars`
-
-This plugin is a shortcut for applying the following plugins:
-
-- <<_io_freefair_sources_jar>>
-- <<_io_freefair_javadoc_jar>>
-
-=== `io.freefair.sources-jar`
-
-This plugin adds a `sourcesJar` task to the project, which produces a jar file containing all sources of the `main` source set.
-
-=== `io.freefair.javadoc-jar`
-
-This plugin adds a `javadocJar` task to the project, which produces a jar file containing the output of the `javadoc` task.
-
-It will also add a `aggregateJavadocJar` task, if the <<_io_freefair_aggregate_javadoc>> plugin is also applied.
-
 === `io.freefair.aggregate-javadoc`
 
 This plugin can be used to generate the aggregated javadocs of multiple projects.
@@ -143,16 +125,14 @@ and all of its subprojects (which have the `java` plugin applied).
 
 === `io.freefair.aggregate-javadoc-jar`
 
-This plugin is a shortcut which applies the following plugins:
+This plugin adds an `aggregateJavadocJar` task based on the <<_io_freefair_aggregate_javadoc_legacy>> Plugin.
 
-- <<_io_freefair_aggregate_javadoc>>
-- <<_io_freefair_javadoc_jar>>
+NOTE: Consider using the new <<_io_freefair_aggregate_javadoc>> Plugin which was rewritten for Version 8.0 which now also directly includes a jar task.
 
 === `io.freefair.javadocs`
 
 This plugin is a shortcut which applies the following plugins:
 
-- <<_io_freefair_javadoc_jar>>
 - <<_io_freefair_javadoc_links>>
 - <<_io_freefair_javadoc_utf_8>>
 
@@ -169,13 +149,9 @@ This plugin configures all `Javadoc` tasks to use `UTF-8`.
 
 This plugin applies the `maven-publish` and `java` plugins and configures a `mavenJava` publication.
 
-It also works together with the <<_io_freefair_sources_jar>>, <<_io_freefair_javadoc_jar>> and <<_io_freefair_maven_jars>> plugins.
-
 === `io.freefair.maven-publish-war`
 
 This plugin applies the `maven-publish` and `war` plugins and configures a `mavenWeb` publication.
-
-It also works together with the <<_io_freefair_sources_jar>>, <<_io_freefair_javadoc_jar>> and <<_io_freefair_maven_jars>> plugins.
 
 === `io.freefair.maven-optional`
 
