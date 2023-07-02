@@ -7,7 +7,7 @@ description = "Collection of Lombok related Gradle plugins"
 dependencies {
     testImplementation project(":test-common")
     testImplementation 'org.projectlombok:lombok:1.18.28'
-    testImplementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:4.0.0.2929'
+    testImplementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:4.2.1.3168'
 }
 
 gradlePlugin {
