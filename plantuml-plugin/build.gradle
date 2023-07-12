@@ -4,11 +4,14 @@ apply plugin: "com.gradle.plugin-publish"
 
 description = "Gradle Plugin for PlantUML"
 
+// Note that this version should be kept in sync with src/main/java/io/freefair/gradle/plugins/plantuml/PlantumlPlugin.java
+def plantUmlVersion='1.2023.9'
+
 dependencies {
     //noinspection GradlePackageUpdate
-    compileOnly 'net.sourceforge.plantuml:plantuml:1.2023.9'
+    compileOnly "net.sourceforge.plantuml:plantuml:${plantUmlVersion}"
 
-    testRuntimeOnly 'net.sourceforge.plantuml:plantuml:1.2023.9'
+    testRuntimeOnly "net.sourceforge.plantuml:plantuml:${plantUmlVersion}"
 }
 
 gradlePlugin {
