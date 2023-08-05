@@ -12,7 +12,6 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     env:
-      ORG_GRADLE_PROJECT_freefairBuildCacheUsername: ${{ secrets.BUILD_CACHE_USERNAME }}
       ORG_GRADLE_PROJECT_freefairBuildCachePassword: ${{ secrets.BUILD_CACHE_PASSWORD }}
     strategy:
       fail-fast: false
