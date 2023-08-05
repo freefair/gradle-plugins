@@ -15,12 +15,25 @@ plugins {
     id("com.gradle.enterprise") version("3.12.1")
 }
 
+boolean isCiServer = System.getenv().containsKey("CI")
+
 gradleEnterprise {
-    if (System.getenv("CI") != null) {
+    if (isCiServer) {
         buildScan {
             publishAlways()
             termsOfServiceUrl = "https://gradle.com/terms-of-service"
             termsOfServiceAgree = "yes"
+        }
+    }
+}
+
+buildCache {
+    remote(HttpBuildCache) {
+        url = 'https://build-cache.grefer-hosting.de/cache/'
+        push = isCiServer
+        credentials {
+            username = settings.freefairBuildCacheUsername
+            password = settings.freefairBuildCachePassword
         }
     }
 }
