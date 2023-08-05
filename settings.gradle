@@ -32,8 +32,8 @@ buildCache {
         url = 'https://build-cache.grefer-hosting.de/cache/'
         push = isCiServer
         credentials {
-            username = settings.freefairBuildCacheUsername
-            password = settings.freefairBuildCachePassword
+            username = providers.gradleProperty('freefairBuildCacheUsername').getOrElse(null)
+            password = providers.gradleProperty('freefairBuildCachePassword').getOrElse(null)
         }
     }
 }
