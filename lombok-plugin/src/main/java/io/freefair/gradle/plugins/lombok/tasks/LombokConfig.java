@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,8 +38,10 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
 
     @Inject
     protected abstract WorkerExecutor getWorkerExecutor();
+
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
+
     @Inject
     protected abstract ExecOperations getExecOperations();
 
@@ -165,6 +168,7 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
         if (getFork().getOrElse(false)) {
             try (OutputStream out = Files.newOutputStream(getOutputFile().getAsFile().get().toPath())) {
 
+                long start = System.nanoTime();
                 getExecOperations().javaexec(config -> {
                     if (getLauncher().isPresent()) {
                         config.setExecutable(getLauncher().get().getExecutablePath().getAsFile().getAbsolutePath());
@@ -178,6 +182,14 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
 
                     config.args(args);
                 });
+
+                Duration duration = Duration.ofNanos(System.nanoTime() - start);
+                if (duration.getSeconds() > 1) {
+                    getLogger().warn("lombok config {} took {}ms", args, duration.toMillis());
+                }
+                else {
+                    getLogger().info("lombok config {} took {}ms", args, duration.toMillis());
+                }
             }
         }
         else {
