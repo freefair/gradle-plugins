@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.git;
 
-import org.codehaus.groovy.runtime.ProcessGroovyMethods;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
@@ -115,8 +114,15 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         try {
-            Process execute = ProcessGroovyMethods.execute("git describe --tags --exact-match --dirty=-SNAPSHOT");
-            String gitTag = ProcessGroovyMethods.getText(execute).trim();
+            String gitTag = project.getProviders()
+                    .exec(execSpec -> {
+                        execSpec.setWorkingDir(project.getProjectDir());
+                        execSpec.commandLine("git", "describe", "--tags", "--exact-match", "--dirty=-SNAPSHOT");
+                    })
+                    .getStandardOutput()
+                    .getAsText()
+                    .get()
+                    .trim();
 
             if (!gitTag.isEmpty()) {
                 String version = resolveTagVersion(gitTag);
@@ -149,8 +155,15 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         try {
-            Process execute = ProcessGroovyMethods.execute("git symbolic-ref --short HEAD");
-            String gitBranch = ProcessGroovyMethods.getText(execute).trim();
+            String gitBranch = project.getProviders()
+                    .exec(execSpec -> {
+                        execSpec.setWorkingDir(project.getProjectDir());
+                        execSpec.commandLine("git", "symbolic-ref", "--short", "HEAD");
+                    })
+                    .getStandardOutput()
+                    .getAsText()
+                    .get()
+                    .trim();
 
             if (!gitBranch.isEmpty()) {
                 String version = resolveBranchVersion(gitBranch);
