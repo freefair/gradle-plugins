@@ -1,0 +1,22 @@
+import io.freefair.gradle.plugins.okhttp.tasks.DownloadFile
+import io.freefair.gradle.plugins.okhttp.tasks.UploadFile
+import okhttp3.logging.HttpLoggingInterceptor
+
+plugins {
+    id "io.freefair.okhttp"
+}
+
+okHttp.loggingLevel = HttpLoggingInterceptor.Level.HEADERS;
+
+tasks.register("download100", DownloadFile) {
+    headers.put("User-Agent", "curl/11")
+    url = "https://speed.hetzner.de/100MB.bin"
+    outputFile = getLayout().getBuildDirectory().file("100MB.bin")
+}
+
+tasks.register("upload100", UploadFile) {
+    dependsOn(download100)
+    headers.put("content-type", "application/octet-stream")
+    url = "https://httpbin.org/put"
+    file = getLayout().getBuildDirectory().file("100MB.bin")
+}
