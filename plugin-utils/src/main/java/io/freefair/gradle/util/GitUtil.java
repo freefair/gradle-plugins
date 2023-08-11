@@ -3,6 +3,7 @@ package io.freefair.gradle.util;
 import lombok.experimental.UtilityClass;
 import org.codehaus.groovy.runtime.ProcessGroovyMethods;
 import org.gradle.api.Project;
+import org.gradle.process.ExecOutput;
 import org.gradle.process.ExecResult;
 
 import java.io.ByteArrayOutputStream;
@@ -53,18 +54,14 @@ public class GitUtil {
 
     public static String execute(Project project, String... command) {
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        ExecResult execResult = project.exec(execSpec -> {
-            execSpec.workingDir(project.getProjectDir());
+        ExecOutput execOutput = project.getProviders().exec(execSpec -> {
+            execSpec.setWorkingDir(project.getProjectDir());
             execSpec.commandLine((Object[]) command);
-            execSpec.setStandardOutput(outputStream);
         });
 
-        if (execResult.getExitValue() == 0) {
-            return outputStream.toString().trim();
-        } else {
-            return null;
-        }
+        return execOutput.getStandardOutput().getAsText()
+                .map(String::trim)
+                .get();
+
     }
 }
