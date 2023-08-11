@@ -16,7 +16,7 @@ tasks.register("download100", DownloadFile) {
 
 tasks.register("upload100", UploadFile) {
     dependsOn(download100)
-    headers.put("content-type", "application/octet-stream")
     url = "https://httpbin.org/put"
-    file = getLayout().getBuildDirectory().file("100MB.bin")
+    contentType = "application/octet-stream"
+    file = file("build.gradle")
 }

@@ -31,7 +31,9 @@ class ProgressRequestBody extends RequestBody {
 
     @Override
     public void writeTo(@Nonnull BufferedSink bufferedSink) throws IOException {
-        requestBody.writeTo(Okio.buffer(sink(bufferedSink)));
+        BufferedSink buffer = Okio.buffer(sink(bufferedSink));
+        requestBody.writeTo(buffer);
+        buffer.close();
     }
 
     @Override
