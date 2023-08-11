@@ -2,9 +2,9 @@ package io.freefair.gradle.plugins.github;
 
 import io.freefair.gradle.plugins.github.internal.GitUtils;
 import io.freefair.gradle.plugins.github.internal.GithubClient;
-import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
 import io.freefair.gradle.util.GitUtil;
 import lombok.Getter;
+import okhttp3.OkHttpClient;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
@@ -41,9 +41,7 @@ public class GithubBasePlugin implements Plugin<Project> {
         githubExtension.getUsername().convention(project.provider(() -> GitUtils.findGithubUsername(project)));
         githubExtension.getToken().convention(project.provider(() -> GitUtils.findGithubToken(project)));
 
-        OkHttpPlugin okHttpPlugin = project.getPlugins().apply(OkHttpPlugin.class);
-
-        githubClient = new GithubClient(githubExtension, okHttpPlugin.getOkHttpClient());
+        githubClient = new GithubClient(githubExtension, new OkHttpClient.Builder().build());
     }
 
     private boolean isTravis() {

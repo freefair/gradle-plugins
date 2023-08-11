@@ -19,13 +19,12 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions;
 public class JavadocLinksPlugin implements Plugin<Project> {
 
     private Project project;
-    private OkHttpPlugin okHttpPlugin;
 
     @Override
     public void apply(Project project) {
         this.project = project;
 
-        okHttpPlugin = project.getPlugins().apply(OkHttpPlugin.class);
+        project.getPlugins().apply(OkHttpPlugin.class);
 
         project.getPlugins().withType(AggregateJavadocPlugin.class, ajp -> {
 
@@ -50,7 +49,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
 
     public void addLinks(TaskProvider<Javadoc> javadocTaskProvider, Configuration classpath) {
 
-        TaskProvider<ResolveJavadocLinks> resolveJavadocLinks = project.getTasks().register("resolveJavadocLinks", ResolveJavadocLinks.class, okHttpPlugin.getOkHttpClient());
+        TaskProvider<ResolveJavadocLinks> resolveJavadocLinks = project.getTasks().register("resolveJavadocLinks", ResolveJavadocLinks.class);
 
         resolveJavadocLinks.configure(rjd -> {
             rjd.getJavadocTool().convention(javadocTaskProvider.get().getJavadocTool());

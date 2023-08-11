@@ -1,13 +1,12 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
+import io.freefair.gradle.plugins.okhttp.tasks.OkHttpTask;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
-import org.gradle.api.artifacts.component.ComponentIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.artifacts.result.ResolvedArtifactResult;
 import org.gradle.api.file.RegularFileProperty;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @NonNullApi
 @CacheableTask
-public abstract class ResolveJavadocLinks extends DefaultTask {
+public abstract class ResolveJavadocLinks extends OkHttpTask {
 
     @OutputFile
     public abstract RegularFileProperty getOutputFile();
@@ -45,13 +44,10 @@ public abstract class ResolveJavadocLinks extends DefaultTask {
     @Input
     public abstract ListProperty<ComponentArtifactIdentifier> getArtifactIds();
 
-    private final OkHttpClient okHttpClient;
-
     private final List<JavadocLinkProvider> javadocLinkProviders;
 
     @Inject
-    public ResolveJavadocLinks(OkHttpClient okHttpClient) {
-        this.okHttpClient = okHttpClient;
+    public ResolveJavadocLinks() {
 
         this.javadocLinkProviders = new ArrayList<>();
         for (JavadocLinkProvider javadocLinkProvider : ServiceLoader.load(JavadocLinkProvider.class, this.getClass().getClassLoader())) {
@@ -140,7 +136,7 @@ public abstract class ResolveJavadocLinks extends DefaultTask {
                     .get()
                     .build();
 
-            try (Response response = okHttpClient.newCall(request).execute()) {
+            try (Response response = getOkHttpClient().newCall(request).execute()) {
                 if (response.isSuccessful()) {
                     return true;
                 }

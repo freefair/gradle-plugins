@@ -8,6 +8,7 @@ import org.gradle.api.provider.Property;
 import javax.inject.Inject;
 
 @Data
+@Deprecated
 public class OkHttpCacheExtension {
 
     private final DirectoryProperty directory;

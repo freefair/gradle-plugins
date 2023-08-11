@@ -1,14 +1,16 @@
 package io.freefair.gradle.plugins.okhttp.tasks;
 
-import io.freefair.gradle.plugins.okhttp.OkHttpPlugin;
+import io.freefair.gradle.plugins.okhttp.internal.CacheControlInterceptor;
 import io.freefair.gradle.plugins.okhttp.internal.ProgressInterceptor;
 import io.freefair.gradle.plugins.okhttp.internal.ProgressListener;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Console;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
@@ -22,7 +24,7 @@ import java.time.Duration;
 /**
  * @author Lars Grefer
  */
-public abstract class OkHttpRequestTask extends DefaultTask {
+public abstract class OkHttpRequestTask extends OkHttpTask {
 
     @Inject
     protected abstract ProgressLoggerFactory getProgressLoggerFactory();
@@ -66,19 +68,6 @@ public abstract class OkHttpRequestTask extends DefaultTask {
 
     }
 
-    private OkHttpClient getOkHttpClient() {
-        OkHttpPlugin plugin = getProject().getPlugins().findPlugin(OkHttpPlugin.class);
-
-        OkHttpClient client;
-        if (plugin != null) {
-            client = plugin.getOkHttpClient();
-        }
-        else {
-            client = new OkHttpClient();
-        }
-        return client;
-    }
-
     public Request.Builder buildRequest(Request.Builder builder) {
 
         getHeaders().get().forEach(builder::header);
@@ -120,7 +109,7 @@ public abstract class OkHttpRequestTask extends DefaultTask {
 
         @Override
         public void writeUpdate(long bytesWritten, long contentLength) {
-            if(uploadStart == 0) {
+            if (uploadStart == 0) {
                 uploadStart = System.nanoTime();
             }
             update("Upload", bytesWritten, contentLength, uploadStart);
