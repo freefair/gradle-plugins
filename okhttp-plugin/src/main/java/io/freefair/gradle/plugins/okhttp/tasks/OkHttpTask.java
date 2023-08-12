@@ -18,7 +18,6 @@ public abstract class OkHttpTask extends DefaultTask {
     public abstract Property<HttpLoggingInterceptor.Level> getLoggingLevel();
 
     @Internal
-    @Optional
     public abstract DirectoryProperty getCacheDir();
 
     @Input
