@@ -118,6 +118,7 @@ public class GitVersionPlugin implements Plugin<Project> {
                     .exec(execSpec -> {
                         execSpec.setWorkingDir(project.getProjectDir());
                         execSpec.commandLine("git", "describe", "--tags", "--exact-match", "--dirty=-SNAPSHOT");
+                        execSpec.setIgnoreExitValue(true);
                     })
                     .getStandardOutput()
                     .getAsText()
