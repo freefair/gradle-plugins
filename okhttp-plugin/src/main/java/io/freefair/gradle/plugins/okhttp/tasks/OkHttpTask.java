@@ -6,9 +6,11 @@ import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Console;
-import org.gradle.api.tasks.Internal;
+import org.gradle.api.tasks.*;
+
+import java.io.File;
 
 public abstract class OkHttpTask extends DefaultTask {
 
@@ -16,10 +18,33 @@ public abstract class OkHttpTask extends DefaultTask {
     public abstract Property<HttpLoggingInterceptor.Level> getLoggingLevel();
 
     @Internal
+    @Optional
+    public abstract DirectoryProperty getCacheDir();
+
+    @Input
+    @Optional
+    public abstract Property<Integer> getCacheSize();
+
+    @Input
+    @Optional
+    public abstract Property<Boolean> getForceCache();
+
+    @Input
+    @Optional
+    public abstract Property<Boolean> getForceNetwork();
+
+    @Internal
     private OkHttpClient okHttpClient;
 
+    public OkHttpTask() {
+        getCacheSize().convention(10 * 1024 * 1024);
+        getCacheDir().fileValue(getTemporaryDir());
+        getForceCache().convention(getProject().getGradle().getStartParameter().isOffline());
+        getForceNetwork().convention(getProject().getGradle().getStartParameter().isRefreshDependencies());
+    }
+
     protected OkHttpClient getOkHttpClient() {
-        if(okHttpClient == null) {
+        if (okHttpClient == null) {
             okHttpClient = buildOkHttpClient();
         }
 
@@ -29,12 +54,18 @@ public abstract class OkHttpTask extends DefaultTask {
     protected OkHttpClient buildOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
-        builder = builder.cache(new Cache(getTemporaryDir(), 10 * 1024 * 1024));
+        File cacheDir = getCacheDir().getAsFile().getOrNull();
+        int cacheSize = getCacheSize().getOrElse(0);
 
-        if (getProject().getGradle().getStartParameter().isOffline()) {
+        if (cacheDir != null && cacheSize > 1) {
+            Cache cache = new Cache(cacheDir, cacheSize);
+            builder = builder.cache(cache);
+        }
+
+        if (getForceCache().getOrElse(false)) {
             builder = builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_CACHE));
         }
-        else if (getProject().getGradle().getStartParameter().isRefreshDependencies()) {
+        else if (getForceNetwork().getOrElse(false)) {
             builder = builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_NETWORK));
         }
 
@@ -45,6 +76,5 @@ public abstract class OkHttpTask extends DefaultTask {
         }
 
         return builder.build();
-
     }
 }
