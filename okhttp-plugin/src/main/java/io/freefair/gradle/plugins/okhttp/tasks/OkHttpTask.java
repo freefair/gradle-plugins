@@ -12,6 +12,11 @@ import org.gradle.api.tasks.*;
 
 import java.io.File;
 
+/**
+ * Base class for tasks using an {@link OkHttpClient}.
+ *
+ * @author Lars Grefer
+ */
 public abstract class OkHttpTask extends DefaultTask {
 
     @Console
@@ -58,20 +63,20 @@ public abstract class OkHttpTask extends DefaultTask {
 
         if (cacheDir != null && cacheSize > 1) {
             Cache cache = new Cache(cacheDir, cacheSize);
-            builder = builder.cache(cache);
+            builder.cache(cache);
         }
 
         if (getForceCache().getOrElse(false)) {
-            builder = builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_CACHE));
+            builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_CACHE));
         }
         else if (getForceNetwork().getOrElse(false)) {
-            builder = builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_NETWORK));
+            builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_NETWORK));
         }
 
         if (getLoggingLevel().isPresent()) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(s -> getLogger().lifecycle(s));
             loggingInterceptor.level(getLoggingLevel().get());
-            builder = builder.addInterceptor(loggingInterceptor);
+            builder.addInterceptor(loggingInterceptor);
         }
 
         return builder.build();

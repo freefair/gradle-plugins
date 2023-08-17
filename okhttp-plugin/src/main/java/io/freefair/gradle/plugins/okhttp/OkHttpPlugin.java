@@ -20,8 +20,21 @@ public class OkHttpPlugin implements Plugin<Project> {
         okHttpExtension = project.getExtensions().create("okHttp", OkHttpExtension.class);
         okHttpExtension.getLoggingLevel().convention(project.provider(this::getLevel));
 
+        okHttpExtension.getCacheSize().convention(10 * 1024 * 1024);
+
+        okHttpExtension.getForceCache().convention(
+                project.getGradle().getStartParameter().isOffline()
+        );
+
+        okHttpExtension.getForceNetwork().convention(
+                project.getGradle().getGradle().getStartParameter().isRefreshDependencies()
+        );
+
         project.getTasks().withType(OkHttpTask.class).configureEach(okHttpTask -> {
             okHttpTask.getLoggingLevel().convention(okHttpExtension.getLoggingLevel());
+            okHttpTask.getCacheSize().convention(okHttpExtension.getCacheSize());
+            okHttpTask.getForceCache().convention(okHttpExtension.getForceCache());
+            okHttpTask.getForceNetwork().convention(okHttpExtension.getForceNetwork());
         });
     }
 

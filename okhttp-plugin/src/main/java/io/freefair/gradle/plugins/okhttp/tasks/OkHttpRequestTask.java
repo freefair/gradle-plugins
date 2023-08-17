@@ -1,16 +1,15 @@
 package io.freefair.gradle.plugins.okhttp.tasks;
 
-import io.freefair.gradle.plugins.okhttp.internal.CacheControlInterceptor;
 import io.freefair.gradle.plugins.okhttp.internal.ProgressInterceptor;
 import io.freefair.gradle.plugins.okhttp.internal.ProgressListener;
 import lombok.RequiredArgsConstructor;
-import okhttp3.*;
-import okhttp3.logging.HttpLoggingInterceptor;
-import org.gradle.api.DefaultTask;
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.gradle.api.GradleException;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Console;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
@@ -22,6 +21,8 @@ import java.io.IOException;
 import java.time.Duration;
 
 /**
+ * Base class for tasks which execute exactly one {@link Request HTTP Request}.
+ *
  * @author Lars Grefer
  */
 public abstract class OkHttpRequestTask extends OkHttpTask {
@@ -50,17 +51,14 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
 
         Request request = buildRequest(new Request.Builder()).build();
 
-        OkHttpClient client = getOkHttpClient();
-
-        client = client.newBuilder()
+        OkHttpClient client = getOkHttpClient()
+                .newBuilder()
                 .addNetworkInterceptor(new ProgressInterceptor(new GradleProcessListener(progressLogger)))
                 .build();
 
         progressLogger.start(request.toString(), "Call");
 
-        Call call = client.newCall(request);
-
-        try (Response response = call.execute()) {
+        try (Response response = client.newCall(request).execute()) {
             handleResponse(response);
         } finally {
             progressLogger.completed();

@@ -12,6 +12,7 @@ import java.io.File;
 /**
  * @author Lars Grefer
  */
+@SuppressWarnings("LombokGetterMayBeUsed")
 @Deprecated
 public class OkHttpCachePlugin implements Plugin<Project> {
 
