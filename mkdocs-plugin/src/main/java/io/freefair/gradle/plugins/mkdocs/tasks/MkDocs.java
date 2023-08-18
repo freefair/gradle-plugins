@@ -12,7 +12,6 @@ import org.gradle.process.ExecSpec;
 
 import javax.inject.Inject;
 
-@Getter
 public abstract class MkDocs extends DefaultTask {
 
     @Inject
@@ -26,13 +25,13 @@ public abstract class MkDocs extends DefaultTask {
      * Silence warnings.
      */
     @Console
-    private final Property<Boolean> quiet = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getQuiet();
 
     /**
      * Enable verbose output.
      */
     @Console
-    private final Property<Boolean> verbose = getProject().getObjects().property(Boolean.class);
+    public abstract Property<Boolean> getVerbose();
 
     protected MkDocs(String command) {
         this.command = command;
