@@ -11,7 +11,7 @@ import org.gradle.api.internal.file.collections.FailingFileCollection;
 import org.gradle.api.internal.file.collections.LazilyInitializedFileCollection;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.api.internal.tasks.TaskDependencyResolveContext;
-import org.gradle.api.plugins.jvm.internal.JvmEcosystemUtilities;
+import org.gradle.api.plugins.jvm.internal.JvmPluginServices;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -89,7 +89,7 @@ public class AspectJRuntime {
 
             private Configuration detachedRuntimeClasspath(Dependency... dependencies) {
                 Configuration classpath = project.getConfigurations().detachedConfiguration(dependencies);
-                jvmEcosystemUtilities().configureAsRuntimeClasspath(classpath);
+                getJvmPluginServices().configureAsRuntimeClasspath(classpath);
                 return classpath;
             }
 
@@ -150,7 +150,7 @@ public class AspectJRuntime {
         return null;
     }
 
-    private JvmEcosystemUtilities jvmEcosystemUtilities() {
-        return project.getServices().get(JvmEcosystemUtilities.class);
+    private JvmPluginServices getJvmPluginServices() {
+        return project.getServices().get(JvmPluginServices.class);
     }
 }
