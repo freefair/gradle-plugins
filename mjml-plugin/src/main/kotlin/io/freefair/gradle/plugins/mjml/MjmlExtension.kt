@@ -8,7 +8,6 @@ abstract class MjmlExtension {
     abstract val minifyOptions: Property<String>
     abstract val juiceOptions: Property<String>
     abstract val juicePreserveTags: Property<String>
-    abstract val filePath: Property<String>
     abstract val validationMode: Property<ValidationMode>
 
     init {
@@ -17,7 +16,6 @@ abstract class MjmlExtension {
         minifyOptions.convention("")
         juiceOptions.convention("")
         juicePreserveTags.convention("")
-        filePath.convention("")
         validationMode.convention(ValidationMode.normal)
     }
 }

@@ -63,7 +63,6 @@ abstract class MjmlCompile : SourceTask() {
         if(extension.minifyOptions.get().isNotBlank()) result.add("--config.minifyOptions", extension.minifyOptions.get())
         if(extension.juiceOptions.get().isNotBlank()) result.add("--config.juiceOptions", extension.juiceOptions.get())
         if(extension.juicePreserveTags.get().isNotBlank()) result.add("--config.juicePreserveTags", extension.juicePreserveTags.get())
-        if(extension.filePath.get().isNotBlank()) result.add("--config.filePath", extension.filePath.get())
         return result.toTypedArray()
     }
 
