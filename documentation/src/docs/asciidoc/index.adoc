@@ -6,9 +6,10 @@ Lars Grefer <github@larsgrefer.de>; Dennis Fricke
 :doctype: book
 :source-highlighter: rouge
 :sectanchors:
+:partnums:
+:part-signifier: Module
 
-= Introduction
-
+[colophon]
 == About the Documentation
 
 The documentation of the FreeFair Gradle Plugin collection {revnumber} consists of two parts:
