@@ -12,7 +12,9 @@ This chapter describes all the plugins contained in the `mjml-plugin` module.
 
 This plugin adds the `mjml` extension to the project and create some basic tasks to install mjml via npm.
 
-[source,groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 mjml {
     validationMode = ValidationMode.strict
@@ -23,8 +25,8 @@ mjml {
     juicePreserveTags = "{\"myTag\": { \"start\": \"<#\", \"end\": \"</#\" }}"
 }
 ----
-
-[source,kotlin]
+[source,kotlin, role="secondary"]
+.Kotlin
 ----
 mjml {
     validationMode = ValidationMode.strict
@@ -35,6 +37,7 @@ mjml {
     juicePreserveTags = "{\"myTag\": { \"start\": \"<#\", \"end\": \"</#\" }}"
 }
 ----
+====
 
 === `io.freefair.mjml.java`
 

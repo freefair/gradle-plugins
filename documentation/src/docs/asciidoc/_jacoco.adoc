@@ -24,7 +24,9 @@ link:../api/io/freefair/gradle/plugins/jacoco/tasks/JacocoDump.html[`io.freefair
 task is the Gradle equivalent of the https://www.jacoco.org/jacoco/trunk/doc/ant.html#dump[`dump` Ant-Task]
 
 .JacocoDump Example
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task dump(type: io.freefair.gradle.plugins.jacoco.tasks.JacocoDump) {
     address = "localhost"
@@ -36,8 +38,8 @@ task dump(type: io.freefair.gradle.plugins.jacoco.tasks.JacocoDump) {
     append = true
 }
 ----
-
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.jacoco.tasks.JacocoDump>("dump") {
     address = "localhost"
@@ -49,3 +51,4 @@ tasks.register<io.freefair.gradle.plugins.jacoco.tasks.JacocoDump>("dump") {
     append = true
 }
 ----
+====

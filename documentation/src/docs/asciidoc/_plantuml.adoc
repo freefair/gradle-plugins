@@ -4,18 +4,22 @@ This plugin generates images from plantuml files.
 
 == Basic usage
 
-[source,groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 plugins {
     id "io.freefair.plantuml"
 }
 ----
-[source,kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 plugins {
     id("io.freefair.plantuml")
 }
 ----
+====
 This adds a PlantUML task to gradle as well as a new source set. The images will be saved to the build directory.
 
 == Configuration options
@@ -37,24 +41,30 @@ This adds a PlantUML task to gradle as well as a new source set. The images will
 |===
 
 === Configure
-[source,groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 plantUml {
     fileFormat = "PNG"
     outputDirectory = layout.buildDirectory.dir("dist")
 }
 ----
-[source,kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.plantUml {
     fileFormat = "PNG"
     outputDirectory = layout.buildDirectory.dir("dist")
 }
 ----
+====
 
 == Custom Task
 
-[source,groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 tasks.register("plantUml2", PlantumlTask) {
     source("src/plantuml2")
@@ -63,7 +73,8 @@ tasks.register("plantUml2", PlantumlTask) {
     outputDirectory = layout.buildDirectory.dir("dist2")
 }
 ----
-[source,kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<PlantumlTask>("plantUml2") {
     source("src/plantuml2")
@@ -72,3 +83,4 @@ tasks.register<PlantumlTask>("plantUml2") {
     outputDirectory = layout.buildDirectory.dir("dist2")
 }
 ----
+====

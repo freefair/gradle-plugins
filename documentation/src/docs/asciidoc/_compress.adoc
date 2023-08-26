@@ -44,18 +44,22 @@ https://docs.gradle.org/current/dsl/org.gradle.api.Project.html#org.gradle.api.P
 methods which are described https://docs.gradle.org/current/userguide/working_with_files.html#sec:unpacking_archives_example[here]
 
 .Example
-[source,groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task example(type: Sync) {
     from commonsCompress.arTree(file("foo.ar"))
 }
 ----
-[source,kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<Sync>("example") {
     from(commonsCompress.arTree(file("foo.ar")))
 }
 ----
+====
 
 === `io.freefair.compress.ar`
 
@@ -78,7 +82,9 @@ This
 https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`]
 implementation can be used to create `ar` archives.
 
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task packageArArchive(type: io.freefair.gradle.plugins.compress.tasks.Ar) {
     archiveFileName = "my-distribution.ar"
@@ -89,7 +95,8 @@ task packageArArchive(type: io.freefair.gradle.plugins.compress.tasks.Ar) {
     longFileMode = org.apache.commons.compress.archivers.ar.ArArchiveOutputStream.LONGFILE_ERROR
 }
 ----
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.compress.tasks.Ar>("packageArArchive") {
     archiveFileName = "my-distribution.ar"
@@ -100,13 +107,16 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.Ar>("packageArArchive")
     longFileMode = org.apache.commons.compress.archivers.ar.ArArchiveOutputStream.LONGFILE_ERROR
 }
 ----
+====
 
 [#BZip2]
 === `BZip2`
 
 This task can be used to compress individual files using BZip2.
 
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task compressBZip2(type: io.freefair.gradle.plugins.compress.tasks.BZip2) {
     source "src/main/resources"
@@ -114,7 +124,8 @@ task compressBZip2(type: io.freefair.gradle.plugins.compress.tasks.BZip2) {
     fileExtension = "bz2"
 }
 ----
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.compress.tasks.BZip2>("compressBZip2") {
     source("src/main/resources")
@@ -122,6 +133,7 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.BZip2>("compressBZip2")
     fileExtension = "bz2"
 }
 ----
+====
 
 
 [#Cpio]
@@ -131,7 +143,9 @@ This
 https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`]
 implementation can be used to create `cpio` archives.
 
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task packageCpioArchive(type: io.freefair.gradle.plugins.compress.tasks.Cpio) {
     archiveFileName = "my-distribution.cpio"
@@ -145,7 +159,8 @@ task packageCpioArchive(type: io.freefair.gradle.plugins.compress.tasks.Cpio) {
 }
 ----
 
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.compress.tasks.Cpio>("packageCpioArchive") {
     archiveFileName = "my-distribution.cpio"
@@ -158,13 +173,16 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.Cpio>("packageCpioArchi
     encoding = "US-ASCII"
 }
 ----
+====
 
 [#Deflate]
 === `Deflate`
 
 This task can be used to compress individual files using the zlib deflate algorithm.
 
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task compressDeflate(type: io.freefair.gradle.plugins.compress.tasks.Deflate) {
     source "src/main/resources"
@@ -175,8 +193,8 @@ task compressDeflate(type: io.freefair.gradle.plugins.compress.tasks.Deflate) {
     withZlibHeader = false
 }
 ----
-
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.compress.tasks.Deflate>("compressDeflate") {
     source("src/main/resources")
@@ -187,13 +205,16 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.Deflate>("compressDefla
     withZlibHeader = false
 }
 ----
+====
 
 [#GZip]
 === `GZip`
 
 This task can be used to compress individual files using BZip2.
 
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task compressGZip(type: io.freefair.gradle.plugins.compress.tasks.GZip) {
     source "src/main/resources"
@@ -205,8 +226,8 @@ task compressGZip(type: io.freefair.gradle.plugins.compress.tasks.GZip) {
     addFilename = false
 }
 ----
-
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.compress.tasks.GZip>("compressGZip") {
     source("src/main/resources")
@@ -218,13 +239,16 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.GZip>("compressGZip") {
     addFilename = false
 }
 ----
+====
 
 [#LZMA]
 === `LZMA`
 
 This task can be used to compress individual files using LZMA.
 
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task compressLZMA(type: io.freefair.gradle.plugins.compress.tasks.LZMA) {
     source "src/main/resources"
@@ -232,8 +256,8 @@ task compressLZMA(type: io.freefair.gradle.plugins.compress.tasks.LZMA) {
     fileExtension = "lzma"
 }
 ----
-
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.compress.tasks.LZMA>("compressLZMA") {
     source("src/main/resources")
@@ -241,6 +265,7 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.LZMA>("compressLZMA") {
     fileExtension = "lzma"
 }
 ----
+====
 
 [#SevenZip]
 === `SevenZip`
@@ -249,7 +274,9 @@ This
 https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.AbstractArchiveTask.html[`AbstractArchiveTask`]
 implementation can be used to create `7z` archives.
 
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 task packageSevenZipArchive(type: io.freefair.gradle.plugins.compress.tasks.SevenZip) {
     archiveFileName = "my-distribution.7z"
@@ -260,8 +287,8 @@ task packageSevenZipArchive(type: io.freefair.gradle.plugins.compress.tasks.Seve
     contentCompression = org.apache.commons.compress.archivers.sevenz.SevenZMethod.LZMA2
 }
 ----
-
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 tasks.register<io.freefair.gradle.plugins.compress.tasks.SevenZip>("packageSevenZipArchive") {
     archiveFileName = "my-distribution.7z"
@@ -272,3 +299,4 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.SevenZip>("packageSeven
     contentCompression = org.apache.commons.compress.archivers.sevenz.SevenZMethod.LZMA2
 }
 ----
+====

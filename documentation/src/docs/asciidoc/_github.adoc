@@ -10,7 +10,9 @@ Common base plugin which is applied by the other plugins in this module.
 It adds the `github` extension to the project:
 
 .Configuration options of the `github` extension
-[source, groovy]
+====
+[source, groovy, role="primary"]
+.Groovy
 ----
 github {
     slug = "freefair" //<1>
@@ -20,7 +22,8 @@ github {
     travis = true //<5>
 }
 ----
-[source, kotlin]
+[source, kotlin, role="secondary"]
+.Kotlin
 ----
 github {
     slug = "freefair" //<1>
@@ -30,6 +33,7 @@ github {
     travis = true //<5>
 }
 ----
+====
 <1> The `owner/name` identifier of the GitHub repository.
 This is auto-detected using the configured git remotes.
 <2> The username which should be used when accessing the GitHub API.
