@@ -8,6 +8,7 @@ import com.github.gradle.node.util.DefaultProjectApiHelper
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
+import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Internal
@@ -16,6 +17,7 @@ import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.process.ExecResult
+import java.io.File
 import javax.inject.Inject
 
 
@@ -25,35 +27,44 @@ abstract class MjmlCompile : SourceTask() {
     abstract val objects: ObjectFactory
 
     @get:Internal
-    val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
+    val projectHelper: DefaultProjectApiHelper
 
     @get:Internal
-    val mjmlExtension = project.extensions.getByType(MjmlExtension::class.java)
+    val mjmlExtension: MjmlExtension
 
     @get:Internal
-    val nodeExtension = project.extensions.getByType(NodeExtension::class.java)
+    val nodeExtension: NodeExtension
 
     @get:Internal
-    val buildDirectory = project.layout.buildDirectory.asFile.get().absoluteFile
+    val buildDirectory: File
 
     init {
         include("**/*.mjml")
+        projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
+        mjmlExtension = project.extensions.getByType(MjmlExtension::class.java)
+        nodeExtension = project.extensions.getByType(NodeExtension::class.java)
+        buildDirectory = project.layout.buildDirectory.asFile.get().absoluteFile
     }
 
-    @OutputFiles
-    protected fun getOutputFiles(): FileTree? {
-        val files = project.fileTree(getDestinationDir())
-        files.include("**/*.html")
-        return files
-    }
+    @get:Internal
+    val processedFiles: MutableList<String> = mutableListOf()
 
     @Internal
     abstract fun getDestinationDir(): DirectoryProperty
+
+    @OutputFiles
+    protected fun getOutputFiles(): FileTree? {
+        val apply = objects.fileTree().from(getDestinationDir()).apply {
+            include(processedFiles)
+        }
+        return apply
+    }
 
     @TaskAction
     fun compileMjml() {
         source.files.forEach { file ->
             val outputFile = getDestinationDir().file(file.name.replace(".mjml", ".html"))
+            processedFiles.add(outputFile.get().asFile.name)
             val fullCommand: MutableList<String> = mutableListOf("mjml", file.absolutePath, "-o", outputFile.get().asFile.absolutePath, *buildArgs())
             val nodeExecConfiguration = NodeExecConfiguration(fullCommand, emptyMap(), buildDirectory, false, null)
             val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
