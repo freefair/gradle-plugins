@@ -27,9 +27,6 @@ class MjmlJavaPlugin : Plugin<Project> {
                     group = org.gradle.api.plugins.BasePlugin.BUILD_GROUP
                     description = "Compile mjml files for the " + sourceSet.name + " source set"
                 }
-            this.resources {
-                srcDir(outputDir)
-            }
             target.tasks.named(processResourcesTaskName, ProcessResources::class.java)
                 .configure {
                     from(mjmlCompileProvider)
