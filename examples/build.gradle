@@ -12,6 +12,7 @@ buildscript {
         classpath "io.freefair.gradle:mkdocs-plugin"
         classpath "io.freefair.gradle:code-generator-plugin"
         classpath "io.freefair.gradle:quicktype-plugin"
+        classpath "io.freefair.gradle:mjml-plugin"
     }
 
     repositories {

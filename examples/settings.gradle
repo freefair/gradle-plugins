@@ -43,4 +43,6 @@ include ":test-maven-plugin"
 include 'quicktype'
 include 'plantuml'
 
+include ":mjml"
+
 include ":okhttp"

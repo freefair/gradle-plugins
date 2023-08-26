@@ -1,0 +1,45 @@
+= MJML
+
+- https://mjml.io/
+- https://github.com/mjmlio/mjml/blob/master/packages/mjml-cli/README.md
+- https://github.com/node-gradle/gradle-node-plugin
+
+== MJML Plugin
+
+This chapter describes all the plugins contained in the `mjml-plugin` module.
+
+=== `io.freefair.mjml.base`
+
+This plugin adds the `mjml` extension to the project and create some basic tasks to install mjml via npm.
+
+[source,groovy]
+----
+mjml {
+    validationMode = ValidationMode.strict
+    minify = true
+    beautify = false
+    minifyOptions = "{\"minifyCSS\": true, \"removeEmptyAttributes\": false}"
+    juiceOptions = "{\"preserveImportant\": true}"
+    juicePreserveTags = "{\"myTag\": { \"start\": \"<#\", \"end\": \"</#\" }}"
+}
+----
+
+[source,kotlin]
+----
+mjml {
+    validationMode = ValidationMode.strict
+    minify = true
+    beautify = false
+    minifyOptions = "{\"minifyCSS\": true, \"removeEmptyAttributes\": false}"
+    juiceOptions = "{\"preserveImportant\": true}"
+    juicePreserveTags = "{\"myTag\": { \"start\": \"<#\", \"end\": \"</#\" }}"
+}
+----
+
+=== `io.freefair.mjml.java`
+
+This plugin adds the mjml compile task output to java's resources.
+
+== MJML Task
+
+Compiles your mjml files to html with the given configuration (see extension documentation).
