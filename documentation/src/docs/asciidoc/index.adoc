@@ -83,6 +83,8 @@ include::_maven-plugin.adoc[]
 
 include::_mkdocs.adoc[]
 
+include::_mjml.adoc[]
+
 include::_okhttp.adoc[]
 
 include::_plantuml.adoc[]

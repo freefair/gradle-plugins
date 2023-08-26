@@ -54,6 +54,7 @@ abstract class MjmlCompile : SourceTask() {
         }
     }
 
+
     private fun buildArgs(): Array<out String> {
         val result = mutableListOf<String>()
         val extension = project.extensions.getByType(MjmlExtension::class.java)

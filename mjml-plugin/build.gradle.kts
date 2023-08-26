@@ -22,7 +22,7 @@ gradlePlugin {
             description = "MJML Plugin"
             tags.set(listOf("mjml"))
         }
-        this.create("mjmlKotlin") {
+        this.create("mjmlJava") {
             id = "io.freefair.mjml.java"
             implementationClass = "io.freefair.gradle.plugins.mjml.MjmlJavaPlugin"
             displayName = "MJML Java Plugin"
