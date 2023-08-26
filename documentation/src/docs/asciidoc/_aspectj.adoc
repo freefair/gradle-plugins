@@ -33,7 +33,7 @@ This plugin adds AspectJ support to the project, by adding a `aspectj` directory
 
 Source contained in the `src/main/aspectj` directory will be compiled with `ajc` by the `compileAspectj` task.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -48,13 +48,13 @@ dependencies {
     implementation("org.aspectj:aspectjrt:1.9.8.RC3")
 }
 ----
-====
+--
 
 TIP: This is follows the same principles as the `groovy` and `scala` plugins.
 
 Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -71,12 +71,12 @@ dependencies {
     testAspect("com.example.foo:bar-aspect:1.0.0")
 }
 ----
-====
+--
 
 Additional jars/classes which should be woven and added to the output as well (the `-inpath`)
 can be declared as dependencies fo the `inpath` configuration:
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -93,7 +93,7 @@ dependencies {
     testInpath("com.example.foo:bar-lib:1.0.0")
 }
 ----
-====
+--
 
 === `io.freefair.aspectj.post-compile-weaving`
 
@@ -102,7 +102,7 @@ with an additional `ajc` action in order to perform post-compile-weaving.
 
 The output of the compilation (`javac`, etc.) becomes the `-inpath` for `ajc`.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -117,11 +117,11 @@ dependencies {
     implementation("org.aspectj:aspectjrt:1.9.8.RC3")
 }
 ----
-====
+--
 
 Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -138,12 +138,12 @@ dependencies {
     testAspect("com.example.foo:bar-aspect:1.0.0")
 }
 ----
-====
+--
 
 Additional jars/classes which should be woven and added to the output as well (the `-inpath`)
 can be declared as dependencies fo the `inpath` configuration:
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -160,7 +160,7 @@ dependencies {
     testInpath("com.example.foo:bar-lib:1.0.0")
 }
 ----
-====
+--
 
 The `-classpath`, `-source` and `-target`
 arguments of `ajc` are set automatically to the corresponding values taken from the compile task.
@@ -168,7 +168,7 @@ Additional `ajc` arguments can be configured using the `ajc.options.compilerArgs
 
 The following things are configurable:
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -217,7 +217,7 @@ tasks.compileTestJava {
     }
 }
 ----
-====
+--
 <1> Specifies if ajc should run at all. Defaults to `true`
 <2> The classpath containing ajc itself (`aspectjtools.jar`). Inferred from the compile/runtime classpaths by default.
 <3> The classpath containing additional advices to weave. This directly maps to the `-aspectpath` argument of ajc.
@@ -234,7 +234,7 @@ https://docs.gradle.org/{gradle_version}/javadoc/org/gradle/api/tasks/compile/Ab
 task can be used to run
 https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html[`ajc`].
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -257,4 +257,4 @@ tasks.register<AspectjCompile>("myAjcTask") {
     }
 }
 ----
-====
+--

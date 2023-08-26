@@ -16,7 +16,7 @@ It also configures all Lombok related tasks to use the `lombok` configuration.
 The used Lombok version can be customized using the `lombok` extension:
 
 .Setting a custom Lombok version
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -31,7 +31,7 @@ lombok {
     version = "1.18.28"
 }
 ----
-====
+--
 
 === `io.freefair.lombok`
 

@@ -6,7 +6,7 @@ An HTTP & HTTP/2 client for Android and Java applications
 == OkHttp Plugins
 
 == Apply plugin
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -21,13 +21,13 @@ plugins {
     id("io.freefair.okhttp")
 }
 ----
-====
+--
 
 === `io.freefair.okhttp`
 
 This plugin provides an `OkHttpClient` instance which can be used by other tasks and plugins.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -42,7 +42,7 @@ okHttp {
     loggingLevel = okhttp3.logging.HttpLoggingInterceptor.Level.BASIC
 }
 ----
-====
+--
 
 == OkHttp Tasks
 
@@ -59,7 +59,7 @@ common properties:
 
 === `DownloadFile`
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -76,13 +76,13 @@ tasks.register<io.freefair.gradle.plugins.okhttp.tasks.DownloadFile>("myDownload
     outputFile = file("build/foo.txt")
 }
 ----
-====
+--
 
 NOTE: See also <<OkHttpRequestTask>>
 
 === `UploadFile`
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -101,6 +101,6 @@ tasks.register<io.freefair.gradle.plugins.okhttp.tasks.UploadFile>("myUpload") {
     contentType = "text/plain"
 }
 ----
-====
+--
 
 NOTE: See also <<OkHttpRequestTask>>

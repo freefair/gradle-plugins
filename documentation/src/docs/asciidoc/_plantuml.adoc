@@ -4,7 +4,7 @@ This plugin generates images from plantuml files.
 
 == Basic usage
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -19,7 +19,7 @@ plugins {
     id("io.freefair.plantuml")
 }
 ----
-====
+--
 This adds a PlantUML task to gradle as well as a new source set. The images will be saved to the build directory.
 
 == Configuration options
@@ -41,7 +41,7 @@ This adds a PlantUML task to gradle as well as a new source set. The images will
 |===
 
 === Configure
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -58,11 +58,11 @@ tasks.plantUml {
     outputDirectory = layout.buildDirectory.dir("dist")
 }
 ----
-====
+--
 
 == Custom Task
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -83,4 +83,4 @@ tasks.register<PlantumlTask>("plantUml2") {
     outputDirectory = layout.buildDirectory.dir("dist2")
 }
 ----
-====
+--

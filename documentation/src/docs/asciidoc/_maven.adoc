@@ -23,7 +23,7 @@ to Gradle.
 
 The overlays can be configured using the `overlays` property, which is added to every `War` task.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -46,7 +46,7 @@ war {
     }
 }
 ----
-[source, groovy, role="secondary"]
+[source, kotlin, role="secondary"]
 .Kotlin
 ----
 tasks.withType<org.gradle.api.tasks.bundling.War> {
@@ -67,7 +67,7 @@ tasks.withType<org.gradle.api.tasks.bundling.War> {
     }
 }
 ----
-====
+--
 <1> The source of the overlay. This can be another project, a File instance or a dependency notation.
 <2> Whether the overlay is enabled or should be skipped.
 <3> The target relative path in the webapp structure. By default, the content of the overlay is added in the root structure of the webapp.
@@ -88,7 +88,7 @@ feature of the
 https://maven.apache.org/plugins/maven-war-plugin/index.html[Maven War Plugin]
 to Gradle.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -108,7 +108,7 @@ war {
 }
 ----
 
-====
+--
 <1> Whether classes (that is the content of the WEB-INF/classes directory) should be attached to the project as an additional artifact.
 <2> The classifier to use for the attached classes artifact.
 
@@ -120,7 +120,7 @@ feature of the
 https://maven.apache.org/plugins/maven-war-plugin/index.html[Maven War Plugin]
 to Gradle.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -136,7 +136,7 @@ war {
     archiveClasses.set(true) //<1>
 }
 ----
-====
+--
 <1> Whether a JAR file will be created for the classes in the webapp. Using this optional configuration parameter will make the compiled classes to be archived into a JAR file and the classes directory will then be excluded from the webapp.
 
 === `io.freefair.aggregate-javadoc`
@@ -148,7 +148,7 @@ This plugin is designed to be used in multi-module Gradle builds. It can either 
 
 The projects which sources should be included into the aggregated javadocs have to be added as dependencies to the `javadoc` configuration:
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -181,7 +181,7 @@ dependencies {
     }
 }
 ----
-====
+--
 
 
 === `io.freefair.aggregate-javadoc-legacy`
@@ -225,7 +225,7 @@ This plugin applies the `maven-publish` and `war` plugins and configures a `mave
 
 This plugin adds a Maven-like `optional` configuration to the project.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -240,7 +240,7 @@ dependencies {
     optional("com.example:foo-bar:1.0.0")
 }
 ----
-====
+--
 
 === `io.freefair.maven-central.validate-poms`
 
@@ -255,7 +255,7 @@ task.
 
 This task validates, that a given pom file contains all the information required by maven central.
 
-====
+--
 [source, groovy, role="primary"]
 .Groovy
 ----
@@ -272,4 +272,4 @@ tasks.register<io.freefair.gradle.plugins.maven.central.ValidateMavenPom>("valid
     ignoreFailures = false
 }
 ----
-====
+--

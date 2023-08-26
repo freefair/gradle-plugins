@@ -4,7 +4,7 @@ Lars Grefer <github@larsgrefer.de>; Dennis Fricke
 :sectnums:
 :icons: font
 :doctype: book
-:source-highlighter: coderay
+:source-highlighter: rouge
 :sectanchors:
 
 = Introduction
