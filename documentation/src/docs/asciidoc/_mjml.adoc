@@ -24,6 +24,18 @@ mjml {
 }
 ----
 
+[source,kotlin]
+----
+mjml {
+    validationMode = ValidationMode.strict
+    minify = true
+    beautify = false
+    minifyOptions = "{\"minifyCSS\": true, \"removeEmptyAttributes\": false}"
+    juiceOptions = "{\"preserveImportant\": true}"
+    juicePreserveTags = "{\"myTag\": { \"start\": \"<#\", \"end\": \"</#\" }}"
+}
+----
+
 === `io.freefair.mjml.java`
 
 This plugin adds the mjml compile task output to java's resources.
