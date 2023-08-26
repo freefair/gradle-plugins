@@ -13,10 +13,20 @@ It adds the `github` extension to the project:
 [source, groovy]
 ----
 github {
-    slug //<1>
+    slug = "freefair" //<1>
     username = findProperty('githubUsername') //<2>
     token = findProperty('githubToken') //<3>
     tag = 'HEAD' //<4>
+    travis = true //<5>
+}
+----
+[source, kotlin]
+----
+github {
+    slug = "freefair" //<1>
+    username = findProperty("githubUsername") //<2>
+    token = findProperty("githubToken") //<3>
+    tag = "HEAD" //<4>
     travis = true //<5>
 }
 ----

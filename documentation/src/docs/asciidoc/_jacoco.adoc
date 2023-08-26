@@ -36,3 +36,16 @@ task dump(type: io.freefair.gradle.plugins.jacoco.tasks.JacocoDump) {
     append = true
 }
 ----
+
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.jacoco.tasks.JacocoDump>("dump") {
+    address = "localhost"
+    port = 6300
+    retryCount = 10
+    dump = true
+    reset = false
+    destfile = file("build/dump.exec")
+    append = true
+}
+----

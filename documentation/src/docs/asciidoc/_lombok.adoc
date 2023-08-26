@@ -44,6 +44,13 @@ task myJavadocs(type: Javadoc) {
   source = delombok
 }
 ----
+
+[source,kotlin]
+----
+tasks.register<Javadoc>("myJavadocs") {
+  source = tasks.named<Delombok>("delombok")
+}
+----
 ====
 
 [NOTE]

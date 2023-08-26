@@ -50,6 +50,12 @@ task example(type: Sync) {
     from commonsCompress.arTree(file("foo.ar"))
 }
 ----
+[source,kotlin]
+----
+tasks.register<Sync>("example") {
+    from(commonsCompress.arTree(file("foo.ar")))
+}
+----
 
 === `io.freefair.compress.ar`
 
@@ -83,6 +89,17 @@ task packageArArchive(type: io.freefair.gradle.plugins.compress.tasks.Ar) {
     longFileMode = org.apache.commons.compress.archivers.ar.ArArchiveOutputStream.LONGFILE_ERROR
 }
 ----
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.compress.tasks.Ar>("packageArArchive") {
+    archiveFileName = "my-distribution.ar"
+    destinationDirectory = file("$buildDir/dist")
+
+    from("$buildDir/toArchive")
+
+    longFileMode = org.apache.commons.compress.archivers.ar.ArArchiveOutputStream.LONGFILE_ERROR
+}
+----
 
 [#BZip2]
 === `BZip2`
@@ -97,6 +114,15 @@ task compressBZip2(type: io.freefair.gradle.plugins.compress.tasks.BZip2) {
     fileExtension = "bz2"
 }
 ----
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.compress.tasks.BZip2>("compressBZip2") {
+    source("src/main/resources")
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "bz2"
+}
+----
+
 
 [#Cpio]
 === `Cpio`
@@ -119,6 +145,20 @@ task packageCpioArchive(type: io.freefair.gradle.plugins.compress.tasks.Cpio) {
 }
 ----
 
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.compress.tasks.Cpio>("packageCpioArchive") {
+    archiveFileName = "my-distribution.cpio"
+    destinationDirectory = file("$buildDir/dist")
+
+    from("$buildDir/toArchive")
+
+    format = org.apache.commons.compress.archivers.cpio.CpioConstants.FORMAT_NEW
+    blockSize = 512
+    encoding = "US-ASCII"
+}
+----
+
 [#Deflate]
 === `Deflate`
 
@@ -128,6 +168,18 @@ This task can be used to compress individual files using the zlib deflate algori
 ----
 task compressDeflate(type: io.freefair.gradle.plugins.compress.tasks.Deflate) {
     source "src/main/resources"
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "deflate"
+
+    compressionLevel = 9
+    withZlibHeader = false
+}
+----
+
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.compress.tasks.Deflate>("compressDeflate") {
+    source("src/main/resources")
     destinationDir = file("$buildDir/compressed")
     fileExtension = "deflate"
 
@@ -154,6 +206,19 @@ task compressGZip(type: io.freefair.gradle.plugins.compress.tasks.GZip) {
 }
 ----
 
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.compress.tasks.GZip>("compressGZip") {
+    source("src/main/resources")
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "gz"
+
+    compressionLevel = 9
+    comment = ""
+    addFilename = false
+}
+----
+
 [#LZMA]
 === `LZMA`
 
@@ -163,6 +228,15 @@ This task can be used to compress individual files using LZMA.
 ----
 task compressLZMA(type: io.freefair.gradle.plugins.compress.tasks.LZMA) {
     source "src/main/resources"
+    destinationDir = file("$buildDir/compressed")
+    fileExtension = "lzma"
+}
+----
+
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.compress.tasks.LZMA>("compressLZMA") {
+    source("src/main/resources")
     destinationDir = file("$buildDir/compressed")
     fileExtension = "lzma"
 }
@@ -182,6 +256,18 @@ task packageSevenZipArchive(type: io.freefair.gradle.plugins.compress.tasks.Seve
     destinationDirectory = file("$buildDir/dist")
 
     from "$buildDir/toArchive"
+
+    contentCompression = org.apache.commons.compress.archivers.sevenz.SevenZMethod.LZMA2
+}
+----
+
+[source, kotlin]
+----
+tasks.register<io.freefair.gradle.plugins.compress.tasks.SevenZip>("packageSevenZipArchive") {
+    archiveFileName = "my-distribution.7z"
+    destinationDirectory = file("$buildDir/dist")
+
+    from("$buildDir/toArchive")
 
     contentCompression = org.apache.commons.compress.archivers.sevenz.SevenZMethod.LZMA2
 }

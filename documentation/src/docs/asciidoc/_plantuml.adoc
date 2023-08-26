@@ -10,6 +10,12 @@ plugins {
     id "io.freefair.plantuml"
 }
 ----
+[source,kotlin]
+----
+plugins {
+    id("io.freefair.plantuml")
+}
+----
 This adds a PlantUML task to gradle as well as a new source set. The images will be saved to the build directory.
 
 == Configuration options
@@ -30,11 +36,36 @@ This adds a PlantUML task to gradle as well as a new source set. The images will
 | `build/plantuml`
 |===
 
+=== Configure
+[source,groovy]
+----
+plantUml {
+    fileFormat = "PNG"
+    outputDirectory = layout.buildDirectory.dir("dist")
+}
+----
+[source,kotlin]
+----
+tasks.plantUml {
+    fileFormat = "PNG"
+    outputDirectory = layout.buildDirectory.dir("dist")
+}
+----
+
 == Custom Task
 
 [source,groovy]
 ----
 tasks.register("plantUml2", PlantumlTask) {
+    source("src/plantuml2")
+    includePattern = "**/*.tuml"
+    fileFormat = "SVG"
+    outputDirectory = layout.buildDirectory.dir("dist2")
+}
+----
+[source,kotlin]
+----
+tasks.register<PlantumlTask>("plantUml2") {
     source("src/plantuml2")
     includePattern = "**/*.tuml"
     fileFormat = "SVG"

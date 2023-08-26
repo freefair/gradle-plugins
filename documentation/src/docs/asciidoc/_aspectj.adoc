@@ -40,6 +40,13 @@ dependencies {
 }
 ----
 
+[source,kotlin]
+----
+dependencies {
+    implementation("org.aspectj:aspectjrt:1.9.8.RC3")
+}
+----
+
 TIP: This is follows the same principles as the `groovy` and `scala` plugins.
 
 Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
@@ -52,6 +59,15 @@ dependencies {
 }
 ----
 
+[source,kotlin]
+----
+dependencies {
+    aspect(project(":my-aspect"))
+    testAspect("com.example.foo:bar-aspect:1.0.0")
+}
+----
+
+
 Additional jars/classes which should be woven and added to the output as well (the `-inpath`)
 can be declared as dependencies fo the `inpath` configuration:
 
@@ -60,6 +76,14 @@ can be declared as dependencies fo the `inpath` configuration:
 dependencies {
     inpath project(":my-lib")
     testInpath "com.example.foo:bar-lib:1.0.0"
+}
+----
+
+[source,kotlin]
+----
+dependencies {
+    inpath(project(":my-lib"))
+    testInpath("com.example.foo:bar-lib:1.0.0")
 }
 ----
 
@@ -76,6 +100,12 @@ dependencies {
     implementation "org.aspectj:aspectjrt:1.9.8.RC3"
 }
 ----
+[source,kotlin]
+----
+dependencies {
+    implementation("org.aspectj:aspectjrt:1.9.8.RC3")
+}
+----
 
 Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
 
@@ -84,6 +114,13 @@ Additional advices (the `-aspectpath`) can be declared as dependencies of the `a
 dependencies {
     aspect project(":my-aspect")
     testAspect "com.example.foo:bar-aspect:1.0.0"
+}
+----
+[source,kotlin]
+----
+dependencies {
+    aspect(project(":my-aspect"))
+    testAspect("com.example.foo:bar-aspect:1.0.0")
 }
 ----
 
@@ -95,6 +132,14 @@ can be declared as dependencies fo the `inpath` configuration:
 dependencies {
     inpath project(":my-lib")
     testInpath "com.example.foo:bar-lib:1.0.0"
+}
+----
+
+[source,kotlin]
+----
+dependencies {
+    inpath(project(":my-lib"))
+    testInpath("com.example.foo:bar-lib:1.0.0")
 }
 ----
 
@@ -127,6 +172,30 @@ compileTestJava {
     }
 }
 ----
+
+[source,kotlin]
+----
+tasks.compileJava {
+    configure<AjcAction> {
+        enabled = true //<1>
+        classpath //<2>
+        options {
+            aspectpath.setFrom(configurations.aspect) //<3>
+            compilerArgs = listOf("") //<4>
+        }
+    }
+}
+tasks.compileTestJava {
+    configure<AjcAction> {
+        enabled = true //<1>
+        classpath //<2>
+        options {
+            aspectpath.setFrom(configurations.testAspect) //<3>
+            compilerArgs = listOf("") //<4>
+        }
+    }
+}
+----
 <1> Specifies if ajc should run at all. Defaults to `true`
 <2> The classpath containing ajc itself (`aspectjtools.jar`). Inferred from the compile/runtime classpaths by default.
 <3> The classpath containing additional advices to weave. This directly maps to the `-aspectpath` argument of ajc.
@@ -144,6 +213,7 @@ task can be used to run
 https://www.eclipse.org/aspectj/doc/released/devguide/ajc-ref.html[`ajc`].
 
 [source,groovy]
+----
 task myAjcTask(type: io.freefair.gradle.plugins.aspectj.AspectjCompile) {
     aspectjClasspath.setFrom configurations.aspectj
     ajcOptions {
@@ -151,3 +221,15 @@ task myAjcTask(type: io.freefair.gradle.plugins.aspectj.AspectjCompile) {
         aspectpath = files()
     }
 }
+----
+
+[source,kotlin]
+----
+tasks.register<AspectjCompile>("myAjcTask") {
+    aspectjClasspath.setFrom(configurations.aspectj)
+    ajcOptions {
+        inpath = files()
+        aspectpath = files()
+    }
+}
+----
