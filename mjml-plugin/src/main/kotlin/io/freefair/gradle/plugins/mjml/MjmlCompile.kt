@@ -27,6 +27,15 @@ abstract class MjmlCompile : SourceTask() {
     @get:Internal
     val projectHelper = project.objects.newInstance<DefaultProjectApiHelper>()
 
+    @get:Internal
+    val mjmlExtension = project.extensions.getByType(MjmlExtension::class.java)
+
+    @get:Internal
+    val nodeExtension = project.extensions.getByType(NodeExtension::class.java)
+
+    @get:Internal
+    val buildDirectory = project.layout.buildDirectory.asFile.get().absoluteFile
+
     init {
         include("**/*.mjml")
     }
@@ -46,10 +55,9 @@ abstract class MjmlCompile : SourceTask() {
         source.files.forEach { file ->
             val outputFile = getDestinationDir().file(file.name.replace(".mjml", ".html"))
             val fullCommand: MutableList<String> = mutableListOf("mjml", file.absolutePath, "-o", outputFile.get().asFile.absolutePath, *buildArgs())
-            val nodeExecConfiguration = NodeExecConfiguration(fullCommand, emptyMap(), project.layout.buildDirectory.asFile.get().absoluteFile, false, null)
+            val nodeExecConfiguration = NodeExecConfiguration(fullCommand, emptyMap(), buildDirectory, false, null)
             val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-            val extension = project.extensions.getByType(NodeExtension::class.java)
-            val result = npmExecRunner.executeNpxCommand(projectHelper, extension, nodeExecConfiguration, VariantComputer())
+            val result = npmExecRunner.executeNpxCommand(projectHelper, nodeExtension, nodeExecConfiguration, VariantComputer())
             if(result.exitValue != 0) throw Exception("Mjml failed")
         }
     }
@@ -57,13 +65,12 @@ abstract class MjmlCompile : SourceTask() {
 
     private fun buildArgs(): Array<out String> {
         val result = mutableListOf<String>()
-        val extension = project.extensions.getByType(MjmlExtension::class.java)
-        result.add("-l", extension.validationMode.get().name.lowercase())
-        if(extension.minify.get()) result.add("--config.minify", "true")
-        if(extension.beautify.get()) result.add("--config.beautify", "true")
-        if(extension.minifyOptions.get().isNotBlank()) result.add("--config.minifyOptions", extension.minifyOptions.get())
-        if(extension.juiceOptions.get().isNotBlank()) result.add("--config.juiceOptions", extension.juiceOptions.get())
-        if(extension.juicePreserveTags.get().isNotBlank()) result.add("--config.juicePreserveTags", extension.juicePreserveTags.get())
+        result.add("-l", mjmlExtension.validationMode.get().name.lowercase())
+        if(mjmlExtension.minify.get()) result.add("--config.minify", "true")
+        if(mjmlExtension.beautify.get()) result.add("--config.beautify", "true")
+        if(mjmlExtension.minifyOptions.get().isNotBlank()) result.add("--config.minifyOptions", mjmlExtension.minifyOptions.get())
+        if(mjmlExtension.juiceOptions.get().isNotBlank()) result.add("--config.juiceOptions", mjmlExtension.juiceOptions.get())
+        if(mjmlExtension.juicePreserveTags.get().isNotBlank()) result.add("--config.juicePreserveTags", mjmlExtension.juicePreserveTags.get())
         return result.toTypedArray()
     }
 
