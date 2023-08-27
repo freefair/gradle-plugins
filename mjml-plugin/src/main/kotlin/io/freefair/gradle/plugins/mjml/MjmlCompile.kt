@@ -3,20 +3,16 @@ package io.freefair.gradle.plugins.mjml
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.exec.NodeExecConfiguration
 import com.github.gradle.node.npm.exec.NpmExecRunner
-import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.util.DefaultProjectApiHelper
 import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileTree
-import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFiles
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.newInstance
-import org.gradle.process.ExecResult
 import java.io.File
 import javax.inject.Inject
 
@@ -46,30 +42,24 @@ abstract class MjmlCompile : SourceTask() {
         buildDirectory = project.layout.buildDirectory.asFile.get().absoluteFile
     }
 
-    @get:Internal
-    val processedFiles: MutableList<String> = mutableListOf()
-
-    @Internal
+    @OutputDirectory
     abstract fun getDestinationDir(): DirectoryProperty
-
-    @OutputFiles
-    protected fun getOutputFiles(): FileTree? {
-        val apply = objects.fileTree().from(getDestinationDir()).apply {
-            include(processedFiles)
-        }
-        return apply
-    }
 
     @TaskAction
     fun compileMjml() {
-        source.files.forEach { file ->
-            val outputFile = getDestinationDir().file(file.name.replace(".mjml", ".html"))
-            processedFiles.add(outputFile.get().asFile.name)
-            val fullCommand: MutableList<String> = mutableListOf("mjml", file.absolutePath, "-o", outputFile.get().asFile.absolutePath, *buildArgs())
-            val nodeExecConfiguration = NodeExecConfiguration(fullCommand, emptyMap(), buildDirectory, false, null)
-            val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
-            val result = npmExecRunner.executeNpxCommand(projectHelper, nodeExtension, nodeExecConfiguration, VariantComputer())
-            if(result.exitValue != 0) throw Exception("Mjml failed")
+        source.visit {
+            if (name.endsWith(".mjml")) {
+                val filePath = relativePath.pathString
+                val absolutOutputFile = getDestinationDir().file(filePath.replace(".mjml", ".html")).get().asFile
+                if(!absolutOutputFile.parentFile.exists()) {
+                    absolutOutputFile.parentFile.mkdirs()
+                }
+                val fullCommand: MutableList<String> = mutableListOf("mjml", file.absolutePath, "-o", absolutOutputFile.absolutePath, *buildArgs())
+                val nodeExecConfiguration = NodeExecConfiguration(fullCommand, emptyMap(), buildDirectory, false, null)
+                val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
+                val result = npmExecRunner.executeNpxCommand(projectHelper, nodeExtension, nodeExecConfiguration, VariantComputer())
+                if(result.exitValue != 0) throw Exception("Mjml failed")
+            }
         }
     }
 
