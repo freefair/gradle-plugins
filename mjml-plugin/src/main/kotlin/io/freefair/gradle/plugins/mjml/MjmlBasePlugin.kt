@@ -10,14 +10,9 @@ import org.gradle.api.Project
  * @author Dennis Fricke
  */
 class MjmlBasePlugin : Plugin<Project> {
-    var mjmlExtension: MjmlExtension? = null
-        private set
-
-    private var project: Project? = null
 
     override fun apply(project: Project) {
-        this.project = project
-        mjmlExtension = project.extensions.create("mjml", MjmlExtension::class.java)
+        val mjmlExtension = project.extensions.create("mjml", MjmlExtension::class.java)
 
         project.plugins.apply(NodePlugin::class.java)
 
@@ -29,6 +24,13 @@ class MjmlBasePlugin : Plugin<Project> {
         project.tasks.withType(MjmlCompile::class.java)
             .configureEach {
                 this.dependsOn("installMjml")
+                this.workingDir.set(project.layout.buildDirectory)
+                this.validationLevel.convention(mjmlExtension.validationMode.map { m -> m.name.lowercase() })
+                this.beautify.convention(mjmlExtension.beautify)
+                this.minify.convention(mjmlExtension.minify)
+                this.minifyOptions.convention(mjmlExtension.minifyOptions)
+                this.juiceOptions.convention(mjmlExtension.juiceOptions)
+                this.juicePreserveTags.convention(mjmlExtension.juicePreserveTags)
             }
     }
 }
