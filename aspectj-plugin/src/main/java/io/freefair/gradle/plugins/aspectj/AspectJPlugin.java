@@ -90,7 +90,8 @@ public class AspectJPlugin implements Plugin<Project> {
         project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
 
         final TaskProvider<AspectjCompile> compileTask = project.getTasks().register(sourceSet.getCompileTaskName("aspectj"), AspectjCompile.class, compile -> {
-            JvmPluginsHelper.configureForSourceSet(sourceSet, aspectjSource, compile, compile.getOptions(), project);
+            JvmPluginsHelper.compileAgainstJavaOutputs(compile, sourceSet, project.getObjects());
+            JvmPluginsHelper.configureAnnotationProcessorPath(sourceSet, aspectjSource, compile.getOptions(), project);
             compile.dependsOn(sourceSet.getCompileJavaTaskName());
             compile.getLauncher().convention(defaultLauncher);
             compile.setDescription("Compiles the " + sourceSet.getName() + " AspectJ source.");
