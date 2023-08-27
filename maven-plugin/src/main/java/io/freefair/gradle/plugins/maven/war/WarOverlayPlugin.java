@@ -10,9 +10,11 @@ import org.gradle.api.artifacts.ExternalDependency;
 import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.CopySpec;
+import org.gradle.api.file.Directory;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.internal.file.copy.CopySpecInternal;
 import org.gradle.api.plugins.WarPlugin;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Sync;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import org.gradle.api.tasks.bundling.War;
@@ -122,10 +124,11 @@ public class WarOverlayPlugin implements Plugin<Project> {
     private void configureOverlay(WarOverlay overlay, Callable<FileTree> warTree) {
         War warTask = overlay.getWarTask();
 
-        String capitalizedWarTaskName = StringGroovyMethods.capitalize((CharSequence) warTask.getName());
-        String capitalizedOverlayName = StringGroovyMethods.capitalize((CharSequence) overlay.getName());
+        String capitalizedWarTaskName = StringGroovyMethods.capitalize(warTask.getName());
+        String capitalizedOverlayName = StringGroovyMethods.capitalize(overlay.getName());
 
-        File destinationDir = new File(project.getBuildDir(), String.format("overlays/%s/%s", warTask.getName(), overlay.getName()));
+        Provider<Directory> destinationDir = project.getLayout().getBuildDirectory().dir(String.format("overlays/%s/%s", warTask.getName(), overlay.getName()));
+
         Action<CopySpec> extractOverlay = copySpec -> {
             copySpec.into(destinationDir);
             copySpec.from(warTree);
@@ -137,13 +140,13 @@ public class WarOverlayPlugin implements Plugin<Project> {
 
         if (overlay.isEnableCompilation()) {
 
-            if (!destinationDir.exists() || isEmpty(destinationDir)) {
+            if (!destinationDir.get().getAsFile().exists() || isEmpty(destinationDir.get().getAsFile())) {
                 project.sync(extractOverlay);
             }
 
             project.getTasks().getByName(CLEAN_TASK_NAME).finalizedBy(extractOverlayTask);
 
-            ConfigurableFileCollection classes = project.files(new File(destinationDir, "WEB-INF/classes"))
+            ConfigurableFileCollection classes = project.files(destinationDir.get().dir("WEB-INF/classes"))
                     .builtBy(extractOverlayTask);
 
             project.getDependencies().add(getClasspathConfigurationName(overlay), classes);

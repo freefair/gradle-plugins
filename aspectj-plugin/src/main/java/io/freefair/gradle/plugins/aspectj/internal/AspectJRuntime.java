@@ -46,7 +46,7 @@ public class AspectJRuntime {
     public FileCollection inferAspectjClasspath(final FileCollection classpath) {
         // alternatively, we could return project.getLayout().files(Runnable)
         // would differ in at least the following ways: 1. live 2. no autowiring
-        return new LazilyInitializedFileCollection() {
+        return new LazilyInitializedFileCollection(project.getTaskDependencyFactory()) {
 
             @Override
             public String getDisplayName() {

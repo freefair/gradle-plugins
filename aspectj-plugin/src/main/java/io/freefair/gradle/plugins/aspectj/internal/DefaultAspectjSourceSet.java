@@ -1,21 +1,14 @@
 package io.freefair.gradle.plugins.aspectj.internal;
 
-import groovy.lang.Closure;
 import io.freefair.gradle.plugins.aspectj.AspectjSourceDirectorySet;
 import io.freefair.gradle.plugins.aspectj.AspectjSourceSet;
-import io.freefair.gradle.plugins.aspectj.WeavingSourceSet;
 import lombok.Getter;
-import org.gradle.api.Action;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.tasks.DefaultSourceSet;
 import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.reflect.HasPublicType;
 import org.gradle.api.reflect.TypeOf;
 import org.gradle.api.tasks.SourceSet;
-import org.gradle.internal.deprecation.DeprecationLogger;
-import org.gradle.util.ConfigureUtil;
-
-import javax.annotation.Nullable;
 
 /**
  * @see org.gradle.api.internal.tasks.DefaultGroovySourceSet
@@ -29,7 +22,7 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
         String name = sourceSet.getName();
         String displayName = ((DefaultSourceSet) sourceSet).getDisplayName();
 
-        AspectjSourceDirectorySet aspectj = new DefaultAspectjSourceDirectorySet(objectFactory.sourceDirectorySet("aspectj", displayName + " AspectJ source"));
+        AspectjSourceDirectorySet aspectj = createAspectjSourceDirectorySet(name, displayName, objectFactory);
         aspectj.getFilter().include("**/*.java", "**/*.aj");
         SourceDirectorySet allAspectj = objectFactory.sourceDirectorySet("all" + name, displayName + " AspectJ source");
         allAspectj.source(aspectj);
@@ -37,6 +30,12 @@ public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements 
 
         sourceSet.getExtensions().add("aspectj", aspectj);
         sourceSet.getExtensions().add("allAspectj", allAspectj);
+    }
+
+    private static AspectjSourceDirectorySet createAspectjSourceDirectorySet(String name, String displayName, ObjectFactory objectFactory) {
+        AspectjSourceDirectorySet aspectjSourceDirectorySet = objectFactory.newInstance(DefaultAspectjSourceDirectorySet.class, objectFactory.sourceDirectorySet(name, displayName + " AspectJ source"));
+        aspectjSourceDirectorySet.getFilter().include("**/*.java", "**/*.aj");
+        return aspectjSourceDirectorySet;
     }
 
     @Override

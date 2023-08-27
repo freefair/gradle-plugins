@@ -15,11 +15,7 @@ import org.gradle.internal.deprecation.DeprecationLogger;
 @Data
 public class DefaultWeavingSourceSet implements WeavingSourceSet, HasPublicType {
 
-    private final SourceSet sourceSet;
-
     public DefaultWeavingSourceSet(SourceSet sourceSet, ObjectFactory objectFactory) {
-        this.sourceSet = sourceSet;
-
         sourceSet.getExtensions().add("aspectPath", objectFactory.fileCollection());
         sourceSet.getExtensions().add("inPath", objectFactory.fileCollection());
     }
