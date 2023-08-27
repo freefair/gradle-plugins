@@ -3,7 +3,7 @@ apply plugin: "io.freefair.javadocs"
 apply plugin: "io.freefair.github.dependency-manifest"
 
 dependencies {
-    implementation platform("org.springframework.boot:spring-boot-dependencies:2.7.14")
+    implementation platform("org.springframework.boot:spring-boot-dependencies:2.7.15")
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
     implementation "org.springframework.boot:spring-boot-starter-web"
 }
