@@ -11,9 +11,11 @@ import de.larsgrefer.sass.embedded.logging.Slf4jLoggingHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.GradleException;
-import org.gradle.api.Incubating;
 import org.gradle.api.UncheckedIOException;
-import org.gradle.api.file.*;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.EmptyFileVisitor;
+import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.ListProperty;
@@ -25,6 +27,7 @@ import sass.embedded_protocol.EmbeddedSass.OutboundMessage.CompileResponse.Compi
 import sass.embedded_protocol.EmbeddedSass.OutboundMessage.VersionResponse;
 import sass.embedded_protocol.EmbeddedSass.OutputStyle;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -38,7 +41,6 @@ import java.util.LinkedHashSet;
 @Getter
 @Setter
 @CacheableTask
-@Incubating
 public abstract class SassCompile extends SourceTask {
 
     public SassCompile() {
@@ -51,15 +53,7 @@ public abstract class SassCompile extends SourceTask {
         }
     }
 
-    @OutputFiles
-    protected FileTree getOutputFiles() {
-        ConfigurableFileTree files = getProject().fileTree(getDestinationDir());
-        files.include("**/*.css");
-        files.include("**/*.css.map");
-        return files;
-    }
-
-    @Internal
+    @OutputDirectory
     public abstract DirectoryProperty getDestinationDir();
 
     @TaskAction
@@ -91,14 +85,10 @@ public abstract class SassCompile extends SourceTask {
             VersionResponse version = compiler.getVersion();
             getLogger().info("{}", version);
 
-            getSource().visit(new FileVisitor() {
-                @Override
-                public void visitDir(FileVisitDetails fileVisitDetails) {
-
-                }
+            getSource().visit(new EmptyFileVisitor() {
 
                 @Override
-                public void visitFile(FileVisitDetails fileVisitDetails) {
+                public void visitFile(@Nonnull FileVisitDetails fileVisitDetails) {
                     String name = fileVisitDetails.getName();
                     if (name.startsWith("_"))
                         return;
