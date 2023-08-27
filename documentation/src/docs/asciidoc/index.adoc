@@ -1,14 +1,15 @@
 = FreeFair Gradle Plugin Collection
-Lars Grefer <github@larsgrefer.de>; Dennis Fricke
+Lars Grefer; Dennis Fricke
 :toc: left
 :sectnums:
 :icons: font
 :doctype: book
-:source-highlighter: coderay
+:source-highlighter: rouge
 :sectanchors:
+:partnums:
+:part-signifier: Module
 
-= Introduction
-
+[colophon]
 == About the Documentation
 
 The documentation of the FreeFair Gradle Plugin collection {revnumber} consists of two parts:
@@ -33,15 +34,27 @@ Each plugin can be included using the Plugins DSL
 or by referencing its containing module in the `buildscript`-block:
 
 .Using the plugins DSL
-[source,groovy,subs=attributes+]
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
 ----
 plugins {
     id "io.freefair.lombok" version "{revnumber}"
 }
 ----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.freefair.lombok") version "{revnumber}"
+}
+----
+--
 
 .Using legacy plugin application
-[source,groovy,subs=attributes+]
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
 ----
 buildscript {
   repositories {
@@ -56,6 +69,23 @@ buildscript {
 
 apply plugin: "io.freefair.lombok"
 ----
+[source,groovy,subs=attributes+,role="secondary"]
+.Kotlin
+----
+buildscript {
+  repositories {
+    maven {
+      url = uri("https://plugins.gradle.org/m2/")
+    }
+  }
+  dependencies {
+    classpath("io.freefair.gradle:lombok-plugin:{revnumber}")
+  }
+}
+
+apply(plugin = "io.freefair.lombok")
+----
+--
 
 == System Requirements
 

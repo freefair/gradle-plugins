@@ -12,7 +12,9 @@ This chapter describes all the plugins contained in the `embedded-sass-plugin` m
 
 This plugin adds the `sass` extension to the project and applies it to all `SassCompile` tasks.
 
-[source,groovy]
+--
+[source, groovy, role="primary"]
+.Groovy
 ----
 sass {
     omitSourceMapUrl = false
@@ -22,17 +24,39 @@ sass {
     sourceMapEnabled = true
 }
 ----
+[source, kotlin, role="secondary"]
+.Kotlin
+----
+sass {
+    omitSourceMapUrl = false
+    outputStyle = sass.embedded_protocol.EmbeddedSass.OutputStyle.EXPANDED
+    sourceMapContents = false
+    sourceMapEmbed = false
+    sourceMapEnabled = true
+}
+----
+--
 
 === `io.freefair.sass-webjars`
 
 This plugin adds webjars support to the sass compilation:
 
-[source,groovy]
+--
+[source, groovy, role="primary"]
+.Groovy
 ----
 dependencies {
-    compile 'org.webjars:bootstrap:5.1.3'
+    implementation 'org.webjars:bootstrap:5.1.3'
 }
 ----
+[source, kotlin, role="secondary"]
+.Kotlin
+----
+dependencies {
+    implementation("org.webjars:bootstrap:5.1.3")
+}
+----
+--
 
 [source,scss]
 ----

@@ -4,10 +4,16 @@ plugins {
     id 'io.freefair.javadoc-links'
 }
 
+configurations {
+    asciidoctorExt
+}
+
 asciidoctor {
     baseDirFollowsSourceDir()
 
     attributes gradle_version: gradle.gradleVersion
+
+    configurations 'asciidoctorExt'
 
     inputs.dir("src/docs/asciidoc")
 }
@@ -22,6 +28,8 @@ dependencies {
     javadocClasspath "org.jacoco:org.jacoco.ant:${org.gradle.testing.jacoco.plugins.JacocoPlugin.DEFAULT_JACOCO_VERSION}"
     javadocClasspath "org.apache.maven.plugins:maven-plugin-plugin:3.9.0"
     javadocClasspath 'net.sourceforge.plantuml:plantuml:1.2023.10'
+
+    asciidoctorExt "io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:0.6.2"
 }
 
 tasks.register("docsZip", Zip) {

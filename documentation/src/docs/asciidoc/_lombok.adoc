@@ -16,12 +16,22 @@ It also configures all Lombok related tasks to use the `lombok` configuration.
 The used Lombok version can be customized using the `lombok` extension:
 
 .Setting a custom Lombok version
-[source,groovy]
+--
+[source, groovy, role="primary"]
+.Groovy
 ----
 lombok {
     version = "1.18.28"
 }
 ----
+[source, groovy, role="secondary"]
+.Kotlin
+----
+lombok {
+    version = "1.18.28"
+}
+----
+--
 
 === `io.freefair.lombok`
 
@@ -38,10 +48,19 @@ This plugin simplifies the use of https://projectlombok.org/[Lombok] in Gradle b
 Only the default `javadoc` https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.tasks.javadoc.Javadoc.html[Javadoc] task will be modified to work on the delombok-ed sources.
 If you create your own custom https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.tasks.javadoc.Javadoc.html[Javadoc] tasks, it's up to you to assign the correct `source`.
 The `delombok` task created by this plugin can be used as source for the javadoc task:
-[source,groovy]
+
+[source, groovy, role="primary"]
+.Groovy
 ----
 task myJavadocs(type: Javadoc) {
   source = delombok
+}
+----
+[source, kotlin, role="secondary"]
+.Kotlin
+----
+tasks.register<Javadoc>("myJavadocs") {
+  source = tasks.named<Delombok>("delombok")
 }
 ----
 ====
