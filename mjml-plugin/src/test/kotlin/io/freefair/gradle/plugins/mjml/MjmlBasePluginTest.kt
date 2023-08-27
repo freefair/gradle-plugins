@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.mjml
 
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,8 +25,8 @@ class MjmlBasePluginTest {
 
     @Test
     fun apply() {
-        val basePlugin = project.plugins.apply(MjmlBasePlugin::class.java)
-        val extension = basePlugin.mjmlExtension
+        project.plugins.apply(MjmlBasePlugin::class.java)
+        val extension = project.extensions.getByType<MjmlExtension>()
         assertThat(extension).isNotNull
     }
 }
