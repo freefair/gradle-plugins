@@ -3,8 +3,10 @@ package io.freefair.gradle.plugins.sass;
 import org.gradle.api.Incubating;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.WarPlugin;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.War;
 
@@ -19,16 +21,17 @@ public class SassWarPlugin implements Plugin<Project> {
         project.getPlugins().apply(SassWebjarsPlugin.class);
         project.getPlugins().apply(WarPlugin.class);
 
+        TaskProvider<War> warTask = project.getTasks().named("war", War.class);
+
         TaskProvider<SassCompile> sassCompileTaskProvider = project.getTasks().register("compileWebappSass", SassCompile.class, compileWebappSass -> {
             compileWebappSass.setGroup(BasePlugin.BUILD_GROUP);
             compileWebappSass.setDescription("Compile sass and scss files for the webapp");
 
-            compileWebappSass.source(project.file("src/main/webapp"));
+            compileWebappSass.source(warTask.flatMap(War::getWebAppDirectory));
 
-            compileWebappSass.getDestinationDir().set(new File(project.getBuildDir(), "jsass/webapp"));
+            compileWebappSass.getDestinationDir().set(project.getLayout().getBuildDirectory().dir("sass/webapp"));
         });
 
-        project.getTasks().named(WarPlugin.WAR_TASK_NAME, War.class)
-                .configure(war -> war.from(sassCompileTaskProvider));
+        warTask.configure(war -> war.from(sassCompileTaskProvider));
     }
 }

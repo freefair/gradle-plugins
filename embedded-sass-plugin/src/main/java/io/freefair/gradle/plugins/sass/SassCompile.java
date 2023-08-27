@@ -105,7 +105,7 @@ public abstract class SassCompile extends SourceTask {
 
                         try {
 
-                            CompileSuccess output = compiler.compileFile(in, getOutputStyle().getOrNull());
+                            CompileSuccess output = compiler.compileFile(in, getOutputStyle().getOrElse(compiler.getOutputStyle()));
 
                             if (realOut.getParentFile().exists() || realOut.getParentFile().mkdirs()) {
                                 String css = output.getCss();
