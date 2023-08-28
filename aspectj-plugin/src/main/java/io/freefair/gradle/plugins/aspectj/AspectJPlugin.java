@@ -44,17 +44,17 @@ public class AspectJPlugin implements Plugin<Project> {
         project.getPlugins().apply(AspectJBasePlugin.class);
         project.getPlugins().apply(JavaBasePlugin.class);
 
-        JavaPluginExtension plugin = project.getExtensions().getByType(JavaPluginExtension.class);
+        JavaPluginExtension javaExtension = project.getExtensions().getByType(JavaPluginExtension.class);
 
         JavaToolchainService service = project.getExtensions().getByType(JavaToolchainService.class);
-        defaultLauncher = service.launcherFor(plugin.getToolchain());
+        defaultLauncher = service.launcherFor(javaExtension.getToolchain());
 
-        plugin.getSourceSets().all(this::configureSourceSet);
+        javaExtension.getSourceSets().all(this::configureSourceSet);
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
 
-            SourceSet main = plugin.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-            SourceSet test = plugin.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
+            SourceSet main = javaExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+            SourceSet test = javaExtension.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
 
             Configuration aspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(main));
             Configuration testAspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(test));
@@ -66,6 +66,9 @@ public class AspectJPlugin implements Plugin<Project> {
     }
 
     private void configureSourceSet(SourceSet sourceSet) {
+        sourceSet.getExtensions().add(WeavingSourceSet.IN_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
+        sourceSet.getExtensions().add(WeavingSourceSet.ASPECT_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
+
         DefaultAspectjSourceSet aspectjSourceSet = new DefaultAspectjSourceSet(project.getObjects(), sourceSet);
         new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectjSourceSet);
 

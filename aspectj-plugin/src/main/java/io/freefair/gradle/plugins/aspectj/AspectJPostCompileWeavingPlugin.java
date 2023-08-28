@@ -1,13 +1,11 @@
 package io.freefair.gradle.plugins.aspectj;
 
-import io.freefair.gradle.plugins.aspectj.internal.DefaultWeavingSourceSet;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
-import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.internal.tasks.compile.HasCompileOptions;
 import org.gradle.api.plugins.GroovyPlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
@@ -62,8 +60,8 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
     }
 
     private void configureSourceSetDefaults(SourceSet sourceSet) {
-        DefaultWeavingSourceSet weavingSourceSet = new DefaultWeavingSourceSet(sourceSet, project.getObjects());
-        new DslObject(sourceSet).getConvention().add("aspectj", weavingSourceSet);
+        sourceSet.getExtensions().add(WeavingSourceSet.IN_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
+        sourceSet.getExtensions().add(WeavingSourceSet.ASPECT_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
 
         Configuration aspectpath = project.getConfigurations().create(WeavingSourceSet.getAspectConfigurationName(sourceSet));
         WeavingSourceSet.getAspectPath(sourceSet).from(aspectpath);

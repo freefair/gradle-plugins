@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.aspectj;
 
 import org.gradle.api.file.ConfigurableFileCollection;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.SourceSet;
 
 public interface WeavingSourceSet {

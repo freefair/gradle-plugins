@@ -14,11 +14,9 @@ import org.gradle.api.tasks.SourceSet;
  * @see org.gradle.api.internal.tasks.DefaultGroovySourceSet
  */
 @Getter
-public class DefaultAspectjSourceSet extends DefaultWeavingSourceSet implements AspectjSourceSet, HasPublicType {
+public class DefaultAspectjSourceSet implements AspectjSourceSet, HasPublicType {
 
     public DefaultAspectjSourceSet(ObjectFactory objectFactory, SourceSet sourceSet) {
-        super(sourceSet, objectFactory);
-
         String name = sourceSet.getName();
         String displayName = ((DefaultSourceSet) sourceSet).getDisplayName();
 
