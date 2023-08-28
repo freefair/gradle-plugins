@@ -1,12 +1,12 @@
 package io.freefair.gradle.plugins.aspectj;
 
-import io.freefair.gradle.plugins.aspectj.internal.DefaultAspectjSourceSet;
+import io.freefair.gradle.plugins.aspectj.internal.DefaultAspectjSourceDirectorySet;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.SourceDirectorySet;
-import org.gradle.api.internal.plugins.DslObject;
+import org.gradle.api.internal.tasks.DefaultSourceSet;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -69,8 +69,8 @@ public class AspectJPlugin implements Plugin<Project> {
         sourceSet.getExtensions().add(WeavingSourceSet.IN_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
         sourceSet.getExtensions().add(WeavingSourceSet.ASPECT_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
 
-        DefaultAspectjSourceSet aspectjSourceSet = new DefaultAspectjSourceSet(project.getObjects(), sourceSet);
-        new DslObject(sourceSet).getConvention().getPlugins().put("aspectj", aspectjSourceSet);
+        AspectjSourceDirectorySet aspectj = getAspectjSourceDirectorySet(sourceSet);
+        sourceSet.getExtensions().add(AspectjSourceDirectorySet.class, "aspectj", aspectj);
 
         final SourceDirectorySet aspectjSource = AspectjSourceSet.getAspectj(sourceSet);
         aspectjSource.srcDir("src/" + sourceSet.getName() + "/aspectj");
@@ -105,5 +105,14 @@ public class AspectJPlugin implements Plugin<Project> {
         JvmPluginsHelper.configureOutputDirectoryForSourceSet(sourceSet, aspectjSource, project, compileTask, compileTask.map(AspectjCompile::getOptions));
 
         project.getTasks().named(sourceSet.getClassesTaskName(), task -> task.dependsOn(compileTask));
+    }
+
+    private AspectjSourceDirectorySet getAspectjSourceDirectorySet(SourceSet sourceSet) {
+        String name = sourceSet.getName();
+        String displayName = ((DefaultSourceSet)sourceSet).getDisplayName();
+
+        AspectjSourceDirectorySet aspectjSourceDirectorySet = project.getObjects().newInstance(DefaultAspectjSourceDirectorySet.class, project.getObjects().sourceDirectorySet(name, displayName + " Groovy source"));
+        aspectjSourceDirectorySet.getFilter().include("**/*.java", "**/*.aj");
+        return aspectjSourceDirectorySet;
     }
 }
