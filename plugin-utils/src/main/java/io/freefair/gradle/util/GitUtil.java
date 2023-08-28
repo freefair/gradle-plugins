@@ -31,15 +31,15 @@ public class GitUtil {
 
     public String getSha(Project project) {
         if (isGithubActions(project.getProviders())) {
-            return System.getenv("GITHUB_SHA");
+            return project.getProviders().environmentVariable("GITHUB_SHA").get();
         }
 
         if (isTravisCi(project.getProviders())) {
-            return System.getenv("TRAVIS_COMMIT");
+            return project.getProviders().environmentVariable("TRAVIS_COMMIT").get();
         }
 
         if (isCircleCi(project.getProviders())) {
-            return System.getenv("CIRCLE_SHA1");
+            return project.getProviders().environmentVariable("CIRCLE_SHA1").get();
         }
 
         return execute(project, "git", "rev-parse", "HEAD");
@@ -47,7 +47,7 @@ public class GitUtil {
 
     public String getRef(Project project) {
         if (isGithubActions(project.getProviders())) {
-            return System.getenv("GITHUB_REF");
+            return project.getProviders().environmentVariable("GITHUB_REF").get();
         }
 
         return execute(project, "git", "symbolic-ref", "HEAD");
