@@ -3,6 +3,7 @@ package io.freefair.gradle.util;
 import lombok.experimental.UtilityClass;
 import org.codehaus.groovy.runtime.ProcessGroovyMethods;
 import org.gradle.api.Project;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.process.ExecOutput;
 import org.gradle.process.ExecResult;
 
@@ -12,16 +13,16 @@ import java.util.Collections;
 @UtilityClass
 public class GitUtil {
 
-    public boolean isTravisCi() {
-        return "true".equalsIgnoreCase(System.getenv("TRAVIS"));
+    public boolean isTravisCi(ProviderFactory providerFactory) {
+        return "true".equalsIgnoreCase(providerFactory.environmentVariable("TRAVIS").getOrNull());
     }
 
-    public boolean isCircleCi() {
-        return "true".equalsIgnoreCase(System.getenv("CIRCLECI"));
+    public boolean isCircleCi(ProviderFactory providerFactory) {
+        return "true".equalsIgnoreCase(providerFactory.environmentVariable("CIRCLECI").getOrNull());
     }
 
-    public boolean isGithubActions() {
-        return "true".equalsIgnoreCase(System.getenv("GITHUB_ACTIONS"));
+    public boolean isGithubActions(ProviderFactory providerFactory) {
+        return "true".equalsIgnoreCase(providerFactory.environmentVariable("GITHUB_ACTIONS").getOrNull());
     }
 
     public boolean isJenkins() {
@@ -29,15 +30,15 @@ public class GitUtil {
     }
 
     public String getSha(Project project) {
-        if (isGithubActions()) {
+        if (isGithubActions(project.getProviders())) {
             return System.getenv("GITHUB_SHA");
         }
 
-        if (isTravisCi()) {
+        if (isTravisCi(project.getProviders())) {
             return System.getenv("TRAVIS_COMMIT");
         }
 
-        if (isCircleCi()) {
+        if (isCircleCi(project.getProviders())) {
             return System.getenv("CIRCLE_SHA1");
         }
 
@@ -45,7 +46,7 @@ public class GitUtil {
     }
 
     public String getRef(Project project) {
-        if (isGithubActions()) {
+        if (isGithubActions(project.getProviders())) {
             return System.getenv("GITHUB_REF");
         }
 

@@ -46,10 +46,10 @@ public class GithubBasePlugin implements Plugin<Project> {
 
     private boolean isTravis() {
 
-        if (GitUtil.isTravisCi()) {
+        if (GitUtil.isTravisCi(project.getProviders())) {
             return true;
         }
-        else if (GitUtil.isGithubActions()) {
+        else if (GitUtil.isGithubActions(project.getProviders())) {
             return false;
         }
 

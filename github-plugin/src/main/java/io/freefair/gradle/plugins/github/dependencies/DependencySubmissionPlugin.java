@@ -22,8 +22,8 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
 
             gds.getJobCorrelator().convention(project.getName());
 
-            if (GitUtil.isGithubActions()) {
-                gds.getJobId().set(System.getenv("GITHUB_RUN_ID"));
+            if (GitUtil.isGithubActions(project.getProviders())) {
+                gds.getJobId().set(project.getProviders().environmentVariable("GITHUB_RUN_ID"));
                 gds.getJobCorrelator().set(
                         String.format("%s_%s_%s", System.getenv("GITHUB_WORKFLOW"), System.getenv("GITHUB_JOB"), project.getName())
                 );
@@ -35,13 +35,13 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
                 );
                 gds.getJobHtmlUrl().set(htmlUrl);
             }
-            else if (GitUtil.isTravisCi()) {
-                gds.getJobId().set(System.getenv("TRAVIS_JOB_ID"));
+            else if (GitUtil.isTravisCi(project.getProviders())) {
+                gds.getJobId().set(project.getProviders().environmentVariable("TRAVIS_JOB_ID"));
                 gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("TRAVIS_JOB_NAME"), project.getName()));
                 gds.getJobHtmlUrl().set(System.getenv("TRAVIS_JOB_WEB_URL"));
             }
-            else if (GitUtil.isCircleCi()) {
-                gds.getJobId().set(System.getenv("CIRCLE_WORKFLOW_JOB_ID"));
+            else if (GitUtil.isCircleCi(project.getProviders())) {
+                gds.getJobId().set(project.getProviders().environmentVariable("CIRCLE_WORKFLOW_JOB_ID"));
                 gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("CIRCLE_JOB"), project.getName()));
                 gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("CIRCLE_BUILD_URL"), project.getName()));
             }

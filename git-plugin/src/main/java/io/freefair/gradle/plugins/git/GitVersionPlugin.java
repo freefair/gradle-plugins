@@ -65,7 +65,7 @@ public class GitVersionPlugin implements Plugin<Project> {
             return project.getVersion();
         }
 
-        if (GitUtil.isTravisCi()) {
+        if (GitUtil.isTravisCi(project.getProviders())) {
             String travisTag = System.getenv("TRAVIS_TAG");
             if (travisTag != null && !travisTag.trim().isEmpty()) {
                 String version = resolveTagVersion(travisTag);
@@ -80,7 +80,7 @@ public class GitVersionPlugin implements Plugin<Project> {
                 return version;
             }
         }
-        else if (GitUtil.isGithubActions()) {
+        else if (GitUtil.isGithubActions(project.getProviders())) {
             String githubRef = System.getenv("GITHUB_REF");
             if (githubRef != null) {
                 if (githubRef.startsWith("refs/tags/")) {
@@ -95,9 +95,11 @@ public class GitVersionPlugin implements Plugin<Project> {
                     logger.lifecycle("Using GitHub Branch '{}' as version: {}", githubRef, version);
                     return version;
                 }
+            } else {
+                logger.warn("No GITHUB_REF found on GitHub Actions");
             }
         }
-        else if (GitUtil.isCircleCi()) {
+        else if (GitUtil.isCircleCi(project.getProviders())) {
             String circleTag = System.getenv("CIRCLE_TAG");
             if (circleTag != null && !circleTag.trim().isEmpty()) {
                 String version = resolveTagVersion(circleTag);

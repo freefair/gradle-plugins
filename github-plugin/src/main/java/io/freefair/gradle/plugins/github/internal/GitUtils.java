@@ -25,8 +25,8 @@ public class GitUtils {
     @Nullable
     public static String findSlug(Project project) {
 
-        if (GitUtil.isGithubActions()) {
-            return System.getenv("GITHUB_REPOSITORY");
+        if (GitUtil.isGithubActions(project.getProviders())) {
+            return project.getProviders().environmentVariable("GITHUB_REPOSITORY").get();
         }
 
         String travisSlug = findTravisSlug(project);
@@ -53,8 +53,8 @@ public class GitUtils {
     @Nullable
     public String findTravisSlug(Project project) {
 
-        if (GitUtil.isTravisCi()) {
-            return System.getenv("TRAVIS_REPO_SLUG");
+        if (GitUtil.isTravisCi(project.getProviders())) {
+            return project.getProviders().environmentVariable("TRAVIS_REPO_SLUG").get();
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -78,10 +78,10 @@ public class GitUtils {
 
     public File findWorkingDirectory(Project project) {
 
-        if (GitUtil.isTravisCi()) {
+        if (GitUtil.isTravisCi(project.getProviders())) {
             return new File(System.getenv("TRAVIS_BUILD_DIR"));
         }
-        else if (GitUtil.isGithubActions()) {
+        else if (GitUtil.isGithubActions(project.getProviders())) {
             return new File(System.getenv("GITHUB_WORKSPACE"));
         }
 
@@ -97,15 +97,15 @@ public class GitUtils {
 
     public String getTag(Project project) {
 
-        if (GitUtil.isTravisCi()) {
-            String travisTagEnv = System.getenv("TRAVIS_TAG");
+        if (GitUtil.isTravisCi(project.getProviders())) {
+            String travisTagEnv = project.getProviders().environmentVariable("TRAVIS_TAG").getOrNull();
 
             if (travisTagEnv != null && !travisTagEnv.isEmpty()) {
                 return travisTagEnv;
             }
         }
 
-        if (GitUtil.isGithubActions()) {
+        if (GitUtil.isGithubActions(project.getProviders())) {
             String githubRef = System.getenv("GITHUB_REF");
             if (githubRef != null) {
                 if (githubRef.startsWith("refs/tags/")) {
@@ -125,7 +125,7 @@ public class GitUtils {
 
     @Nullable
     public String findGithubUsername(Project project) {
-        if (GitUtil.isGithubActions()) {
+        if (GitUtil.isGithubActions(project.getProviders())) {
             return System.getenv("GITHUB_ACTOR");
         }
 

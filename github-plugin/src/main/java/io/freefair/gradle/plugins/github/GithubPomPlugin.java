@@ -98,7 +98,7 @@ public class GithubPomPlugin implements Plugin<Project> {
                     ciManagement.getUrl().convention(String.format("https://travis-ci.org/%s/", slug));
                 });
             }
-            else if (GitUtil.isGithubActions()) {
+            else if (GitUtil.isGithubActions(project.getProviders())) {
                 pom.ciManagement(ciManagement -> {
                     ciManagement.getSystem().convention("GitHub Actions");
                     ciManagement.getUrl().convention(String.format("https://github.com/%s/actions", slug));
