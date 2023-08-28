@@ -119,13 +119,8 @@ open class QuicktypePlugin : Plugin<Project> {
             sourceSet.getCompileTaskName("quicktype"),
             QuicktypeCompile::class.java
         ) {
-            JvmPluginsHelper.configureForSourceSet(
-                sourceSet,
-                quicktypeSourceSet.quicktype,
-                it,
-                it.options,
-                project
-            )
+            JvmPluginsHelper.compileAgainstJavaOutputs(it, sourceSet, project?.objects)
+            JvmPluginsHelper.configureAnnotationProcessorPath(sourceSet, quicktypeSourceSet.quicktype, it.options, project)
             it.dependsOn(sourceSet.compileJavaTaskName)
             it.description = "Compiles the " + sourceSet.name + " quicktype source."
             it.source = quicktypeSourceSet.quicktype
