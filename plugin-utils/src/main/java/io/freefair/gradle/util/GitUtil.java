@@ -25,8 +25,8 @@ public class GitUtil {
         return "true".equalsIgnoreCase(providerFactory.environmentVariable("GITHUB_ACTIONS").getOrNull());
     }
 
-    public boolean isJenkins() {
-        return System.getenv("JENKINS_HOME") != null;
+    public boolean isJenkins(ProviderFactory providerFactory) {
+        return providerFactory.environmentVariable("JENKINS_HOME").isPresent();
     }
 
     public String getSha(Project project) {
