@@ -127,10 +127,10 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
             }
         }
 
-        private String makeHumanReadable(long bytes) {
+        private String makeHumanReadable(double bytes) {
 
             if (bytes < 1024) {
-                return String.format("%d B", bytes);
+                return String.format("%.2f B", bytes);
             }
 
             double kib = bytes / 1024d;
