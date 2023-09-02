@@ -29,6 +29,10 @@ public class GitUtil {
         return providerFactory.environmentVariable("JENKINS_HOME").isPresent();
     }
 
+    public boolean isGitLab(ProviderFactory providerFactory) {
+        return providerFactory.environmentVariable("GITLAB_CI").isPresent();
+    }
+
     public String getSha(Project project) {
         if (isGithubActions(project.getProviders())) {
             return project.getProviders().environmentVariable("GITHUB_SHA").get();
