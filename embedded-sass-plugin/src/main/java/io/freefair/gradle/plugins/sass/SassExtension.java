@@ -1,10 +1,10 @@
 package io.freefair.gradle.plugins.sass;
 
+import com.sass_lang.embedded_protocol.OutputStyle;
 import org.gradle.api.Incubating;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Property;
-import sass.embedded_protocol.EmbeddedSass.OutputStyle;
 
 @Incubating
 public abstract class SassExtension {

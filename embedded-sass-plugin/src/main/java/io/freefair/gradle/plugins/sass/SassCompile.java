@@ -1,5 +1,9 @@
 package io.freefair.gradle.plugins.sass;
 
+import com.sass_lang.embedded_protocol.OutboundMessage.CompileResponse.CompileFailure;
+import com.sass_lang.embedded_protocol.OutboundMessage.VersionResponse;
+import com.sass_lang.embedded_protocol.OutputStyle;
+import de.larsgrefer.sass.embedded.CompileSuccess;
 import de.larsgrefer.sass.embedded.SassCompilationFailedException;
 import de.larsgrefer.sass.embedded.SassCompiler;
 import de.larsgrefer.sass.embedded.SassCompilerFactory;
@@ -22,10 +26,6 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.webjars.WebJarAssetLocator;
-import sass.embedded_protocol.EmbeddedSass;
-import sass.embedded_protocol.EmbeddedSass.OutboundMessage.CompileResponse.CompileSuccess;
-import sass.embedded_protocol.EmbeddedSass.OutboundMessage.VersionResponse;
-import sass.embedded_protocol.EmbeddedSass.OutputStyle;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -139,7 +139,7 @@ public abstract class SassCompile extends SourceTask {
                                 }
                             }
                         } catch (SassCompilationFailedException e) {
-                            EmbeddedSass.OutboundMessage.CompileResponse.CompileFailure sassError = e.getCompileFailure();
+                            CompileFailure sassError = e.getCompileFailure();
 
                             getLogger().error(sassError.getMessage());
 
