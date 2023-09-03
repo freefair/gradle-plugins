@@ -121,6 +121,21 @@ public class GitVersionPlugin implements Plugin<Project> {
                 logger.lifecycle("Using CIRCLE_BRANCH '{}' as version: {}", circleBranch, version);
                 return version;
             }
+
+        } else if (GitUtil.isGitLab(providerFactory)) {
+            Provider<String> gitLabTag = providerFactory.environmentVariable("CI_COMMIT_TAG");
+            if (gitLabTag.isPresent()) {
+                String version = resolveTagVersion(gitLabTag.get().trim());
+                logger.lifecycle("Using CI_COMMIT_TAG '{}' as version: {}", gitLabTag, version);
+                return version;
+            }
+
+            Provider<String> gitLabBranch = providerFactory.environmentVariable("CI_COMMIT_BRANCH");
+            if (gitLabBranch.isPresent()) {
+                String version = resolveBranchVersion(gitLabBranch.get());
+                logger.lifecycle("Using CI_COMMIT_BRANCH '{}' as version: {}", gitLabBranch, version);
+                return version;
+            }
         }
 
         try {
