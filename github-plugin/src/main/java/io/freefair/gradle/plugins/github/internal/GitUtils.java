@@ -5,12 +5,10 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Provider;
-import org.gradle.internal.impldep.org.eclipse.jgit.api.Git;
-import org.gradle.process.ExecResult;
+import org.gradle.process.ExecOutput;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +30,7 @@ public class GitUtils {
             return project.getProviders().environmentVariable("GITHUB_REPOSITORY").get();
         }
 
-        String travisSlug = findTravisSlug(project);
+        String travisSlug = findTravisSlug(project).getOrNull();
 
         if (travisSlug != null) {
             return travisSlug;
@@ -53,26 +51,18 @@ public class GitUtils {
         return null;
     }
 
-    @Nullable
-    public String findTravisSlug(Project project) {
+    @Nonnull
+    public Provider<String> findTravisSlug(Project project) {
 
-        if (GitUtil.isTravisCi(project.getProviders())) {
-            return project.getProviders().environmentVariable("TRAVIS_REPO_SLUG").get();
-        }
+        Provider<String> travisRepoSlug = project.getProviders().environmentVariable("TRAVIS_REPO_SLUG");
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        ExecResult travisSlugResult = project.exec(execSpec -> {
+        ExecOutput execOutput = project.getProviders().exec(execSpec -> {
             execSpec.workingDir(project.getProjectDir());
             execSpec.commandLine("git", "config", "travis.slug");
-            execSpec.setStandardOutput(outputStream);
             execSpec.setIgnoreExitValue(true);
         });
 
-        if (travisSlugResult.getExitValue() == 0) {
-            return outputStream.toString().trim();
-        }
-        return null;
+        return travisRepoSlug.orElse(execOutput.getStandardOutput().getAsText().map(String::trim));
     }
 
     public String getRemoteUrl(Project project, String remote) {
