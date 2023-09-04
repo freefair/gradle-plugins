@@ -36,7 +36,7 @@ public class GithubBasePlugin implements Plugin<Project> {
         githubExtension.getSlug().convention(project.provider(() -> GitUtils.findSlug(project)));
 
         githubExtension.getTravis().convention(project.provider(this::isTravis));
-        githubExtension.getTag().convention(project.provider(() -> GitUtils.getTag(project)));
+        githubExtension.getTag().convention(GitUtils.getTag(project));
 
         githubExtension.getUsername().convention(project.provider(() -> GitUtils.findGithubUsername(project)));
         githubExtension.getToken().convention(project.provider(() -> GitUtils.findGithubToken(project)));

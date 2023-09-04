@@ -4,9 +4,16 @@ import io.freefair.gradle.plugins.github.GithubBasePlugin;
 import io.freefair.gradle.util.GitUtil;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Transformer;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.TaskProvider;
 
-public class DependencySubmissionPlugin implements Plugin<Project> {
+import javax.inject.Inject;
+
+public abstract class DependencySubmissionPlugin implements Plugin<Project> {
+
+    @Inject
+    protected abstract ProviderFactory getProviderFactory();
 
     private TaskProvider<DependencySnapshotTask> githubDependencySnapshot;
 
@@ -16,34 +23,45 @@ public class DependencySubmissionPlugin implements Plugin<Project> {
         GithubBasePlugin basePlugin = project.getPlugins().apply(GithubBasePlugin.class);
 
         githubDependencySnapshot = project.getTasks().register("githubDependencySnapshot", DependencySnapshotTask.class, gds -> {
-            gds.getSha().convention(project.provider(() -> GitUtil.getSha(project)));
-            gds.getRef().convention(project.provider(() -> GitUtil.getRef(project)));
+            gds.getSha().convention(GitUtil.getSha(project));
+            gds.getRef().convention(GitUtil.getRef(project));
             gds.getOutputFile().convention(project.getLayout().getBuildDirectory().file("github/dependency-snapshot.json"));
 
-            gds.getJobCorrelator().convention(project.getName());
+            Transformer<String, String> addProjectName = base -> base + "_" + project.getName();
 
-            if (GitUtil.isGithubActions(project.getProviders())) {
-                gds.getJobId().set(project.getProviders().environmentVariable("GITHUB_RUN_ID"));
-                gds.getJobCorrelator().set(
-                        String.format("%s_%s_%s", System.getenv("GITHUB_WORKFLOW"), System.getenv("GITHUB_JOB"), project.getName())
-                );
+            if (GitUtil.isGithubActions(getProviderFactory())) {
+                gds.getJobId().set(getProviderFactory().environmentVariable("GITHUB_RUN_ID"));
+                String jobCorrelator = String.format(
+                        "%s_%s_%s",
+                        getProviderFactory().environmentVariable("GITHUB_WORKFLOW").get(),
+                        getProviderFactory().environmentVariable("GITHUB_JOB").get(),
+                        project.getName());
+                gds.getJobCorrelator().set(jobCorrelator);
                 String htmlUrl = String.format(
                         "%s/%s/actions/runs/%s",
-                        System.getenv("GITHUB_SERVER_URL"),
-                        System.getenv("GITHUB_REPOSITORY"),
-                        System.getenv("GITHUB_RUN_ID")
+                        getProviderFactory().environmentVariable("GITHUB_SERVER_URL").get(),
+                        getProviderFactory().environmentVariable("GITHUB_REPOSITORY").get(),
+                        getProviderFactory().environmentVariable("GITHUB_RUN_ID").get()
                 );
                 gds.getJobHtmlUrl().set(htmlUrl);
             }
-            else if (GitUtil.isTravisCi(project.getProviders())) {
-                gds.getJobId().set(project.getProviders().environmentVariable("TRAVIS_JOB_ID"));
-                gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("TRAVIS_JOB_NAME"), project.getName()));
-                gds.getJobHtmlUrl().set(System.getenv("TRAVIS_JOB_WEB_URL"));
+            else if (GitUtil.isTravisCi(getProviderFactory())) {
+                gds.getJobId().set(getProviderFactory().environmentVariable("TRAVIS_JOB_ID"));
+                gds.getJobCorrelator().set(getProviderFactory().environmentVariable("TRAVIS_JOB_NAME").map(addProjectName));
+                gds.getJobHtmlUrl().set(getProviderFactory().environmentVariable("TRAVIS_JOB_WEB_URL"));
             }
-            else if (GitUtil.isCircleCi(project.getProviders())) {
-                gds.getJobId().set(project.getProviders().environmentVariable("CIRCLE_WORKFLOW_JOB_ID"));
-                gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("CIRCLE_JOB"), project.getName()));
-                gds.getJobCorrelator().set(String.format("%s_%s", System.getenv("CIRCLE_BUILD_URL"), project.getName()));
+            else if (GitUtil.isCircleCi(getProviderFactory())) {
+                gds.getJobId().set(getProviderFactory().environmentVariable("CIRCLE_WORKFLOW_JOB_ID"));
+                gds.getJobCorrelator().set(getProviderFactory().environmentVariable("CIRCLE_JOB").map(addProjectName));
+                gds.getJobHtmlUrl().set(getProviderFactory().environmentVariable("CIRCLE_BUILD_URL"));
+            }
+            else if (GitUtil.isGitLab(getProviderFactory())) {
+                gds.getJobId().set(getProviderFactory().environmentVariable("CI_JOB_ID"));
+                gds.getJobCorrelator().set(getProviderFactory().environmentVariable("CI_JOB_NAME").map(addProjectName));
+                gds.getJobHtmlUrl().set(getProviderFactory().environmentVariable("CI_JOB_URL"));
+            }
+            else {
+                gds.getJobCorrelator().convention(project.getName());
             }
         });
 

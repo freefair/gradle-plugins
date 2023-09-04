@@ -4,6 +4,8 @@ import io.freefair.gradle.util.GitUtil;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
+import org.gradle.internal.impldep.org.eclipse.jgit.api.Git;
 import org.gradle.process.ExecResult;
 
 import javax.annotation.Nullable;
@@ -73,7 +75,7 @@ public class GitUtils {
     }
 
     public String getRemoteUrl(Project project, String remote) {
-        return GitUtil.execute(project, "git", "ls-remote", "--get-url", remote);
+        return GitUtil.execute(project, "git", "ls-remote", "--get-url", remote).get();
     }
 
     public File findWorkingDirectory(Project project) {
@@ -85,7 +87,7 @@ public class GitUtils {
             return new File(System.getenv("GITHUB_WORKSPACE"));
         }
 
-        String git = GitUtil.execute(project, "git", "rev-parse", "--show-toplevel");
+        String git = GitUtil.execute(project, "git", "rev-parse", "--show-toplevel").get();
 
         if (git != null) {
             return new File(git);
@@ -95,32 +97,39 @@ public class GitUtils {
         }
     }
 
-    public String getTag(Project project) {
+    public Provider<String> getTag(Project project) {
+
+        Provider<String> tagEnv = null;
 
         if (GitUtil.isTravisCi(project.getProviders())) {
-            String travisTagEnv = project.getProviders().environmentVariable("TRAVIS_TAG").getOrNull();
-
-            if (travisTagEnv != null && !travisTagEnv.isEmpty()) {
-                return travisTagEnv;
-            }
+            tagEnv = project.getProviders().environmentVariable("TRAVIS_TAG");
         }
 
         if (GitUtil.isGithubActions(project.getProviders())) {
-            String githubRef = System.getenv("GITHUB_REF");
-            if (githubRef != null) {
-                if (githubRef.startsWith("refs/tags/")) {
-                    return githubRef.substring("refs/tags/".length());
-                }
-            }
+            project.getProviders().environmentVariable("GITHUB_REF")
+                    .map(githubRef -> {
+                        if (githubRef.startsWith("refs/tags/")) {
+                            return githubRef.substring("refs/tags/".length());
+                        }
+                        else {
+                            return null;
+                        }
+                    });
         }
 
-        String gitTag = GitUtil.execute(project, "git", "tag", "--points-at", "HEAD");
-
-        if (gitTag != null) {
-            return gitTag;
+        if (GitUtil.isGitLab(project.getProviders())) {
+            tagEnv = project.getProviders().environmentVariable("CI_COMMIT_TAG");
         }
 
-        return "HEAD";
+        if (tagEnv != null) {
+            return tagEnv
+                    .orElse(GitUtil.execute(project, "git", "tag", "--points-at", "HEAD"))
+                    .orElse("HEAD");
+        }
+        else {
+            return GitUtil.execute(project, "git", "tag", "--points-at", "HEAD")
+                    .orElse("HEAD");
+        }
     }
 
     @Nullable

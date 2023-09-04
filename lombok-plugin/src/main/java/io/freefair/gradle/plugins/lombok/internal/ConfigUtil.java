@@ -4,6 +4,7 @@ import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
 
@@ -61,21 +62,11 @@ public class ConfigUtil {
         });
     }
 
-    public static boolean isDisableConfig(Project project) {
-
-        String systemProperty = System.getProperty("lombok.disableConfig");
-        Object projectProperty = project.findProperty("lombok.disableConfig");
-
-        if (projectProperty != null && !"false".equalsIgnoreCase(projectProperty.toString())) {
-            return true;
-        }
-
-        //noinspection RedundantIfStatement
-        if (systemProperty != null && !"false".equalsIgnoreCase(systemProperty)) {
-            return true;
-        }
-
-        return false;
+    public static Provider<Boolean> isDisableConfig(Project project) {
+        return project.getProviders().gradleProperty("lombok.disableConfig")
+                .orElse(project.getProviders().systemProperty("lombok.disableConfig"))
+                .map(propValue -> !"false".equalsIgnoreCase(propValue.trim()))
+                .orElse(false);
     }
 
     /**

@@ -19,7 +19,7 @@ class GitUtilTest {
 
     @Test
     void getSha() {
-        String sha = GitUtil.getSha(project);
+        String sha = GitUtil.getSha(project).get();
 
         assertThat(sha).hasSizeGreaterThan(12);
     }

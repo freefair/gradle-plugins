@@ -3,6 +3,7 @@ package io.freefair.gradle.util;
 import lombok.experimental.UtilityClass;
 import org.codehaus.groovy.runtime.ProcessGroovyMethods;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.process.ExecOutput;
 import org.gradle.process.ExecResult;
@@ -33,31 +34,31 @@ public class GitUtil {
         return providerFactory.environmentVariable("GITLAB_CI").isPresent();
     }
 
-    public String getSha(Project project) {
+    public Provider<String> getSha(Project project) {
         if (isGithubActions(project.getProviders())) {
-            return project.getProviders().environmentVariable("GITHUB_SHA").get();
+            return project.getProviders().environmentVariable("GITHUB_SHA");
         }
 
         if (isTravisCi(project.getProviders())) {
-            return project.getProviders().environmentVariable("TRAVIS_COMMIT").get();
+            return project.getProviders().environmentVariable("TRAVIS_COMMIT");
         }
 
         if (isCircleCi(project.getProviders())) {
-            return project.getProviders().environmentVariable("CIRCLE_SHA1").get();
+            return project.getProviders().environmentVariable("CIRCLE_SHA1");
         }
 
         return execute(project, "git", "rev-parse", "HEAD");
     }
 
-    public String getRef(Project project) {
+    public Provider<String> getRef(Project project) {
         if (isGithubActions(project.getProviders())) {
-            return project.getProviders().environmentVariable("GITHUB_REF").get();
+            return project.getProviders().environmentVariable("GITHUB_REF");
         }
 
         return execute(project, "git", "symbolic-ref", "HEAD");
     }
 
-    public static String execute(Project project, String... command) {
+    public static Provider<String> execute(Project project, String... command) {
 
         ExecOutput execOutput = project.getProviders().exec(execSpec -> {
             execSpec.setWorkingDir(project.getProjectDir());
@@ -65,8 +66,7 @@ public class GitUtil {
         });
 
         return execOutput.getStandardOutput().getAsText()
-                .map(String::trim)
-                .get();
+                .map(String::trim);
 
     }
 }
