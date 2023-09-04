@@ -8,6 +8,7 @@ import org.gradle.api.provider.Provider;
 import org.gradle.internal.impldep.org.eclipse.jgit.api.Git;
 import org.gradle.process.ExecResult;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -78,86 +79,49 @@ public class GitUtils {
         return GitUtil.execute(project, "git", "ls-remote", "--get-url", remote).get();
     }
 
-    public File findWorkingDirectory(Project project) {
+    public Provider<File> findWorkingDirectory(Project project) {
 
-        if (GitUtil.isTravisCi(project.getProviders())) {
-            return new File(System.getenv("TRAVIS_BUILD_DIR"));
-        }
-        else if (GitUtil.isGithubActions(project.getProviders())) {
-            return new File(System.getenv("GITHUB_WORKSPACE"));
-        }
+        Provider<String> gitToplevel = GitUtil.execute(project, "git", "rev-parse", "--show-toplevel");
 
-        String git = GitUtil.execute(project, "git", "rev-parse", "--show-toplevel").get();
-
-        if (git != null) {
-            return new File(git);
-        }
-        else {
-            return null;
-        }
+        return project.getProviders().environmentVariable("TRAVIS_BUILD_DIR")
+                .orElse(project.getProviders().environmentVariable("GITHUB_WORKSPACE"))
+                .orElse(gitToplevel)
+                .map(File::new);
     }
 
     public Provider<String> getTag(Project project) {
 
-        Provider<String> tagEnv = null;
+        Provider<String> travisTag = project.getProviders().environmentVariable("TRAVIS_TAG");
 
-        if (GitUtil.isTravisCi(project.getProviders())) {
-            tagEnv = project.getProviders().environmentVariable("TRAVIS_TAG");
-        }
+        Provider<String> githubTag = project.getProviders().environmentVariable("GITHUB_REF")
+                .map(githubRef -> {
+                    if (githubRef.startsWith("refs/tags/")) {
+                        return githubRef.substring("refs/tags/".length());
+                    }
+                    else {
+                        return null;
+                    }
+                });
 
-        if (GitUtil.isGithubActions(project.getProviders())) {
-            project.getProviders().environmentVariable("GITHUB_REF")
-                    .map(githubRef -> {
-                        if (githubRef.startsWith("refs/tags/")) {
-                            return githubRef.substring("refs/tags/".length());
-                        }
-                        else {
-                            return null;
-                        }
-                    });
-        }
+        Provider<String> gitlabTag = project.getProviders().environmentVariable("CI_COMMIT_TAG");
 
-        if (GitUtil.isGitLab(project.getProviders())) {
-            tagEnv = project.getProviders().environmentVariable("CI_COMMIT_TAG");
-        }
+        return travisTag
+                .orElse(githubTag)
+                .orElse(gitlabTag)
+                .orElse(GitUtil.execute(project, "git", "tag", "--points-at", "HEAD"))
+                .orElse("HEAD");
 
-        if (tagEnv != null) {
-            return tagEnv
-                    .orElse(GitUtil.execute(project, "git", "tag", "--points-at", "HEAD"))
-                    .orElse("HEAD");
-        }
-        else {
-            return GitUtil.execute(project, "git", "tag", "--points-at", "HEAD")
-                    .orElse("HEAD");
-        }
     }
 
-    @Nullable
-    public String findGithubUsername(Project project) {
-        if (GitUtil.isGithubActions(project.getProviders())) {
-            return System.getenv("GITHUB_ACTOR");
-        }
-
-        Object githubUsername = project.findProperty("githubUsername");
-        if (githubUsername != null) {
-            return githubUsername.toString();
-        }
-
-        return null;
+    @Nonnull
+    public Provider<String> findGithubUsername(Project project) {
+        return project.getProviders().environmentVariable("GITHUB_ACTOR")
+                .orElse(project.getProviders().gradleProperty("githubUsername"));
     }
 
-    @Nullable
-    public String findGithubToken(Project project) {
-        String github_token = System.getenv("GITHUB_TOKEN");
-        if (github_token != null) {
-            return github_token;
-        }
-
-        Object githubToken = project.findProperty("githubToken");
-        if (githubToken != null) {
-            return githubToken.toString();
-        }
-
-        return null;
+    @Nonnull
+    public Provider<String> findGithubToken(Project project) {
+        return project.getProviders().environmentVariable("GITHUB_TOKEN")
+                .orElse(project.getProviders().gradleProperty("githubToken"));
     }
 }

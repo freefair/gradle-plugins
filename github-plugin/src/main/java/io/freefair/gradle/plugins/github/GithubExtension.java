@@ -47,7 +47,7 @@ public abstract class GithubExtension {
             if (matcher.matches()) {
                 return matcher.group(1);
             }
-            return "";
+            return null;
         });
     }
 
@@ -61,7 +61,7 @@ public abstract class GithubExtension {
             if (matcher.matches()) {
                 return matcher.group(2);
             }
-            return "";
+            return null;
         });
     }
 

@@ -50,7 +50,7 @@ public abstract class DependencyManifestTask extends DefaultTask {
 
         getManifestName().convention(project.getPath());
 
-        File gitDir = GitUtils.findWorkingDirectory(getProject());
+        File gitDir = GitUtils.findWorkingDirectory(getProject()).get();
 
         String filePath = project.getBuildFile().getCanonicalPath().replace(gitDir.getCanonicalPath(), "");
         if (filePath.startsWith(File.separator)) {

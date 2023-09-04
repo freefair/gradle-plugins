@@ -38,8 +38,8 @@ public class GithubBasePlugin implements Plugin<Project> {
         githubExtension.getTravis().convention(project.provider(this::isTravis));
         githubExtension.getTag().convention(GitUtils.getTag(project));
 
-        githubExtension.getUsername().convention(project.provider(() -> GitUtils.findGithubUsername(project)));
-        githubExtension.getToken().convention(project.provider(() -> GitUtils.findGithubToken(project)));
+        githubExtension.getUsername().convention(GitUtils.findGithubUsername(project));
+        githubExtension.getToken().convention(GitUtils.findGithubToken(project));
 
         githubClient = new GithubClient(githubExtension, new OkHttpClient.Builder().build());
     }
@@ -53,7 +53,7 @@ public class GithubBasePlugin implements Plugin<Project> {
             return false;
         }
 
-        if (new File(GitUtils.findWorkingDirectory(project), ".travis.yml").isFile()) {
+        if (new File(GitUtils.findWorkingDirectory(project).get(), ".travis.yml").isFile()) {
             return true;
         }
 
