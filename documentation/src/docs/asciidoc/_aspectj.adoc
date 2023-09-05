@@ -17,21 +17,32 @@ ____
 
 This chapter describes all the plugins contained in the `aspectj-plugin` module.
 
-=== `io.freefair.aspectj.base`
+The plugins support two different approaches when working with AspectJ:
+_Compile-time weaving_ and _post-compile weaving_.
 
-NOTE: The other two plugins implicitly apply this one.
-In most cases it's therefore unnecessary to explicitly apply it to your project.
+These are implemented by the `io.freefair.aspectj` and `io.freefair.aspectj.post-compile-weaving` plugins respectively.
 
-This plugin enables the automatic configuration of the `aspectjClasspath`.
+=== Compile-time weaving
 
-The automatic configuration follows the same principles as described here:
-https://docs.gradle.org/{gradle_version}/userguide/groovy_plugin.html#sec:automatic_configuration_of_groovyclasspath
+When using compile-time weaving, your sources are directly compiled by `ajc`.
+This works well for simple projects which only have `*.java` and `*.aj` sources and don't need javac-specific features like annotation processing with Project Lombok.
 
-=== `io.freefair.aspectj`
+The `io.freefair.aspectj` is built analogous to the existing plugins for Groovy, Scala and Kotlin.
+It adds an additional `aspectj` directory to every source set which will be compiled by `ajc`. By default, you have to put your sources into `src/main/aspectj`, `src/test/aspectj` and so forth.
 
-This plugin adds AspectJ support to the project, by adding a `aspectj` directory to every source set.
+=== Post-compile weaving
 
-Source contained in the `src/main/aspectj` directory will be compiled with `ajc` by the `compileAspectj` task.
+The `io.freefair.aspectj.post-compile-weaving` enhances the
+`compileJava` (`compileGroovy`, `compileScala`, `compileKotlin`) tasks of all source sets
+with an additional `ajc` action in order to perform post-compile weaving.
+
+With this setup, your source code is first compiled by javac, groovyc, scalac and/or kotlinc as usual.
+The resulting byte-code is then post-processed by ajc.
+This enables the usage of AspectJ in combination with annotation processors like Lombok or even other Languages like Groovy, Scala and Kotlin.
+
+=== Configuration Options
+
+==== AspectJ Runtime
 
 --
 [source, groovy, role="primary"]
@@ -50,7 +61,7 @@ dependencies {
 ----
 --
 
-TIP: This is follows the same principles as the `groovy` and `scala` plugins.
+==== Aspectpath
 
 Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
 
@@ -72,6 +83,8 @@ dependencies {
 }
 ----
 --
+
+==== Inpath
 
 Additional jars/classes which should be woven and added to the output as well (the `-inpath`)
 can be declared as dependencies fo the `inpath` configuration:
@@ -95,72 +108,12 @@ dependencies {
 ----
 --
 
-=== `io.freefair.aspectj.post-compile-weaving`
+==== `io.freefair.aspectj.post-compile-weaving`
 
 This plugin enhances the `compileJava` (`compileGroovy`, `compileScala`, `compileKotlin`) tasks of all source sets
 with an additional `ajc` action in order to perform post-compile-weaving.
 
 The output of the compilation (`javac`, etc.) becomes the `-inpath` for `ajc`.
-
---
-[source, groovy, role="primary"]
-.Groovy
-----
-dependencies {
-    implementation "org.aspectj:aspectjrt:1.9.8.RC3"
-}
-----
-[source, kotlin, role="secondary"]
-.Kotlin
-----
-dependencies {
-    implementation("org.aspectj:aspectjrt:1.9.8.RC3")
-}
-----
---
-
-Additional advices (the `-aspectpath`) can be declared as dependencies of the `aspect` configuration:
-
---
-[source, groovy, role="primary"]
-.Groovy
-----
-dependencies {
-    aspect project(":my-aspect")
-    testAspect "com.example.foo:bar-aspect:1.0.0"
-}
-----
-[source, kotlin, role="secondary"]
-.Kotlin
-----
-dependencies {
-    aspect(project(":my-aspect"))
-    testAspect("com.example.foo:bar-aspect:1.0.0")
-}
-----
---
-
-Additional jars/classes which should be woven and added to the output as well (the `-inpath`)
-can be declared as dependencies fo the `inpath` configuration:
-
---
-[source, groovy, role="primary"]
-.Groovy
-----
-dependencies {
-    inpath project(":my-lib")
-    testInpath "com.example.foo:bar-lib:1.0.0"
-}
-----
-[source, kotlin, role="secondary"]
-.Kotlin
-----
-dependencies {
-    inpath(project(":my-lib"))
-    testInpath("com.example.foo:bar-lib:1.0.0")
-}
-----
---
 
 The `-classpath`, `-source` and `-target`
 arguments of `ajc` are set automatically to the corresponding values taken from the compile task.
