@@ -25,10 +25,26 @@ These are implemented by the `io.freefair.aspectj` and `io.freefair.aspectj.post
 === Compile-time weaving
 
 When using compile-time weaving, your sources are directly compiled by `ajc`.
-This works well for simple projects which only have `*.java` and `*.aj` sources and don't need javac-specific features like annotation processing with Project Lombok.
+This works well for simple projects which only have `.java` and `.aj` sources and don't need javac-specific features like annotation processing with Project Lombok.
 
-The `io.freefair.aspectj` is built analogous to the existing plugins for Groovy, Scala and Kotlin.
-It adds an additional `aspectj` directory to every source set which will be compiled by `ajc`. By default, you have to put your sources into `src/main/aspectj`, `src/test/aspectj` and so forth.
+The `io.freefair.aspectj` plugin is built analogous to the existing plugins for Groovy, Scala and Kotlin.
+It adds an additional `aspectj` directory to every source set which will be compiled by `ajc`.
+This creates the additional source folders  `src/main/aspectj`, `src/test/aspectj` and so forth.
+
+In order to avoid conflicts and confusion between ajc and javac, the default `compile*Java` tasks will be disabled,
+and `src/<sourceSet>/java` will be compiled by ajc as well.
+This aligns with the AspectJ Maven Plugin, which also uses `src/<sourceSet>/java`.
+
+[NOTE]
+====
+Technically, each Gradle https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.tasks.SourceSet.html[SourceSet] will get two new https://docs.gradle.org/{gradle_version}/dsl/org.gradle.api.file.SourceDirectorySet.html[SourceDirectorySets]: `aspectj` and `allAspectj`.
+
+`aspectj` contains `src/<sourceSet>/aspectj` while `allAspectj` combines `aspectj` with the default `java` SourceDirectorySet.
+
+The `compile*Aspectj` tasks the use `allAspectj` as its source, in order to compile both `src/<sourceSet>/aspectj` and `src/<sourceSet>/java`
+
+If you need both ajc and javac, just reenable the `compile*Java` tasks and switch the `compile*AspectJ` tasks from `allAspectj` to `aspectj`.
+====
 
 === Post-compile weaving
 

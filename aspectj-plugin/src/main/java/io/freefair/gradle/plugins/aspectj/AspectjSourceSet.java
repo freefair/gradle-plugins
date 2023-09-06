@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.aspectj;
 
+import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.tasks.SourceSet;
 
 /**
@@ -10,5 +11,9 @@ public interface AspectjSourceSet extends WeavingSourceSet {
 
     static AspectjSourceDirectorySet getAspectj(SourceSet sourceSet) {
         return (AspectjSourceDirectorySet) sourceSet.getExtensions().getByName("aspectj");
+    }
+
+    static SourceDirectorySet getAllAspectj(SourceSet sourceSet) {
+        return (AspectjSourceDirectorySet) sourceSet.getExtensions().getByName("allAspectj");
     }
 }
