@@ -5,7 +5,7 @@ apply plugin: "com.gradle.plugin-publish"
 description = "Gradle Plugin for PlantUML"
 
 // Note that this version should be kept in sync with src/main/java/io/freefair/gradle/plugins/plantuml/PlantumlPlugin.java
-def plantUmlVersion='1.2023.10'
+def plantUmlVersion='1.2023.11'
 
 dependencies {
     //noinspection GradlePackageUpdate
