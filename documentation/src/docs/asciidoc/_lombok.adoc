@@ -21,14 +21,14 @@ The used Lombok version can be customized using the `lombok` extension:
 .Groovy
 ----
 lombok {
-    version = "1.18.28"
+    version = "1.18.30"
 }
 ----
 [source, groovy, role="secondary"]
 .Kotlin
 ----
 lombok {
-    version = "1.18.28"
+    version = "1.18.30"
 }
 ----
 --
