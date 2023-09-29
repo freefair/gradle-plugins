@@ -1,4 +1,6 @@
-apply plugin: "io.freefair.maven-publish-java"
+plugins {
+    id "io.freefair.maven-publish-java"
+}
 
 description = "Code Generator API"
 

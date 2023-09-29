@@ -1,8 +1,9 @@
 import kotlin.KotlinVersion
-
-apply plugin: "maven-publish"
-apply plugin: "java-gradle-plugin"
-apply plugin: "com.gradle.plugin-publish"
+plugins {
+    id "maven-publish"
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish"
+}
 
 description = "Collection of AspectJ related Gradle plugins"
 

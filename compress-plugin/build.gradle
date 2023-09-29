@@ -1,7 +1,9 @@
-apply plugin: "maven-publish"
-apply plugin: "java-gradle-plugin"
-apply plugin: "com.gradle.plugin-publish"
-apply plugin: "groovy"
+plugins {
+    id "maven-publish"
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish"
+    id "groovy"
+}
 
 description = "Collection of Apache Commons Compress related Gradle plugins"
 
