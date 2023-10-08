@@ -7,7 +7,6 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.tasks.DefaultSourceSet;
-import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.internal.JvmPluginsHelper;
@@ -27,6 +26,8 @@ public class AspectJPlugin implements Plugin<Project> {
 
     private Provider<JavaLauncher> defaultLauncher;
 
+    private JavaPluginExtension javaExtension;
+
     @Override
     public void apply(Project project) {
         if (project.getPlugins().hasPlugin(AspectJPostCompileWeavingPlugin.class)) {
@@ -42,27 +43,32 @@ public class AspectJPlugin implements Plugin<Project> {
 
         this.project = project;
         project.getPlugins().apply(AspectJBasePlugin.class);
-        project.getPlugins().apply(JavaBasePlugin.class);
+        project.getPlugins().apply(JavaPlugin.class);
 
-        JavaPluginExtension javaExtension = project.getExtensions().getByType(JavaPluginExtension.class);
+        configureJavaBasePlugin(project);
+
+        configureJavaPlugin(project);
+    }
+
+    private void configureJavaBasePlugin(Project project) {
+        javaExtension = project.getExtensions().getByType(JavaPluginExtension.class);
 
         JavaToolchainService service = project.getExtensions().getByType(JavaToolchainService.class);
         defaultLauncher = service.launcherFor(javaExtension.getToolchain());
 
         javaExtension.getSourceSets().all(this::configureSourceSet);
+    }
 
-        project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
+    private void configureJavaPlugin(Project project) {
+        SourceSet main = javaExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+        SourceSet test = javaExtension.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
 
-            SourceSet main = javaExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-            SourceSet test = javaExtension.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
+        Configuration aspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(main));
+        Configuration testAspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(test));
 
-            Configuration aspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(main));
-            Configuration testAspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(test));
+        testAspectpath.extendsFrom(aspectpath);
 
-            testAspectpath.extendsFrom(aspectpath);
-
-            WeavingSourceSet.getAspectPath(test).setFrom(main.getOutput(), testAspectpath);
-        });
+        WeavingSourceSet.getAspectPath(test).setFrom(main.getOutput(), testAspectpath);
     }
 
     private void configureSourceSet(SourceSet sourceSet) {

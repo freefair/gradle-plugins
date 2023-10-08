@@ -1,5 +1,3 @@
-apply plugin: "java"
-apply plugin: "groovy"
 apply plugin: "io.freefair.aspectj"
 
 dependencies {
