@@ -172,9 +172,8 @@ public abstract class SassCompile extends SourceTask {
     @Optional
     public abstract ListProperty<CustomImporter> getCustomImporters();
 
-    @InputFiles
+    @Classpath
     @Optional
-    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract ConfigurableFileCollection getWebjars();
 
     /**
@@ -182,6 +181,7 @@ public abstract class SassCompile extends SourceTask {
      */
     @InputFiles
     @Optional
+    @IgnoreEmptyDirectories
     @PathSensitive(PathSensitivity.RELATIVE)
     public abstract ConfigurableFileCollection getIncludePaths();
 
