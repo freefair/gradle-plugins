@@ -18,7 +18,7 @@ This plugin adds the `sass` extension to the project and applies it to all `Sass
 ----
 sass {
     omitSourceMapUrl = false
-    outputStyle = sass.embedded_protocol.EmbeddedSass.OutputStyle.EXPANDED
+    outputStyle = com.sass_lang.embedded_protocol.OutputStyle.EXPANDED
     sourceMapContents = false
     sourceMapEmbed = false
     sourceMapEnabled = true
@@ -29,7 +29,7 @@ sass {
 ----
 sass {
     omitSourceMapUrl = false
-    outputStyle = sass.embedded_protocol.EmbeddedSass.OutputStyle.EXPANDED
+    outputStyle = com.sass_lang.embedded_protocol.OutputStyle.EXPANDED
     sourceMapContents = false
     sourceMapEmbed = false
     sourceMapEnabled = true
