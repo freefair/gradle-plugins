@@ -1,3 +1,5 @@
+import com.sass_lang.embedded_protocol.OutputStyle
+
 apply plugin: "java"
 apply plugin: "io.freefair.sass-java"
 
@@ -8,5 +10,5 @@ dependencies {
 compileSass {
     sourceMapEnabled = true
     sourceMapEmbed = true
-    outputStyle = EXPANDED
+    outputStyle = OutputStyle.EXPANDED
 }
