@@ -73,14 +73,14 @@ public class GitVersionPlugin implements Plugin<Project> {
             Provider<String> travisTag = providerFactory.environmentVariable("TRAVIS_TAG");
             if (travisTag.isPresent()) {
                 String version = resolveTagVersion(travisTag.get().trim());
-                logger.lifecycle("Using TRAVIS_TAG '{}' as version: {}", travisTag, version);
+                logger.lifecycle("Using TRAVIS_TAG '{}' as version: {}", travisTag.get(), version);
                 return version;
             }
 
             Provider<String> travisBranch = providerFactory.environmentVariable("TRAVIS_BRANCH");
             if (travisBranch.isPresent()) {
                 String version = resolveBranchVersion(travisBranch.get());
-                logger.lifecycle("Using TRAVIS_BRANCH '{}' as version: {}", travisBranch, version);
+                logger.lifecycle("Using TRAVIS_BRANCH '{}' as version: {}", travisBranch.get(), version);
                 return version;
             }
         }
@@ -90,13 +90,13 @@ public class GitVersionPlugin implements Plugin<Project> {
                 if (githubRef.get().startsWith("refs/tags/")) {
                     String tag = githubRef.get().substring("refs/tags/".length());
                     String version = resolveTagVersion(tag);
-                    logger.lifecycle("Using GitHub Tag '{}' as version: {}", githubRef, version);
+                    logger.lifecycle("Using GitHub Tag '{}' as version: {}", githubRef.get(), version);
                     return version;
                 }
                 else if (githubRef.get().startsWith("refs/heads/")) {
                     String branch = githubRef.get().substring("refs/heads/".length());
                     String version = resolveBranchVersion(branch);
-                    logger.lifecycle("Using GitHub Branch '{}' as version: {}", githubRef, version);
+                    logger.lifecycle("Using GitHub Branch '{}' as version: {}", githubRef.get(), version);
                     return version;
                 }
                 else {
@@ -111,14 +111,14 @@ public class GitVersionPlugin implements Plugin<Project> {
             Provider<String> circleTag = providerFactory.environmentVariable("CIRCLE_TAG");
             if (circleTag.isPresent()) {
                 String version = resolveTagVersion(circleTag.get().trim());
-                logger.lifecycle("Using CIRCLE_TAG '{}' as version: {}", circleTag, version);
+                logger.lifecycle("Using CIRCLE_TAG '{}' as version: {}", circleTag.get(), version);
                 return version;
             }
 
             Provider<String> circleBranch = providerFactory.environmentVariable("CIRCLE_BRANCH");
             if (circleBranch.isPresent()) {
                 String version = resolveBranchVersion(circleBranch.get());
-                logger.lifecycle("Using CIRCLE_BRANCH '{}' as version: {}", circleBranch, version);
+                logger.lifecycle("Using CIRCLE_BRANCH '{}' as version: {}", circleBranch.get(), version);
                 return version;
             }
 
@@ -126,14 +126,14 @@ public class GitVersionPlugin implements Plugin<Project> {
             Provider<String> gitLabTag = providerFactory.environmentVariable("CI_COMMIT_TAG");
             if (gitLabTag.isPresent()) {
                 String version = resolveTagVersion(gitLabTag.get().trim());
-                logger.lifecycle("Using CI_COMMIT_TAG '{}' as version: {}", gitLabTag, version);
+                logger.lifecycle("Using CI_COMMIT_TAG '{}' as version: {}", gitLabTag.get(), version);
                 return version;
             }
 
             Provider<String> gitLabBranch = providerFactory.environmentVariable("CI_COMMIT_BRANCH");
             if (gitLabBranch.isPresent()) {
                 String version = resolveBranchVersion(gitLabBranch.get());
-                logger.lifecycle("Using CI_COMMIT_BRANCH '{}' as version: {}", gitLabBranch, version);
+                logger.lifecycle("Using CI_COMMIT_BRANCH '{}' as version: {}", gitLabBranch.get(), version);
                 return version;
             }
         }
@@ -163,19 +163,19 @@ public class GitVersionPlugin implements Plugin<Project> {
             Provider<String> gitLocalBranch = providerFactory.environmentVariable("GIT_LOCAL_BRANCH");
             if (gitLocalBranch.isPresent()) {
                 String version = resolveBranchVersion(gitLocalBranch.get());
-                logger.lifecycle("Using GIT_LOCAL_BRANCH '{}' as version: {}", gitLocalBranch, version);
+                logger.lifecycle("Using GIT_LOCAL_BRANCH '{}' as version: {}", gitLocalBranch.get(), version);
                 return version;
             }
             Provider<String> gitBranch = providerFactory.environmentVariable("GIT_BRANCH");
             if (gitBranch.isPresent()) {
                 String version = resolveBranchVersion(gitBranch.get());
-                logger.lifecycle("Using GIT_BRANCH '{}' as version: {}", gitBranch, version);
+                logger.lifecycle("Using GIT_BRANCH '{}' as version: {}", gitBranch.get(), version);
                 return version;
             }
             Provider<String> branchName = providerFactory.environmentVariable("BRANCH_NAME");
             if (branchName.isPresent()) {
                 String version = resolveBranchVersion(branchName.get());
-                logger.lifecycle("Using BRANCH_NAME '{}' as version: {}", branchName, version);
+                logger.lifecycle("Using BRANCH_NAME '{}' as version: {}", branchName.get(), version);
                 return version;
             }
         }
