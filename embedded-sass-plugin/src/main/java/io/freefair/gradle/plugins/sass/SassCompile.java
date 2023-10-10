@@ -12,8 +12,6 @@ import de.larsgrefer.sass.embedded.importer.CustomImporter;
 import de.larsgrefer.sass.embedded.importer.FileImporter;
 import de.larsgrefer.sass.embedded.importer.WebjarsImporter;
 import de.larsgrefer.sass.embedded.logging.Slf4jLoggingHandler;
-import lombok.Getter;
-import lombok.Setter;
 import org.gradle.api.GradleException;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -38,8 +36,6 @@ import java.nio.file.Files;
 import java.util.Base64;
 import java.util.LinkedHashSet;
 
-@Getter
-@Setter
 @CacheableTask
 public abstract class SassCompile extends SourceTask {
 
@@ -195,7 +191,7 @@ public abstract class SassCompile extends SourceTask {
      * Output style for the generated css code.
      */
     @Input
-    private final Property<OutputStyle> outputStyle = getProject().getObjects().property(OutputStyle.class);
+    public abstract Property<OutputStyle> getOutputStyle();
 
     /**
      * Embed include contents in maps.
