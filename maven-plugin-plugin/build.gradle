@@ -6,7 +6,7 @@ plugins {
 
 description = "Gradle Plugin for building Maven Plugins"
 
-def mavenPluginToolsVersion = "3.9.0"
+def mavenPluginToolsVersion = "3.10.1"
 
 dependencies {
     api project(':maven-plugin')
