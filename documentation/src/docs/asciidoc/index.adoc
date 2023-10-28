@@ -89,7 +89,15 @@ apply(plugin = "io.freefair.lombok")
 
 == System Requirements
 
-Unless otherwise noted, all plugins require at least Java 8 and are targeted at Gradle {gradle_version}.
+=== Gradle
+
+The plugins of version {revnumber} are targeted at Gradle {gradle_version}.
+
+Starting with version 8, the _Major.Minor_ version of the plugins matches those of Gradle itself.
+
+=== Java
+
+Most of the plugins should work all Java versions supported by Gradle {gradle_version}, but some of the included external tools or libraries like Lombok or AJC might have additional constraints.
 
 include::_settings.adoc[]
 

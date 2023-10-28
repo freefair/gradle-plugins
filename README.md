@@ -11,9 +11,18 @@ Javadoc https://docs.freefair.io/gradle-plugins/current/api/
 
 # Compatibility Matrix
 
+Since version 8, we align our major.minor version with Gradle.
+
+The plugins itself should work on every Java version on which Gradle works,
+but external tools like Lombok or Ajc may have additional constrains.
+
 | Plugin Version | Gradle Version | Java Version | Kotlin Version |
 |----------------|----------------|--------------|----------------|
-| 8.0.x          | 8.0            | 8 - 18       |                |
+| 8.4.x          | 8.4            | 8+           |                |
+| 8.3.x          | 8.3            | 8+           |                |
+| 8.2.x          | 8.2            | 8+           |                |
+| 8.1.x          | 8.1            | 8+           |                |
+| 8.0.x          | 8.0            | 8+           |                |
 | 6.6.x          | 7.6            | 8 - 18       | 1.7.x          |
 | 6.5.x          | 7.5            | 8 - 18       | 1.7.x          |
 | 6.4.x          | 7.4            | 8 - 17       | 1.3.x - 1.6.x  |
