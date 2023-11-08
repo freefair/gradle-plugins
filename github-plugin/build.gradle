@@ -51,7 +51,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
-    implementation 'com.github.package-url:packageurl-java:1.4.1'
+    implementation 'com.github.package-url:packageurl-java:1.4.2'
 
     api project(":okhttp-plugin")
     implementation project(":plugin-utils")
