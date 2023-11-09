@@ -29,7 +29,7 @@ dependencies {
     javadocClasspath "org.apache.maven.plugins:maven-plugin-plugin:3.10.2"
     javadocClasspath 'net.sourceforge.plantuml:plantuml:1.2023.12'
 
-    asciidoctorExt "io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:0.6.2"
+    asciidoctorExt "io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:0.6.3"
 }
 
 tasks.register("docsZip", Zip) {
