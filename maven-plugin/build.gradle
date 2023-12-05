@@ -7,7 +7,7 @@ plugins {
 description = "Collection of Maven related Gradle plugins"
 
 dependencies {
-    implementation 'org.apache.maven:maven-model:3.9.5'
+    implementation 'org.apache.maven:maven-model:3.9.6'
 
     api project(":okhttp-plugin")
 
