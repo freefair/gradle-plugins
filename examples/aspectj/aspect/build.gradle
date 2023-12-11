@@ -1,7 +1,7 @@
 apply plugin: "io.freefair.aspectj"
 
 dependencies {
-    implementation "org.aspectj:aspectjrt:1.9.20.1"
+    implementation "org.aspectj:aspectjrt:1.9.21"
 }
 
 compileAspectj {
