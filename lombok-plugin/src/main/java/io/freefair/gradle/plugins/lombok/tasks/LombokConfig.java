@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
+@CacheableTask
 public abstract class LombokConfig extends DefaultTask implements LombokTask {
 
     @Inject
@@ -95,6 +96,7 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
         getVerbose().convention(false);
         getNotMentioned().convention(false);
         getOutputs().upToDateWhen(t -> ((LombokConfig) t).getConfigFiles() != null);
+        getOutputs().doNotCacheIf("Config Imports were used", t -> ((LombokConfig) t).getConfigFiles() == null);
     }
 
     @Input
