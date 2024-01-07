@@ -1,6 +1,12 @@
 apply plugin: "io.freefair.aspectj.post-compile-weaving"
 apply plugin: "java"
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 dependencies {
     implementation "org.aspectj:aspectjrt:1.9.21"
 
