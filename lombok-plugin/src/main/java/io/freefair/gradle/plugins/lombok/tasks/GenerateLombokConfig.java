@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.StopExecutionException;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.internal.deprecation.DeprecationLogger;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -31,6 +32,11 @@ public class GenerateLombokConfig extends DefaultTask {
     private final MapProperty<String, String> properties = getProject().getObjects().mapProperty(String.class, String.class);
 
     public GenerateLombokConfig() {
+        DeprecationLogger.deprecateTaskType(GenerateLombokConfig.class, "generateLombokConfig")
+                .willBeRemovedInGradle9()
+                .undocumented()
+                .nagUser();
+
         outputFile.set(getProject().file("lombok.config"));
         onlyIf(t -> getProperties().isPresent() && !getProperties().get().isEmpty());
     }

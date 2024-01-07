@@ -7,6 +7,7 @@ import org.gradle.api.Project;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
+import org.gradle.internal.deprecation.DeprecationLogger;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -27,6 +28,12 @@ public class ConfigUtil {
 
     @Deprecated
     public Map<File, TaskProvider<LombokConfig>> getLombokConfigTasks(Project project, String sourceSetName, Set<File> srcDirs) {
+
+        DeprecationLogger.deprecateMethod(ConfigUtil.class, "getLombokConfigTasks()")
+                .willBeRemovedInGradle9()
+                .undocumented()
+                .nagUser();
+
         Map<File, TaskProvider<LombokConfig>> result = new HashMap<>();
 
         int i = 1;

@@ -6,6 +6,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.internal.project.ProjectInternal;
 import org.gradle.initialization.layout.ProjectCacheDir;
+import org.gradle.internal.deprecation.DeprecationLogger;
 
 import java.io.File;
 
@@ -26,6 +27,11 @@ public class OkHttpCachePlugin implements Plugin<Project> {
         if (project != project.getRootProject()) {
             throw new IllegalStateException();
         }
+
+        DeprecationLogger.deprecateType(OkHttpCachePlugin.class)
+                .willBeRemovedInGradle9()
+                .undocumented()
+                .nagUser();
 
         extension = project.getExtensions().create("okHttpCache", OkHttpCacheExtension.class);
 
