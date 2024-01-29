@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
 
       - run: ./gradlew -V assemble -s
       - run: ./gradlew -V uploadGithubDependenciesSnapshot -s
@@ -61,7 +61,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
 
       - run: ./gradlew -V assemble -s
       - run: ./gradlew -V uploadGithubDependenciesSnapshot -s
