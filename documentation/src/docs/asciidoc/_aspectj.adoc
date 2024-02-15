@@ -65,14 +65,14 @@ This enables the usage of AspectJ in combination with annotation processors like
 .Groovy
 ----
 dependencies {
-    implementation "org.aspectj:aspectjrt:1.9.8.RC3"
+    implementation "org.aspectj:aspectjrt:1.9.21.1"
 }
 ----
 [source, kotlin, role="secondary"]
 .Kotlin
 ----
 dependencies {
-    implementation("org.aspectj:aspectjrt:1.9.8.RC3")
+    implementation("org.aspectj:aspectjrt:1.9.21.1")
 }
 ----
 --
