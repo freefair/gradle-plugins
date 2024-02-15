@@ -16,7 +16,7 @@ public class PlantumlPlugin implements Plugin<Project> {
 
         plantuml.defaultDependencies(s -> {
             // Note that this version should be kept in sync with build.gradle
-            s.add(project.getDependencies().create("net.sourceforge.plantuml:plantuml:1.2024.2"));
+            s.add(project.getDependencies().create("net.sourceforge.plantuml:plantuml:1.2024.3"));
         });
 
         project.getTasks().withType(PlantumlTask.class).configureEach(plantumlTask -> {
