@@ -1,5 +1,8 @@
+import io.freefair.gradle.plugins.okhttp.tasks.DownloadFile
+
 plugins {
     id "io.freefair.compress"
+    id "io.freefair.okhttp"
 }
 
 task foo(type: io.freefair.gradle.plugins.compress.tasks.GZip) {
@@ -30,5 +33,17 @@ task baz(type: io.freefair.gradle.plugins.compress.tasks.SevenZip) {
 task example(type: Sync) {
     dependsOn baz
     from commonsCompress.sevenZipTree("$buildDir/baz.7z")
-    into "$buildDir/579"
+    into layout.buildDirectory.dir("gh-579")
+}
+
+
+// https://github.com/freefair/gradle-plugins/issues/1023
+task downloadGh1023(type: DownloadFile) {
+    url = "https://github.com/upx/upx/releases/download/v4.2.2/upx-4.2.2-amd64_linux.tar.xz"
+    outputFile = layout.buildDirectory.file("upx-4.2.2-amd64_linux.tar.xz")
+}
+task gh1023(type: Sync) {
+    dependsOn downloadGh1023
+    from commonsCompress.tarXzTree(downloadGh1023.outputFile)
+    into layout.buildDirectory.dir("build/gh-1023")
 }
