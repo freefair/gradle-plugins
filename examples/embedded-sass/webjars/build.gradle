@@ -4,7 +4,7 @@ apply plugin: "java"
 apply plugin: "io.freefair.sass-java"
 
 dependencies {
-    implementation 'org.webjars:bootstrap:5.3.2'
+    implementation 'org.webjars:bootstrap:5.3.3'
 }
 
 compileSass {
