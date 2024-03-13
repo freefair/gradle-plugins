@@ -3,27 +3,30 @@ package io.freefair.gradle.plugins.compress.tree;
 import io.freefair.gradle.plugins.compress.internal.SevenZipArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
+import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.provider.Provider;
-import org.gradle.cache.internal.DecompressionCache;
+import org.gradle.cache.internal.DecompressionCoordinator;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SevenZipFileTree extends ArchiveFileTree<SevenZipArchiveInputStream, SevenZArchiveEntry> {
-    public SevenZipFileTree(Provider<File> archiveFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider, Chmod chmod, DirectoryFileTreeFactory directoryFileTreeFactory, FileHasher fileHasher, DecompressionCache decompressionCache) {
-        super(archiveFile, inputStreamProvider, chmod, directoryFileTreeFactory, fileHasher, decompressionCache);
+    public SevenZipFileTree(Provider<File> archiveFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider, Chmod chmod, DirectoryFileTreeFactory directoryFileTreeFactory, FileHasher fileHasher, DecompressionCoordinator decompressionCoordinator,
+                            TemporaryFileProvider temporaryExtractionDir) {
+        super(archiveFile, inputStreamProvider, chmod, directoryFileTreeFactory, fileHasher, decompressionCoordinator, temporaryExtractionDir);
     }
 
     @Override
-    ArchiveEntryFileTreeElement createDetails(Chmod chmod) {
-        return new SevenZArchiveEntryFileTreeElement(chmod);
+    ArchiveEntryFileTreeElement createDetails(Chmod chmod, File expandedDir, AtomicBoolean stopFlag) {
+        return new SevenZArchiveEntryFileTreeElement(chmod, expandedDir, stopFlag);
     }
 
     public class SevenZArchiveEntryFileTreeElement extends ArchiveEntryFileTreeElement {
 
-        SevenZArchiveEntryFileTreeElement(Chmod chmod) {
-            super(chmod);
+        protected SevenZArchiveEntryFileTreeElement(Chmod chmod, File expandedDir, AtomicBoolean stopFlag) {
+            super(chmod, expandedDir, stopFlag);
         }
 
         @Override

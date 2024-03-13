@@ -14,10 +14,12 @@ import org.gradle.api.internal.file.AbstractFileTreeElement;
 import org.gradle.api.internal.file.archive.ZipFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTree;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
+import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.provider.Provider;
-import org.gradle.cache.internal.DecompressionCache;
+import org.gradle.cache.internal.DecompressionCoordinator;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
+import org.gradle.internal.hash.HashCode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +37,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
     private final Chmod chmod;
     private final DirectoryFileTreeFactory directoryFileTreeFactory;
     private final FileHasher fileHasher;
+    private final TemporaryFileProvider temporaryExtractionDir;
 
     public ArchiveFileTree(
             Provider<File> zipFile,
@@ -42,18 +45,20 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
             Chmod chmod,
             DirectoryFileTreeFactory directoryFileTreeFactory,
             FileHasher fileHasher,
-            DecompressionCache decompressionCache
+            DecompressionCoordinator decompressionCoordinator,
+            TemporaryFileProvider temporaryExtractionDir
     ) {
-        super(decompressionCache);
+        super(decompressionCoordinator);
         this.fileProvider = zipFile;
         this.inputStreamProvider = inputStreamProvider;
         this.chmod = chmod;
         this.directoryFileTreeFactory = directoryFileTreeFactory;
         this.fileHasher = fileHasher;
+        this.temporaryExtractionDir = temporaryExtractionDir;
     }
 
-    ArchiveEntryFileTreeElement createDetails(Chmod chmod) {
-        return new ArchiveEntryFileTreeElement(chmod);
+    ArchiveEntryFileTreeElement createDetails(Chmod chmod, File expandedDir, AtomicBoolean stopFlag) {
+        return new ArchiveEntryFileTreeElement(chmod, expandedDir, stopFlag);
     }
 
     public DirectoryFileTree getMirror() {
@@ -70,36 +75,38 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
             throw new InvalidUserDataException(String.format("Cannot expand %s as it is not a file.", getDisplayName()));
         }
 
-        AtomicBoolean stopFlag = new AtomicBoolean();
+        File expandedDir = getExpandedDir();
+        decompressionCoordinator.exclusiveAccessTo(expandedDir, () -> {
+            AtomicBoolean stopFlag = new AtomicBoolean();
 
-        try {
-            IS archiveInputStream = inputStreamProvider.openFile(archiveFile);
             try {
-                ArchiveEntry archiveEntry;
+                IS archiveInputStream = inputStreamProvider.openFile(archiveFile);
+                try {
+                    ArchiveEntry archiveEntry;
 
-                while (!stopFlag.get() && (archiveEntry = archiveInputStream.getNextEntry()) != null) {
-                    ArchiveEntryFileTreeElement details = createDetails(chmod);
-                    details.archiveInputStream = archiveInputStream;
-                    details.archiveEntry = (E) archiveEntry;
-                    details.stopFlag = stopFlag;
+                    while (!stopFlag.get() && (archiveEntry = archiveInputStream.getNextEntry()) != null) {
+                        ArchiveEntryFileTreeElement details = createDetails(chmod, expandedDir, stopFlag);
+                        details.archiveInputStream = archiveInputStream;
+                        details.archiveEntry = (E) archiveEntry;
 
-                    try {
-                        if (archiveEntry.isDirectory()) {
-                            visitor.visitDir(details);
+                        try {
+                            if (archiveEntry.isDirectory()) {
+                                visitor.visitDir(details);
+                            }
+                            else {
+                                visitor.visitFile(details);
+                            }
+                        } finally {
+                            details.close();
                         }
-                        else {
-                            visitor.visitFile(details);
-                        }
-                    } finally {
-                        details.close();
                     }
+                } finally {
+                    archiveInputStream.close();
                 }
-            } finally {
-                archiveInputStream.close();
+            } catch (Exception e) {
+                throw new GradleException(String.format("Could not expand %s.", getDisplayName()), e);
             }
-        } catch (Exception e) {
-            throw new GradleException(String.format("Could not expand %s.", getDisplayName()), e);
-        }
+        });
     }
 
     @Override
@@ -109,8 +116,21 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
 
     private File getExpandedDir() {
         File archiveFile = fileProvider.get();
-        String expandedDirName = archiveFile.getName() + "_" + fileHasher.hash(archiveFile);
-        return new File(decompressionCache.getBaseDir(), expandedDirName);
+        HashCode fileHash = hashFile(archiveFile);
+        String expandedDirName = "archive_" + fileHash;
+        return temporaryExtractionDir.newTemporaryDirectory(".cache", "expanded", expandedDirName);
+    }
+
+    private HashCode hashFile(File tarFile) {
+        try {
+            return fileHasher.hash(tarFile);
+        } catch (Exception e) {
+            throw cannotExpand(e);
+        }
+    }
+
+    private RuntimeException cannotExpand(Exception e) {
+        throw new InvalidUserDataException(String.format("Cannot expand %s.", getDisplayName()), e);
     }
 
     @Override
@@ -119,53 +139,32 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
     }
 
     @Getter
-    class ArchiveEntryFileTreeElement extends AbstractFileTreeElement implements FileVisitDetails, Closeable {
+    class ArchiveEntryFileTreeElement extends AbstractArchiveFileTreeElement implements FileVisitDetails, Closeable {
 
         private IS archiveInputStream;
         private E archiveEntry;
-        private AtomicBoolean stopFlag;
-        @Nullable
-        private File file;
         private boolean closed;
         private boolean inputStreamUsed;
 
-        ArchiveEntryFileTreeElement(Chmod chmod) {
-            super(chmod);
+        /**
+         * Creates a new instance.
+         *
+         * @param chmod       the chmod instance to use
+         * @param expandedDir the directory to extract the archived file to
+         * @param stopFlag    the stop flag to use
+         */
+        protected ArchiveEntryFileTreeElement(Chmod chmod, File expandedDir, AtomicBoolean stopFlag) {
+            super(chmod, expandedDir, stopFlag);
         }
 
         @Override
-        public void stopVisiting() {
-            stopFlag.set(true);
+        protected String getEntryName() {
+            return archiveEntry.getName();
         }
 
         @Override
         public String getDisplayName() {
             return String.format("%s %s!%s", archiveEntry.getClass().getSimpleName(), fileProvider.get(), archiveEntry.getName());
-        }
-
-        @Override
-        public long getLastModified() {
-            return archiveEntry.getLastModifiedDate().getTime();
-        }
-
-        @Override
-        public long getSize() {
-            return archiveEntry.getSize();
-        }
-
-        @Override
-        public String getName() {
-            return archiveEntry.getName();
-        }
-
-        @Override
-        public boolean isDirectory() {
-            return archiveEntry.isDirectory();
-        }
-
-        @Override
-        public RelativePath getRelativePath() {
-            return new RelativePath(!archiveEntry.isDirectory(), archiveEntry.getName().split("/"));
         }
 
         @Override
@@ -200,20 +199,6 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
             } catch (ArchiveException e) {
                 throw new IOException(e);
             }
-        }
-
-        /**
-         * @see ZipFileTree.DetailsImpl#getFile()
-         */
-        @Nonnull
-        public File getFile() {
-            if (file == null) {
-                file = new File(getExpandedDir(), archiveEntry.getName());
-                if (!file.exists()) {
-                    copyTo(file);
-                }
-            }
-            return file;
         }
 
         @Override

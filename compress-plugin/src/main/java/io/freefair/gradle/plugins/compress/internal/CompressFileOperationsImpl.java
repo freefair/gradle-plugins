@@ -8,6 +8,7 @@ import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
 import org.apache.commons.compress.archivers.dump.DumpArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import org.gradle.api.InvalidUserCodeException;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.RegularFile;
 import org.gradle.api.internal.file.DefaultFileOperations;
@@ -21,9 +22,9 @@ import org.gradle.api.internal.tasks.TaskDependencyFactory;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.resources.ReadableResource;
+import org.gradle.api.resources.internal.ReadableResourceInternal;
 import org.gradle.api.tasks.util.PatternSet;
-import org.gradle.cache.internal.DecompressionCache;
-import org.gradle.cache.internal.DecompressionCacheFactory;
+import org.gradle.cache.internal.DecompressionCoordinator;
 import org.gradle.internal.Cast;
 import org.gradle.internal.Factory;
 import org.gradle.internal.hash.FileHasher;
@@ -51,7 +52,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private final Factory<PatternSet> patternSetFactory;
     private final TaskDependencyFactory taskDependencyFactory;
     private final ProviderFactory providers;
-    private final DecompressionCacheFactory decompressionCacheFactory;
+    private final DecompressionCoordinator decompressionCoordinator;
 
     public CompressFileOperationsImpl(ProjectInternal project) {
         fileOperations = project.getFileOperations();
@@ -63,13 +64,13 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         patternSetFactory = project.getServices().getFactory(PatternSet.class);
         taskDependencyFactory = project.getServices().get(TaskDependencyFactory.class);
         providers = project.getServices().get(ProviderFactory.class);
-        decompressionCacheFactory = project.getServices().get(DecompressionCacheFactory.class);
+        decompressionCoordinator = project.getServices().get(DecompressionCoordinator.class);
     }
 
     @Override
     public FileTree arTree(Object arPath) {
         Provider<File> file = asFileProvider(arPath);
-        ArFileTree arFileTree = new ArFileTree(file, f -> new ArArchiveInputStream(new FileInputStream(f)), fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        ArFileTree arFileTree = new ArFileTree(file, f -> new ArArchiveInputStream(new FileInputStream(f)), fileSystem, directoryFileTreeFactory, fileHasher, decompressionCoordinator, temporaryFileProvider);
         return new FileTreeAdapter(arFileTree, taskDependencyFactory, patternSetFactory);
     }
 
@@ -85,7 +86,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree arjTree(Object arjFile, ArchiveInputStreamProvider<ArjArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(arjFile);
-        ArjFileTree arjFileTree = new ArjFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        ArjFileTree arjFileTree = new ArjFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCoordinator, temporaryFileProvider);
         return new FileTreeAdapter(arjFileTree, taskDependencyFactory, patternSetFactory);
     }
 
@@ -111,7 +112,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree cpioTree(Object arPath, ArchiveInputStreamProvider<CpioArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(arPath);
-        ArchiveFileTree<CpioArchiveInputStream, CpioArchiveEntry> cpioFileTree = new ArchiveFileTree<>(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        ArchiveFileTree<CpioArchiveInputStream, CpioArchiveEntry> cpioFileTree = new ArchiveFileTree<>(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCoordinator, temporaryFileProvider);
         return new FileTreeAdapter(cpioFileTree, taskDependencyFactory, patternSetFactory);
     }
 
@@ -127,7 +128,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree sevenZipTree(Object sevenZipFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(sevenZipFile);
-        SevenZipFileTree sevenZipFileTree = new SevenZipFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        SevenZipFileTree sevenZipFileTree = new SevenZipFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCoordinator, temporaryFileProvider);
         return new FileTreeAdapter(sevenZipFileTree, taskDependencyFactory, patternSetFactory);
     }
 
@@ -143,7 +144,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     private FileTree dumpTree(Object dumpFile, ArchiveInputStreamProvider<DumpArchiveInputStream> inputStreamProvider) {
         Provider<File> file = asFileProvider(dumpFile);
-        DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCacheFactory.create());
+        DumpFileTree dumpFileTree = new DumpFileTree(file, inputStreamProvider, fileSystem, directoryFileTreeFactory, fileHasher, decompressionCoordinator, temporaryFileProvider);
         return new FileTreeAdapter(dumpFileTree, taskDependencyFactory, patternSetFactory);
     }
 
@@ -162,7 +163,12 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
      */
     private Provider<File> asFileProvider(Object path) {
         if (path instanceof ReadableResource) {
-            return providers.provider(() -> null);
+            boolean hasBackingFile = path instanceof ReadableResourceInternal
+                    && ((ReadableResourceInternal) path).getBackingFile() != null;
+            if (!hasBackingFile) {
+                throw new InvalidUserCodeException("Cannot use tarTree() on a resource without a backing file.");
+            }
+            return providers.provider(() -> ((ReadableResourceInternal) path).getBackingFile());
         }
         if (path instanceof Provider) {
             ProviderInternal<?> provider = (ProviderInternal<?>) path;
