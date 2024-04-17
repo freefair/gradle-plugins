@@ -16,7 +16,7 @@ dependencies {
 
     testImplementation project(":test-common")
     testImplementation "org.jetbrains.kotlin:kotlin-test"
-    testImplementation "org.mockito.kotlin:mockito-kotlin:5.2.1"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:5.3.1"
     testImplementation "com.natpryce:hamkrest:1.8.0.1"
 }
 
