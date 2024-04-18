@@ -7,7 +7,7 @@ plugins {
 description = "A plugin for executing specified code generators"
 
 dependencies {
-    implementation 'io.github.classgraph:classgraph:4.8.168'
+    implementation 'io.github.classgraph:classgraph:4.8.171'
     api project(':code-generator-api')
     testImplementation project(':test-common')
 
