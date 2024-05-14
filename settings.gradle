@@ -12,7 +12,7 @@ pluginManagement {
 
 plugins {
     id "io.freefair.settings.plugin-versions" version "8.6"
-    id "com.gradle.enterprise" version "3.17.2"
+    id "com.gradle.enterprise" version "3.17.3"
 }
 
 enableFeaturePreview "STABLE_CONFIGURATION_CACHE"
