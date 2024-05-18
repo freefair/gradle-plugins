@@ -8,7 +8,7 @@ java {
 }
 
 dependencies {
-    implementation "org.aspectj:aspectjrt:1.9.22"
+    implementation "org.aspectj:aspectjrt:1.9.22.1"
 }
 
 compileAspectj {
