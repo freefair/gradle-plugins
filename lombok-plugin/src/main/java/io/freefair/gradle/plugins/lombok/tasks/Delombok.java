@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.*;
+import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.internal.file.FileTreeInternal;
 import org.gradle.api.internal.file.UnionFileTree;
 import org.gradle.api.provider.Property;
@@ -29,6 +30,9 @@ import java.util.stream.Collectors;
 @Setter
 @CacheableTask
 public abstract class Delombok extends DefaultTask implements LombokTask {
+
+    @Inject
+    protected abstract FileOperations getFileOperations();
 
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
@@ -134,7 +138,7 @@ public abstract class Delombok extends DefaultTask implements LombokTask {
         for (File file : getInput().getFiles()) {
             if (file.isDirectory()) {
                 if (fileTree == null) {
-                    fileTree = getProject().fileTree(file);
+                    fileTree = getFileOperations().fileTree(file);
                 }
                 else {
                     fileTree.from(file);
