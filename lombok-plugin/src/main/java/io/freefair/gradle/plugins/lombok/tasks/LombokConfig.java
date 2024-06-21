@@ -103,7 +103,7 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
     protected List<String> getInputPaths() {
         return getPaths().getFiles()
                 .stream()
-                .map(File::getPath)
+                .map(getProject()::relativePath)
                 .collect(Collectors.toList());
     }
 
