@@ -110,7 +110,7 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
     @InputFiles
     @Optional
     @Nullable
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     @SneakyThrows
     protected Set<File> getConfigFiles() {
         if (getPaths().isEmpty()) {
