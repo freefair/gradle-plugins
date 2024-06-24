@@ -103,14 +103,14 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
     protected List<String> getInputPaths() {
         return getPaths().getFiles()
                 .stream()
-                .map(File::getPath)
+                .map(getProject()::relativePath)
                 .collect(Collectors.toList());
     }
 
     @InputFiles
     @Optional
     @Nullable
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     @SneakyThrows
     protected Set<File> getConfigFiles() {
         if (getPaths().isEmpty()) {
