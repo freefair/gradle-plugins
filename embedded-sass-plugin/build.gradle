@@ -41,7 +41,7 @@ gradlePlugin {
 
 dependencies {
     api 'de.larsgrefer.sass:sass-embedded-host:3.6.0'
-    implementation 'org.webjars:webjars-locator-core:0.58'
+    implementation 'org.webjars:webjars-locator-core:0.59'
 
     testImplementation project(":test-common")
 }
