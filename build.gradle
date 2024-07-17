@@ -5,7 +5,7 @@ plugins {
     id 'io.freefair.lombok' apply false
     id "com.gradle.plugin-publish" version "1.2.1" apply false
     id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
-    id "org.owasp.dependencycheck" version "10.0.2"
+    id "org.owasp.dependencycheck" version "10.0.3"
     id 'org.jetbrains.kotlin.jvm' apply false
 }
 
