@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api 'org.apache.maven:maven-core:3.9.8'
     api 'org.apache.maven:maven-model:3.9.8'
-    api 'org.apache.maven:maven-plugin-api:3.9.6'
+    api 'org.apache.maven:maven-plugin-api:3.9.8'
 
     compileOnly 'org.apache.maven.plugin-tools:maven-plugin-annotations:3.13.1'
 }
