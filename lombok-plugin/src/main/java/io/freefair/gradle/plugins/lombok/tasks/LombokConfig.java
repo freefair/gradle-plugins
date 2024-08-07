@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.provider.ListProperty;
@@ -45,7 +46,7 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
     protected abstract FileSystemOperations getFileSystemOperations();
 
     @Inject
-    protected abstract FileOperations getFileOperations();
+    protected abstract ProjectLayout getProjectLayout();
 
     @Inject
     protected abstract ExecOperations getExecOperations();
@@ -85,7 +86,8 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
     /**
      * Paths to java files or directories the configuration is to be printed for.
      */
-    @Internal
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract ConfigurableFileCollection getPaths();
 
     @OutputFile
@@ -101,14 +103,6 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
         getNotMentioned().convention(false);
         getOutputs().upToDateWhen(t -> ((LombokConfig) t).getConfigFiles() != null);
         getOutputs().doNotCacheIf("Config Imports were used", t -> ((LombokConfig) t).getConfigFiles() == null);
-    }
-
-    @Input
-    protected List<String> getInputPaths() {
-        return getPaths().getFiles()
-                .stream()
-                .map(getFileOperations()::relativePath)
-                .collect(Collectors.toList());
     }
 
     @InputFiles
