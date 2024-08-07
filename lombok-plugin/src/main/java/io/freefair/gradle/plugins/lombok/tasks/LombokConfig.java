@@ -8,9 +8,7 @@ import lombok.SneakyThrows;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileSystemOperations;
-import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Optional;
@@ -44,9 +42,6 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
 
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
-
-    @Inject
-    protected abstract ProjectLayout getProjectLayout();
 
     @Inject
     protected abstract ExecOperations getExecOperations();
