@@ -4,15 +4,23 @@ package io.freefair.gradle.plugins.plantuml;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.plugins.jvm.internal.JvmPluginServices;
+
+import javax.inject.Inject;
 
 /**
  * @author Lars Grefer
  */
-public class PlantumlPlugin implements Plugin<Project> {
+public abstract class PlantumlPlugin implements Plugin<Project> {
+
+    @Inject
+    public abstract JvmPluginServices getJvmPluginServices();
 
     @Override
     public void apply(Project project) {
         Configuration plantuml = project.getConfigurations().create("plantuml");
+
+        getJvmPluginServices().configureAsRuntimeClasspath(plantuml);
 
         plantuml.defaultDependencies(s -> {
             // Note that this version should be kept in sync with build.gradle
