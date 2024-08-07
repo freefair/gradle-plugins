@@ -2,10 +2,10 @@ package io.freefair.gradle.plugins.compress.tree;
 
 import io.freefair.gradle.plugins.compress.internal.SevenZipArchiveInputStream;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
+import org.gradle.api.internal.file.archive.DecompressionCoordinator;
 import org.gradle.api.internal.file.collections.DirectoryFileTreeFactory;
 import org.gradle.api.internal.file.temp.TemporaryFileProvider;
 import org.gradle.api.provider.Provider;
-import org.gradle.cache.internal.DecompressionCoordinator;
 import org.gradle.internal.file.Chmod;
 import org.gradle.internal.hash.FileHasher;
 
