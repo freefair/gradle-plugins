@@ -15,7 +15,7 @@ jobs:
           java-version: 11
           distribution: 'temurin'
       - name: Publish package
-        run: ./gradlew --no-parallel publishToSonatype publishPlugins uploadDocs closeAndReleaseStagingRepository
+        run: ./gradlew --no-parallel publishToSonatype publishPlugins uploadDocs closeAndReleaseStagingRepositories
         env:
           ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_USERNAME }}
           ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_PASSWORD }}
