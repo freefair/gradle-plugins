@@ -81,7 +81,8 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
     /**
      * Paths to java files or directories the configuration is to be printed for.
      */
-    @Internal
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract ConfigurableFileCollection getPaths();
 
     @OutputFile
@@ -99,18 +100,10 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
         getOutputs().doNotCacheIf("Config Imports were used", t -> ((LombokConfig) t).getConfigFiles() == null);
     }
 
-    @Input
-    protected List<String> getInputPaths() {
-        return getPaths().getFiles()
-                .stream()
-                .map(File::getPath)
-                .collect(Collectors.toList());
-    }
-
     @InputFiles
     @Optional
     @Nullable
-    @PathSensitive(PathSensitivity.ABSOLUTE)
+    @PathSensitive(PathSensitivity.RELATIVE)
     @SneakyThrows
     protected Set<File> getConfigFiles() {
         if (getPaths().isEmpty()) {
