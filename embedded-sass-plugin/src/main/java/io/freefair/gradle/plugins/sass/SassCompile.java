@@ -22,12 +22,15 @@ import org.gradle.api.file.EmptyFileVisitor;
 import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
+import org.gradle.api.problems.Problems;
+import org.gradle.api.problems.Severity;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.webjars.WebJarAssetLocator;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -55,6 +58,9 @@ public abstract class SassCompile extends SourceTask {
 
     @OutputDirectory
     public abstract DirectoryProperty getDestinationDir();
+
+    @Inject
+    public abstract Problems getProblems();
 
     @TaskAction
     public void compileSass() throws IOException {
@@ -143,7 +149,14 @@ public abstract class SassCompile extends SourceTask {
 
                             getLogger().error(sassError.getMessage());
 
-                            throw new RuntimeException(e);
+                            throw getProblems().forNamespace("io.freefair.sass")
+                                            .throwing(problemSpec -> problemSpec
+                                                    .id("sass-compilation-failed", "Sass Compilation Failed")
+                                                    .lineInFileLocation(sassError.getSpan().getUrl(), sassError.getSpan().getStart().getLine(), sassError.getSpan().getStart().getColumn())
+                                                    .withException(new RuntimeException(e))
+                                                    .details(sassError.getFormatted())
+                                                    .severity(Severity.ERROR));
+
                         } catch (IOException e) {
                             getLogger().error(e.getLocalizedMessage());
                             throw new UncheckedIOException(e);

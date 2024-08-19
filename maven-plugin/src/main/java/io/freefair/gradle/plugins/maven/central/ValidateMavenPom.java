@@ -8,12 +8,14 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.problems.Problems;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.VerificationTask;
 
+import javax.inject.Inject;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collection;
@@ -22,6 +24,9 @@ import java.util.Collection;
  * @author Lars Grefer
  */
 public abstract class ValidateMavenPom extends DefaultTask implements VerificationTask {
+
+    @Inject
+    public abstract Problems getProblems();
 
     @InputFile
     public abstract RegularFileProperty getPomFile();
@@ -60,7 +65,8 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
 
         if (isEmpty(model.getLicenses())) {
             logError("licenses");
-        } else {
+        }
+        else {
             model.getLicenses().forEach(license -> {
                 if (isEmpty(license.getName())) {
                     logError("license.name");
@@ -73,7 +79,8 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
 
         if (isEmpty(model.getDevelopers())) {
             logError("developers");
-        } else {
+        }
+        else {
             model.getDevelopers().forEach(developer -> {
                 if (isEmpty(developer.getId())) {
                     logError("developer.id");
@@ -89,7 +96,8 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
 
         if (model.getScm() == null) {
             logError("scm");
-        } else {
+        }
+        else {
             if (isEmpty(model.getScm().getConnection())) {
                 logError("scm.connection");
             }
@@ -109,6 +117,12 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
     private void logError(String element) {
         errorFound = true;
         getLogger().error("No {} found in {}", element, getPomFile().getAsFile().get());
+        getProblems()
+                .forNamespace("io.freefair.maven")
+                .reporting(problem -> problem.id("maven-pom", "Missing Element in Maven Pom")
+                        .fileLocation(getPomFile().getAsFile().get().getPath())
+                        .details("No " + element + " found")
+                );
     }
 
     private boolean isEmpty(String string) {
