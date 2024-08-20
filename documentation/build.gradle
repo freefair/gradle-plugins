@@ -43,11 +43,6 @@ tasks.register("docsZip", Zip) {
     into("reference") {
         from asciidoctor.outputDir
     }
-    into("owasp") {
-        from rootProject
-                .files("build/reports/dependency-check-report.html")
-                .builtBy(rootProject.tasks.named("dependencyCheckAggregate"))
-    }
 }
 
 tasks.register("uploadDocs", io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
