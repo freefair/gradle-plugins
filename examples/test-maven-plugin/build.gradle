@@ -8,5 +8,5 @@ dependencies {
     api 'org.apache.maven:maven-model:3.9.9'
     api 'org.apache.maven:maven-plugin-api:3.9.9'
 
-    compileOnly 'org.apache.maven.plugin-tools:maven-plugin-annotations:3.14.0'
+    compileOnly 'org.apache.maven.plugin-tools:maven-plugin-annotations:3.15.0'
 }
