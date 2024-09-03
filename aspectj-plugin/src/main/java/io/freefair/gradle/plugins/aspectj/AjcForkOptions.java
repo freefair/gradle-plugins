@@ -7,5 +7,5 @@ import org.gradle.api.tasks.compile.BaseForkOptions;
  * @see org.gradle.api.tasks.compile.GroovyForkOptions
  * @see org.gradle.api.tasks.scala.ScalaForkOptions
  */
-public class AjcForkOptions extends BaseForkOptions {
+public abstract class AjcForkOptions extends BaseForkOptions {
 }
