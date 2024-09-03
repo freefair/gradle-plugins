@@ -128,7 +128,7 @@ public class AspectJCompileOptions extends AbstractOptions {
      * Options for running the compiler in a child process.
      */
     @Internal
-    private final AjcForkOptions forkOptions = new AjcForkOptions();
+    private final AjcForkOptions forkOptions;
 
     public void forkOptions(Action<AjcForkOptions> action) {
         action.execute(getForkOptions());
@@ -148,5 +148,6 @@ public class AspectJCompileOptions extends AbstractOptions {
         xmlConfigured = objectFactory.fileProperty();
         encoding = objectFactory.property(String.class);
         verbose = objectFactory.property(Boolean.class).convention(false);
+        forkOptions = objectFactory.newInstance(AjcForkOptions.class);
     }
 }
