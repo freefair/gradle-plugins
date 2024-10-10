@@ -153,24 +153,6 @@ public class LombokPlugin implements Plugin<Project> {
 
         TaskProvider<LombokConfig> lombokConfigTask = ConfigUtil.getLombokConfigTask(project, sourceSet);
 
-        // Workaround https://github.com/freefair/gradle-plugins/issues/1193
-        if (sourceSet.getName().equals("contractTest")) {
-            project.getTasks().configureEach(task -> {
-                if (task.getName().equals("generateContractTests")) {
-                    lombokConfigTask.get().mustRunAfter(task);
-                }
-            });
-        }
-
-        // Workaround https://github.com/freefair/gradle-plugins/issues/1193
-        if (sourceSet.getName().equals("main")) {
-            project.getTasks().configureEach(task -> {
-                if (task.getName().equals("openApiGenerate")) {
-                    lombokConfigTask.get().mustRunAfter(task);
-                }
-            });
-        }
-
         compileTaskProvider.configure(javaCompile -> {
             javaCompile.getInputs().file(lombokConfigTask.get().getOutputFile())
                     .withPropertyName("lombok.config")

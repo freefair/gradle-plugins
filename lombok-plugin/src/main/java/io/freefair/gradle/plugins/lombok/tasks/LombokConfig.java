@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.internal.file.FileOperations;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Optional;
@@ -42,6 +43,9 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
 
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
+
+    @Inject
+    protected abstract FileOperations getFileOperations();
 
     @Inject
     protected abstract ExecOperations getExecOperations();
@@ -81,8 +85,7 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
     /**
      * Paths to java files or directories the configuration is to be printed for.
      */
-    @InputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
+    @Internal
     public abstract ConfigurableFileCollection getPaths();
 
     @OutputFile
@@ -98,6 +101,19 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
         getNotMentioned().convention(false);
         getOutputs().upToDateWhen(t -> ((LombokConfig) t).getConfigFiles() != null);
         getOutputs().doNotCacheIf("Config Imports were used", t -> ((LombokConfig) t).getConfigFiles() == null);
+    }
+
+    @Input
+    protected Set<String> getInputPaths() {
+        HashSet<String> paths = new HashSet<>();
+        for (File path : getPaths()) {
+            try {
+                paths.add(getFileOperations().relativePath(path));
+            } catch (Exception e) {
+                paths.add(path.toString());
+            }
+        }
+        return paths;
     }
 
     @InputFiles
@@ -181,13 +197,11 @@ public abstract class LombokConfig extends DefaultTask implements LombokTask {
                 Duration duration = Duration.ofNanos(System.nanoTime() - start);
                 if (duration.getSeconds() > 1) {
                     getLogger().warn("lombok config {} took {}ms", args, duration.toMillis());
-                }
-                else {
+                } else {
                     getLogger().info("lombok config {} took {}ms", args, duration.toMillis());
                 }
             }
-        }
-        else {
+        } else {
             getWorkerExecutor()
                     .classLoaderIsolation(cl -> cl.getClasspath().from(getLombokClasspath()))
                     .submit(LombokConfigAction.class, params -> {
