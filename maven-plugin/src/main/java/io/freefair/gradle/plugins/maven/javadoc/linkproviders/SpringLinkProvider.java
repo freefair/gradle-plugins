@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.jetbrains.annotations.Nullable;
 
 public class SpringLinkProvider implements JavadocLinkProvider {
@@ -17,7 +18,18 @@ public class SpringLinkProvider implements JavadocLinkProvider {
         }
 
         if (group.equals("org.springframework.boot") && artifact.startsWith("spring-boot")) {
-            return "https://docs.spring.io/spring-boot/docs/" + version + "/api/";
+            String sitePrefix = "https://docs.spring.io/spring-boot/";
+            String siteVersion = version;
+            String sitePostfix = "/api/java/";
+            ComparableVersion newDocsVersion = new ComparableVersion("3.3.0-M1");
+            ComparableVersion parsedVersion = new ComparableVersion(version);;
+
+            if (parsedVersion.compareTo(newDocsVersion) < 0) {
+                sitePrefix = "https://docs.spring.io/spring-boot/docs/";
+                sitePostfix = "/api/";
+            }
+
+            return sitePrefix + siteVersion + sitePostfix;
         }
 
         if (group.equals("org.springframework.security") && artifact.startsWith("spring-security")) {
