@@ -118,7 +118,7 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
         errorFound = true;
         getLogger().error("No {} found in {}", element, getPomFile().getAsFile().get());
         getProblems()
-                .forNamespace("io.freefair.maven")
+                .getReporter()
                 .reporting(problem -> problem.id("maven-pom", "Missing Element in Maven Pom")
                         .fileLocation(getPomFile().getAsFile().get().getPath())
                         .details("No " + element + " found")

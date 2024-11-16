@@ -149,7 +149,7 @@ public abstract class SassCompile extends SourceTask {
 
                             getLogger().error(sassError.getMessage());
 
-                            throw getProblems().forNamespace("io.freefair.sass")
+                            throw getProblems().getReporter()
                                             .throwing(problemSpec -> problemSpec
                                                     .id("sass-compilation-failed", "Sass Compilation Failed")
                                                     .lineInFileLocation(sassError.getSpan().getUrl(), sassError.getSpan().getStart().getLine(), sassError.getSpan().getStart().getColumn())
