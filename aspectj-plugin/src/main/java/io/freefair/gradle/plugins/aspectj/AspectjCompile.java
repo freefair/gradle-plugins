@@ -10,7 +10,7 @@ import org.gradle.api.tasks.*;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.jvm.toolchain.JavaLauncher;
-import org.gradle.process.internal.JavaExecHandleFactory;
+import org.gradle.process.ExecOperations;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -21,6 +21,9 @@ public abstract class AspectjCompile extends AbstractCompile {
 
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
+
+    @Inject
+    protected abstract ExecOperations getExecOperations();
 
     @Inject
     protected abstract ProjectLayout getProjectLayout();
@@ -81,7 +84,7 @@ public abstract class AspectjCompile extends AbstractCompile {
     }
 
     private AspectJCompiler getCompiler() {
-        return new AspectJCompiler(getServices().get(JavaExecHandleFactory.class));
+        return new AspectJCompiler(getExecOperations());
     }
 
     protected AspectJCompileSpec createSpec() {
