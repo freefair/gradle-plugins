@@ -18,7 +18,7 @@ import org.gradle.api.tasks.Nested;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.compile.AbstractCompile;
 import org.gradle.jvm.toolchain.JavaLauncher;
-import org.gradle.process.internal.JavaExecHandleFactory;
+import org.gradle.process.ExecOperations;
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile;
 
 import javax.inject.Inject;
@@ -27,12 +27,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.freefair.gradle.util.TaskUtils.*;
+import static io.freefair.gradle.util.TaskUtils.registerNested;
 
 /**
  * @author Lars Grefer
@@ -45,7 +43,7 @@ public class AjcAction implements Action<Task> {
     @Getter(AccessLevel.NONE)
     private final ProjectLayout projectLayout;
     @Getter(AccessLevel.NONE)
-    private final JavaExecHandleFactory javaExecHandleFactory;
+    private final ExecOperations execOperations;
 
     private final ConfigurableFileCollection classpath;
 
@@ -64,7 +62,7 @@ public class AjcAction implements Action<Task> {
     }
 
     @Inject
-    public AjcAction(ProjectLayout projectLayout, ObjectFactory objectFactory, JavaExecHandleFactory javaExecHandleFactory) {
+    public AjcAction(ProjectLayout projectLayout, ObjectFactory objectFactory, ExecOperations execOperations) {
         this.projectLayout = projectLayout;
         options = new AspectJCompileOptions(objectFactory);
         classpath = objectFactory.fileCollection();
@@ -73,7 +71,7 @@ public class AjcAction implements Action<Task> {
         launcher = objectFactory.property(JavaLauncher.class);
 
         enabled = objectFactory.property(Boolean.class).convention(true);
-        this.javaExecHandleFactory = javaExecHandleFactory;
+        this.execOperations = execOperations;
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -105,7 +103,7 @@ public class AjcAction implements Action<Task> {
 
         AspectJCompileSpec spec = createSpec(task);
 
-        new AspectJCompiler(javaExecHandleFactory).execute(spec);
+        new AspectJCompiler(execOperations).execute(spec);
     }
 
     private boolean shouldSkipAjc(Task task) {

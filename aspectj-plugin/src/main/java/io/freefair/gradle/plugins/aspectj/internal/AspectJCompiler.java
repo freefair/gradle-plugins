@@ -7,10 +7,9 @@ import org.gradle.api.internal.tasks.compile.CompilationFailedException;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.language.base.internal.compile.Compiler;
+import org.gradle.process.ExecOperations;
 import org.gradle.process.ExecResult;
-import org.gradle.process.internal.ExecHandle;
-import org.gradle.process.internal.JavaExecHandleBuilder;
-import org.gradle.process.internal.JavaExecHandleFactory;
+import org.gradle.process.JavaExecSpec;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -24,21 +23,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
 
-    private final JavaExecHandleFactory javaExecHandleFactory;
+    private final ExecOperations execOperations;
 
     @Override
     public WorkResult execute(AspectJCompileSpec spec) {
 
-        ExecHandle handle = createCompilerHandle(spec);
-        executeCompiler(handle);
+        ExecResult result = execOperations.javaexec(ajc -> configureJavaExec(ajc, spec));
+        if (result.getExitValue() != 0) {
+            throw new CompilationFailedException(result.getExitValue());
+        }
 
         return WorkResults.didWork(true);
     }
 
     @SneakyThrows
-    private ExecHandle createCompilerHandle(AspectJCompileSpec spec) {
-        JavaExecHandleBuilder ajc = javaExecHandleFactory.newJavaExec();
-
+    private void configureJavaExec(JavaExecSpec ajc, AspectJCompileSpec spec) {
         if (spec.getLauncher() != null) {
             ajc.setExecutable(spec.getLauncher().getExecutablePath().getAsFile().getAbsolutePath());
         }
@@ -161,15 +160,6 @@ public class AspectJCompiler implements Compiler<AspectJCompileSpec> {
         ajc.args("-argfile", argFile.getAbsolutePath());
 
         ajc.setIgnoreExitValue(true);
-        return ajc.build();
-    }
-
-    private void executeCompiler(ExecHandle handle) {
-        handle.start();
-        ExecResult result = handle.waitForFinish();
-        if (result.getExitValue() != 0) {
-            throw new CompilationFailedException(result.getExitValue());
-        }
     }
 
     private String getAsPath(Collection<File> files) {
