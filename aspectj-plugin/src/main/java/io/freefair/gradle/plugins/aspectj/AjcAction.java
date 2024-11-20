@@ -108,7 +108,7 @@ public class AjcAction implements Action<Task> {
 
     private boolean shouldSkipAjc(Task task) {
         if (!enabled.getOrElse(true)) {
-            task.getLogger().lifecycle("Skipping AJC (disabled)");
+            task.getLogger().lifecycle("Skipping AJC for task '{}' (disabled)", task.getPath());
             return true;
         }
 
@@ -136,7 +136,7 @@ public class AjcAction implements Action<Task> {
             task.getLogger().info("Not skipping AJC (found {} in {})", clazz, clazz.getProtectionDomain().getCodeSource().getLocation());
             return false;
         } catch (ClassNotFoundException e) {
-            task.getLogger().lifecycle("Skipping AJC (no inpath, no aspectpath, no aspectjrt on classpath)");
+            task.getLogger().lifecycle("Skipping AJC for task '{}' (no inpath, no aspectpath, no aspectjrt on classpath)", task.getPath());
             return true;
         } catch (IOException e) {
             throw new RuntimeException(e);
