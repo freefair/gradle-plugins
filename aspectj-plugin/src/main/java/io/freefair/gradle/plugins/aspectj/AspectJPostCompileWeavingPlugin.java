@@ -5,6 +5,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.tasks.compile.HasCompileOptions;
 import org.gradle.api.plugins.GroovyPlugin;
@@ -79,7 +80,9 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
             FileCollection inpath = WeavingSourceSet.getInPath(sourceSet);
 
             Configuration runtimeClasspath = project.getConfigurations().getByName(sourceSet.getRuntimeClasspathConfigurationName());
-            FileCollection aspectjClasspath = aspectjBasePlugin.getAspectjRuntime().inferAspectjClasspath(runtimeClasspath);
+            Configuration compileClasspath = project.getConfigurations().getByName(sourceSet.getCompileClasspathConfigurationName());
+            ConfigurableFileCollection searchPath = project.files(runtimeClasspath, compileClasspath);
+            FileCollection aspectjClasspath = aspectjBasePlugin.getAspectjRuntime().inferAspectjClasspath(searchPath);
 
             project.getTasks().named(sourceSet.getCompileTaskName(language), compileTask -> {
                 AjcAction ajcAction = enhanceWithWeavingAction(compileTask, aspectpath, inpath, aspectjClasspath);

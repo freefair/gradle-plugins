@@ -1,5 +1,7 @@
 plugins {
     id "org.jetbrains.kotlin.jvm"
+    id "org.springframework.boot" version "3.3.5"
+    id "org.graalvm.buildtools.native" version "0.10.2"
 }
 
 apply plugin: "io.freefair.aspectj.post-compile-weaving"
@@ -29,10 +31,13 @@ dependencies {
 
     implementation "org.slf4j:slf4j-api:2.+"
 
+    implementation "org.springframework.boot:spring-boot-starter:3.3.5"
+
     implementation "org.aspectj:aspectjrt:1.9.22.1"
     implementation localGroovy()
 
     testImplementation "junit:junit:4.13.2"
+    implementation "org.springframework.boot:spring-boot-starter-test:3.3.5"
 }
 
 configurations.testImplementation.extendsFrom(configurations.jacocoAnt)

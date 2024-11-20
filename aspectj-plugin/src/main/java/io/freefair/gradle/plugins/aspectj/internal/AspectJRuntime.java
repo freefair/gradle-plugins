@@ -74,12 +74,8 @@ public class AspectJRuntime {
                 String versionNumber = findAspectjVersion(classpath);
 
                 if (versionNumber == null) {
-                    throw new GradleException(
-                            String.format(
-                                    "Cannot infer AspectJ class path because no AspectJ Jar was found on class path: %s",
-                                    classpath
-                            )
-                    );
+                    log.warn("Cannot infer AspectJ class path because no AspectJ Jar was found on class path: {}", classpath);
+                    return project.files();
                 }
 
                 String notation = "org.aspectj:aspectjtools:" + versionNumber;
