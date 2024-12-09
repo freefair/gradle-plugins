@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import java.io.FileReader;
 import java.io.IOException;
 
+@Deprecated
 public abstract class UploadSnapshotTask extends DefaultTask {
 
     private final GithubClient githubClient;

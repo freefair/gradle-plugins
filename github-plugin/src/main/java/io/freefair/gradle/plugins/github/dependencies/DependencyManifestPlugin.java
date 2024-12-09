@@ -10,6 +10,7 @@ import org.gradle.api.attributes.Usage;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskProvider;
 
+@Deprecated
 public class DependencyManifestPlugin implements Plugin<Project> {
 
     @Getter

@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
+@Deprecated
 public abstract class DependencySnapshotTask extends SourceTask {
 
     @OutputFile
