@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.aspectj;
 
+import io.freefair.gradle.plugins.aspectj.internal.AspectJUtil;
 import io.freefair.gradle.plugins.aspectj.internal.DefaultAspectjSourceDirectorySet;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -97,6 +98,7 @@ public class AspectJPlugin implements Plugin<Project> {
         allAspectj.source(sourceSet.getJava());
 
         Configuration aspect = project.getConfigurations().create(WeavingSourceSet.getAspectConfigurationName(sourceSet));
+        aspect.exclude(AspectJUtil.getAspectJToolsExclude());
         WeavingSourceSet.getAspectPath(sourceSet).from(aspect);
 
         Configuration inpath = project.getConfigurations().create(WeavingSourceSet.getInpathConfigurationName(sourceSet));

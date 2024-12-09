@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.aspectj;
 
+import io.freefair.gradle.plugins.aspectj.internal.AspectJUtil;
 import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -65,6 +66,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         sourceSet.getExtensions().add(WeavingSourceSet.ASPECT_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
 
         Configuration aspectpath = project.getConfigurations().create(WeavingSourceSet.getAspectConfigurationName(sourceSet));
+        aspectpath.exclude(AspectJUtil.getAspectJToolsExclude());
         WeavingSourceSet.getAspectPath(sourceSet).from(aspectpath);
 
         Configuration inpath = project.getConfigurations().create(WeavingSourceSet.getInpathConfigurationName(sourceSet));
