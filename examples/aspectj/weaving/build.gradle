@@ -1,6 +1,6 @@
 plugins {
     id "org.jetbrains.kotlin.jvm"
-    id "org.springframework.boot" version "3.3.5"
+    id "org.springframework.boot" version "3.4.0"
     id "org.graalvm.buildtools.native" version "0.10.4"
 }
 
