@@ -77,7 +77,7 @@ allprojects {
         project.apply plugin: 'io.freefair.maven-central.validate-poms'
 
         signing {
-            required { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask("publish") }
+            required = { !version.endsWith('SNAPSHOT') && gradle.taskGraph.hasTask("publish") }
 
             def signingKey = findProperty("signingKey")
             def signingPassword = findProperty("signingPassword")
