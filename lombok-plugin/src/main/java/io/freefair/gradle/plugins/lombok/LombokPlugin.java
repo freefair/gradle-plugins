@@ -53,7 +53,7 @@ public class LombokPlugin implements Plugin<Project> {
     private void configureJavaPluginDefaults() {
         JavaPluginExtension javaPluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
 
-        project.getTasks().withType(LombokTask.class, lombokTask -> {
+        project.getTasks().withType(LombokTask.class).configureEach(lombokTask -> {
             JavaToolchainService javaToolchainService = project.getExtensions().getByType(JavaToolchainService.class);
             Provider<JavaLauncher> launcherProvider = javaToolchainService.launcherFor(javaPluginExtension.getToolchain());
             lombokTask.getLauncher().convention(launcherProvider);

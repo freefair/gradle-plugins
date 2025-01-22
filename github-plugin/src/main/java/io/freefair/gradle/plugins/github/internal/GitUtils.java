@@ -32,7 +32,7 @@ public class GitUtils {
 
         String travisSlug = findTravisSlug(project).getOrNull();
 
-        if (travisSlug != null) {
+        if (travisSlug != null && !travisSlug.isEmpty()) {
             return travisSlug;
         }
 
