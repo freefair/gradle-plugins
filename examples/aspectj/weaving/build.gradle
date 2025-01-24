@@ -38,7 +38,7 @@ dependencies {
     implementation localGroovy()
 
     testImplementation "junit:junit:4.13.2"
-    implementation "org.springframework.boot:spring-boot-starter-test:3.4.1"
+    implementation "org.springframework.boot:spring-boot-starter-test:3.4.2"
 }
 
 configurations.testImplementation.extendsFrom(configurations.jacocoAnt)
