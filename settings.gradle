@@ -12,7 +12,7 @@ pluginManagement {
 
 plugins {
     id "io.freefair.settings.plugin-versions" version "8.11"
-    id "com.gradle.develocity" version "3.19"
+    id "com.gradle.develocity" version "3.19.1"
 }
 
 enableFeaturePreview "STABLE_CONFIGURATION_CACHE"
