@@ -6,7 +6,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.Project;
-import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.ProjectLayout;
 
@@ -62,10 +61,6 @@ public class MavenProjectWrapper extends MavenProject {
     public void setMainSourceDirs(FileCollection mainSourceDirs) {
         this.mainSourceDirs = mainSourceDirs;
         getBuild().setSourceDirectory(mainSourceDirs.getFiles().iterator().next().getAbsolutePath());
-    }
-
-    public void setMainOutputDirectory(DirectoryProperty mainOutputDirectory) {
-        getBuild().setOutputDirectory(mainOutputDirectory.get().getAsFile().getAbsolutePath());
     }
 
 }

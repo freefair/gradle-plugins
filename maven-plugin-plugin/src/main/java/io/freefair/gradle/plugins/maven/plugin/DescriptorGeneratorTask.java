@@ -21,25 +21,22 @@ import org.apache.maven.tools.plugin.scanner.DefaultMojoScanner;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.component.ComponentIdentifier;
-import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
-import org.gradle.api.artifacts.result.ResolvedArtifactResult;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.api.tasks.Optional;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -79,18 +76,8 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
     @Input
     public abstract Property<Boolean> getSkipErrorNoDescriptorsFound();
 
-    @InputFiles
-    public abstract ConfigurableFileCollection getMainSourceDirs();
-
-    @Internal
-    public abstract DirectoryProperty getMainOutputDirectory();
-
     public DescriptorGeneratorTask() {
         getSkipErrorNoDescriptorsFound().convention(false);
-
-        SourceSet main = getProject().getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-        getMainSourceDirs().from(main.getAllJava().getSourceDirectories());
-        getMainOutputDirectory().convention(main.getJava().getClassesDirectory());
     }
 
     /**
@@ -101,8 +88,8 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
         PluginDescriptor pluginDescriptor = new PluginDescriptor();
 
         MavenProjectWrapper project = new MavenProjectWrapper(getProjectLayout(), getPomFile().getAsFile().get());
-        project.setMainSourceDirs(getMainSourceDirs());
-        project.setMainOutputDirectory(getMainOutputDirectory());
+        project.setMainSourceDirs(getSourceDirectories());
+        project.getBuild().setOutputDirectory(getClassesDirectories().getFiles().iterator().next().getAbsolutePath());
 
         pluginDescriptor.setGroupId(project.getGroupId());
         pluginDescriptor.setArtifactId(project.getArtifactId());
