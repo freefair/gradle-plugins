@@ -6,9 +6,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.Project;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.ProjectLayout;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
 
 import java.io.File;
 import java.io.FileReader;
@@ -26,10 +26,9 @@ public class MavenProjectWrapper extends MavenProject {
     private final ProjectLayout projectLayout;
     private final File pomFile;
 
-    private final SourceSet main;
-    private final SourceSet test;
+    private FileCollection mainSourceDirs;
 
-    public MavenProjectWrapper(ProjectLayout projectLayout, SourceSetContainer sourceSets, File pomFile) throws IOException, XmlPullParserException {
+    public MavenProjectWrapper(ProjectLayout projectLayout, File pomFile) throws IOException, XmlPullParserException {
         this.projectLayout = projectLayout;
         this.pomFile = pomFile;
 
@@ -39,14 +38,6 @@ public class MavenProjectWrapper extends MavenProject {
         setModel(model);
 
         getBuild().setDirectory(projectLayout.getBuildDirectory().get().getAsFile().getAbsolutePath());
-
-        main = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-        getBuild().setSourceDirectory(main.getJava().getSrcDirs().iterator().next().getAbsolutePath());
-        getBuild().setOutputDirectory(main.getJava().getClassesDirectory().get().getAsFile().getAbsolutePath());
-
-        test = sourceSets.getByName(SourceSet.TEST_SOURCE_SET_NAME);
-        getBuild().setTestSourceDirectory(test.getJava().getSrcDirs().iterator().next().getAbsolutePath());
-        getBuild().setTestOutputDirectory(test.getJava().getClassesDirectory().get().getAsFile().getAbsolutePath());
 
         setArtifact(new ProjectArtifact(this));
     }
@@ -63,15 +54,18 @@ public class MavenProjectWrapper extends MavenProject {
 
     @Override
     public List<String> getCompileSourceRoots() {
-        return main.getJava().getSrcDirs().stream()
+        return mainSourceDirs.getFiles().stream()
                 .map(File::getAbsolutePath)
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<String> getTestCompileSourceRoots() {
-        return test.getJava().getSrcDirs().stream()
-                .map(File::getAbsolutePath)
-                .collect(Collectors.toList());
+    public void setMainSourceDirs(FileCollection mainSourceDirs) {
+        this.mainSourceDirs = mainSourceDirs;
+        getBuild().setSourceDirectory(mainSourceDirs.getFiles().iterator().next().getAbsolutePath());
     }
+
+    public void setMainOutputDirectory(DirectoryProperty mainOutputDirectory) {
+        getBuild().setOutputDirectory(mainOutputDirectory.get().getAsFile().getAbsolutePath());
+    }
+
 }
