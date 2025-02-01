@@ -25,7 +25,6 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 
@@ -118,17 +117,16 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
     }
 
     @Nonnull
-    private List<ComponentDependency> getRuntimeDependencies() {
-        return getProject().getConfigurations().getByName(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME)
-                .getResolvedConfiguration()
-                .getResolvedArtifacts()
+    private List<ComponentDependency> getRuntimeDependencies() throws XmlPullParserException, IOException {
+        return MavenHelper.parsePom(getPomFile().get().getAsFile())
+                .getDependencies()
                 .stream()
                 .map(resolvedDependency -> {
                     ComponentDependency componentDependency = new ComponentDependency();
 
-                    componentDependency.setArtifactId(resolvedDependency.getModuleVersion().getId().getName());
-                    componentDependency.setGroupId(resolvedDependency.getModuleVersion().getId().getGroup());
-                    componentDependency.setVersion(resolvedDependency.getModuleVersion().getId().getVersion());
+                    componentDependency.setArtifactId(resolvedDependency.getArtifactId());
+                    componentDependency.setGroupId(resolvedDependency.getGroupId());
+                    componentDependency.setVersion(resolvedDependency.getVersion());
                     componentDependency.setType(resolvedDependency.getType());
 
                     return componentDependency;
