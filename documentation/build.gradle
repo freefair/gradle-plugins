@@ -1,3 +1,6 @@
+import io.freefair.gradle.plugins.okhttp.tasks.UploadFile
+import kotlin.KotlinVersion
+
 plugins {
     id 'org.asciidoctor.jvm.convert' version '4.0.4'
     id 'io.freefair.aggregate-javadoc'
@@ -12,6 +15,7 @@ asciidoctor {
     baseDirFollowsSourceDir()
 
     attributes gradle_version: gradle.gradleVersion
+    attributes kotlin_version: KotlinVersion.CURRENT
 
     configurations 'asciidoctorExt'
 
@@ -45,7 +49,7 @@ tasks.register("docsZip", Zip) {
     }
 }
 
-tasks.register("uploadDocs", io.freefair.gradle.plugins.okhttp.tasks.UploadFile) {
+tasks.register("uploadDocs", UploadFile) {
     dependsOn docsZip
     username = findProperty("freefairDocsUser")
     password = findProperty("freefairDocsPass")

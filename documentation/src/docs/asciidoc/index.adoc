@@ -99,6 +99,14 @@ Starting with version 8, the _Major.Minor_ version of the plugins matches those 
 
 Most of the plugins should work all Java versions supported by Gradle {gradle_version}, but some of the included external tools or libraries like Lombok or AJC might have additional constraints.
 
+=== Kotlin
+
+For most of the plugins, the Kotlin version is irrelevant.
+
+Some plugins may interface with the Kotlin Gradle plugin or are implemented in Kotlin.
+
+Whenever possible, we use the same Kotlin version that Gradle uses, currently {kotlin_version}.
+
 include::_settings.adoc[]
 
 include::_aspectj.adoc[]
