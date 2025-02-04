@@ -8,3 +8,5 @@ This chapter describes all the plugins contained in the `settings-plugin` module
 
 This plugin allows you to use all other plugins, without defining their version.
 
+NOTE: This plugin must be applied in settings.gradle(.kts)
+
