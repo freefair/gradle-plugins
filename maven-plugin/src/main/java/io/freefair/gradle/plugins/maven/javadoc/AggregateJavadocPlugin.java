@@ -35,7 +35,7 @@ public abstract class AggregateJavadocPlugin implements Plugin<Project> {
         project.getPlugins().apply(JavaBasePlugin.class);
 
         project.getPlugins().withType(JavaPlugin.class, jp -> {
-            throw new IllegalStateException("The aggregate-javadoc plugin should not be used on a java project");
+            project.getLogger().warn("The aggregate-javadoc plugin should not be used on a java project");
         });
 
         createConfigurations(project);
