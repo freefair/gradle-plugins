@@ -1,7 +1,7 @@
 plugins {
     id "org.jetbrains.kotlin.jvm"
     id "org.springframework.boot" version "3.4.2"
-    id "org.graalvm.buildtools.native" version "0.10.4"
+    id "org.graalvm.buildtools.native" version "0.10.5"
 }
 
 apply plugin: "io.freefair.aspectj.post-compile-weaving"
