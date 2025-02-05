@@ -49,6 +49,7 @@ public abstract class AggregateJavadocPlugin implements Plugin<Project> {
             jd.setClasspath(javadocClasspath);
 
             jd.setFailOnError(false);
+            jd.doFirst(new MultiModuleFixAction());
         });
 
         javadocJar = project.getTasks().register("javadocJar", Jar.class, jar -> {
