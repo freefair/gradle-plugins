@@ -8,6 +8,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.gradle.api.GradleException;
+import org.gradle.api.InvalidUserDataException;
+import org.gradle.api.credentials.HttpHeaderCredentials;
+import org.gradle.api.credentials.PasswordCredentials;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -44,6 +47,10 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
     @Optional
     public abstract Property<String> getPassword();
 
+    @Input
+    @Optional
+    public abstract Property<org.gradle.api.credentials.Credentials> getCredentials();
+
     @TaskAction
     public void executeRequest() throws IOException {
 
@@ -74,6 +81,28 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
             builder.header("Authorization", Credentials.basic(getUsername().get(), getPassword().get()));
         }
 
+        if (getCredentials().isPresent()) {
+            org.gradle.api.credentials.Credentials credentials = getCredentials().get();
+
+            if (credentials instanceof PasswordCredentials) {
+                PasswordCredentials passwordCredentials = (PasswordCredentials) credentials;
+                String username = passwordCredentials.getUsername();
+                String password = passwordCredentials.getPassword();
+                if (username != null && password != null) {
+                    builder.header("Authorization", Credentials.basic(username, password));
+                }
+            } else if (credentials instanceof HttpHeaderCredentials) {
+                HttpHeaderCredentials headerCredentials = (HttpHeaderCredentials) credentials;
+                String name = headerCredentials.getName();
+                String value = headerCredentials.getValue();
+                if (name != null && value != null) {
+                    builder.header(name, value);
+                }
+            } else {
+                throw new InvalidUserDataException("Unsupported credential type: " + credentials.getClass());
+            }
+        }
+
         if (getUrl().isPresent()) {
             builder.url(getUrl().get());
         }
@@ -84,7 +113,9 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
     public void handleResponse(Response response) throws IOException {
         if (!response.isSuccessful()) {
             getLogger().error("{}: {}", response.code(), response.message());
-            getLogger().error(response.body().string());
+            if (response.body() != null) {
+                getLogger().error(response.body().string());
+            }
             throw new GradleException(response.message());
         }
     }
@@ -120,8 +151,7 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
 
             if (contentLength < 1) {
                 progressLogger.progress(String.format("%s %s [%s/s]", prefix, makeHumanReadable(bytes), makeHumanReadable(bps)));
-            }
-            else {
+            } else {
                 double percent = (double) bytes / contentLength * 100d;
                 progressLogger.progress(String.format("%s %.2f%% (%s / %s) [%s/s]", prefix, percent, makeHumanReadable(bytes), makeHumanReadable(contentLength), makeHumanReadable(bps)));
             }
