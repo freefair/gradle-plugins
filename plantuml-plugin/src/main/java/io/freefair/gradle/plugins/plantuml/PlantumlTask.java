@@ -1,10 +1,14 @@
 package io.freefair.gradle.plugins.plantuml;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.process.JavaForkOptions;
+import org.gradle.process.internal.JavaForkOptionsFactory;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
@@ -21,6 +25,9 @@ public abstract class PlantumlTask extends SourceTask {
 
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
+
+    @Inject
+    protected abstract JavaForkOptionsFactory getJavaForkOptionsFactory();
 
     @Classpath
     public abstract ConfigurableFileCollection getPlantumlClasspath();
@@ -41,23 +48,31 @@ public abstract class PlantumlTask extends SourceTask {
     @Input
     public abstract Property<Boolean> getDeleteOutputBeforeBuild();
 
+    @Input
+    @Getter
+    @Setter
+    private JavaForkOptions forkOptions;
+
     public PlantumlTask() {
         this.setGroup("plantuml");
         getWithMetadata().convention(true);
         getIncludePattern().convention("**/*.puml");
         getDeleteOutputBeforeBuild().convention(true);
+
+        forkOptions = getJavaForkOptionsFactory().newJavaForkOptions();
+        getForkOptions().systemProperty("java.awt.headless", true);
     }
 
     @TaskAction
     public void execute() {
 
-        if(getDeleteOutputBeforeBuild().get()) {
+        if (getDeleteOutputBeforeBuild().get()) {
             getFileSystemOperations().delete(deleteSpec -> deleteSpec.delete(getOutputDirectory()));
         }
 
         WorkQueue workQueue = getWorkerExecutor().processIsolation(process -> {
             process.getClasspath().from(getPlantumlClasspath());
-            process.getForkOptions().systemProperty("java.awt.headless", true);
+            getForkOptions().copyTo(process.getForkOptions());
         });
 
         for (File file : getSource().matching(p -> p.include(getIncludePattern().get()))) {
