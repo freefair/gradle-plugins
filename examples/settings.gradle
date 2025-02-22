@@ -46,3 +46,5 @@ include 'plantuml'
 include ":mjml"
 
 include ":okhttp"
+
+include ":gwt:war"

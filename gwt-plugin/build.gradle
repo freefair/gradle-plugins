@@ -1,0 +1,44 @@
+plugins {
+    id "maven-publish"
+    id "java-gradle-plugin"
+    id "com.gradle.plugin-publish"
+}
+
+dependencies {
+
+    compileOnly 'org.gwtproject:gwt-dev:2.12.1'
+
+}
+
+gradlePlugin {
+    plugins {
+        gwt {
+            id = "io.freefair.gwt"
+            implementationClass = "io.freefair.gradle.plugins.gwt.GwtPlugin"
+            displayName = "GWT Plugin"
+            description = "GWT Plugin"
+            tags.set(['gwt'])
+        }
+        gwtBase {
+            id = "io.freefair.gwt-base"
+            implementationClass = "io.freefair.gradle.plugins.gwt.GwtBasePlugin"
+            displayName = "GWT Base Plugin"
+            description = "GWT Plugin"
+            tags.set(['gwt'])
+        }
+        gwtWar {
+            id = "io.freefair.gwt-war"
+            implementationClass = "io.freefair.gradle.plugins.gwt.GwtWarPlugin"
+            displayName = "GWT War Plugin"
+            description = "GWT Plugin"
+            tags.set(['gwt'])
+        }
+        gwtWebjar {
+            id = "io.freefair.gwt-webjar"
+            implementationClass = "io.freefair.gradle.plugins.gwt.GwtWebJarPlugin"
+            displayName = "GWT WebJar Plugin"
+            description = "GWT Plugin"
+            tags.set(['gwt'])
+        }
+    }
+}
