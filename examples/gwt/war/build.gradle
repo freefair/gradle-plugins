@@ -1,0 +1,15 @@
+import io.freefair.gradle.plugins.gwt.tasks.AbstractGwtTask
+
+plugins {
+    id "io.freefair.gwt-war"
+    id "war"
+}
+
+gwt {
+    modules.add("io.freefair.example.Example")
+}
+
+dependencies {
+    gwtClasspath "org.gwtproject:gwt-user:2.12.1"
+    gwtClasspath project(":code-generator:generator")
+}

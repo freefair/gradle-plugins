@@ -61,6 +61,7 @@ include "git-plugin"
 include "mkdocs-plugin"
 include "quicktype-plugin"
 include "plantuml-plugin"
+include "gwt-plugin"
 
 include "mjml-plugin"
 
