@@ -117,12 +117,17 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
     private void logError(String element) {
         errorFound = true;
         getLogger().error("No {} found in {}", element, getPomFile().getAsFile().get());
-        getProblems()
-                .getReporter()
-                .reporting(problem -> problem.id("maven-pom", "Missing Element in Maven Pom")
-                        .fileLocation(getPomFile().getAsFile().get().getPath())
-                        .details("No " + element + " found")
-                );
+        try {
+            getProblems()
+                    .getReporter()
+                    .reporting(problem -> problem.id("maven-pom", "Missing Element in Maven Pom")
+                            .fileLocation(getPomFile().getAsFile().get().getPath())
+                            .details("No " + element + " found")
+                    );
+        } catch (LinkageError e) {
+            // https://github.com/freefair/gradle-plugins/issues/1299
+            getLogger().info("Incompatible Gradle Version", e);
+        }
     }
 
     private boolean isEmpty(String string) {
