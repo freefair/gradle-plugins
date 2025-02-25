@@ -22,8 +22,7 @@ import org.gradle.api.file.EmptyFileVisitor;
 import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
-import org.gradle.api.problems.Problems;
-import org.gradle.api.problems.Severity;
+import org.gradle.api.problems.*;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
@@ -45,6 +44,8 @@ import java.util.LinkedHashSet;
 @Setter
 @CacheableTask
 public abstract class SassCompile extends SourceTask {
+
+    public static final ProblemGroup PROBLEM_GROUP = ProblemGroup.create("sass", "Sass compiler");
 
     public SassCompile() {
         include("**/*.scss");
@@ -149,13 +150,12 @@ public abstract class SassCompile extends SourceTask {
 
                             getLogger().error(sassError.getMessage());
 
-                            throw getProblems().getReporter()
-                                            .throwing(problemSpec -> problemSpec
-                                                    .id("sass-compilation-failed", "Sass Compilation Failed")
-                                                    .lineInFileLocation(sassError.getSpan().getUrl(), sassError.getSpan().getStart().getLine(), sassError.getSpan().getStart().getColumn())
-                                                    .withException(new RuntimeException(e))
-                                                    .details(sassError.getFormatted())
-                                                    .severity(Severity.ERROR));
+                            ProblemId problemId = ProblemId.create("sass-compilation-failed", "Sass Compilation Failed", PROBLEM_GROUP);
+                            throw getProblems().getReporter().throwing(e, problemId, problemSpec -> {
+                                problemSpec.lineInFileLocation(sassError.getSpan().getUrl(), sassError.getSpan().getStart().getLine(), sassError.getSpan().getStart().getColumn());
+                                problemSpec.details(sassError.getFormatted());
+                                problemSpec.severity(Severity.ERROR);
+                            });
 
                         } catch (IOException e) {
                             getLogger().error(e.getLocalizedMessage());

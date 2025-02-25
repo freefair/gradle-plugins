@@ -8,7 +8,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.problems.ProblemGroup;
+import org.gradle.api.problems.ProblemId;
 import org.gradle.api.problems.Problems;
+import org.gradle.api.problems.Severity;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
@@ -24,6 +27,8 @@ import java.util.Collection;
  * @author Lars Grefer
  */
 public abstract class ValidateMavenPom extends DefaultTask implements VerificationTask {
+
+    public static final ProblemGroup PROBLEM_GROUP = ProblemGroup.create("validate-maven-pom", "Maven Pom Validation");
 
     @Inject
     public abstract Problems getProblems();
@@ -118,12 +123,12 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
         errorFound = true;
         getLogger().error("No {} found in {}", element, getPomFile().getAsFile().get());
         try {
-            getProblems()
-                    .getReporter()
-                    .reporting(problem -> problem.id("maven-pom", "Missing Element in Maven Pom")
-                            .fileLocation(getPomFile().getAsFile().get().getPath())
-                            .details("No " + element + " found")
-                    );
+            ProblemId problemId = ProblemId.create("maven-pom", "Missing Element in Maven Pom", PROBLEM_GROUP);
+            getProblems().getReporter().report(problemId, problemSpec -> {
+                problemSpec.fileLocation(getPomFile().getAsFile().get().getPath());
+                problemSpec.details("No " + element + " found");
+                problemSpec.severity(Severity.ERROR);
+            });
         } catch (LinkageError e) {
             // https://github.com/freefair/gradle-plugins/issues/1299
             getLogger().info("Incompatible Gradle Version", e);
