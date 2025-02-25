@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.process.JavaForkOptions;
@@ -26,9 +28,6 @@ public abstract class PlantumlTask extends SourceTask {
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
 
-    @Inject
-    protected abstract JavaForkOptionsFactory getJavaForkOptionsFactory();
-
     @Classpath
     public abstract ConfigurableFileCollection getPlantumlClasspath();
 
@@ -49,18 +48,23 @@ public abstract class PlantumlTask extends SourceTask {
     public abstract Property<Boolean> getDeleteOutputBeforeBuild();
 
     @Input
-    @Getter
-    @Setter
-    private JavaForkOptions forkOptions;
+    public abstract MapProperty<String, Object> getSystemProperties();
+
+    @Input
+    public abstract ListProperty<String> getJvmArgs();
+
+    @Input
+    public abstract Property<Boolean> getDebug();
+
+    @OutputDirectory
+    public abstract DirectoryProperty getTmpDir();
 
     public PlantumlTask() {
         this.setGroup("plantuml");
         getWithMetadata().convention(true);
         getIncludePattern().convention("**/*.puml");
         getDeleteOutputBeforeBuild().convention(true);
-
-        forkOptions = getJavaForkOptionsFactory().newJavaForkOptions();
-        getForkOptions().systemProperty("java.awt.headless", true);
+        getTmpDir().set(getTemporaryDir());
     }
 
     @TaskAction
@@ -72,7 +76,25 @@ public abstract class PlantumlTask extends SourceTask {
 
         WorkQueue workQueue = getWorkerExecutor().processIsolation(process -> {
             process.getClasspath().from(getPlantumlClasspath());
-            getForkOptions().copyTo(process.getForkOptions());
+
+            process.forkOptions(javaForkOptions -> {
+
+                javaForkOptions.systemProperty("java.awt.headless", true);
+                javaForkOptions.systemProperty("java.io.tmpdir", getTmpDir().get().getAsFile().getAbsolutePath());
+
+                if (getSystemProperties().isPresent()) {
+                    javaForkOptions.systemProperties(getSystemProperties().get());
+                }
+
+                if (getJvmArgs().isPresent()) {
+                    javaForkOptions.jvmArgs(getJvmArgs().get());
+                }
+
+                if (getDebug().isPresent()) {
+                    javaForkOptions.setDebug(getDebug().get());
+                }
+
+            });
         });
 
         for (File file : getSource().matching(p -> p.include(getIncludePattern().get()))) {
