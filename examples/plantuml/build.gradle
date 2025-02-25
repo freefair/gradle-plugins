@@ -1,6 +1,7 @@
 import io.freefair.gradle.plugins.plantuml.PlantumlTask
 
 plugins {
+    id "base"
     id "io.freefair.plantuml"
 }
 
@@ -14,4 +15,9 @@ tasks.register("plantUml2", PlantumlTask) {
     includePattern = "**/*.tuml"
     fileFormat = "SVG"
     outputDirectory = layout.buildDirectory.dir("dist2")
+}
+
+
+tasks.withType(PlantumlTask).configureEach {
+    tasks.getByName("build").dependsOn(it)
 }
