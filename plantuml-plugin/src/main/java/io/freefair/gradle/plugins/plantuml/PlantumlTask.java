@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.process.JavaForkOptions;
@@ -49,18 +51,38 @@ public abstract class PlantumlTask extends SourceTask {
     public abstract Property<Boolean> getDeleteOutputBeforeBuild();
 
     @Input
-    @Getter
-    @Setter
-    private JavaForkOptions forkOptions;
+    public abstract MapProperty<String, Object> getSystemProperties();
+
+    @Input
+    public abstract ListProperty<String> getJvmArgs();
+
+    @Input
+    public abstract Property<Boolean> getDebug();
+
+    @Input
+    public abstract Property<String> getTmpDir();
 
     public PlantumlTask() {
         this.setGroup("plantuml");
         getWithMetadata().convention(true);
         getIncludePattern().convention("**/*.puml");
         getDeleteOutputBeforeBuild().convention(true);
+    }
 
-        forkOptions = getJavaForkOptionsFactory().newJavaForkOptions();
-        getForkOptions().systemProperty("java.awt.headless", true);
+    private JavaForkOptions getForkOptions() {
+        JavaForkOptions forkOptions = getJavaForkOptionsFactory().newJavaForkOptions();
+        forkOptions.systemProperty("java.awt.headless", true);
+        getSystemProperties().get().forEach(forkOptions::systemProperty);
+        getJvmArgs().get().forEach(forkOptions::jvmArgs);
+        if (getDebug().isPresent() && getDebug().get()) {
+            forkOptions.setDebug(true);
+        }
+        if(getTmpDir().isPresent()) {
+            forkOptions.systemProperty("java.io.tmpdir", getTmpDir().get());
+        } else {
+            forkOptions.systemProperty("java.io.tmpdir", System.getProperty("java.io.tmpdir"));
+        }
+        return forkOptions;
     }
 
     @TaskAction
