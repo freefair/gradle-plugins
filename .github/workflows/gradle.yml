@@ -27,12 +27,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
 
       - run: ./gradlew -V assemble -s
-      - run: ./gradlew -V uploadGithubDependenciesSnapshot -s
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: ./gradlew -V check -s
       - name: Upload Coverage Reports
         run: |
@@ -42,8 +39,6 @@ jobs:
   build-examples:
     name: Build example projects
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
@@ -64,5 +59,4 @@ jobs:
         uses: gradle/gradle-build-action@v3
 
       - run: ./gradlew -V assemble -s
-      - run: ./gradlew -V uploadGithubDependenciesSnapshot -s
       - run: ./gradlew -V check -s
