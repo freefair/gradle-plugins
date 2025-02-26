@@ -54,6 +54,7 @@ public abstract class PlantumlTask extends SourceTask {
     public abstract ListProperty<String> getJvmArgs();
 
     @Input
+    @Optional
     public abstract Property<Boolean> getDebug();
 
     @OutputDirectory
