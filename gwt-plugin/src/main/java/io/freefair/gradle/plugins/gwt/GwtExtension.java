@@ -13,6 +13,6 @@ public abstract class GwtExtension {
     public abstract ListProperty<String> getModules();
 
     public GwtExtension() {
-        getToolVersion().convention("2.12.1");
+        getToolVersion().convention("2.12.2");
     }
 }
