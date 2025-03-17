@@ -35,7 +35,8 @@ allprojects {
 
     plugins.withId("java") {
         dependencies {
-            implementation platform("org.junit:junit-bom:5.11.4")
+            implementation platform("org.junit:junit-bom:5.12.1")
+            testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
         }
     }
 }
