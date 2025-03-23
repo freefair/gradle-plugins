@@ -32,8 +32,13 @@ dependencies {
     javadocClasspath "org.jacoco:org.jacoco.ant:${org.gradle.testing.jacoco.plugins.JacocoPlugin.DEFAULT_JACOCO_VERSION}"
     javadocClasspath "org.apache.maven.plugins:maven-plugin-plugin:3.15.1"
     javadocClasspath 'net.sourceforge.plantuml:plantuml:1.2025.2'
+    javadocClasspath 'org.projectlombok:lombok:1.18.36'
 
     asciidoctorExt "io.spring.asciidoctor:spring-asciidoctor-extensions-block-switch:0.6.3"
+}
+
+tasks.named("javadoc", Javadoc) {
+    failOnError = true
 }
 
 tasks.register("docsZip", Zip) {
