@@ -12,6 +12,7 @@ import org.gradle.api.tasks.compile.AbstractOptions;
 import org.gradle.process.CommandLineArgumentProvider;
 
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AspectJCompileOptions extends AbstractOptions {
+public class AspectJCompileOptions implements Serializable {
 
     /**
      * Accept as source bytecode any .class files in the .jar files or directories on Path.
