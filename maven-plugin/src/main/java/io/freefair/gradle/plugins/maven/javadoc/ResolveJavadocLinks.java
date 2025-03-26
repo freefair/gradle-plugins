@@ -201,7 +201,7 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
         }
 
         if (group.equals("org.jetbrains.kotlin")) {
-            return "https://kotlinlang.org/api/latest/jvm/stdlib/";
+            return "https://kotlinlang.org/api/core/";
         }
 
         return null;

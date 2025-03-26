@@ -32,14 +32,14 @@ class SpringLinkProviderTest {
     void testSpringBoot_3_3_leadsToNewSite() {
         String javadocLink = linkProvider.getJavadocLink("org.springframework.boot", "spring-boot", "3.3.5");
 
-        assertThat(javadocLink).isEqualTo("https://docs.spring.io/spring-boot/3.3.5/api/java/");
+        assertThat(javadocLink).isEqualTo("https://docs.spring.io/spring-boot/3.3/api/java/");
     }
 
     @Test
     void testSpringBoot_3_4_leadsToNewSite() {
         String javadocLink = linkProvider.getJavadocLink("org.springframework.boot", "spring-boot", "3.4.0-RC1");
 
-        assertThat(javadocLink).isEqualTo("https://docs.spring.io/spring-boot/3.4.0-RC1/api/java/");
+        assertThat(javadocLink).isEqualTo("https://docs.spring.io/spring-boot/3.4/api/java/");
     }
 
 }

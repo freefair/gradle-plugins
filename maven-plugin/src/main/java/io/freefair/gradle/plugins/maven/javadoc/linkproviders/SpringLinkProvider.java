@@ -22,11 +22,14 @@ public class SpringLinkProvider implements JavadocLinkProvider {
             String siteVersion = version;
             String sitePostfix = "/api/java/";
             ComparableVersion newDocsVersion = new ComparableVersion("3.3.0-M1");
-            ComparableVersion parsedVersion = new ComparableVersion(version);;
+            ComparableVersion parsedVersion = new ComparableVersion(version);
 
             if (parsedVersion.compareTo(newDocsVersion) < 0) {
                 sitePrefix = "https://docs.spring.io/spring-boot/docs/";
                 sitePostfix = "/api/";
+            }
+            else {
+                siteVersion = version.substring(0, version.indexOf('.', version.indexOf('.') + 1));
             }
 
             return sitePrefix + siteVersion + sitePostfix;
