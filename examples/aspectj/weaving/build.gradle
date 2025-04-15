@@ -28,7 +28,7 @@ sourceSets {
 
 dependencies {
     aspect project(":aspectj:aspect")
-    aspect 'org.aspectj:aspectjtools:1.9.23'
+    aspect 'org.aspectj:aspectjtools:1.9.24'
 
     implementation "org.slf4j:slf4j-api:2.+"
 
