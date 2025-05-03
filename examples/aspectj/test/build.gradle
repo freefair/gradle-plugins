@@ -8,7 +8,7 @@ java {
 }
 
 dependencies {
-    implementation "org.aspectj:aspectjrt:1.9.23"
+    implementation "org.aspectj:aspectjrt:1.9.24"
 
     testImplementation 'junit:junit:4.13.2'
 }
