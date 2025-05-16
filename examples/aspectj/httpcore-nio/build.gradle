@@ -9,7 +9,7 @@ java {
 
 dependencies {
     inpath 'org.apache.httpcomponents:httpcore-nio:4.4.16'
-    implementation "org.aspectj:aspectjrt:1.9.23"
+    implementation "org.aspectj:aspectjrt:1.9.24"
 
     testImplementation 'junit:junit:4.13.2'
 }
