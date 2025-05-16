@@ -5,6 +5,9 @@ plugins {
     id "war"
 }
 
+//No Java 21 Support for GWT 2.12.2
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 gwt {
     modules.add("io.freefair.example.Example")
 }
