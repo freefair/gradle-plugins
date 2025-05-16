@@ -24,9 +24,8 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.resources.ReadableResource;
 import org.gradle.api.resources.internal.ReadableResourceInternal;
-import org.gradle.api.tasks.util.PatternSet;
+import org.gradle.api.tasks.util.internal.PatternSetFactory;
 import org.gradle.internal.Cast;
-import org.gradle.internal.Factory;
 import org.gradle.internal.hash.FileHasher;
 import org.gradle.internal.nativeintegration.filesystem.FileSystem;
 
@@ -49,7 +48,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
     private final FileHasher fileHasher;
     private final FileSystem fileSystem;
     private final DirectoryFileTreeFactory directoryFileTreeFactory;
-    private final Factory<PatternSet> patternSetFactory;
+    private final PatternSetFactory patternSetFactory;
     private final TaskDependencyFactory taskDependencyFactory;
     private final ProviderFactory providers;
     private final DecompressionCoordinator decompressionCoordinator;
@@ -61,7 +60,7 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
         fileHasher = project.getServices().get(FileHasher.class);
         fileSystem = project.getServices().get(FileSystem.class);
         directoryFileTreeFactory = project.getServices().get(DirectoryFileTreeFactory.class);
-        patternSetFactory = project.getServices().getFactory(PatternSet.class);
+        patternSetFactory = project.getServices().get(PatternSetFactory.class);
         taskDependencyFactory = project.getServices().get(TaskDependencyFactory.class);
         providers = project.getServices().get(ProviderFactory.class);
         decompressionCoordinator = project.getServices().get(DecompressionCoordinator.class);
