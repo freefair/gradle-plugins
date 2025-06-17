@@ -1,7 +1,10 @@
 package io.freefair.immutables;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.List;
 
+@SuppressFBWarnings
 public class FoobarValueMain {
     public static void main(String... args) {
         FoobarValue value = ImmutableFoobarValue.builder()
