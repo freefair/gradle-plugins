@@ -26,36 +26,6 @@ public class ConfigUtil {
     private static final Pattern stopBubblingPattern = Pattern.compile("\\s*config\\.stopBubbling\\s*=\\s*true\\s*", Pattern.CASE_INSENSITIVE);
     private static final Pattern importPattern = Pattern.compile("\\s*import\\s*(.*?)\\s*", Pattern.CASE_INSENSITIVE);
 
-    @Deprecated
-    public Map<File, TaskProvider<LombokConfig>> getLombokConfigTasks(Project project, String sourceSetName, Set<File> srcDirs) {
-
-        DeprecationLogger.deprecateMethod(ConfigUtil.class, "getLombokConfigTasks()")
-                .willBeRemovedInGradle9()
-                .undocumented()
-                .nagUser();
-
-        Map<File, TaskProvider<LombokConfig>> result = new HashMap<>();
-
-        int i = 1;
-        for (File srcDir : srcDirs) {
-
-            int finalI = i;
-            String taskName = "generate" + capitalize(sourceSetName) + "EffectiveLombokConfig" + i;
-            TaskProvider<LombokConfig> genConfigTask = project.getTasks().register(taskName, LombokConfig.class, lombokConfigTask -> {
-                lombokConfigTask.setGroup("lombok");
-                lombokConfigTask.setDescription("Generate effective Lombok configuration for '" + srcDir + "' of source-set '" + sourceSetName + "'.");
-                lombokConfigTask.getPaths().from(srcDir);
-                lombokConfigTask.getOutputFile().set(project.getLayout().getBuildDirectory().file("lombok/effective-config/" + sourceSetName + "/lombok-" + finalI + ".config"));
-            });
-
-            result.put(srcDir, genConfigTask);
-
-            i++;
-        }
-
-        return result;
-    }
-
     public TaskProvider<LombokConfig> getLombokConfigTask(Project project, SourceSet sourceSet) {
 
         String taskName = sourceSet.getTaskName("generate", "effectiveLombokConfig");

@@ -36,13 +36,6 @@ gradlePlugin {
             description = "GitHub Dependency Manifest Plugin"
             tags.set(['github'])
         }
-        githubDependencySubmission {
-            id = "io.freefair.github.dependency-submission"
-            implementationClass = "io.freefair.gradle.plugins.github.dependencies.DependencySubmissionPlugin"
-            displayName = "GitHub Dependency Submission Plugin"
-            description = "Uploads the projects Dependencies to GitHub using the Dependency submission API"
-            tags.set(['github'])
-        }
     }
 }
 
