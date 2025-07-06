@@ -96,7 +96,8 @@ public class WarOverlayPlugin implements Plugin<Project> {
             }
 
             if (dependency instanceof ProjectDependency) {
-                configureOverlay(overlay, ((ProjectDependency) dependency).getDependencyProject());
+                String path = ((ProjectDependency) dependency).getPath();
+                configureOverlay(overlay, project.project(path));
             } else if (dependency instanceof ExternalDependency) {
                 configureOverlay(overlay, (ExternalDependency) dependency);
             } else {
