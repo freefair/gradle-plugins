@@ -1,6 +1,5 @@
 apply plugin: "java"
 apply plugin: "io.freefair.javadocs"
-apply plugin: "io.freefair.github.dependency-manifest"
 
 dependencies {
     implementation platform("org.springframework.boot:spring-boot-dependencies:2.7.18")

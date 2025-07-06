@@ -29,13 +29,6 @@ gradlePlugin {
             description = "GitHub Package Registry Maven Publish Plugin"
             tags.set(['github'])
         }
-        githubDependencyManifest {
-            id = "io.freefair.github.dependency-manifest"
-            implementationClass = "io.freefair.gradle.plugins.github.dependencies.DependencyManifestPlugin"
-            displayName = "GitHub Dependency Manifest Plugin"
-            description = "GitHub Dependency Manifest Plugin"
-            tags.set(['github'])
-        }
     }
 }
 
