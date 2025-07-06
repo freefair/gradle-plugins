@@ -153,7 +153,7 @@ public class GitVersionPlugin implements Plugin<Project> {
             if (!gitTag.isEmpty()) {
                 String version = resolveTagVersion(gitTag);
                 logger.lifecycle("Using git tag '{}' as version: {}", gitTag, version);
-                return gitTag;
+                return version;
             }
         } catch (Exception e) {
             logger.debug("Failed to get current git tag", e);
