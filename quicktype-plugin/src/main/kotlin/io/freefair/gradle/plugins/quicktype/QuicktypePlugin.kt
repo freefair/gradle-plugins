@@ -93,7 +93,7 @@ open class QuicktypePlugin : Plugin<Project> {
         val quicktypeSourceSet = DslObject(sourceSet).extensions.create(
             "quicktype",
             DefaultQuicktypeSourceSet::class.java,
-            project?.objects,
+            project?.objects!!,
             sourceSet
         )
 
@@ -111,9 +111,9 @@ open class QuicktypePlugin : Plugin<Project> {
         val inpath = project?.configurations?.create(sourceSetPrefix + quicktypeSourceSet.inpathConfigurationName)
         quicktypeSourceSet.inPath = inpath
 
-        project?.configurations?.getByName(sourceSet.implementationConfigurationName)?.extendsFrom(quicktype)
+        project?.configurations?.getByName(sourceSet.implementationConfigurationName)?.extendsFrom(quicktype!!)
 
-        project?.configurations?.getByName(sourceSet.compileOnlyConfigurationName)?.extendsFrom(inpath)
+        project?.configurations?.getByName(sourceSet.compileOnlyConfigurationName)?.extendsFrom(inpath!!)
 
         val compileTask = project?.tasks?.register(
             sourceSet.getCompileTaskName("quicktype"),
@@ -137,7 +137,7 @@ open class QuicktypePlugin : Plugin<Project> {
 
         project?.tasks?.named(sourceSet.classesTaskName) { task: Task ->
             task.dependsOn(
-                compileTask
+                compileTask!!
             )
         }
     }

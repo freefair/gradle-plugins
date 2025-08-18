@@ -30,7 +30,7 @@ allprojects {
             withSourcesJar()
             withJavadocJar()
             toolchain {
-                languageVersion = JavaLanguageVersion.of(8)
+                languageVersion = JavaLanguageVersion.of(17)
             }
         }
 
@@ -40,7 +40,10 @@ allprojects {
 
         jacocoTestReport.reports.xml.required = true
 
-        test.useJUnitPlatform()
+        tasks.withType(Test) {
+            useJUnitPlatform()
+            jvmArgs('--add-opens=java.base/java.lang=ALL-UNNAMED')
+        }
 
         dependencies {
             testImplementation platform("org.junit:junit-bom:5.13.2")

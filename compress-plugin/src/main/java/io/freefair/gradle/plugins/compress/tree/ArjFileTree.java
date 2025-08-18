@@ -33,14 +33,6 @@ public class ArjFileTree extends ArchiveFileTree<ArjArchiveInputStream, ArjArchi
             super(chmod, expandedDir, stopFlag);
         }
 
-        @SuppressWarnings("OctalInteger")
-        public int getMode() {
-            int unixMode = getArchiveEntry().getUnixMode() & 0777;
-            if (unixMode == 0) {
-                return super.getMode();
-            }
-            return unixMode;
-        }
     }
 
 
