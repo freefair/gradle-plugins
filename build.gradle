@@ -11,6 +11,7 @@ nexusPublishing {
     repositories {
         sonatype {
             stagingProfileId = "7e6204597a774f"
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
         }
     }
 }
