@@ -184,10 +184,6 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
             return "https://www.primefaces.org/docs/api/" + version + "/";
         }
 
-        if (group.equals("org.eclipse.jetty")) {
-            return "https://www.eclipse.org/jetty/javadoc/" + version + "/";
-        }
-
         if (group.equals("org.ow2.asm")) {
             return "https://asm.ow2.io/javadoc/";
         }
