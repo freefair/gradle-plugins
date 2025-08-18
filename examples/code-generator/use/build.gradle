@@ -6,3 +6,4 @@ dependencies {
 }
 
 javadoc.failOnError = false
+test.failOnNoDiscoveredTests = false
