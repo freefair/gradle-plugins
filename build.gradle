@@ -3,17 +3,9 @@ plugins {
     id 'io.freefair.maven-central.validate-poms' apply false
     id 'io.freefair.lombok' apply false
     id "com.gradle.plugin-publish" version "1.3.1" apply false
-    id "io.github.gradle-nexus.publish-plugin" version "2.0.0"
     id 'org.jetbrains.kotlin.jvm' apply false
-}
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            stagingProfileId = "7e6204597a774f"
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-        }
-    }
+    id 'base'
+    id 'org.jreleaser' version '1.20.0'
 }
 
 allprojects {
@@ -134,10 +126,41 @@ allprojects {
                     }
                 }
             }
+
+            repositories {
+                maven {
+                    name = "mavenCentralStaging"
+                    url = rootProject.layout.buildDirectory.dir('staging-deploy')
+                }
+            }
         }
     }
 }
 
 tasks.named('wrapper') {
     distributionType = Wrapper.DistributionType.ALL
+}
+
+jreleaser {
+    project {
+        license = 'MIT'
+        inceptionYear = '2016'
+    }
+    signing {
+        active = 'NEVER'
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'RELEASE'
+                    namespace = "io.freefair"
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    sign = false //Already done by Gradle
+                    checksums = false //Already done by Gradle
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+        }
+    }
 }
