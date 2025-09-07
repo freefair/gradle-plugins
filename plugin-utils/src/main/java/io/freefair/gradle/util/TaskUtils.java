@@ -15,8 +15,15 @@ public class TaskUtils {
     }
 
     public static <T> void registerNested(Task task, Class<? super T> type, T object, String prefix) throws InvocationTargetException, IllegalAccessException {
+        if (type == null) {
+            return;
+        }
 
-        while (!type.equals(Object.class)) {
+        if (type.getName().startsWith("java.")) {
+            return;
+        }
+
+        while (type != null && !type.equals(Object.class)) {
 
             for (Field declaredField : type.getDeclaredFields()) {
                 registerNested(task, declaredField, object, prefix);
@@ -28,7 +35,16 @@ public class TaskUtils {
                 }
             }
 
-            type = type.getSuperclass();
+            for (Class<?> iface : type.getInterfaces()) {
+                registerNested(task, (Class<? super T>) iface, object, prefix);
+            }
+
+            if (type.isInterface()) {
+                break;
+            }
+            else {
+                type = type.getSuperclass();
+            }
         }
 
     }
