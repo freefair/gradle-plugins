@@ -7,10 +7,22 @@ version: 2
 updates:
   - package-ecosystem: "gradle"
     directory: "/" # Location of package manifests
+    target-branch: 8.x
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
     directory: "/examples/" # Location of package manifests
+    target-branch: 8.x
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "/" # Location of package manifests
+    target-branch: main
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "/examples/" # Location of package manifests
+    target-branch: main
     schedule:
       interval: "daily"
 
