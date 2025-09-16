@@ -1,10 +1,8 @@
 package io.freefair.gradle.plugins.maven.javadoc;
 
 import io.freefair.gradle.plugins.okhttp.tasks.OkHttpTask;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
@@ -31,7 +29,6 @@ import java.util.stream.Collectors;
 /**
  * @author Lars Grefer
  */
-@NonNullApi
 @CacheableTask
 public abstract class ResolveJavadocLinks extends OkHttpTask {
 

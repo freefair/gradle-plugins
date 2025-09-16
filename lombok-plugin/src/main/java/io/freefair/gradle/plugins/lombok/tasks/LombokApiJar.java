@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
-import org.gradle.api.NonNullApi;
 import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.internal.ProcessOperations;
 import org.gradle.api.tasks.CacheableTask;
@@ -16,7 +15,6 @@ import java.io.File;
  *
  * @author Lars Grefer
  */
-@NonNullApi
 @CacheableTask
 public abstract class LombokApiJar extends LombokJarTask {
 

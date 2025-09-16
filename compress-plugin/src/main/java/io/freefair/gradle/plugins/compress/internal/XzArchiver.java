@@ -18,7 +18,10 @@ public class XzArchiver extends CommonsCompressArchiver {
 
     @Override
     protected XZCompressorInputStream read(InputStream in) throws IOException {
-        return new XZCompressorInputStream(in, true);
+        return XZCompressorInputStream.builder()
+                .setInputStream(in)
+                .setDecompressConcatenated(true)
+                .get();
     }
 
     @Override

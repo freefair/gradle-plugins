@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.lombok.internal;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import lombok.SneakyThrows;
 import org.gradle.api.Action;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
 
 import java.io.IOException;
@@ -16,7 +15,6 @@ import java.util.stream.Stream;
 /**
  * @author Lars Grefer
  */
-@NonNullApi
 public class CleanLombokConfig implements Action<Task> {
 
     @Override

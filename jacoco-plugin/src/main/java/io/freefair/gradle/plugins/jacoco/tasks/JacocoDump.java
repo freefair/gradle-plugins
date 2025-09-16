@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.jacoco.tasks;
 
 import lombok.Getter;
 import org.gradle.api.InvalidUserDataException;
-import org.gradle.api.UncheckedIOException;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -21,6 +20,7 @@ import org.jacoco.core.tools.ExecFileLoader;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 /**
  * @author Lars Grefer

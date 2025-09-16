@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.gradle.api.Action;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
@@ -37,7 +36,6 @@ import static io.freefair.gradle.util.TaskUtils.registerNested;
  * @see AspectJPostCompileWeavingPlugin
  */
 @Getter
-@NonNullApi
 public class AjcAction implements Action<Task> {
 
     @Getter(AccessLevel.NONE)
@@ -147,17 +145,15 @@ public class AjcAction implements Action<Task> {
     private AspectJCompileSpec createSpec(Task compile) {
         AspectJCompileSpec spec = new AspectJCompileSpec();
 
-        if (compile instanceof AbstractCompile) {
-            AbstractCompile abstractCompile = (AbstractCompile) compile;
+        if (compile instanceof AbstractCompile abstractCompile) {
             spec.setDestinationDir(abstractCompile.getDestinationDirectory().get().getAsFile());
             spec.setTargetCompatibility(abstractCompile.getTargetCompatibility());
             spec.setSourceCompatibility(abstractCompile.getSourceCompatibility());
         }
-        else if (compile instanceof KotlinJvmCompile) {
-            KotlinJvmCompile kotlinJvmCompile = (KotlinJvmCompile) compile;
+        else if (compile instanceof KotlinJvmCompile kotlinJvmCompile) {
             spec.setDestinationDir(kotlinJvmCompile.getDestinationDirectory().get().getAsFile());
-            spec.setTargetCompatibility(kotlinJvmCompile.getKotlinOptions().getJvmTarget());
-            spec.setSourceCompatibility(kotlinJvmCompile.getKotlinOptions().getJvmTarget());
+            spec.setTargetCompatibility(kotlinJvmCompile.getCompilerOptions().getJvmTarget().get().getTarget());
+            spec.setSourceCompatibility(kotlinJvmCompile.getCompilerOptions().getJvmTarget().get().getTarget());
         }
         spec.setCompileClasspath(getCompileClasspath(compile).collect(Collectors.toList()));
 

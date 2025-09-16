@@ -63,7 +63,7 @@ public abstract class GZip extends CompressorTask<GZip.GZipWorkParameters> {
             }
 
             if (getParameters().getAddFilename().getOrElse(false)) {
-                parameters.setFilename(getParameters().getSourceFile().getAsFile().get().getName());
+                parameters.setFileName(getParameters().getSourceFile().getAsFile().get().getName());
             }
 
             return new GzipCompressorOutputStream(outputStream, parameters);

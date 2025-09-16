@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugins.compress.internal;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.gradle.api.internal.file.archive.compression.CompressedReadableResource;
 import org.gradle.api.internal.file.archive.compression.URIBuilder;
 import org.gradle.api.resources.ResourceException;

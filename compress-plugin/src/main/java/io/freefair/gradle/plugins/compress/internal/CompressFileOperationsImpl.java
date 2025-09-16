@@ -117,12 +117,12 @@ public class CompressFileOperationsImpl implements CompressFileOperations {
 
     @Override
     public FileTree sevenZipTree(Object sevenZipFile) {
-        return sevenZipTree(sevenZipFile, f -> new SevenZipArchiveInputStream(new SevenZFile(f)));
+        return sevenZipTree(sevenZipFile, f -> new SevenZipArchiveInputStream(SevenZFile.builder().setFile(f).get()));
     }
 
     @Override
     public FileTree sevenZipTree(Object sevenZipFile, char[] password) {
-        return sevenZipTree(sevenZipFile, f -> new SevenZipArchiveInputStream(new SevenZFile(f, password)));
+        return sevenZipTree(sevenZipFile, f -> new SevenZipArchiveInputStream(SevenZFile.builder().setFile(f).setPassword(password).get()));
     }
 
     private FileTree sevenZipTree(Object sevenZipFile, ArchiveInputStreamProvider<SevenZipArchiveInputStream> inputStreamProvider) {

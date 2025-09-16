@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugins.compress.tasks;
 
 import org.apache.commons.compress.compressors.CompressorOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.gradle.workers.WorkAction;
 
 import java.io.*;

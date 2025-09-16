@@ -16,6 +16,7 @@ import org.gradle.api.internal.file.copy.CopySpecInternal;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Sync;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import org.gradle.api.tasks.bundling.War;
 
@@ -33,7 +34,6 @@ import static org.gradle.api.plugins.WarPlugin.WAR_TASK_NAME;
 /**
  * @author Lars Grefer
  */
-@NonNullApi
 public class WarOverlayPlugin implements Plugin<Project> {
 
     private Project project;
@@ -135,7 +135,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
             copySpec.from(warTree);
         };
 
-        Sync extractOverlayTask = project.getTasks().create(String.format("extract%s%sOverlay", capitalizedOverlayName, capitalizedWarTaskName), Sync.class, extractOverlay);
+        TaskProvider<Sync> extractOverlayTask = project.getTasks().register(String.format("extract%s%sOverlay", capitalizedOverlayName, capitalizedWarTaskName), Sync.class, extractOverlay);
 
         overlay.getWarCopySpec().from(extractOverlayTask);
 

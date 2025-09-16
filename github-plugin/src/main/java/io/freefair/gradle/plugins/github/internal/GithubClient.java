@@ -3,7 +3,6 @@ package io.freefair.gradle.plugins.github.internal;
 import io.freefair.gradle.plugins.github.GithubExtension;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.provider.Property;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -11,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 
 @Slf4j
-@NonNullApi
 public class GithubClient {
 
     private Retrofit retrofit;

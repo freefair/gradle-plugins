@@ -1,7 +1,6 @@
 package io.freefair.gradle.plugins.aspectj;
 
 import io.freefair.gradle.plugins.aspectj.internal.AspectJUtil;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -22,7 +21,6 @@ import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile;
 
-@NonNullApi
 public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
 
     private Project project;

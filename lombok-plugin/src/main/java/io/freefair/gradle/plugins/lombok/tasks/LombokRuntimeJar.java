@@ -1,6 +1,5 @@
 package io.freefair.gradle.plugins.lombok.tasks;
 
-import org.gradle.api.NonNullApi;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Console;
@@ -17,7 +16,6 @@ import javax.inject.Inject;
  *
  * @author Lars Grefer
  */
-@NonNullApi
 @CacheableTask
 public abstract class LombokRuntimeJar extends LombokJarTask {
 

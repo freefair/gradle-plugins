@@ -21,6 +21,8 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Lars Grefer
@@ -43,7 +45,7 @@ public abstract class Cpio extends AbstractArchiveTask {
         getArchiveExtension().convention("cpio");
         getFormat().convention(CpioConstants.FORMAT_NEW);
         getBlockSize().convention(CpioConstants.BLOCK_SIZE);
-        getEncoding().convention(CharsetNames.US_ASCII);
+        getEncoding().convention(StandardCharsets.US_ASCII.name());
     }
 
     public void setFormat(String format) {
