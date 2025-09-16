@@ -2,6 +2,7 @@ package io.freefair.gradle.plugins.maven.javadoc;
 
 import io.freefair.gradle.plugins.okhttp.tasks.OkHttpTask;
 import okhttp3.OkHttpClient;
+import kotlin.jvm.functions.Function3;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.gradle.api.NonNullApi;
@@ -11,6 +12,7 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.artifacts.result.ResolvedArtifactResult;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.internal.artifacts.dsl.dependencies.DependencyFactoryInternal;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
@@ -44,15 +46,15 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
     @Input
     public abstract ListProperty<ComponentArtifactIdentifier> getArtifactIds();
 
-    private final List<JavadocLinkProvider> javadocLinkProviders;
+    @Inject
+    protected abstract ObjectFactory getObjectFactory();
 
     @Inject
     public ResolveJavadocLinks() {
 
-        this.javadocLinkProviders = new ArrayList<>();
         for (JavadocLinkProvider javadocLinkProvider : ServiceLoader.load(JavadocLinkProvider.class, this.getClass().getClassLoader())) {
-            getLogger().info("{}", javadocLinkProvider.getClass());
-            javadocLinkProviders.add(javadocLinkProvider);
+            getLogger().info("Found JavaDoc link provider: {}", javadocLinkProvider.getClass());
+            this.getLinkProviderClassNames().add(javadocLinkProvider.getClass().getName());
         }
 
         File temporaryDir = getTemporaryDir();
@@ -61,11 +63,12 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
     }
 
     @Input
+    public abstract ListProperty<String> getLinkProviderClassNames();
+
+    @Deprecated
+    @Internal
     protected List<String> getLinkProviderNames() {
-        return javadocLinkProviders.stream()
-                .map(javadocLinkProvider -> javadocLinkProvider.getClass().getName())
-                .sorted()
-                .collect(Collectors.toList());
+        return this.getLinkProviderClassNames().getOrElse(List.of());
     }
 
     public void setClasspath(Configuration configuration) {
@@ -159,10 +162,20 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
     }
 
     @Nullable
+    @SuppressWarnings("unchecked")
     private String findWellKnownLink(String group, String artifact, String version) {
 
-        for (JavadocLinkProvider javadocLinkProvider : javadocLinkProviders) {
-            String javadocLink = javadocLinkProvider.getJavadocLink(group, artifact, version);
+        for (var className : this.getLinkProviderClassNames().get()) {
+            String javadocLink;
+            try {
+                Function3<String, String, String, String> javadocLinkProvider = (Function3<String, String, String, String>) this.getObjectFactory().newInstance(Class.forName(className));
+                javadocLink = javadocLinkProvider.invoke(group, artifact, version);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Could not find Javadoc link provider class: " + className, e);
+            } catch (ClassCastException e) {
+                throw new RuntimeException("Javadoc link provider class is not of type JavadocLinkProvider or Function3<String, String, String, String>: " + className, e);
+            }
+
             if (javadocLink != null) {
                 return javadocLink;
             }
