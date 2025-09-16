@@ -8,7 +8,7 @@ import org.gradle.api.provider.Property;
  */
 public abstract class LombokExtension {
 
-    public static final String LOMBOK_VERSION = "1.18.38";
+    public static final String LOMBOK_VERSION = "1.18.40";
 
     /**
      * The version of Lombok which will be used.
