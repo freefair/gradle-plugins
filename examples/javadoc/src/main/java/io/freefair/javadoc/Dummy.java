@@ -3,7 +3,7 @@ package io.freefair.javadoc;
 import org.hibernate.SessionFactory;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 
 /**
  * Some Documentation {@link String}
