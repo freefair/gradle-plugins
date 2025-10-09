@@ -11,8 +11,8 @@ apply plugin: "io.freefair.lombok"
 dependencies {
     implementation "org.slf4j:slf4j-api:2.+"
 
-    implementation 'org.immutables:value:2.11.4'
-    annotationProcessor 'org.immutables:value:2.11.4'
+    implementation 'org.immutables:value:2.11.6'
+    annotationProcessor 'org.immutables:value:2.11.6'
 }
 
 sourceSets {
