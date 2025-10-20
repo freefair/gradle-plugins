@@ -7,7 +7,7 @@ plugins {
 description = "Gradle Plugin for PlantUML"
 
 // Note that this version should be kept in sync with src/main/java/io/freefair/gradle/plugins/plantuml/PlantumlPlugin.java
-def plantUmlVersion='1.2025.8'
+def plantUmlVersion='1.2025.9'
 
 dependencies {
     //noinspection GradlePackageUpdate
