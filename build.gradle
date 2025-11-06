@@ -5,7 +5,7 @@ plugins {
     id "com.gradle.plugin-publish" version "2.0.0" apply false
     id 'org.jetbrains.kotlin.jvm' apply false
     id 'base'
-    id 'org.jreleaser' version '1.20.0'
+    id 'org.jreleaser' version '1.21.0'
 }
 
 allprojects {
