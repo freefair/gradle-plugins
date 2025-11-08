@@ -2,7 +2,6 @@ package io.freefair.gradle.plugins.maven.plugin.wrappers;
 
 import io.freefair.gradle.plugins.maven.plugin.internal.MavenHelper;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.ProjectArtifact;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -11,7 +10,6 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.ProjectLayout;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
