@@ -15,11 +15,14 @@ import org.apache.maven.tools.plugin.extractor.annotations.JavaAnnotationsMojoDe
 import org.apache.maven.tools.plugin.extractor.annotations.converter.JavadocBlockTagsToXhtmlConverter;
 import org.apache.maven.tools.plugin.extractor.annotations.converter.JavadocInlineTagsToXhtmlConverter;
 import org.apache.maven.tools.plugin.extractor.annotations.scanner.DefaultMojoAnnotationsScanner;
+import org.apache.maven.tools.plugin.extractor.annotations.scanner.MojoAnnotationsScanner;
 import org.apache.maven.tools.plugin.generator.GeneratorException;
 import org.apache.maven.tools.plugin.generator.PluginDescriptorFilesGenerator;
 import org.apache.maven.tools.plugin.scanner.DefaultMojoScanner;
 import org.apache.maven.tools.plugin.scanner.MojoScanner;
 import org.codehaus.plexus.component.repository.ComponentDependency;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
@@ -143,7 +146,8 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
         extractors.put("java-annotations", getMojoDescriptorExtractor());
 
         DefaultMojoScanner defaultMojoScanner = new DefaultMojoScanner(extractors);
-        defaultMojoScanner.enableLogging(new PlexusLoggerWrapper(getLogger()));
+        //Logger plexusLogger = new PlexusLoggerWrapper(getLogger());
+        //defaultMojoScanner.enableLogging(plexusLogger);
         return defaultMojoScanner;
     }
 
@@ -151,10 +155,10 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
         PlexusLoggerWrapper plexusLoggerWrapper = new PlexusLoggerWrapper(getLogger());
 
         JavaAnnotationsMojoDescriptorExtractor mojoDescriptorExtractor = new JavaAnnotationsMojoDescriptorExtractor();
-        mojoDescriptorExtractor.enableLogging(plexusLoggerWrapper);
+        //mojoDescriptorExtractor.enableLogging(plexusLoggerWrapper);
 
         DefaultMojoAnnotationsScanner delegate = new DefaultMojoAnnotationsScanner();
-        delegate.enableLogging(plexusLoggerWrapper);
+        //delegate.enableLogging(plexusLoggerWrapper);
 
         MojoAnnotationScannerWrapper mojoAnnotationsScanner = new MojoAnnotationScannerWrapper(delegate);
         mojoAnnotationsScanner.setSourceDirectories(getSourceDirectories());

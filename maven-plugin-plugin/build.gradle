@@ -6,14 +6,18 @@ plugins {
 
 description = "Gradle Plugin for building Maven Plugins"
 
-def mavenPluginToolsVersion = "3.15.1"
-
 dependencies {
     api project(':maven-plugin')
 
-    implementation "org.apache.maven.plugin-tools:maven-plugin-tools-generators:$mavenPluginToolsVersion"
-    implementation "org.apache.maven.plugin-tools:maven-plugin-tools-annotations:$mavenPluginToolsVersion"
-    compileOnly "org.apache.maven.plugins:maven-plugin-plugin:$mavenPluginToolsVersion"
+    implementation platform("org.apache.maven.plugin-tools:maven-plugin-tools:3.15.2")
+
+    implementation "org.apache.maven.plugin-tools:maven-plugin-tools-generators"
+    implementation "org.apache.maven.plugin-tools:maven-plugin-tools-annotations"
+    implementation 'org.apache.maven:maven-core'
+    implementation 'org.apache.maven:maven-model'
+    implementation 'org.apache.maven:maven-plugin-api'
+    implementation 'org.eclipse.sisu:org.eclipse.sisu.plexus'
+    compileOnly "org.apache.maven.plugins:maven-plugin-plugin"
 
     testImplementation project(":test-common")
 }
