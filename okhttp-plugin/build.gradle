@@ -7,7 +7,7 @@ plugins {
 description = "Collection of OkHttp related Gradle plugins"
 
 dependencies {
-    api platform("com.squareup.okhttp3:okhttp-bom:5.3.1")
+    api platform("com.squareup.okhttp3:okhttp-bom:5.3.2")
     api "com.squareup.okhttp3:okhttp"
     api "com.squareup.okhttp3:logging-interceptor"
 
