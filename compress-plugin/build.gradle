@@ -49,7 +49,7 @@ gradlePlugin {
 
 dependencies {
     api 'org.apache.commons:commons-compress:1.28.0'
-    implementation 'org.tukaani:xz:1.10'
+    implementation 'org.tukaani:xz:1.11'
 
     implementation 'org.brotli:dec:0.1.2'
 
