@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-    api 'org.apache.maven:maven-core:3.9.11'
-    api 'org.apache.maven:maven-model:3.9.11'
-    api 'org.apache.maven:maven-plugin-api:3.9.11'
+    api 'org.apache.maven:maven-core:3.9.12'
+    api 'org.apache.maven:maven-model:3.9.12'
+    api 'org.apache.maven:maven-plugin-api:3.9.12'
 
     compileOnly 'org.apache.maven.plugin-tools:maven-plugin-annotations:3.15.1'
 }
