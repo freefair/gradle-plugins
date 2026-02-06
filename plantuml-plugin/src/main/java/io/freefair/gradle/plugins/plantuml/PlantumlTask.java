@@ -1,7 +1,5 @@
 package io.freefair.gradle.plugins.plantuml;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
@@ -9,8 +7,6 @@ import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
-import org.gradle.process.JavaForkOptions;
-import org.gradle.process.internal.JavaForkOptionsFactory;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
 
@@ -98,13 +94,19 @@ public abstract class PlantumlTask extends SourceTask {
             });
         });
 
-        for (File file : getSource().matching(p -> p.include(getIncludePattern().get()))) {
+        getSource().matching(p -> p.include(getIncludePattern().get()))
+                .visit(fileVisitDetails -> {
+            if (fileVisitDetails.isDirectory()) {
+                return;
+            }
+
             workQueue.submit(PlantumlAction.class, params -> {
-                params.getInputFile().set(file);
-                params.getOutputDirectory().set(getOutputDirectory());
+                params.getInputFile().set(fileVisitDetails.getFile());
+                File outputFile = fileVisitDetails.getRelativePath().getFile(getOutputDirectory().get().getAsFile());
+                params.getOutputDirectory().set(outputFile.getParentFile());
                 params.getFileFormat().set(getFileFormat());
                 params.getWithMetadata().set(getWithMetadata());
             });
-        }
+        });
     }
 }
