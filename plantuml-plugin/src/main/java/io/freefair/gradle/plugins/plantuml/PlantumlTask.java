@@ -16,6 +16,7 @@ import java.io.File;
 /**
  * @author Lars Grefer
  */
+@CacheableTask
 public abstract class PlantumlTask extends SourceTask {
 
     @Inject
