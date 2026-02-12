@@ -61,11 +61,11 @@ public class AspectJPlugin implements Plugin<Project> {
     }
 
     private void configureJavaPlugin(Project project) {
-        SourceSet main = javaExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
-        SourceSet test = javaExtension.getSourceSets().getByName(SourceSet.TEST_SOURCE_SET_NAME);
+        SourceSet main = javaExtension.getSourceSets().named(SourceSet.MAIN_SOURCE_SET_NAME).get();
+        SourceSet test = javaExtension.getSourceSets().named(SourceSet.TEST_SOURCE_SET_NAME).get();
 
-        Configuration aspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(main));
-        Configuration testAspectpath = project.getConfigurations().getByName(WeavingSourceSet.getAspectConfigurationName(test));
+        Configuration aspectpath = project.getConfigurations().named(WeavingSourceSet.getAspectConfigurationName(main)).get();
+        Configuration testAspectpath = project.getConfigurations().named(WeavingSourceSet.getAspectConfigurationName(test)).get();
 
         testAspectpath.extendsFrom(aspectpath);
 
@@ -104,9 +104,9 @@ public class AspectJPlugin implements Plugin<Project> {
         Configuration inpath = project.getConfigurations().create(WeavingSourceSet.getInpathConfigurationName(sourceSet));
         WeavingSourceSet.getInPath(sourceSet).from(inpath);
 
-        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName()).extendsFrom(aspect);
+        project.getConfigurations().named(sourceSet.getImplementationConfigurationName()).get().extendsFrom(aspect);
 
-        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
+        project.getConfigurations().named(sourceSet.getCompileOnlyConfigurationName()).get().extendsFrom(inpath);
 
         final TaskProvider<AspectjCompile> compileTask = project.getTasks().register(sourceSet.getCompileTaskName("aspectj"), AspectjCompile.class, compile -> {
             JvmPluginsHelper.compileAgainstJavaOutputs(compile, sourceSet, project.getObjects());

@@ -70,8 +70,8 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         Configuration inpath = project.getConfigurations().create(WeavingSourceSet.getInpathConfigurationName(sourceSet));
         WeavingSourceSet.getInPath(sourceSet).from(inpath);
 
-        project.getConfigurations().getByName(sourceSet.getImplementationConfigurationName()).extendsFrom(aspectpath);
-        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(inpath);
+        project.getConfigurations().named(sourceSet.getImplementationConfigurationName()).get().extendsFrom(aspectpath);
+        project.getConfigurations().named(sourceSet.getCompileOnlyConfigurationName()).get().extendsFrom(inpath);
     }
 
     private void configurePlugin(String language) {
@@ -79,8 +79,8 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
             FileCollection aspectpath = WeavingSourceSet.getAspectPath(sourceSet);
             FileCollection inpath = WeavingSourceSet.getInPath(sourceSet);
 
-            Configuration runtimeClasspath = project.getConfigurations().getByName(sourceSet.getRuntimeClasspathConfigurationName());
-            Configuration compileClasspath = project.getConfigurations().getByName(sourceSet.getCompileClasspathConfigurationName());
+            Configuration runtimeClasspath = project.getConfigurations().named(sourceSet.getRuntimeClasspathConfigurationName()).get();
+            Configuration compileClasspath = project.getConfigurations().named(sourceSet.getCompileClasspathConfigurationName()).get();
             ConfigurableFileCollection searchPath = project.files(runtimeClasspath, compileClasspath);
             FileCollection aspectjClasspath = aspectjBasePlugin.getAspectjRuntime().inferAspectjClasspath(searchPath);
 
