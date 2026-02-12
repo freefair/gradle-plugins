@@ -34,7 +34,7 @@ public class MavenPluginPlugin implements Plugin<Project> {
 
         TaskProvider<GenerateMavenPom> generateMavenPom = project.getTasks().named("generatePomFileForMavenJavaPublication", GenerateMavenPom.class);
 
-        SourceSet main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
+        SourceSet main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().named("main").get();
 
         TaskProvider<DescriptorGeneratorTask> descriptorGeneratorTaskProvider = project.getTasks().register("generateMavenPluginDescriptor", DescriptorGeneratorTask.class, generateMavenPluginDescriptor -> {
 
@@ -46,7 +46,7 @@ public class MavenPluginPlugin implements Plugin<Project> {
             );
 
             generateMavenPluginDescriptor.getSourceDirectories().from(main.getAllJava().getSourceDirectories());
-            JavaCompile javaCompile = (JavaCompile) project.getTasks().getByName(main.getCompileJavaTaskName());
+            JavaCompile javaCompile = (JavaCompile) project.getTasks().named(main.getCompileJavaTaskName()).get();
 
             generateMavenPluginDescriptor.getClassesDirectories().from(javaCompile);
             generateMavenPluginDescriptor.getEncoding().convention(javaCompile.getOptions().getEncoding());
