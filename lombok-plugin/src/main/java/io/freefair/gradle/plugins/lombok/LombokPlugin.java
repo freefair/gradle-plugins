@@ -61,14 +61,14 @@ public class LombokPlugin implements Plugin<Project> {
 
         javaPluginExtension.getSourceSets().all(this::configureSourceSetDefaults);
 
-        SourceSet mainSourceSet = javaPluginExtension.getSourceSets().getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+        SourceSet mainSourceSet = javaPluginExtension.getSourceSets().named(SourceSet.MAIN_SOURCE_SET_NAME).get();
         Object mainDelombokTask = mainSourceSet.getExtensions().getByName("delombokTask");
 
         project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class, javadoc -> {
             javadoc.setSource(mainDelombokTask);
         });
 
-        Configuration mainSourceElements = project.getConfigurations().getByName("mainSourceElements");
+        Configuration mainSourceElements = project.getConfigurations().named("mainSourceElements").get();
 
         mainSourceElements.getOutgoing().getVariants().create("delombok", delombokVariant -> {
             delombokVariant.artifact(mainDelombokTask, cpa -> cpa.setType("directory"));
@@ -80,8 +80,8 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void configureSourceSetDefaults(SourceSet sourceSet) {
-        project.getConfigurations().getByName(sourceSet.getCompileOnlyConfigurationName()).extendsFrom(lombokBasePlugin.getLombokConfiguration());
-        project.getConfigurations().getByName(sourceSet.getAnnotationProcessorConfigurationName()).extendsFrom(lombokBasePlugin.getLombokConfiguration());
+        project.getConfigurations().named(sourceSet.getCompileOnlyConfigurationName()).get().extendsFrom(lombokBasePlugin.getLombokConfiguration());
+        project.getConfigurations().named(sourceSet.getAnnotationProcessorConfigurationName()).get().extendsFrom(lombokBasePlugin.getLombokConfiguration());
 
         TaskProvider<Delombok> delombokTaskProvider = project.getTasks().register(sourceSet.getTaskName("delombok", ""), Delombok.class, delombok -> {
             delombok.setDescription("Runs delombok on the " + sourceSet.getName() + " source-set");
@@ -170,7 +170,7 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void handleMapstructSupport(SourceSet sourceSet) {
-        Configuration annotationProcessor = project.getConfigurations().getByName(sourceSet.getAnnotationProcessorConfigurationName());
+        Configuration annotationProcessor = project.getConfigurations().named(sourceSet.getAnnotationProcessorConfigurationName()).get();
 
         Dependency mapstruct = null;
         boolean hasBinding = false;
