@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.maven;
 
 import lombok.Getter;
+import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.component.SoftwareComponent;
@@ -29,7 +30,7 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
                 .create(getPublicationName(), MavenPublication.class);
 
         project.afterEvaluate(p -> {
-            publication.from(getSoftwareComponent());
+            publication.from(getSoftwareComponent().get());
 
             project.getPlugins().withType(SigningPlugin.class, signingPlugin -> project.getExtensions()
                     .getByType(SigningExtension.class)
@@ -44,8 +45,8 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
         return "maven" + capitalize((CharSequence) getComponentName());
     }
 
-    public SoftwareComponent getSoftwareComponent() {
-        return getProject().getComponents().named(getComponentName()).get();
+    public NamedDomainObjectProvider<SoftwareComponent> getSoftwareComponent() {
+        return getProject().getComponents().named(getComponentName());
     }
 
     abstract String getComponentName();

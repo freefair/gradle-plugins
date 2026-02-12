@@ -11,13 +11,16 @@ public class OptionalPlugin implements Plugin<Project> {
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
             Configuration optional = project.getConfigurations().create("optional");
 
-            project.getConfigurations().named(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME).get()
-                    .extendsFrom(optional);
+            project.getConfigurations()
+                    .named(JavaPlugin.COMPILE_ONLY_CONFIGURATION_NAME)
+                    .configure(compileOnly -> compileOnly.extendsFrom(optional));
 
-            project.getConfigurations().named(JavaPlugin.TEST_COMPILE_ONLY_CONFIGURATION_NAME).get()
-                    .extendsFrom(optional);
-            project.getConfigurations().named(JavaPlugin.TEST_RUNTIME_ONLY_CONFIGURATION_NAME).get()
-                    .extendsFrom(optional);
+            project.getConfigurations()
+                    .named(JavaPlugin.TEST_COMPILE_ONLY_CONFIGURATION_NAME)
+                    .configure(testCompileOnly -> testCompileOnly.extendsFrom(optional));
+            project.getConfigurations()
+                    .named(JavaPlugin.TEST_RUNTIME_ONLY_CONFIGURATION_NAME)
+                    .configure(testRuntimeOnly -> testRuntimeOnly.extendsFrom(optional));
         });
     }
 }

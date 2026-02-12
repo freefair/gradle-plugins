@@ -51,8 +51,12 @@ public class WarOverlayPlugin implements Plugin<Project> {
             warTask.getExtensions().add("overlayClasspath", warOverlayClasspath);
 
             if (warTask.getName().equals(WarPlugin.WAR_TASK_NAME)) {
-                project.getConfigurations().named(COMPILE_CLASSPATH_CONFIGURATION_NAME).get().extendsFrom(warOverlayClasspath);
-                project.getConfigurations().named(TEST_IMPLEMENTATION_CONFIGURATION_NAME).get().extendsFrom(warOverlayClasspath);
+                project.getConfigurations()
+                        .named(COMPILE_CLASSPATH_CONFIGURATION_NAME)
+                        .configure(compileClasspath -> compileClasspath.extendsFrom(warOverlayClasspath));
+                project.getConfigurations()
+                        .named(TEST_IMPLEMENTATION_CONFIGURATION_NAME)
+                        .configure(testImplementation -> testImplementation.extendsFrom(warOverlayClasspath));
             }
 
             project.afterEvaluate(p -> warOverlays.all(overlay -> {
@@ -145,7 +149,8 @@ public class WarOverlayPlugin implements Plugin<Project> {
                 project.sync(extractOverlay);
             }
 
-            project.getTasks().named(CLEAN_TASK_NAME).get().finalizedBy(extractOverlayTask);
+            project.getTasks().named(CLEAN_TASK_NAME)
+                    .configure(clean -> clean.finalizedBy(extractOverlayTask));
 
             ConfigurableFileCollection classes = project.files(destinationDir.get().dir("WEB-INF/classes"))
                     .builtBy(extractOverlayTask);
@@ -167,9 +172,9 @@ public class WarOverlayPlugin implements Plugin<Project> {
     private void configureOverlay(WarOverlay overlay, Project otherProject) {
         project.evaluationDependsOn(otherProject.getPath());
 
-        War otherWar = (War) otherProject.getTasks().named(WAR_TASK_NAME).get();
+        TaskProvider<War> otherWar = otherProject.getTasks().named(WAR_TASK_NAME, War.class);
 
-        configureOverlay(overlay, otherWar);
+        configureOverlay(overlay, otherWar.get());
 
         if (overlay.isEnableCompilation()) {
             project.getDependencies().add(getClasspathConfigurationName(overlay), otherProject);
@@ -177,7 +182,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
             otherProject.getPlugins().withType(WarOverlayPlugin.class, otherWarOverlayPlugin -> {
                 Map<String, String> map = new HashMap<>();
                 map.put("path", otherProject.getPath());
-                map.put("configuration", otherWarOverlayPlugin.getClasspathConfigurationName(otherWar));
+                map.put("configuration", otherWarOverlayPlugin.getClasspathConfigurationName(otherWar.get()));
 
                 project.getDependencies().add(
                         getClasspathConfigurationName(overlay),
