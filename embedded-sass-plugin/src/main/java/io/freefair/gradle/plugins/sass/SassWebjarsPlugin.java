@@ -15,7 +15,7 @@ public class SassWebjarsPlugin implements Plugin<Project> {
         Configuration webjars = project.getConfigurations().create("webjars");
 
         project.getPlugins().withType(JavaPlugin.class, javaPlugin ->
-                webjars.extendsFrom(project.getConfigurations().getByName(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME))
+                webjars.extendsFrom(project.getConfigurations().named(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME).get())
         );
 
         project.getTasks().withType(SassCompile.class)
