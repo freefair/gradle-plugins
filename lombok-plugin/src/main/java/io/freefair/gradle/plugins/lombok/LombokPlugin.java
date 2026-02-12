@@ -155,14 +155,14 @@ public class LombokPlugin implements Plugin<Project> {
         TaskProvider<LombokConfig> lombokConfigTask = ConfigUtil.getLombokConfigTask(project, sourceSet);
 
         compileTaskProvider.configure(javaCompile -> {
-            javaCompile.getInputs().file(lombokConfigTask.get().getOutputFile())
+            javaCompile.getInputs().file(lombokConfigTask.flatMap(LombokConfig::getOutputFile))
                     .withPropertyName("lombok.config")
                     .withPathSensitivity(PathSensitivity.NONE)
                     .optional();
         });
 
         delombokTaskProvider.configure(delombok -> {
-            delombok.getInputs().file(lombokConfigTask.get().getOutputFile())
+            delombok.getInputs().file(lombokConfigTask.flatMap(LombokConfig::getOutputFile))
                     .withPropertyName("lombok.config")
                     .withPathSensitivity(PathSensitivity.NONE)
                     .optional();

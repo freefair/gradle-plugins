@@ -52,7 +52,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         TaskProvider<ResolveJavadocLinks> resolveJavadocLinks = project.getTasks().register("resolveJavadocLinks", ResolveJavadocLinks.class);
 
         resolveJavadocLinks.configure(rjd -> {
-            rjd.getJavadocTool().convention(javadocTaskProvider.get().getJavadocTool());
+            rjd.getJavadocTool().convention(javadocTaskProvider.flatMap(Javadoc::getJavadocTool));
             rjd.setClasspath(classpath);
         });
 
@@ -66,7 +66,7 @@ public class JavadocLinksPlugin implements Plugin<Project> {
 
             if (options instanceof StandardJavadocDocletOptions) {
                 StandardJavadocDocletOptions standardOptions = (StandardJavadocDocletOptions) options;
-                standardOptions.linksFile(resolveJavadocLinks.get().getOutputFile().get().getAsFile());
+                standardOptions.linksFile(resolveJavadocLinks.flatMap(ResolveJavadocLinks::getOutputFile).map(f -> f.getAsFile()).get());
             }
         });
 
