@@ -55,7 +55,7 @@ public class LegacyAggregateJavadocPlugin implements Plugin<Project> {
             aggregateClasspath.from(clientPlugin.getJavadocClasspath());
 
             aggregateJavadoc.configure(aj -> {
-                SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
+                SourceSet main = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().named("main").get();
                 Javadoc javadoc = subproject.getTasks().named(main.getJavadocTaskName(), Javadoc.class).get();
 
                 if (!javadoc.isEnabled()) {

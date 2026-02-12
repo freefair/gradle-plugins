@@ -51,8 +51,8 @@ public class WarOverlayPlugin implements Plugin<Project> {
             warTask.getExtensions().add("overlayClasspath", warOverlayClasspath);
 
             if (warTask.getName().equals(WarPlugin.WAR_TASK_NAME)) {
-                project.getConfigurations().getByName(COMPILE_CLASSPATH_CONFIGURATION_NAME).extendsFrom(warOverlayClasspath);
-                project.getConfigurations().getByName(TEST_IMPLEMENTATION_CONFIGURATION_NAME).extendsFrom(warOverlayClasspath);
+                project.getConfigurations().named(COMPILE_CLASSPATH_CONFIGURATION_NAME).get().extendsFrom(warOverlayClasspath);
+                project.getConfigurations().named(TEST_IMPLEMENTATION_CONFIGURATION_NAME).get().extendsFrom(warOverlayClasspath);
             }
 
             project.afterEvaluate(p -> warOverlays.all(overlay -> {
@@ -145,7 +145,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
                 project.sync(extractOverlay);
             }
 
-            project.getTasks().getByName(CLEAN_TASK_NAME).finalizedBy(extractOverlayTask);
+            project.getTasks().named(CLEAN_TASK_NAME).get().finalizedBy(extractOverlayTask);
 
             ConfigurableFileCollection classes = project.files(destinationDir.get().dir("WEB-INF/classes"))
                     .builtBy(extractOverlayTask);
@@ -167,7 +167,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
     private void configureOverlay(WarOverlay overlay, Project otherProject) {
         project.evaluationDependsOn(otherProject.getPath());
 
-        War otherWar = (War) otherProject.getTasks().getByName(WAR_TASK_NAME);
+        War otherWar = (War) otherProject.getTasks().named(WAR_TASK_NAME).get();
 
         configureOverlay(overlay, otherWar);
 

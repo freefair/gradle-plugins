@@ -45,7 +45,7 @@ public abstract class MavenPublishBasePlugin implements Plugin<Project> {
     }
 
     public SoftwareComponent getSoftwareComponent() {
-        return getProject().getComponents().getByName(getComponentName());
+        return getProject().getComponents().named(getComponentName()).get();
     }
 
     abstract String getComponentName();

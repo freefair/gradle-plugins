@@ -37,8 +37,8 @@ public class JavadocLinksPlugin implements Plugin<Project> {
         project.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
             TaskProvider<Javadoc> javadoc = project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class);
 
-            SourceSet main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().getByName("main");
-            Configuration compileClasspath = project.getConfigurations().getByName(main.getCompileClasspathConfigurationName());
+            SourceSet main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().named("main").get();
+            Configuration compileClasspath = project.getConfigurations().named(main.getCompileClasspathConfigurationName()).get();
 
             project.afterEvaluate(p -> {
                 this.addJavaSeLink(javadoc);
