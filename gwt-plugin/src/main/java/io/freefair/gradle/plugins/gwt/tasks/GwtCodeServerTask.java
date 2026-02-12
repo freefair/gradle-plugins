@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.gwt.tasks;
 
 import io.freefair.gradle.plugins.gwt.GwtCodeServerOptions;
+import org.gradle.api.tasks.UntrackedTask;
 import org.gradle.process.CommandLineArgumentProvider;
 
 import java.util.ArrayList;
@@ -9,10 +10,10 @@ import java.util.List;
 /**
  * @author Lars Grefer
  */
+@UntrackedTask(because = "Runs an interactive development code server that does not produce cacheable outputs")
 public abstract class GwtCodeServerTask extends AbstractGwtTask implements GwtCodeServerOptions {
 
     public GwtCodeServerTask() {
-        this.getOutputs().upToDateWhen(task -> false);
         getMainClass().set("com.google.gwt.dev.codeserver.CodeServer");
 
         getArgumentProviders().add(new ArgProvider());
