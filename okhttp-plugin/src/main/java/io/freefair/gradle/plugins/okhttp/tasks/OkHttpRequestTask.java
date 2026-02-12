@@ -99,7 +99,10 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
                     builder.header(name, value);
                 }
             } else {
-                throw new InvalidUserDataException("Unsupported credential type: " + credentials.getClass());
+                throw new InvalidUserDataException(String.format(
+                    "Unsupported credential type: %s. Supported types: PasswordCredentials, HttpHeaderCredentials",
+                    credentials.getClass().getName()
+                ));
             }
         }
 
@@ -112,11 +115,16 @@ public abstract class OkHttpRequestTask extends OkHttpTask {
 
     public void handleResponse(Response response) throws IOException {
         if (!response.isSuccessful()) {
-            getLogger().error("{}: {}", response.code(), response.message());
-            if (response.body() != null) {
-                getLogger().error(response.body().string());
-            }
-            throw new GradleException(response.message());
+            String responseBody = response.body() != null ? response.body().string() : "";
+            String errorMessage = String.format(
+                "HTTP request failed for %s: %d %s%s",
+                response.request().url(),
+                response.code(),
+                response.message(),
+                responseBody.isEmpty() ? "" : "\nResponse body: " + responseBody
+            );
+            getLogger().error(errorMessage);
+            throw new GradleException(errorMessage);
         }
     }
 
