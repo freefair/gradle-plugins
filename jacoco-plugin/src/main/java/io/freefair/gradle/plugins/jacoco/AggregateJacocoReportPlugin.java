@@ -31,7 +31,7 @@ public class AggregateJacocoReportPlugin implements Plugin<Project> {
             project.allprojects(subproject -> {
                 subproject.getPlugins().withType(JavaPlugin.class, javaPlugin -> {
                     SourceSetContainer sourceSets = subproject.getExtensions().getByType(JavaPluginExtension.class).getSourceSets();
-                    SourceSet main = sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME);
+                    SourceSet main = sourceSets.named(SourceSet.MAIN_SOURCE_SET_NAME).get();
                     reportTask.sourceSets(main);
                 });
 
