@@ -39,6 +39,8 @@ public abstract class GenerateCodeTask extends DefaultTask {
 
     @InputDirectory
     @Optional
+    @SkipWhenEmpty
+    @IgnoreEmptyDirectories
     public abstract DirectoryProperty getInputDir();
 
     @OutputDirectory
