@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.plantuml;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.MapProperty;
 import org.gradle.api.provider.Property;
@@ -62,6 +63,14 @@ public abstract class PlantumlTask extends SourceTask {
         getIncludePattern().convention("**/*.puml");
         getDeleteOutputBeforeBuild().convention(true);
         getTmpDir().set(getTemporaryDir());
+    }
+
+    @Override
+    @InputFiles
+    @SkipWhenEmpty
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public FileTree getSource() {
+        return super.getSource();
     }
 
     @TaskAction

@@ -47,6 +47,8 @@ public abstract class MkDocsServe extends MkDocs {
      */
     @Optional
     @InputDirectory
+    @IgnoreEmptyDirectories
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract DirectoryProperty getThemeDir();
 
     /**

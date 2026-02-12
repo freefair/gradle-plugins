@@ -52,9 +52,11 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
     protected abstract ProjectLayout getProjectLayout();
 
     @InputFiles
+    @SkipWhenEmpty
     public abstract ConfigurableFileCollection getSourceDirectories();
 
     @InputFiles
+    @SkipWhenEmpty
     public abstract ConfigurableFileCollection getClassesDirectories();
 
     @InputFile
