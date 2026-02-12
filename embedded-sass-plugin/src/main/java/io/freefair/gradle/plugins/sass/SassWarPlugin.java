@@ -12,6 +12,15 @@ import org.gradle.api.tasks.bundling.War;
 
 import java.io.File;
 
+/**
+ * Plugin that integrates Sass compilation with WAR projects.
+ * <p>
+ * Applies {@link SassWebjarsPlugin} and Gradle's {@link WarPlugin}, then registers a
+ * {@code compileWebappSass} task that compiles Sass/SCSS files from the webapp directory
+ * ({@code src/main/webapp}) and includes the compiled CSS in the WAR file.
+ * <p>
+ * The compiled output is placed in the WAR at the same relative path as the source files.
+ */
 @Incubating
 public class SassWarPlugin implements Plugin<Project> {
 
