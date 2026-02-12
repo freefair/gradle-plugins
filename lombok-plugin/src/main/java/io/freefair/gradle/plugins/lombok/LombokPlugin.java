@@ -5,14 +5,12 @@ import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import io.freefair.gradle.plugins.lombok.tasks.LombokTask;
 import lombok.Getter;
+import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.attributes.Bundling;
-import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.DocsType;
-import org.gradle.api.attributes.VerificationType;
 import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
@@ -61,18 +59,18 @@ public class LombokPlugin implements Plugin<Project> {
 
         javaPluginExtension.getSourceSets().all(this::configureSourceSetDefaults);
 
-        SourceSet mainSourceSet = javaPluginExtension.getSourceSets().named(SourceSet.MAIN_SOURCE_SET_NAME).get();
-        Object mainDelombokTask = mainSourceSet.getExtensions().getByName("delombokTask");
+        NamedDomainObjectProvider<SourceSet> mainSourceSet = javaPluginExtension.getSourceSets().named(SourceSet.MAIN_SOURCE_SET_NAME);
+        Provider<Delombok> mainDelombokTask = mainSourceSet.flatMap(main -> (TaskProvider<Delombok>) main.getExtensions().getByName("delombokTask"));
 
         project.getTasks().named(JavaPlugin.JAVADOC_TASK_NAME, Javadoc.class, javadoc -> {
             javadoc.setSource(mainDelombokTask);
         });
 
-        Configuration mainSourceElements = project.getConfigurations().named("mainSourceElements").get();
-
-        mainSourceElements.getOutgoing().getVariants().create("delombok", delombokVariant -> {
-            delombokVariant.artifact(mainDelombokTask, cpa -> cpa.setType("directory"));
-            delombokVariant.getAttributes().attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.getObjects().named(DocsType.class, DocsType.SOURCES));
+        project.getConfigurations().named("mainSourceElements").configure(mainSourceElements -> {
+            mainSourceElements.getOutgoing().getVariants().create("delombok", delombokVariant -> {
+                delombokVariant.artifact(mainDelombokTask, cpa -> cpa.setType("directory"));
+                delombokVariant.getAttributes().attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.getObjects().named(DocsType.class, DocsType.SOURCES));
+            });
         });
 
         project.getPlugins().withId("com.github.spotbugs", spotBugsPlugin -> configureForSpotbugs(javaPluginExtension));
@@ -80,8 +78,12 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void configureSourceSetDefaults(SourceSet sourceSet) {
-        project.getConfigurations().named(sourceSet.getCompileOnlyConfigurationName()).get().extendsFrom(lombokBasePlugin.getLombokConfiguration());
-        project.getConfigurations().named(sourceSet.getAnnotationProcessorConfigurationName()).get().extendsFrom(lombokBasePlugin.getLombokConfiguration());
+        project.getConfigurations()
+                .named(sourceSet.getCompileOnlyConfigurationName())
+                .configure(compileOnly -> compileOnly.extendsFrom(lombokBasePlugin.getLombokConfiguration()));
+        project.getConfigurations()
+                .named(sourceSet.getAnnotationProcessorConfigurationName())
+                .configure(annotationProcessor -> annotationProcessor.extendsFrom(lombokBasePlugin.getLombokConfiguration()));
 
         TaskProvider<Delombok> delombokTaskProvider = project.getTasks().register(sourceSet.getTaskName("delombok", ""), Delombok.class, delombok -> {
             delombok.setDescription("Runs delombok on the " + sourceSet.getName() + " source-set");
