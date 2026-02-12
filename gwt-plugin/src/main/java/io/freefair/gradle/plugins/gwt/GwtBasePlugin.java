@@ -50,7 +50,7 @@ public class GwtBasePlugin implements Plugin<Project> {
             gwtTask.getGwtClasspath().from(gwtDev);
             gwtTask.getGwtClasspath().from(gwtClasspath);
             JavaPluginExtension pluginExtension = project.getExtensions().getByType(JavaPluginExtension.class);
-            SourceSet main = pluginExtension.getSourceSets().getByName("main");
+            SourceSet main = pluginExtension.getSourceSets().named("main").get();
             gwtTask.getGwtClasspath().from(main.getAllJava().getSourceDirectories());
 
             gwtTask.getWorkDir().set(gwtTask.getTemporaryDir());
