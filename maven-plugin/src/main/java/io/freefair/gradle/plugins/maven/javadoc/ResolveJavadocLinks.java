@@ -8,14 +8,12 @@ import org.gradle.api.artifacts.component.ComponentArtifactIdentifier;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.artifacts.result.ResolvedArtifactResult;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.internal.artifacts.dsl.dependencies.DependencyFactoryInternal;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.*;
 import org.gradle.external.javadoc.JavadocOptionFileOption;
 import org.gradle.external.javadoc.internal.JavadocOptionFile;
-import org.gradle.internal.component.local.model.OpaqueComponentIdentifier;
 import org.gradle.jvm.toolchain.JavadocTool;
 import org.gradle.util.GradleVersion;
 
@@ -97,8 +95,8 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
     private boolean containsGradleApi() {
         return getArtifactIds().get().stream()
                 .map(ComponentArtifactIdentifier::getComponentIdentifier)
-                .filter(componentIdentifier -> componentIdentifier instanceof OpaqueComponentIdentifier)
-                .anyMatch(componentIdentifier -> ((OpaqueComponentIdentifier) componentIdentifier).getClassPathNotation() == DependencyFactoryInternal.ClassPathNotation.GRADLE_API);
+                .map(Object::toString)
+                .anyMatch(id -> id.contains("Gradle API"));
     }
 
     @Nullable
