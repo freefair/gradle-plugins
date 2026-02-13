@@ -27,6 +27,22 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
+/**
+ * Gradle plugin that integrates Project Lombok with Java projects.
+ * <p>
+ * Applies the Lombok annotation processor to Java compilation and provides
+ * delombok tasks for generating de-annotated source code. Also configures
+ * integration with Mapstruct, SpotBugs, and SonarQube.
+ * <p>
+ * This plugin creates:
+ * <ul>
+ *   <li>A {@code lombok} configuration for Lombok dependencies</li>
+ *   <li>Delombok tasks for each source set (e.g., {@code delombok})</li>
+ *   <li>Integration with annotation processors and code quality tools</li>
+ * </ul>
+ *
+ * @author Lars Grefer
+ */
 @Getter
 public class LombokPlugin implements Plugin<Project> {
 

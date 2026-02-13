@@ -13,6 +13,21 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Tar;
 import org.gradle.api.tasks.bundling.Zip;
 
+/**
+ * Gradle plugin for MkDocs documentation generator.
+ * <p>
+ * Provides tasks to build, serve, and package MkDocs-based documentation.
+ * Requires MkDocs to be installed and available on the system PATH.
+ * <p>
+ * This plugin registers the following tasks:
+ * <ul>
+ *   <li>{@code mkdocs} - Builds the documentation</li>
+ *   <li>{@code mkdocsServe} - Starts the development server</li>
+ *   <li>{@code mkdocsNew} - Creates a new MkDocs project</li>
+ *   <li>{@code mkdocsZip} - Creates a ZIP archive of the built documentation</li>
+ *   <li>{@code mkdocsTar} - Creates a TAR archive of the built documentation</li>
+ * </ul>
+ */
 public class MkDocsPlugin implements Plugin<Project> {
 
     @Override
