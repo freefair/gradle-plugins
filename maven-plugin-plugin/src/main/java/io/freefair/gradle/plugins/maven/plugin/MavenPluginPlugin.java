@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.maven.plugin;
 
 import io.freefair.gradle.plugins.maven.MavenPublishJavaPlugin;
+import org.gradle.api.NamedDomainObjectProvider;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
@@ -34,7 +35,7 @@ public class MavenPluginPlugin implements Plugin<Project> {
 
         TaskProvider<GenerateMavenPom> generateMavenPom = project.getTasks().named("generatePomFileForMavenJavaPublication", GenerateMavenPom.class);
 
-        SourceSet main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().named("main").get();
+        NamedDomainObjectProvider<SourceSet> main = project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().named("main");
 
         TaskProvider<DescriptorGeneratorTask> descriptorGeneratorTaskProvider = project.getTasks().register("generateMavenPluginDescriptor", DescriptorGeneratorTask.class, generateMavenPluginDescriptor -> {
 
@@ -45,13 +46,13 @@ public class MavenPluginPlugin implements Plugin<Project> {
                     project.getLayout().getBuildDirectory().dir("generated/resources/maven-plugin-descriptor")
             );
 
-            generateMavenPluginDescriptor.getSourceDirectories().from(main.getAllJava().getSourceDirectories());
-            JavaCompile javaCompile = (JavaCompile) project.getTasks().named(main.getCompileJavaTaskName()).get();
+            generateMavenPluginDescriptor.getSourceDirectories().from(main.get().getAllJava().getSourceDirectories());
+            JavaCompile javaCompile = (JavaCompile) project.getTasks().named(main.get().getCompileJavaTaskName()).get();
 
             generateMavenPluginDescriptor.getClassesDirectories().from(javaCompile);
             generateMavenPluginDescriptor.getEncoding().convention(javaCompile.getOptions().getEncoding());
         });
 
-        main.getResources().srcDir(descriptorGeneratorTaskProvider);
+        main.configure(m -> m.getResources().srcDir(descriptorGeneratorTaskProvider));
     }
 }
