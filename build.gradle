@@ -43,7 +43,7 @@ allprojects {
         test.useJUnitPlatform()
 
         dependencies {
-            testImplementation platform("org.junit:junit-bom:5.14.2")
+            testImplementation platform("org.junit:junit-bom:5.14.3")
 
             testImplementation 'org.assertj:assertj-core:3.27.7'
             testImplementation 'org.junit.jupiter:junit-jupiter-api'
