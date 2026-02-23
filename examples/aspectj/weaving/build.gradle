@@ -1,6 +1,6 @@
 plugins {
     id "org.jetbrains.kotlin.jvm"
-    id "org.springframework.boot" version "3.5.10"
+    id "org.springframework.boot" version "3.5.11"
     id "org.graalvm.buildtools.native" version "0.11.4"
 }
 
@@ -32,13 +32,13 @@ dependencies {
 
     implementation "org.slf4j:slf4j-api:2.+"
 
-    implementation "org.springframework.boot:spring-boot-starter:3.5.10"
+    implementation "org.springframework.boot:spring-boot-starter:3.5.11"
 
     implementation "org.aspectj:aspectjrt:1.9.25.1"
     implementation localGroovy()
 
     testImplementation "junit:junit:4.13.2"
-    implementation "org.springframework.boot:spring-boot-starter-test:3.5.10"
+    implementation "org.springframework.boot:spring-boot-starter-test:3.5.11"
 }
 
 configurations.testImplementation.extendsFrom(configurations.jacocoAnt)
