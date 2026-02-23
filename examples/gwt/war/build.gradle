@@ -13,6 +13,6 @@ gwt {
 }
 
 dependencies {
-    gwtClasspath "org.gwtproject:gwt-user:2.12.2"
+    gwtClasspath "org.gwtproject:gwt-user:2.13.0"
     gwtClasspath project(":code-generator:generator")
 }
