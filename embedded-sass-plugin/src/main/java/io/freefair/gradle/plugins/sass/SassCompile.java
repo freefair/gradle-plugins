@@ -19,7 +19,6 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.EmptyFileVisitor;
 import org.gradle.api.file.FileVisitDetails;
-import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.problems.*;
 import org.gradle.api.provider.ListProperty;
@@ -51,7 +50,7 @@ public abstract class SassCompile extends SourceTask {
         include("**/*.scss");
         include("**/*.sass");
 
-        ExtraPropertiesExtension extraProperties = new DslObject(this).getExtensions().getExtraProperties();
+        ExtraPropertiesExtension extraProperties = this.getExtensions().getExtraProperties();
         for (OutputStyle value : OutputStyle.values()) {
             extraProperties.set(value.name(), value);
         }
