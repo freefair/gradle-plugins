@@ -117,15 +117,15 @@ public class LombokPlugin implements Plugin<Project> {
         }
         spotbugConfigured = true;
 
-        project.afterEvaluate(p -> {
-            String toolVersion = resolveSpotBugVersion();
-
-            javaPluginExtension.getSourceSets().all(sourceSet ->
-                    project.getDependencies().add(
-                            sourceSet.getCompileOnlyConfigurationName(),
-                            "com.github.spotbugs:spotbugs-annotations:" + toolVersion
-                    ));
-        });
+        javaPluginExtension.getSourceSets().all(sourceSet ->
+                project.getConfigurations()
+                        .getByName(sourceSet.getCompileOnlyConfigurationName())
+                        .withDependencies(deps -> {
+                            String toolVersion = resolveSpotBugVersion();
+                            deps.add(project.getDependencies().create(
+                                    "com.github.spotbugs:spotbugs-annotations:" + toolVersion
+                            ));
+                        }));
     }
 
     private String resolveSpotBugVersion() {
