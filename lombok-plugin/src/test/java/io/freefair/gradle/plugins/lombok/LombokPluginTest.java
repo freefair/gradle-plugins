@@ -55,6 +55,9 @@ public class LombokPluginTest {
         var unresolvedDeps = compileClasspath.getResolvedConfiguration()
                 .getLenientConfiguration().getUnresolvedModuleDependencies();
 
+        // spotbugs-annotations appears as "unresolved" because ProjectBuilder has no
+        // repositories configured — what matters is that it was added by withDependencies
+        // before resolution, rather than failing with an immutability exception.
         assertThat(unresolvedDeps)
                 .anyMatch(d -> "spotbugs-annotations".equals(d.getSelector().getName()));
     }
