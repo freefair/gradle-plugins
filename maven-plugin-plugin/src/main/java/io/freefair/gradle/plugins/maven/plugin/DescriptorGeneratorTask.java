@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
  * @see DescriptorGeneratorMojo
  */
 @Getter
+@CacheableTask
 public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
 
     @Inject
@@ -53,13 +54,16 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
 
     @InputFiles
     @SkipWhenEmpty
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract ConfigurableFileCollection getSourceDirectories();
 
     @InputFiles
     @SkipWhenEmpty
+    @Classpath
     public abstract ConfigurableFileCollection getClassesDirectories();
 
     @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract RegularFileProperty getPomFile();
 
     @OutputDirectory

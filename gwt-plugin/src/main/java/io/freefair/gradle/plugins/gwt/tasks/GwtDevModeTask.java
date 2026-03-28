@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.gwt.tasks;
 
 import io.freefair.gradle.plugins.gwt.GwtDevModeOptions;
+import org.gradle.api.tasks.UntrackedTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +9,10 @@ import java.util.List;
 /**
  * @author Lars Grefer
  */
+@UntrackedTask(because = "Runs an interactive development server that does not produce cacheable outputs")
 public abstract class GwtDevModeTask extends AbstractGwtTask implements GwtDevModeOptions {
 
     public GwtDevModeTask() {
-        this.getOutputs().upToDateWhen(task -> false);
-
         getMainClass().convention("com.google.gwt.dev.DevMode");
 
         getArgumentProviders().add(new ArgumentProvider());

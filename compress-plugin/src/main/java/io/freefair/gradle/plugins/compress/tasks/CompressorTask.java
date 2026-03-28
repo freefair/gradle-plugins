@@ -10,6 +10,7 @@ import org.gradle.workers.WorkerExecutor;
 import javax.inject.Inject;
 import java.io.File;
 
+@CacheableTask
 public abstract class CompressorTask<P extends CompressorWorkParameters> extends SourceTask {
 
     @Inject

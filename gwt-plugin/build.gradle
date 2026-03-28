@@ -8,7 +8,7 @@ description = "Collection of GWT Gradle plugins"
 
 dependencies {
 
-    compileOnly 'org.gwtproject:gwt-dev:2.12.2'
+    compileOnly 'org.gwtproject:gwt-dev:2.13.0'
 
 }
 

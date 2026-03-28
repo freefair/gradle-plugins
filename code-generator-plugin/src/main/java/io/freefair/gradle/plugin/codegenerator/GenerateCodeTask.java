@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@CacheableTask
 public abstract class GenerateCodeTask extends DefaultTask {
 
     @Inject
@@ -41,6 +42,7 @@ public abstract class GenerateCodeTask extends DefaultTask {
     @Optional
     @SkipWhenEmpty
     @IgnoreEmptyDirectories
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract DirectoryProperty getInputDir();
 
     @OutputDirectory
