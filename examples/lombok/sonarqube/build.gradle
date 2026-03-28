@@ -1,5 +1,5 @@
 plugins {
-    id "org.sonarqube" version "6.2.0.5505"
+    id "org.sonarqube" version "7.2.2.6593"
 }
 
 apply plugin: "java"
