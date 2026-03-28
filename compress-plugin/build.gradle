@@ -49,12 +49,12 @@ gradlePlugin {
 
 dependencies {
     api 'org.apache.commons:commons-compress:1.28.0'
-    implementation 'org.tukaani:xz:1.11'
+    implementation 'org.tukaani:xz:1.12'
 
     implementation 'org.brotli:dec:0.1.2'
 
     testImplementation project(":test-common")
-    testImplementation platform("org.spockframework:spock-bom:2.3-groovy-4.0")
+    testImplementation platform("org.spockframework:spock-bom:2.4-groovy-4.0")
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-junit4'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'

@@ -1,6 +1,9 @@
 package io.freefair.gradle.plugins.lombok;
 
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.ProviderFactory;
+
+import javax.inject.Inject;
 
 /**
  * @author Lars Grefer
@@ -17,9 +20,16 @@ public abstract class LombokExtension {
 
     public abstract Property<Boolean> getDisableConfig();
 
+    @Inject
+    protected abstract ProviderFactory getProviders();
+
     public LombokExtension() {
         getVersion().convention(LOMBOK_VERSION);
 
-        getDisableConfig().convention(System.getProperty("lombok.disableConfig") != null);
+        getDisableConfig().convention(
+            getProviders().systemProperty("lombok.disableConfig")
+                .map(v -> true)
+                .orElse(false)
+        );
     }
 }

@@ -21,7 +21,9 @@ import org.gradle.api.tasks.VerificationTask;
 import javax.inject.Inject;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Lars Grefer
@@ -42,11 +44,14 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
     @Getter(AccessLevel.NONE)
     private boolean errorFound = false;
 
+    private final List<String> missingElements = new ArrayList<>();
+
     @TaskAction
     public void check() throws IOException, XmlPullParserException {
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = reader.read(new FileReader(getPomFile().getAsFile().get()));
+        missingElements.clear();
 
         if (isEmpty(model.getGroupId())) {
             logError("groupId");
@@ -115,12 +120,17 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
         }
 
         if (errorFound && !getIgnoreFailures()) {
-            throw new GradleException();
+            throw new GradleException(String.format(
+                "POM validation failed for %s. Missing required elements: %s",
+                getPomFile().getAsFile().get().getName(),
+                String.join(", ", missingElements)
+            ));
         }
     }
 
     private void logError(String element) {
         errorFound = true;
+        missingElements.add(element);
         getLogger().error("No {} found in {}", element, getPomFile().getAsFile().get());
         try {
             ProblemId problemId = ProblemId.create("maven-pom", "Missing Element in Maven Pom", PROBLEM_GROUP);

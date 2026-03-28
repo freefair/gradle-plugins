@@ -16,6 +16,7 @@ import java.io.File;
 /**
  * @author Lars Grefer
  */
+@CacheableTask
 public abstract class PlantumlTask extends SourceTask {
 
     @Inject
@@ -58,6 +59,7 @@ public abstract class PlantumlTask extends SourceTask {
 
     public PlantumlTask() {
         this.setGroup("plantuml");
+        getFileFormat().convention("png");
         getWithMetadata().convention(true);
         getIncludePattern().convention("**/*.puml");
         getDeleteOutputBeforeBuild().convention(true);
