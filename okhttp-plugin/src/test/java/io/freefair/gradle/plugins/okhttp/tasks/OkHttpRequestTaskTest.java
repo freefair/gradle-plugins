@@ -29,7 +29,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testBasicAuthCredentials() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
         task.getUrl().set("https://example.com/test");
 
         PasswordCredentials credentials = project.getObjects().newInstance(PasswordCredentials.class);
@@ -46,7 +46,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testHeaderCredentials() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
         task.getUrl().set("https://example.com/test");
 
         HttpHeaderCredentials credentials = project.getObjects().newInstance(HttpHeaderCredentials.class);
@@ -63,7 +63,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testUnsupportedCredentialType() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
         task.getUrl().set("https://example.com/test");
 
         // Use a custom credentials implementation that's not supported
@@ -78,7 +78,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testSuccessfulResponse() throws IOException {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
 
         Response response = new Response.Builder()
             .request(new Request.Builder().url("https://example.com/test").build())
@@ -94,7 +94,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void test404ErrorResponse() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
 
         Response response = new Response.Builder()
             .request(new Request.Builder().url("https://example.com/missing").build())
@@ -111,7 +111,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void test500ErrorResponse() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
 
         Response response = new Response.Builder()
             .request(new Request.Builder().url("https://example.com/error").build())
@@ -128,7 +128,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testErrorResponseWithEmptyBody() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
 
         Response response = new Response.Builder()
             .request(new Request.Builder().url("https://example.com/error").build())
@@ -145,7 +145,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testUrlConfiguration() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
         String testUrl = "https://example.com/api/test";
         task.getUrl().set(testUrl);
 
@@ -158,7 +158,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testRequestBuilderWithoutCredentials() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
         task.getUrl().set("https://example.com/test");
 
         Request.Builder builder = new Request.Builder();
@@ -170,7 +170,7 @@ public class OkHttpRequestTaskTest {
 
     @Test
     public void testCustomHeaders() {
-        OkHttpRequestTask task = project.getTasks().create("testRequest", OkHttpRequestTask.class);
+        OkHttpRequestTask task = project.getTasks().register("testRequest", OkHttpRequestTask.class).get();
         task.getUrl().set("https://example.com/test");
         task.getHeaders().put("X-Custom-Header", "custom-value");
         task.getHeaders().put("Accept", "application/json");
