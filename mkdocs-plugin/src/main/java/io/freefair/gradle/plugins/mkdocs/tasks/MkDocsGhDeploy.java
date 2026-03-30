@@ -8,6 +8,7 @@ import org.gradle.process.ExecSpec;
 /**
  * Deploy your documentation to GitHub Pages.
  */
+@UntrackedTask(because = "Remote state cannot be tracked")
 public abstract class MkDocsGhDeploy extends MkDocs {
 
     /**

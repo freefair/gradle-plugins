@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream;
 import org.apache.commons.compress.archivers.cpio.CpioConstants;
-import org.apache.commons.compress.utils.CharsetNames;
 import org.gradle.api.internal.file.CopyActionProcessingStreamAction;
 import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
@@ -18,10 +17,10 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -30,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Setter
 @Slf4j
+@DisableCachingByDefault
 public abstract class Cpio extends AbstractArchiveTask {
 
     @Input

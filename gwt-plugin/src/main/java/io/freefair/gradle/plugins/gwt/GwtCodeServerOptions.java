@@ -49,6 +49,7 @@ public interface GwtCodeServerOptions extends CommonGwtToolOptions {
      */
     @Optional
     @InputDirectory
+    @Classpath
     DirectoryProperty getSrc();
 
     /**

@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.IOException;
 
@@ -18,6 +19,7 @@ import java.io.IOException;
  * @see AbstractGeneratorMojo
  */
 @SuppressWarnings("JavadocReference")
+@DisableCachingByDefault
 public abstract class AbstractGeneratorTask extends DefaultTask {
 
     /**

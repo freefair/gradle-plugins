@@ -6,12 +6,14 @@ import okhttp3.RequestBody;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
+import org.gradle.work.DisableCachingByDefault;
 
 import javax.annotation.Nullable;
 
 /**
  * @author Lars Grefer
  */
+@DisableCachingByDefault(because = "Remote state cannot be tracked")
 public abstract class HttpPut extends OkHttpRequestTask {
 
     @Input

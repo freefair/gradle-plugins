@@ -10,6 +10,7 @@ import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.testing.jacoco.tasks.JacocoBase;
+import org.gradle.work.DisableCachingByDefault;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
 import org.gradle.workers.WorkQueue;
@@ -27,6 +28,7 @@ import java.io.UncheckedIOException;
  * @see org.jacoco.ant.DumpTask
  */
 @Getter
+@DisableCachingByDefault(because = "Remote State cannot be tracked")
 public class JacocoDump extends JacocoBase {
 
     @Internal

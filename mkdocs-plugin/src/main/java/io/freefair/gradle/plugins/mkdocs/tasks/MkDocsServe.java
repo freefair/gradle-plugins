@@ -9,6 +9,7 @@ import org.gradle.process.ExecSpec;
 /**
  * Run the builtin development server.
  */
+@UntrackedTask(because = "Runs a server")
 public abstract class MkDocsServe extends MkDocs {
 
     /**
@@ -47,6 +48,7 @@ public abstract class MkDocsServe extends MkDocs {
      */
     @Optional
     @InputDirectory
+    @PathSensitive(PathSensitivity.RELATIVE)
     public abstract DirectoryProperty getThemeDir();
 
     /**

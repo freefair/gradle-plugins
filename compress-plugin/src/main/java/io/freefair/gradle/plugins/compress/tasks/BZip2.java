@@ -2,12 +2,14 @@ package io.freefair.gradle.plugins.compress.tasks;
 
 import lombok.Getter;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.gradle.api.tasks.CacheableTask;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 
 @SuppressWarnings("UnstableApiUsage")
 @Getter
+@CacheableTask
 public abstract class BZip2 extends CompressorTask<CompressorWorkParameters> {
 
     public BZip2() {

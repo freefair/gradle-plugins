@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.io.IOException;
 @Getter
 @Setter
 @Slf4j
+@DisableCachingByDefault
 public abstract class Ar extends AbstractArchiveTask {
 
     @Input
