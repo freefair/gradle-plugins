@@ -20,4 +20,6 @@ public interface PlantumlParameters extends WorkParameters {
     Property<String> getFileFormat();
 
     Property<Boolean> getWithMetadata();
+
+    Property<Boolean> getIgnoreSuggestedName();
 }
