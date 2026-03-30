@@ -12,6 +12,7 @@ dependencies {
     api "com.squareup.okhttp3:logging-interceptor"
 
     testImplementation project(":test-common")
+    testImplementation "com.squareup.okhttp3:mockwebserver"
 }
 
 gradlePlugin {
