@@ -11,7 +11,7 @@ import javax.inject.Inject;
  */
 public abstract class LombokExtension {
 
-    public static final String LOMBOK_VERSION = "1.18.42";
+    public static final String LOMBOK_VERSION = "1.18.44";
 
     /**
      * The version of Lombok which will be used.
