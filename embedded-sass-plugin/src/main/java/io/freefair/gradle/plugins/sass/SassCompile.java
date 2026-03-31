@@ -18,6 +18,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.EmptyFileVisitor;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.file.FileVisitDetails;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.problems.*;
@@ -227,6 +228,15 @@ public abstract class SassCompile extends SourceTask {
     @Input
     @Optional
     public abstract Property<URI> getSourceMapRoot();
+
+    @Override
+    @InputFiles
+    @SkipWhenEmpty
+    @IgnoreEmptyDirectories
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public FileTree getSource() {
+        return super.getSource();
+    }
 
     public void setOutputStyle(String outputStyle) {
         getOutputStyle().set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
