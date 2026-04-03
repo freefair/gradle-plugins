@@ -14,6 +14,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DelombokTest extends AbstractPluginTest {
 
     @Test
+    public void jpmsDelombokTest() {
+        createGradleConfiguration()
+                .applyPlugin("java")
+                .applyPlugin("io.freefair.lombok")
+                .addCustomConfigurationBlock("delombok.target = file('src/main-delombok/java/')")
+                .write();
+
+        TypeSpec.Builder builder = TypeSpec.classBuilder("ModularUser")
+                .addModifiers(Modifier.PUBLIC);
+        builder.addField(FieldSpec.builder(String.class, "name", Modifier.PRIVATE).build());
+        builder.addField(FieldSpec.builder(String.class, "email", Modifier.PRIVATE).build());
+        builder.addAnnotation(AnnotationSpec.builder(lombok.Data.class).build());
+
+        createJavaClass("main", "io.freefair.gradle.plugins.lombok.test", builder.build());
+
+        createFile("src/main/java", "module-info.java")
+                .append("module io.freefair.gradle.plugins.lombok.test {\n")
+                .append("    requires static lombok;\n")
+                .append("}\n")
+                .write();
+
+        executeTask("delombok", "--debug");
+        String modularUser = readJavaClass("main-delombok", "io.freefair.gradle.plugins.lombok.test", "ModularUser");
+        assertThat(modularUser).doesNotContain("lombok.Data");
+    }
+
+    @Test
     public void simpleDelombokTest() {
         createGradleConfiguration()
                 .applyPlugin("java")

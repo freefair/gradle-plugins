@@ -116,10 +116,18 @@ public class LombokPlugin implements Plugin<Project> {
 
             delombokTaskProvider.configure(delombok -> {
                 delombok.getEncoding().set(compileTaskProvider.map(c -> c.getOptions().getEncoding()));
-                delombok.getClasspath().from(sourceSet.getCompileClasspath());
                 delombok.getInput().from(sourceSet.getJava().getSourceDirectories());
                 delombok.getSourcepath().from(compileTaskProvider.flatMap(c -> c.getOptions().getGeneratedSourceOutputDirectory()));
                 delombok.dependsOn(sourceSet.getJava().getBuildDependencies());
+
+                boolean hasModuleInfo = !sourceSet.getJava().getSourceDirectories()
+                        .getAsFileTree().matching(pattern -> pattern.include("**/module-info.java")).isEmpty();
+
+                if (hasModuleInfo) {
+                    delombok.getModulePath().from(sourceSet.getCompileClasspath());
+                } else {
+                    delombok.getClasspath().from(sourceSet.getCompileClasspath());
+                }
             });
         });
 
