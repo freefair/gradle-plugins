@@ -10,6 +10,15 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.Jar;
 import org.gradle.api.tasks.bundling.War;
 
+/**
+ * Plugin that attaches a classes JAR as an artifact alongside the WAR.
+ * <p>
+ * Adds {@code attachClasses} and {@code classesClassifier} extension properties to {@link War} tasks.
+ * When {@code attachClasses} is enabled, the main classes JAR is published as an additional
+ * artifact with the specified classifier (defaults to "classes").
+ * <p>
+ * This allows other projects to depend on the WAR's classes without depending on the entire WAR file.
+ */
 public class WarAttachClassesPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {

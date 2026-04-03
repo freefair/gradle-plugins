@@ -11,6 +11,16 @@ import org.gradle.api.tasks.bundling.War;
 import java.io.File;
 import java.util.Collections;
 
+/**
+ * Plugin that adds support for archiving WAR classes separately.
+ * <p>
+ * Adds an {@code archiveClasses} extension property to {@link War} tasks. When enabled,
+ * this creates a separate JAR file containing the WAR's class files and adjusts the
+ * WAR's classpath to reference this JAR instead of including classes directly in
+ * {@code WEB-INF/classes}.
+ * <p>
+ * This is useful for creating skinny WARs where classes are packaged separately.
+ */
 public class WarArchiveClassesPlugin implements Plugin<Project> {
 
     @Override
