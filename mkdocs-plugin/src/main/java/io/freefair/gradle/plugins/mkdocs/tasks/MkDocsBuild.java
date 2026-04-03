@@ -40,6 +40,7 @@ public abstract class MkDocsBuild extends MkDocs {
      */
     @Optional
     @InputDirectory
+    @IgnoreEmptyDirectories
     @PathSensitive(PathSensitivity.RELATIVE)
     public abstract DirectoryProperty getThemeDir();
 

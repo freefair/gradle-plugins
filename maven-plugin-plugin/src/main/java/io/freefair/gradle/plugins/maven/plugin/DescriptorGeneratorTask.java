@@ -53,6 +53,7 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
     protected abstract ProjectLayout getProjectLayout();
 
     @InputFiles
+    @SkipWhenEmpty
     @PathSensitive(PathSensitivity.RELATIVE)
     public abstract ConfigurableFileCollection getSourceDirectories();
 

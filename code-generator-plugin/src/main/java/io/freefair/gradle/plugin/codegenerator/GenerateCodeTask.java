@@ -40,6 +40,8 @@ public abstract class GenerateCodeTask extends DefaultTask {
 
     @InputDirectory
     @Optional
+    @SkipWhenEmpty
+    @IgnoreEmptyDirectories
     @PathSensitive(PathSensitivity.RELATIVE)
     public abstract DirectoryProperty getInputDir();
 
