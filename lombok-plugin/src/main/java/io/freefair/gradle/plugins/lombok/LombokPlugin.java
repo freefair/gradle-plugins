@@ -13,11 +13,9 @@ import org.gradle.api.attributes.Bundling;
 import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.DocsType;
 import org.gradle.api.attributes.VerificationType;
-import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
-import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
@@ -143,8 +141,7 @@ public class LombokPlugin implements Plugin<Project> {
             return ((CodeQualityExtension) spotbugsExtension).getToolVersion();
         }
 
-        Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
-        return toolVersionProperty.get();
+        return SPOTBUGS_DEFAULT_VERSION;
     }
 
     private void configureDelombokDefaults(Delombok delombok) {
