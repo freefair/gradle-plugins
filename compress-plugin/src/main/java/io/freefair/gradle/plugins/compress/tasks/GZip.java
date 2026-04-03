@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipParameters;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 
@@ -11,6 +12,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 
 @Getter
+@CacheableTask
 public abstract class GZip extends CompressorTask<GZip.GZipWorkParameters> {
 
     @Input

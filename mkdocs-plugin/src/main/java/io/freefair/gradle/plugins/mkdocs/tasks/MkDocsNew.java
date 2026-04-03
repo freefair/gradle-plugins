@@ -4,10 +4,12 @@ import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.process.ExecSpec;
+import org.gradle.work.DisableCachingByDefault;
 
 /**
  * Create a new MkDocs project
  */
+@DisableCachingByDefault()
 public abstract class MkDocsNew extends MkDocs {
 
     @Optional

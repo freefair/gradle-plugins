@@ -18,6 +18,7 @@ import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.internal.logging.progress.ProgressLogger;
 import org.gradle.internal.logging.progress.ProgressLoggerFactory;
+import org.gradle.work.DisableCachingByDefault;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.time.Duration;
  *
  * @author Lars Grefer
  */
+@DisableCachingByDefault(because = "Remote state cannot be tracked")
 public abstract class OkHttpRequestTask extends OkHttpTask {
 
     @Inject

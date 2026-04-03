@@ -9,6 +9,7 @@ import org.gradle.process.ExecSpec;
 /**
  * Run the builtin development server.
  */
+@UntrackedTask(because = "Runs a server")
 public abstract class MkDocsServe extends MkDocs {
 
     /**

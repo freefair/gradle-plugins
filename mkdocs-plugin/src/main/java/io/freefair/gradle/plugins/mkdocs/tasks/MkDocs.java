@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Console;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
@@ -12,6 +13,7 @@ import org.gradle.process.ExecSpec;
 
 import javax.inject.Inject;
 
+@CacheableTask
 public abstract class MkDocs extends DefaultTask {
 
     @Inject

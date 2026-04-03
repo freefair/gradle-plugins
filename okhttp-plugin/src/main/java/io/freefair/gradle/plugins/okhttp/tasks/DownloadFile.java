@@ -5,12 +5,14 @@ import okio.BufferedSink;
 import okio.Okio;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.OutputFile;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.IOException;
 
 /**
  * @author Lars Grefer
  */
+@DisableCachingByDefault(because = "Remote state cannot be tracked")
 public abstract class DownloadFile extends HttpGet {
 
     @OutputFile

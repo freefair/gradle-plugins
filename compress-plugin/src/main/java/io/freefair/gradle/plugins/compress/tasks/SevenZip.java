@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -26,6 +27,7 @@ import java.util.Date;
  */
 @Getter
 @Setter
+@DisableCachingByDefault
 public abstract class SevenZip extends AbstractArchiveTask {
 
     @Input

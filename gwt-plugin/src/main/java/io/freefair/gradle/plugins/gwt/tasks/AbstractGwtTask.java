@@ -9,12 +9,14 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.JavaExec;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.util.Collection;
 
 /**
  * @author Lars Grefer
  */
+@DisableCachingByDefault(because = "Abstract suoerclass")
 public abstract class AbstractGwtTask extends JavaExec implements CommonGwtToolOptions {
 
     @InputFiles

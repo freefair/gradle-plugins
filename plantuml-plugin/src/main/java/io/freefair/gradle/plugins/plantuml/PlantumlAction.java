@@ -26,6 +26,7 @@ public abstract class PlantumlAction implements WorkAction<PlantumlParameters> {
         FileFormatOption fileFormatOption = new FileFormatOption(fileFormat, getParameters().getWithMetadata().get());
 
         SourceFileReader sourceFileReader = new SourceFileReader(
+                getParameters().getIgnoreSuggestedName().getOrElse(false),
                 getParameters().getInputFile().getAsFile().get(),
                 getParameters().getOutputDirectory().getAsFile().get(),
                 fileFormatOption

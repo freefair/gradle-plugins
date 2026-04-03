@@ -40,6 +40,9 @@ public abstract class PlantumlTask extends SourceTask {
     public abstract Property<Boolean> getWithMetadata();
 
     @Input
+    public abstract Property<Boolean> getIgnoreSuggestedName();
+
+    @Input
     public abstract Property<String> getIncludePattern();
 
     @Input
@@ -62,6 +65,7 @@ public abstract class PlantumlTask extends SourceTask {
         this.setGroup("plantuml");
         getFileFormat().convention("png");
         getWithMetadata().convention(true);
+        getIgnoreSuggestedName().convention(false);
         getIncludePattern().convention("**/*.puml");
         getDeleteOutputBeforeBuild().convention(true);
         getTmpDir().set(getTemporaryDir());
@@ -70,6 +74,7 @@ public abstract class PlantumlTask extends SourceTask {
     @Override
     @InputFiles
     @SkipWhenEmpty
+    @IgnoreEmptyDirectories
     @PathSensitive(PathSensitivity.RELATIVE)
     public FileTree getSource() {
         return super.getSource();
@@ -117,6 +122,7 @@ public abstract class PlantumlTask extends SourceTask {
                 params.getOutputDirectory().set(outputFile.getParentFile());
                 params.getFileFormat().set(getFileFormat());
                 params.getWithMetadata().set(getWithMetadata());
+                params.getIgnoreSuggestedName().set(getIgnoreSuggestedName());
             });
         });
     }

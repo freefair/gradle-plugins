@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.gradle.work.DisableCachingByDefault;
 
 import java.io.File;
 
@@ -17,6 +18,7 @@ import java.io.File;
  *
  * @author Lars Grefer
  */
+@DisableCachingByDefault(because = "Remote state cannot be tracked")
 public abstract class OkHttpTask extends DefaultTask {
 
     @Console

@@ -58,7 +58,6 @@ public abstract class DescriptorGeneratorTask extends AbstractGeneratorTask {
     public abstract ConfigurableFileCollection getSourceDirectories();
 
     @InputFiles
-    @SkipWhenEmpty
     @Classpath
     public abstract ConfigurableFileCollection getClassesDirectories();
 

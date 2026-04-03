@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Baseline tests for OkHttpPlugin.
+ * Tests for OkHttpPlugin configuration and extension.
  */
 public class OkHttpPluginTest {
 
@@ -52,6 +52,26 @@ public class OkHttpPluginTest {
         project.getPlugins().apply(OkHttpPlugin.class);
 
         OkHttpExtension extension = project.getExtensions().getByType(OkHttpExtension.class);
+
+        assertThat(extension.getForceCache().get()).isTrue();
+    }
+
+    @Test
+    public void onlineModeDoesNotForceCache() {
+        project.getGradle().getStartParameter().setOffline(false);
+        project.getPlugins().apply(OkHttpPlugin.class);
+
+        OkHttpExtension extension = project.getExtensions().getByType(OkHttpExtension.class);
+
+        assertThat(extension.getForceCache().get()).isFalse();
+    }
+
+    @Test
+    public void forceCacheCanBeOverridden() {
+        project.getPlugins().apply(OkHttpPlugin.class);
+
+        OkHttpExtension extension = project.getExtensions().getByType(OkHttpExtension.class);
+        extension.getForceCache().set(true);
 
         assertThat(extension.getForceCache().get()).isTrue();
     }

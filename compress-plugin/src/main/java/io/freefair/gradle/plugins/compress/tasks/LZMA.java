@@ -2,11 +2,13 @@ package io.freefair.gradle.plugins.compress.tasks;
 
 import lombok.Getter;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
+import org.gradle.api.tasks.CacheableTask;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 
 @Getter
+@CacheableTask
 public abstract class LZMA extends CompressorTask<CompressorWorkParameters> {
 
     public LZMA() {

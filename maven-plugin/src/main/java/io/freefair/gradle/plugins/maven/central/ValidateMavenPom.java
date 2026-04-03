@@ -13,10 +13,7 @@ import org.gradle.api.problems.ProblemId;
 import org.gradle.api.problems.Problems;
 import org.gradle.api.problems.Severity;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.VerificationTask;
+import org.gradle.api.tasks.*;
 
 import javax.inject.Inject;
 import java.io.FileReader;
@@ -28,6 +25,7 @@ import java.util.List;
 /**
  * @author Lars Grefer
  */
+@CacheableTask
 public abstract class ValidateMavenPom extends DefaultTask implements VerificationTask {
 
     public static final ProblemGroup PROBLEM_GROUP = ProblemGroup.create("validate-maven-pom", "Maven Pom Validation");
@@ -36,6 +34,7 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
     public abstract Problems getProblems();
 
     @InputFile
+    @PathSensitive(PathSensitivity.NONE)
     public abstract RegularFileProperty getPomFile();
 
     @Input
