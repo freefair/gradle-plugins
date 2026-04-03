@@ -13,7 +13,7 @@ import org.gradle.api.Project;
  * <ul>
  *   <li>Output style (compressed, expanded, etc.)</li>
  *   <li>Source map generation and embedding</li>
- *   <li>Source map URL inclusion</li>
+ *   <li>Whether to omit the source map URL from compiled output</li>
  * </ul>
  *
  * @see SassExtension

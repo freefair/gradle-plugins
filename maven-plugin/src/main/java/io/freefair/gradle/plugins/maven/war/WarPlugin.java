@@ -8,7 +8,7 @@ import org.gradle.api.Project;
  * <p>
  * This plugin applies:
  * <ul>
- *   <li>Gradle's standard {@code war} plugin</li>
+ *   <li>{@link org.gradle.api.plugins.WarPlugin} - Gradle's standard WAR plugin</li>
  *   <li>{@link WarOverlayPlugin} - Support for WAR overlays</li>
  *   <li>{@link WarArchiveClassesPlugin} - Archive classes separately from WAR</li>
  *   <li>{@link WarAttachClassesPlugin} - Attach classes JAR as artifact</li>
