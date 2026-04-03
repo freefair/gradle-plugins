@@ -78,6 +78,7 @@ public abstract class SassCompile extends SourceTask {
             getCustomImporters().get().forEach(compiler::registerImporter);
             getHostFunctions().get().forEach(compiler::registerFunction);
 
+            URLClassLoader webjarsLoader = null;
             if (!getWebjars().isEmpty()) {
                 LinkedHashSet<URL> urls = new LinkedHashSet<>();
 
@@ -85,7 +86,7 @@ public abstract class SassCompile extends SourceTask {
                     urls.add(webjar.toURI().toURL());
                 }
 
-                URLClassLoader webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
+                webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
                 compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
             }
 
@@ -164,6 +165,10 @@ public abstract class SassCompile extends SourceTask {
                     }
                 }
             });
+
+            if (webjarsLoader != null) {
+                webjarsLoader.close();
+            }
         }
     }
 
