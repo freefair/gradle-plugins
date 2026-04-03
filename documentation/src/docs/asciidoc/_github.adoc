@@ -2,7 +2,7 @@
 
 == GitHub Plugins
 
-This chapter describes all the plugins contained in the `github-plugin` module.
+The `github-plugin` module provides plugins for GitHub integration: repository detection, POM enrichment, and publishing to the GitHub Package Registry.
 
 === `io.freefair.github.base`
 
@@ -48,10 +48,10 @@ WARNING: This plugin should only be applied to the root project.
 
 === `io.freefair.github.pom`
 
-This plugin pre-fills the pom's of all `MavenPublication`s with information avaiable from the GitHub project.
+This plugin pre-fills the POMs of all `MavenPublication` instances with information available from the GitHub project.
 
-The `scm.tag` element of the pom is auto-detected by default,
-but can be overriden using the `github.tag` extension property.
+The `scm.tag` element of the POM is auto-detected by default,
+but can be overridden using the `github.tag` extension property.
 
 TIP: This plugins calls the GitHub API.
 Configure a username and token as described in <<_io_freefair_github_base>> if

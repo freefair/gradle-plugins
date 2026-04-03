@@ -4,9 +4,93 @@
 - https://github.com/sass/embedded-protocol
 - https://github.com/sass/dart-sass-embedded
 
-== JSass Plugins
+== Getting Started
 
-This chapter describes all the plugins contained in the `embedded-sass-plugin` module.
+The Embedded Sass plugins compile https://sass-lang.com/[Sass/SCSS] files to CSS using the https://github.com/larsgrefer/dart-sass-java[Dart Sass] embedded compiler.
+Choose the plugin variant that matches your project type.
+
+=== For Java / Resource Projects
+
+Place `.scss` files in `src/main/resources/`.
+The compiled CSS is included in the processed resources automatically.
+
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "java"
+    id "io.freefair.sass-java" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    java
+    id("io.freefair.sass-java") version "{revnumber}"
+}
+----
+--
+
+.src/main/resources/styles/main.scss
+[source,scss]
+----
+$primary: #3366cc;
+
+body {
+  font-family: system-ui, sans-serif;
+
+  a {
+    color: $primary;
+
+    &:hover {
+      color: darken($primary, 15%);
+    }
+  }
+}
+----
+
+[source,bash]
+----
+./gradlew compileSass
+----
+
+The compiled CSS appears in `build/sass/main/` and is included in `processResources` output.
+
+=== For WAR Projects
+
+Place `.scss` files in `src/main/webapp/`.
+
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "war"
+    id "io.freefair.sass-war" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    war
+    id("io.freefair.sass-war") version "{revnumber}"
+}
+----
+--
+
+[source,bash]
+----
+./gradlew compileWebappSass
+----
+
+TIP: For complete working examples (Java resources, WAR, and WebJars integration), see the https://github.com/freefair/gradle-plugins/tree/main/examples/embedded-sass[embedded-sass example projects].
+
+== Embedded Sass Plugins
+
+The `embedded-sass-plugin` module provides the following plugins.
 
 === `io.freefair.sass-base`
 

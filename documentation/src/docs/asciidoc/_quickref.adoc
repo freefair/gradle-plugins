@@ -1,0 +1,146 @@
+= Plugin Quick Reference
+
+Use this table to find the right plugin for your use case.
+All plugin IDs follow the pattern `io.freefair.<name>`.
+
+== Build & Compilation
+
+[cols="2,3", options="header"]
+|===
+| Plugin ID | Purpose
+
+| `io.freefair.lombok`
+| Automates https://projectlombok.org/[Lombok] setup: adds annotation processor, creates `delombok` tasks, configures Javadoc.
+
+| `io.freefair.aspectj`
+| Compile-time AspectJ weaving. Replaces `javac` with `ajc`. Supports `.aj` and `@Aspect` sources.
+
+| `io.freefair.aspectj.post-compile-weaving`
+| Post-compile AspectJ weaving. Runs `ajc` after `javac`/`kotlinc`/`groovyc`. Use with Lombok or Kotlin.
+
+| `io.freefair.sass-java`
+| Compiles Sass/SCSS files from `src/main/resources/` to CSS using https://github.com/larsgrefer/dart-sass-java[Dart Sass].
+
+| `io.freefair.sass-war`
+| Compiles Sass/SCSS files from `src/main/webapp/` for WAR projects.
+
+| `io.freefair.sass-webjars`
+| Adds https://www.webjars.org/[WebJars] support to Sass compilation (e.g., `@import "scss/bootstrap"`).
+
+| `io.freefair.mjml.java`
+| Compiles https://mjml.io/[MJML] email templates to HTML as part of resource processing.
+
+| `io.freefair.gwt`
+| Google Web Toolkit compilation and DevMode integration.
+
+| `io.freefair.plantuml`
+| Generates images (PNG, SVG, etc.) from https://plantuml.com/[PlantUML] diagram files.
+
+| `io.freefair.compress`
+| Provides Ar, Cpio, 7z archive tasks and GZip, BZip2, LZMA, Deflate compression tasks via Apache Commons Compress.
+
+| `io.freefair.code-generator`
+| Framework for custom code generation plugins.
+
+| `io.freefair.quicktype`
+| Generates code from JSON Schema using https://quicktype.io/[quicktype].
+
+| `io.freefair.maven-plugin`
+| Build Maven plugins using Gradle. Generates Maven plugin descriptors.
+|===
+
+== Documentation
+
+[cols="2,3", options="header"]
+|===
+| Plugin ID | Purpose
+
+| `io.freefair.aggregate-javadoc`
+| Aggregates Javadoc from multiple subprojects into a single documentation set. Apply to the root project.
+
+| `io.freefair.javadocs`
+| Adds a `javadocJar` task and publishes it alongside the main artifact.
+
+| `io.freefair.javadoc-links`
+| Automatically resolves and adds `-link` arguments to Javadoc tasks based on dependencies.
+
+| `io.freefair.javadoc-utf-8`
+| Sets UTF-8 encoding for all Javadoc tasks.
+
+| `io.freefair.mkdocs`
+| Integrates https://www.mkdocs.org/[MkDocs] into the Gradle build for documentation generation.
+|===
+
+== Publishing
+
+[cols="2,3", options="header"]
+|===
+| Plugin ID | Purpose
+
+| `io.freefair.maven-publish-java`
+| Configures `maven-publish` for Java libraries with sources and Javadoc JARs.
+
+| `io.freefair.maven-publish-war`
+| Configures `maven-publish` for WAR projects.
+
+| `io.freefair.github.package-registry-maven-publish`
+| Publishes artifacts to the GitHub Package Registry.
+
+| `io.freefair.maven-central.validate-poms`
+| Validates that generated POM files meet Maven Central requirements.
+
+| `io.freefair.maven-optional`
+| Adds an `optional` configuration similar to Maven's `<optional>true</optional>`.
+|===
+
+== Project Setup & Utilities
+
+[cols="2,3", options="header"]
+|===
+| Plugin ID | Purpose
+
+| `io.freefair.settings.plugin-versions`
+| Apply in `settings.gradle` to manage FreeFair plugin versions in one place. Subprojects can omit the version.
+
+| `io.freefair.git-version`
+| Sets the project version based on the current Git tag or branch. Apply to the root project only.
+
+| `io.freefair.github.base`
+| Detects the GitHub repository slug and provides a shared `GithubExtension` for other GitHub plugins.
+
+| `io.freefair.github.pom`
+| Fills POM metadata (URL, SCM, license, developers) from the GitHub API.
+
+| `io.freefair.okhttp`
+| Provides a shared https://square.github.io/okhttp/[OkHttpClient] and HTTP tasks (download, upload, request).
+
+| `io.freefair.war`
+| Adds Maven-like WAR features (attached classes, archive classes).
+
+| `io.freefair.war-overlay`
+| Adds Maven-like WAR overlay support for merging WARs.
+
+| `io.freefair.aggregate-jacoco-report`
+| Aggregates JaCoCo code coverage reports from multiple subprojects.
+|===
+
+== Base Plugins
+
+Base plugins provide shared infrastructure and are applied automatically by the higher-level plugins listed above. You typically do not need to apply these directly.
+
+[cols="2,3", options="header"]
+|===
+| Plugin ID | Applied by
+
+| `io.freefair.aspectj.base`
+| `io.freefair.aspectj`, `io.freefair.aspectj.post-compile-weaving`
+
+| `io.freefair.sass-base`
+| `io.freefair.sass-java`, `io.freefair.sass-war`
+
+| `io.freefair.gwt-base`
+| `io.freefair.gwt`
+
+| `io.freefair.mjml.base`
+| `io.freefair.mjml.java`
+|===

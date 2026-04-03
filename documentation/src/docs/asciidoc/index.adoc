@@ -107,6 +107,8 @@ Some plugins may interface with the Kotlin Gradle plugin or are implemented in K
 
 Whenever possible, we use the same Kotlin version that Gradle uses, currently {kotlin_version}.
 
+include::_quickref.adoc[]
+
 include::_settings.adoc[]
 
 include::_aspectj.adoc[]

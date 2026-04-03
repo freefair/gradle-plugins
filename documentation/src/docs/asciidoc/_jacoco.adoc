@@ -5,15 +5,41 @@ https://www.eclemma.org/jacoco/[JaCoCo] is a free code coverage library for Java
 
 == JaCoCo Plugins
 
-This chapter describes all the plugins contained in the `jacoco-plugin` module.
+The `jacoco-plugin` module provides plugins for aggregating code coverage data across multi-project builds.
 
 === `io.freefair.aggregate-jacoco-report`
 
-This plugin adds a `aggregateJacocoReport` task to the project its applied on.
-This Task will generate an aggregated Jacoco report for the main java source sets of
-all projects by evaluating the execution data of the test tasks of all projects.
+This plugin adds an `aggregateJacocoReport` task to the project it is applied to.
+The task generates an aggregated JaCoCo report for the `main` source sets of all subprojects
+by collecting the execution data from their test tasks.
 
-The task is of type https://docs.gradle.org/{gradle_version}/dsl/org.gradle.testing.jacoco.tasks.JacocoReport.html[JacocoReport]
+Apply this plugin to the root project:
+
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "io.freefair.aggregate-jacoco-report" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.freefair.aggregate-jacoco-report") version "{revnumber}"
+}
+----
+--
+
+[source,bash]
+----
+./gradlew aggregateJacocoReport
+----
+
+The aggregated report is of type https://docs.gradle.org/{gradle_version}/dsl/org.gradle.testing.jacoco.tasks.JacocoReport.html[JacocoReport].
+
+TIP: For a multi-module example, see the https://github.com/freefair/gradle-plugins/tree/main/examples/jacoco[jacoco example project].
 
 == JaCoCo Tasks
 
@@ -21,7 +47,8 @@ The task is of type https://docs.gradle.org/{gradle_version}/dsl/org.gradle.test
 
 The
 link:../api/io/freefair/gradle/plugins/jacoco/tasks/JacocoDump.html[`io.freefair.gradle.plugins.jacoco.tasks.JacocoDump`]
-task is the Gradle equivalent of the https://www.jacoco.org/jacoco/trunk/doc/ant.html#dump[`dump` Ant-Task]
+task is the Gradle equivalent of the https://www.jacoco.org/jacoco/trunk/doc/ant.html#dump[`dump` Ant-Task].
+It connects to a remote JaCoCo agent via TCP and downloads execution data.
 
 .JacocoDump Example
 --

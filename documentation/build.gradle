@@ -40,6 +40,13 @@ tasks.named("javadoc", Javadoc) {
     failOnError = true
 }
 
+tasks.register("copyLlmsTxt", Copy) {
+    from "src/docs/asciidoc/llms.txt"
+    into asciidoctor.outputDir
+}
+
+asciidoctor.finalizedBy("copyLlmsTxt")
+
 tasks.register("docsZip", Zip) {
     group = 'build'
     archiveClassifier = 'docs'

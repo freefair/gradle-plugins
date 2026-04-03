@@ -4,28 +4,81 @@
 MkDocs is a fast, simple and downright gorgeous static site generator that's geared towards building project documentation.
 Documentation source files are written in Markdown, and configured with a single YAML configuration file.
 
+== Getting Started
+
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "io.freefair.mkdocs" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.freefair.mkdocs") version "{revnumber}"
+}
+----
+--
+
+NOTE: MkDocs must be installed on your system (`pip install mkdocs`).
+The plugin calls the `mkdocs` CLI under the hood.
+
+Initialize a new MkDocs project:
+
+[source,bash]
+----
+./gradlew mkdocsNew
+----
+
+Start the development server:
+
+[source,bash]
+----
+./gradlew mkdocsServe
+----
+
+Build the documentation:
+
+[source,bash]
+----
+./gradlew mkdocs
+----
+
+The built site appears in `build/docs/mkdocs/` by default.
+
+TIP: For a working example, see the https://github.com/freefair/gradle-plugins/tree/main/examples/mkdocs[mkdocs example project].
+
 == MkDocs Plugins
 
 === `io.freefair.mkdocs`
 
+This plugin registers all MkDocs tasks listed below.
+It expects a `mkdocs.yml` configuration file in the project root directory.
+
 == MkDocs Tasks
 
-All MkDocs tasks can be found in the
+All tasks are in the `documentation` group.
+Full API documentation is available in the
 link:../api/io/freefair/gradle/plugins/mkdocs/tasks/package-summary.html[`io.freefair.gradle.plugins.mkdocs.tasks`]
-package
+package.
 
 === `MkDocsBuild`
 
-This tasks executes `mkdocs build`.
+Executes `mkdocs build` to generate a static documentation site.
 
-=== `MkDocsGhDeploy`
-
-This task executes `mkdocs gh-deploy`
-
-=== `MkDocsNew`
-
-This task executes `mkdocs new`
+Output directory convention: `build/docs/mkdocs`.
 
 === `MkDocsServe`
 
-This tasks executes `mkdocs serve`
+Executes `mkdocs serve` to start a local development server with live-reload.
+
+=== `MkDocsNew`
+
+Executes `mkdocs new` to scaffold a fresh MkDocs project with a default `mkdocs.yml` and `docs/index.md`.
+
+=== `MkDocsGhDeploy`
+
+Executes `mkdocs gh-deploy` to publish the documentation to GitHub Pages.
