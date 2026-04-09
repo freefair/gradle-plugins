@@ -110,6 +110,11 @@ public class AjcAction implements Action<Task> {
             return true;
         }
 
+        if (hasNoCompileOutput(task)) {
+            task.getLogger().lifecycle("Skipping AJC for task '{}' (compile task produced no output)", task.getPath());
+            return true;
+        }
+
         if (!getOptions().getAspectpath().isEmpty()) {
             task.getLogger().info("Not skipping AJC (aspectpath is set)");
             return false;
@@ -167,6 +172,21 @@ public class AjcAction implements Action<Task> {
         spec.setLauncher(launcher.getOrNull());
 
         return spec;
+    }
+
+    private static boolean hasNoCompileOutput(Task task) {
+        File outputDir = null;
+        if (task instanceof AbstractCompile) {
+            outputDir = ((AbstractCompile) task).getDestinationDirectory().get().getAsFile();
+        } else if (task instanceof KotlinJvmCompile) {
+            outputDir = ((KotlinJvmCompile) task).getDestinationDirectory().get().getAsFile();
+        }
+
+        if (outputDir == null) {
+            return false;
+        }
+
+        return !outputDir.exists() || outputDir.list() == null || outputDir.list().length == 0;
     }
 
     public static Stream<File> getCompileClasspath(Task task) {
