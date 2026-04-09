@@ -1,0 +1,60 @@
+# FreeFair Gradle Plugins
+
+> A collection of 45+ Gradle plugins for Lombok, AspectJ, SASS, PlantUML, Maven integration, GitHub publishing, and more.
+
+All plugin IDs follow the pattern `io.freefair.<name>`. Since version 8, the major.minor version aligns with Gradle's version (e.g., plugin 9.x targets Gradle 9.x). Java 17+ required.
+
+## Docs
+
+- [Reference Guide](https://docs.freefair.io/gradle-plugins/current/reference/): Complete plugin documentation (AsciiDoc, single-page)
+- [Javadoc API](https://docs.freefair.io/gradle-plugins/current/api/): API documentation for all plugin classes
+- [Examples](https://github.com/freefair/gradle-plugins/tree/main/examples): Working example projects for most plugins
+- [Source Code](https://github.com/freefair/gradle-plugins): GitHub repository
+
+## Build & Compilation Plugins
+
+- `io.freefair.lombok`: Automates Lombok setup. Zero-config: just apply the plugin. Adds annotation processor, creates delombok tasks, configures Javadoc.
+- `io.freefair.aspectj`: AspectJ compile-time weaving. Replaces javac with ajc. Supports .aj and @Aspect sources. Place aspects in src/main/aspectj/.
+- `io.freefair.aspectj.post-compile-weaving`: AspectJ post-compile weaving. Runs ajc after javac/kotlinc/groovyc. Use with Lombok or Kotlin. Only supports @Aspect classes, not .aj files.
+- `io.freefair.sass-java`: Compiles Sass/SCSS files from src/main/resources/ to CSS using Dart Sass. Output included in processResources.
+- `io.freefair.sass-war`: Compiles Sass/SCSS files from src/main/webapp/ for WAR projects.
+- `io.freefair.sass-webjars`: Adds WebJars support to Sass compilation (e.g., @import "scss/bootstrap").
+- `io.freefair.mjml.java`: Compiles MJML email templates to HTML. Requires Node.js. Output added to Java resources.
+- `io.freefair.gwt`: Google Web Toolkit compilation and DevMode integration.
+- `io.freefair.plantuml`: Generates images (PNG, SVG, etc.) from PlantUML diagram files in src/plantuml/.
+- `io.freefair.compress`: Archive and compression tasks (Ar, Cpio, 7z, GZip, BZip2, LZMA, Deflate) via Apache Commons Compress.
+- `io.freefair.code-generator`: Framework for custom code generation plugins.
+- `io.freefair.quicktype`: Generates code from JSON Schema using quicktype.
+- `io.freefair.maven-plugin`: Build Maven plugins using Gradle. Generates Maven plugin descriptors.
+
+## Documentation Plugins
+
+- `io.freefair.aggregate-javadoc`: Aggregates Javadoc from multiple subprojects. Apply to root project. Add subprojects via `javadoc` configuration dependencies.
+- `io.freefair.javadocs`: Adds a javadocJar task and publishes it alongside the main artifact.
+- `io.freefair.javadoc-links`: Automatically resolves and adds -link arguments to Javadoc tasks based on dependencies.
+- `io.freefair.javadoc-utf-8`: Sets UTF-8 encoding for all Javadoc tasks.
+- `io.freefair.mkdocs`: Integrates MkDocs into the Gradle build. Requires MkDocs installed on the system. Tasks: mkdocs (build), mkdocsServe, mkdocsNew.
+
+## Publishing Plugins
+
+- `io.freefair.maven-publish-java`: Configures maven-publish for Java libraries with sources and Javadoc JARs.
+- `io.freefair.maven-publish-war`: Configures maven-publish for WAR projects.
+- `io.freefair.github.package-registry-maven-publish`: Publishes artifacts to the GitHub Package Registry. Requires GitHub token.
+- `io.freefair.maven-central.validate-poms`: Validates that generated POM files meet Maven Central requirements.
+- `io.freefair.maven-optional`: Adds an "optional" configuration similar to Maven's optional dependency scope.
+
+## Utility Plugins
+
+- `io.freefair.settings.plugin-versions`: Apply in settings.gradle to manage FreeFair plugin versions in one place. Subprojects can omit the version.
+- `io.freefair.git-version`: Sets project version based on Git tag or branch. Supports GitHub Actions, GitLab CI, Travis CI, CircleCI, Jenkins. Apply to root project only.
+- `io.freefair.github.base`: Detects GitHub repository slug. Provides GithubExtension for other GitHub plugins. Apply to root project only.
+- `io.freefair.github.pom`: Fills POM metadata (URL, SCM, license, developers) from the GitHub API.
+- `io.freefair.okhttp`: Provides a shared OkHttpClient and HTTP tasks (DownloadFile, UploadFile).
+- `io.freefair.war`: Adds Maven-like WAR features (attached classes, archive classes).
+- `io.freefair.war-overlay`: Adds Maven-like WAR overlay support for merging multiple WARs.
+- `io.freefair.aggregate-jacoco-report`: Aggregates JaCoCo code coverage reports from multiple subprojects. Apply to root project.
+
+## Optional
+
+- [Gradle Plugin Portal](https://plugins.gradle.org/search?term=io.freefair): All plugins on the Gradle Plugin Portal
+- [Compatibility Matrix](https://github.com/freefair/gradle-plugins#compatibility): Plugin version to Gradle/Java/Kotlin version mapping

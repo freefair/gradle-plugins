@@ -1,17 +1,49 @@
 = MJML
 
-- https://mjml.io/
-- https://github.com/mjmlio/mjml/blob/master/packages/mjml-cli/README.md
-- https://github.com/node-gradle/gradle-node-plugin
+https://mjml.io/[MJML] is a markup language for responsive email templates.
+It compiles to standard HTML that renders consistently across email clients.
 
-== MJML Plugin
+== Getting Started
 
-This chapter describes all the plugins contained in the `mjml-plugin` module.
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "java"
+    id "io.freefair.mjml.java" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    java
+    id("io.freefair.mjml.java") version "{revnumber}"
+}
+----
+--
+
+Place `.mjml` files in `src/main/mjml/`.
+The compiled HTML is added to the Java resource output automatically.
+
+[source,bash]
+----
+./gradlew compileMjml
+----
+
+NOTE: MJML is installed automatically via npm (requires Node.js on the system `PATH`).
+The plugin uses the https://github.com/node-gradle/gradle-node-plugin[gradle-node-plugin] under the hood.
+
+TIP: For a working example, see the https://github.com/freefair/gradle-plugins/tree/main/examples/mjml[mjml example project].
+
+== MJML Plugins
 
 === `io.freefair.mjml.base`
 
-This plugin adds the `mjml` extension to the project and create some basic tasks to install mjml via npm.
+This plugin adds the `mjml` extension to the project and installs MJML via npm.
 
+.Configuration options
 --
 [source, groovy, role="primary"]
 .Groovy
@@ -25,7 +57,7 @@ mjml {
     juicePreserveTags = "{\"myTag\": { \"start\": \"<#\", \"end\": \"</#\" }}"
 }
 ----
-[source,kotlin, role="secondary"]
+[source, kotlin, role="secondary"]
 .Kotlin
 ----
 mjml {
@@ -41,8 +73,10 @@ mjml {
 
 === `io.freefair.mjml.java`
 
-This plugin adds the mjml compile task output to java's resources.
+Applies the base plugin and adds the MJML compile task output to the Java resource processing pipeline.
 
-== MJML Task
+== MJML Tasks
 
-Compiles your mjml files to html with the given configuration (see extension documentation).
+=== `CompileMjml`
+
+Compiles `.mjml` files to `.html` using the MJML CLI with the configuration from the `mjml` extension.

@@ -5,7 +5,7 @@ An HTTP & HTTP/2 client for Android and Java applications
 
 == OkHttp Plugins
 
-== Apply plugin
+=== Apply plugin
 --
 [source, groovy, role="primary"]
 .Groovy

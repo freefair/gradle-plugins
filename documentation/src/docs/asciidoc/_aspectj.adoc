@@ -13,14 +13,119 @@ ____
 - clean modularization of crosscutting concerns, such as error checking and handling, synchronization, context-sensitive behavior, performance optimizations, monitoring and logging, debugging support, and multi-object protocols
 ____
 
+== Getting Started
+
+The FreeFair AspectJ plugins support two approaches: _compile-time weaving_ and _post-compile weaving_.
+Choose the one that fits your project.
+
+=== Quick Start: Compile-Time Weaving
+
+Use this when your project only has Java and AspectJ sources and does not need javac-specific features like annotation processing with Lombok.
+
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "io.freefair.aspectj" version "{revnumber}"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+dependencies {
+    implementation "org.aspectj:aspectjrt:1.9.25.1"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.freefair.aspectj") version "{revnumber}"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+dependencies {
+    implementation("org.aspectj:aspectjrt:1.9.25.1")
+}
+----
+--
+
+Place your aspects in `src/main/aspectj/` (`.aj` files) or use `@Aspect`-annotated Java classes in `src/main/java/`.
+The plugin disables the standard `compileJava` task and compiles both directories with `ajc`.
+
+[source,bash]
+----
+./gradlew compileAspectj
+----
+
+=== Quick Start: Post-Compile Weaving
+
+Use this when you need AspectJ together with annotation processors (e.g., Lombok), or with Kotlin, Groovy, or Scala sources.
+
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "java"
+    id "io.freefair.aspectj.post-compile-weaving" version "{revnumber}"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+dependencies {
+    implementation "org.aspectj:aspectjrt:1.9.25.1"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    java
+    id("io.freefair.aspectj.post-compile-weaving") version "{revnumber}"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+dependencies {
+    implementation("org.aspectj:aspectjrt:1.9.25.1")
+}
+----
+--
+
+Your source code is compiled by `javac` first, then `ajc` weaves aspects into the resulting bytecode.
+Write your aspects as `@Aspect`-annotated classes in `src/main/java/`.
+
+NOTE: Post-compile weaving only supports pre-compiled aspects (annotation-based `@Aspect` classes or aspects provided as bytecode on the aspectpath). Native `.aj` source files require compile-time weaving.
+
+[source,bash]
+----
+./gradlew compileJava
+----
+
+TIP: For complete working examples (including multi-module setups with separate aspect libraries), see the https://github.com/freefair/gradle-plugins/tree/main/examples/aspectj[aspectj example projects].
+
 == AspectJ Plugins
 
-This chapter describes all the plugins contained in the `aspectj-plugin` module.
-
-The plugins support two different approaches when working with AspectJ:
-_Compile-time weaving_ and _post-compile weaving_.
-
-These are implemented by the `io.freefair.aspectj` and `io.freefair.aspectj.post-compile-weaving` plugins respectively.
+The `aspectj-plugin` module provides the following plugins.
+They implement _compile-time weaving_ and _post-compile weaving_ respectively.
 
 === Compile-time weaving
 

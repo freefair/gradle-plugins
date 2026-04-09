@@ -2,11 +2,50 @@
 
 == Settings Plugins
 
-This chapter describes all the plugins contained in the `settings-plugin` module.
-
 === `io.freefair.settings.plugin-versions`
 
-This plugin allows you to use all other plugins, without defining their version.
+Apply this plugin in `settings.gradle(.kts)` to manage FreeFair plugin versions in one place.
+Once applied, all FreeFair plugins can be used in subprojects without specifying a version.
 
-NOTE: This plugin must be applied in settings.gradle(.kts)
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+// settings.gradle
+plugins {
+    id "io.freefair.settings.plugin-versions" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+// settings.gradle.kts
+plugins {
+    id("io.freefair.settings.plugin-versions") version "{revnumber}"
+}
+----
+--
 
+In your subproject build files, the version can then be omitted:
+
+--
+[source,groovy,role="primary"]
+.Groovy
+----
+// build.gradle (subproject)
+plugins {
+    id "io.freefair.lombok" // no version needed
+}
+----
+[source,kotlin,role="secondary"]
+.Kotlin
+----
+// build.gradle.kts (subproject)
+plugins {
+    id("io.freefair.lombok") // no version needed
+}
+----
+--
+
+The plugin reads all known FreeFair plugin IDs from the classpath and registers them in the settings
+https://docs.gradle.org/{gradle_version}/userguide/plugins.html#sec:plugin_management[plugin management] block with the matching version.

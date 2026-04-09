@@ -4,9 +4,66 @@
 https://projectlombok.org/[Project Lombok] is a java library that automatically plugs into your editor and build tools, spicing up your java.
 Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.
 
+== Getting Started
+
+Apply the plugin and you are done -- no manual dependency management required.
+
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "java"
+    id "io.freefair.lombok" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    java
+    id("io.freefair.lombok") version "{revnumber}"
+}
+----
+--
+
+The plugin adds Lombok to `annotationProcessor` and `compileOnly` for every source set automatically.
+Use Lombok annotations in your Java sources right away:
+
+[source,java]
+----
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+@Data
+@Slf4j
+public class User {
+    private String name;
+    private String email;
+}
+----
+
+Build as usual:
+
+[source,bash]
+----
+./gradlew build
+----
+
+To inspect the generated code, run `delombok`:
+
+[source,bash]
+----
+./gradlew delombok
+----
+
+The delomboked sources appear in `build/delombok/`.
+
+TIP: For a complete working example (including MapStruct integration), see the https://github.com/freefair/gradle-plugins/tree/main/examples/lombok[lombok example project].
+
 == Lombok Plugins
 
-This chapter describes all the plugins contained in the `lombok-plugin` module.
+The `lombok-plugin` module provides the following plugins.
 
 === `io.freefair.lombok-base`
 
