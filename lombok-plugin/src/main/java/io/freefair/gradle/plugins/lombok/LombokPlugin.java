@@ -131,6 +131,7 @@ public class LombokPlugin implements Plugin<Project> {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private String resolveSpotBugVersion() {
         if (!project.getPlugins().hasPlugin("com.github.spotbugs")) {
             return SPOTBUGS_DEFAULT_VERSION;
@@ -139,6 +140,19 @@ public class LombokPlugin implements Plugin<Project> {
         Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
         if (spotbugsExtension instanceof CodeQualityExtension) {
             return ((CodeQualityExtension) spotbugsExtension).getToolVersion();
+        }
+
+        try {
+            Object result = spotbugsExtension.getClass().getMethod("getToolVersion").invoke(spotbugsExtension);
+            if (result instanceof org.gradle.api.provider.Property) {
+                String version = ((org.gradle.api.provider.Property<String>) result).getOrNull();
+                if (version != null) {
+                    return version;
+                }
+            } else if (result instanceof String) {
+                return (String) result;
+            }
+        } catch (ReflectiveOperationException ignored) {
         }
 
         return SPOTBUGS_DEFAULT_VERSION;
