@@ -5,10 +5,7 @@ import lombok.Setter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.*;
 import org.gradle.api.internal.file.FileOperations;
-import org.gradle.api.internal.file.FileTreeInternal;
-import org.gradle.api.internal.file.UnionFileTree;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.*;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.process.ExecOperations;
@@ -17,7 +14,10 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

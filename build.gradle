@@ -28,6 +28,7 @@ allprojects {
         }
 
         plugins.apply "jacoco"
+        plugins.apply "checkstyle"
         plugins.apply "io.freefair.lombok"
 
         jacocoTestReport.reports.xml.required = true

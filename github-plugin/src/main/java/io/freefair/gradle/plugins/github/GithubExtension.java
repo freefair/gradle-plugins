@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 @Setter
 public abstract class GithubExtension {
 
-    private final static Pattern slugPattern = Pattern.compile("(.*)/(.*)");
+    private static final Pattern slugPattern = Pattern.compile("(.*)/(.*)");
 
     /**
      * The Identifier of the GitHub Repository as {@code owner/repo}

@@ -1,7 +1,7 @@
 package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

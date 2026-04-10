@@ -144,7 +144,7 @@ public class JacocoDump extends JacocoBase {
         Property<Boolean> getAppend();
     }
 
-    static abstract class Action implements WorkAction<JacocoDumpParameters> {
+    abstract static class Action implements WorkAction<JacocoDumpParameters> {
 
         @Override
         public void execute() {

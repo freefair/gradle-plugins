@@ -2,7 +2,7 @@ package io.freefair.gradle.plugins.maven.javadoc.linkproviders;
 
 import io.freefair.gradle.plugins.maven.javadoc.JavadocLinkProvider;
 import org.apache.maven.artifact.versioning.ComparableVersion;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class SpringLinkProvider implements JavadocLinkProvider {
 

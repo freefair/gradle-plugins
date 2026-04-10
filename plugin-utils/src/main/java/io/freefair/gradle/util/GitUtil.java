@@ -1,15 +1,10 @@
 package io.freefair.gradle.util;
 
 import lombok.experimental.UtilityClass;
-import org.codehaus.groovy.runtime.ProcessGroovyMethods;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.process.ExecOutput;
-import org.gradle.process.ExecResult;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Collections;
 
 @UtilityClass
 public class GitUtil {

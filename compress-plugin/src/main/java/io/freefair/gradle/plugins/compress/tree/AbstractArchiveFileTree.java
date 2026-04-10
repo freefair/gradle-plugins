@@ -21,7 +21,7 @@ import java.io.File;
         this.decompressionCoordinator = decompressionCoordinator;
     }
 
-    abstract protected Provider<File> getBackingFileProvider();
+    protected abstract Provider<File> getBackingFileProvider();
 
     private File getBackingFile() {
         return getBackingFileProvider().get();
