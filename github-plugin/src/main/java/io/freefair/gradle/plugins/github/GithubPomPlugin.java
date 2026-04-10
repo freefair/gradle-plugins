@@ -40,10 +40,6 @@ public class GithubPomPlugin implements Plugin<Project> {
 
             try {
                 repo = githubService.getRepository(slug).execute().body();
-                user = githubService.getUser(githubExtension.getOwner().get()).execute().body();
-                if (repo != null && repo.getLicense() != null) {
-                    ghLicense = githubService.getLicense(repo.getLicense().getUrl()).execute().body();
-                }
             } catch (IOException e) {
                 project.getLogger().warn("Failed to fetch GitHub repository info for '{}': {}", slug, e.getMessage());
                 return;
@@ -52,6 +48,17 @@ public class GithubPomPlugin implements Plugin<Project> {
             if (repo == null) {
                 project.getLogger().warn("Could not retrieve GitHub repository info for '{}'. POM will not be enriched.", slug);
                 return;
+            }
+
+            try {
+                if (repo.getLicense() != null && hasText(repo.getLicense().getUrl())) {
+                    ghLicense = githubService.getLicense(repo.getLicense().getUrl()).execute().body();
+                }
+                if (githubExtension.getOwner().isPresent()) {
+                    user = githubService.getUser(githubExtension.getOwner().get()).execute().body();
+                }
+            } catch (IOException e) {
+                project.getLogger().warn("Failed to fetch GitHub user/license info for '{}': {}", slug, e.getMessage());
             }
 
             project.getPlugins().withType(PublishingPlugin.class, publishingPlugin -> {
@@ -80,7 +87,9 @@ public class GithubPomPlugin implements Plugin<Project> {
             }
 
             pom.getName().convention(project.getName());
-            pom.getInceptionYear().convention(repo.getCreated_at().substring(0, 4));
+            if (hasText(repo.getCreated_at()) && repo.getCreated_at().length() >= 4) {
+                pom.getInceptionYear().convention(repo.getCreated_at().substring(0, 4));
+            }
 
             if (user != null) {
                 pom.organization(organization -> {
