@@ -141,8 +141,12 @@ public class GithubPomPlugin implements Plugin<Project> {
 
             pom.scm(scm -> {
                 scm.getUrl().convention(repo.getHtml_url());
-                scm.getConnection().convention("scm:git:" + repo.getClone_url());
-                scm.getDeveloperConnection().convention("scm:git:" + repo.getSsh_url());
+                if (hasText(repo.getClone_url())) {
+                    scm.getConnection().convention("scm:git:" + repo.getClone_url());
+                }
+                if (hasText(repo.getSsh_url())) {
+                    scm.getDeveloperConnection().convention("scm:git:" + repo.getSsh_url());
+                }
                 scm.getTag().convention(githubExtension.getTag());
             });
 
