@@ -20,7 +20,7 @@ public abstract class LZMA extends CompressorTask<CompressorWorkParameters> {
         return LZMAWorkAction.class;
     }
 
-    public static abstract class LZMAWorkAction extends CompressorWorkAction<LZMACompressorOutputStream, CompressorWorkParameters> {
+    public abstract static class LZMAWorkAction extends CompressorWorkAction<LZMACompressorOutputStream, CompressorWorkParameters> {
 
         @Override
         protected LZMACompressorOutputStream createOutputStream(BufferedOutputStream outputStream) throws IOException {

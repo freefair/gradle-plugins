@@ -21,7 +21,7 @@ public abstract class BZip2 extends CompressorTask<CompressorWorkParameters> {
         return BZip2WorkAction.class;
     }
 
-    public static abstract class BZip2WorkAction extends CompressorWorkAction<BZip2CompressorOutputStream, CompressorWorkParameters> {
+    public abstract static class BZip2WorkAction extends CompressorWorkAction<BZip2CompressorOutputStream, CompressorWorkParameters> {
 
         @Override
         protected BZip2CompressorOutputStream createOutputStream(BufferedOutputStream outputStream) throws IOException {

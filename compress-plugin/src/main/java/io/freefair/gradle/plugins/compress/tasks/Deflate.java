@@ -44,7 +44,7 @@ public abstract class Deflate extends CompressorTask<Deflate.DeflateWorkParamete
         Property<Boolean> getWithZlibHeader();
     }
 
-    public static abstract class DeflateWorkAction extends CompressorWorkAction<DeflateCompressorOutputStream, DeflateWorkParameters> {
+    public abstract static class DeflateWorkAction extends CompressorWorkAction<DeflateCompressorOutputStream, DeflateWorkParameters> {
 
         @Override
         protected DeflateCompressorOutputStream createOutputStream(BufferedOutputStream outputStream) throws IOException {

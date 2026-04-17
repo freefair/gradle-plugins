@@ -12,8 +12,6 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.jvm.tasks.ProcessResources;
 
-import java.io.File;
-
 /**
  * @author Lars Grefer
  */

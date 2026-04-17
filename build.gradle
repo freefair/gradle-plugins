@@ -28,6 +28,7 @@ allprojects {
         }
 
         plugins.apply "jacoco"
+        plugins.apply "checkstyle"
         plugins.apply "io.freefair.lombok"
 
         jacocoTestReport.reports.xml.required = true
@@ -43,7 +44,7 @@ allprojects {
             testImplementation 'org.assertj:assertj-core:3.27.7'
             testImplementation 'org.junit.jupiter:junit-jupiter-api'
             testImplementation 'org.junit.jupiter:junit-jupiter-params'
-            testImplementation 'org.mockito:mockito-core:5.22.0'
+            testImplementation 'org.mockito:mockito-core:5.23.0'
             testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
             testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
         }

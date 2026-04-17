@@ -1,19 +1,54 @@
-= Maven-Plugin
+= Maven Plugin
 
-== Maven-Plugin Plugins
-
-This chapter describes all the plugins contained in the `maven-plugin-plugin` module.
+== Maven Plugin Plugins
 
 === `io.freefair.maven-plugin`
 
-This plugin can be used to build maven plugins.
-It's based on the `java` and `maven-publish` plugins.
+Use this plugin to build https://maven.apache.org/plugin-tools/[Maven plugins] with Gradle.
+It applies the `java` and `maven-publish` plugins, sets the POM packaging to `maven-plugin`,
+and generates a Maven plugin descriptor from your annotated source code.
 
-== Maven-Plugin Tasks
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "io.freefair.maven-plugin" version "{revnumber}"
+}
+
+dependencies {
+    implementation "org.apache.maven:maven-plugin-api:3.9.9"
+    implementation "org.apache.maven.plugin-tools:maven-plugin-annotations:3.16.0"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.freefair.maven-plugin") version "{revnumber}"
+}
+
+dependencies {
+    implementation("org.apache.maven:maven-plugin-api:3.9.9")
+    implementation("org.apache.maven.plugin-tools:maven-plugin-annotations:3.16.0")
+}
+----
+--
+
+Annotate your Mojo classes with `@Mojo`, `@Parameter`, etc. as usual.
+The plugin descriptor is generated automatically during the build.
+
+TIP: For a working example, see the https://github.com/freefair/gradle-plugins/tree/main/examples/test-maven-plugin[test-maven-plugin example project].
+
+== Maven Plugin Tasks
 
 === `DescriptorGeneratorTask`
 
-This Task is the gradle equivalent of the
+Generates the Maven plugin descriptor (`plugin.xml`) from annotated source files.
+This is the Gradle equivalent of the
 https://maven.apache.org/plugin-tools/maven-plugin-plugin/descriptor-mojo.html[`DescriptorGeneratorMojo`]
-of the
-https://maven.apache.org/plugin-tools/maven-plugin-plugin/index.html[Maven Plugin Maven Plugin].
+from the
+https://maven.apache.org/plugin-tools/maven-plugin-plugin/index.html[Maven Plugin Plugin].
+
+The generated descriptor is placed in `build/generated/resources/maven-plugin-descriptor`
+and automatically included in the main source set resources.

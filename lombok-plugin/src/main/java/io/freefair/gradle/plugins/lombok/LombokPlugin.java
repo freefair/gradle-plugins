@@ -9,8 +9,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
-import org.gradle.api.attributes.Bundling;
-import org.gradle.api.attributes.Category;
 import org.gradle.api.attributes.DocsType;
 import org.gradle.api.attributes.VerificationType;
 import org.gradle.api.plugins.JavaPlugin;
@@ -25,6 +23,20 @@ import org.gradle.api.tasks.javadoc.Javadoc;
 import org.gradle.jvm.toolchain.JavaLauncher;
 import org.gradle.jvm.toolchain.JavaToolchainService;
 
+/**
+ * Gradle plugin that integrates Project Lombok with Java projects.
+ * <p>
+ * Applies the Lombok annotation processor to Java compilation and provides
+ * delombok tasks for generating de-annotated source code. Also adds SpotBugs
+ * annotations to the compile-only classpath when either the {@code com.github.spotbugs}
+ * or {@code org.sonarqube} plugin is present.
+ * <p>
+ * This plugin creates:
+ * <ul>
+ *   <li>A {@code lombok} configuration for Lombok dependencies</li>
+ *   <li>Delombok tasks for each source set (e.g., {@code delombok})</li>
+ * </ul>
+ */
 @Getter
 public class LombokPlugin implements Plugin<Project> {
 
@@ -152,7 +164,8 @@ public class LombokPlugin implements Plugin<Project> {
             } else if (result instanceof String) {
                 return (String) result;
             }
-        } catch (ReflectiveOperationException ignored) {
+        } catch (ReflectiveOperationException e) {
+            project.getLogger().warn("Could not resolve SpotBugs tool version via reflection; falling back to {}", SPOTBUGS_DEFAULT_VERSION, e);
         }
 
         return SPOTBUGS_DEFAULT_VERSION;

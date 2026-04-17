@@ -50,7 +50,7 @@ public abstract class GZip extends CompressorTask<GZip.GZipWorkParameters> {
         Property<Boolean> getAddFilename();
     }
 
-    public static abstract class GZipWorkAction extends CompressorWorkAction<GzipCompressorOutputStream, GZipWorkParameters> {
+    public abstract static class GZipWorkAction extends CompressorWorkAction<GzipCompressorOutputStream, GZipWorkParameters> {
 
         @Override
         protected GzipCompressorOutputStream createOutputStream(BufferedOutputStream outputStream) throws IOException {

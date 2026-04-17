@@ -5,7 +5,7 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 
@@ -18,9 +18,9 @@ public class ProgressInterceptor implements Interceptor {
     private final ProgressListener progressListener;
 
     @SuppressWarnings({"resource", "KotlinInternalInJava"})
-    @NotNull
+    @NonNull
     @Override
-    public Response intercept(@NotNull Interceptor.Chain chain) throws IOException {
+    public Response intercept(@lombok.NonNull Interceptor.Chain chain) throws IOException {
         Request request = chain.request();
 
         RequestBody requestBody = request.body();

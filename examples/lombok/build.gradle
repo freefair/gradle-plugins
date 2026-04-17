@@ -1,7 +1,7 @@
 import io.freefair.gradle.plugins.lombok.tasks.LombokApiJar
 import io.freefair.gradle.plugins.lombok.tasks.LombokRuntimeJar
 plugins {
-    id "com.github.spotbugs" version "6.4.8"
+    id "com.github.spotbugs" version "6.5.0"
 }
 
 apply plugin: "java"
@@ -11,8 +11,8 @@ apply plugin: "io.freefair.lombok"
 dependencies {
     implementation "org.slf4j:slf4j-api:2.+"
 
-    implementation 'org.immutables:value:2.11.6'
-    annotationProcessor 'org.immutables:value:2.11.6'
+    implementation 'org.immutables:value:2.12.1'
+    annotationProcessor 'org.immutables:value:2.12.1'
 }
 
 sourceSets {

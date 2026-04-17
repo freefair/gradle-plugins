@@ -2,7 +2,7 @@
 
 == Maven Plugins
 
-This chapter describes all the plugins contained in the `maven-plugin` module.
+The `maven-plugin` module provides Maven-like features for Gradle: WAR overlays, Javadoc aggregation, Maven Central publishing helpers, and more.
 
 === `io.freefair.war`
 

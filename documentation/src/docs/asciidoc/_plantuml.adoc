@@ -20,7 +20,10 @@ plugins {
 }
 ----
 --
-This adds a PlantUML task to gradle as well as a new source set. The images will be saved to the build directory.
+This adds a PlantUML task to Gradle as well as a new source set.
+Place `.puml` files in `src/plantuml/` and the generated images will be saved to the build directory.
+
+TIP: For a working example, see the https://github.com/freefair/gradle-plugins/tree/main/examples/plantuml[plantuml example project].
 
 == Configuration options
 

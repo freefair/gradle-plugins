@@ -5,7 +5,7 @@ https://commons.apache.org/proper/commons-compress/[The Apache Commons Compress]
 
 == Compress Plugins
 
-This chapter describes all the plugins contained in the `compress-plugin` module.
+The `compress-plugin` module provides archive and compression tasks based on Apache Commons Compress.
 
 === `io.freefair.compress`
 This plugin applies all of the plugins listed below for convenience.
@@ -210,7 +210,7 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.Deflate>("compressDefla
 [#GZip]
 === `GZip`
 
-This task can be used to compress individual files using BZip2.
+This task compresses individual files using GZip.
 
 --
 [source, groovy, role="primary"]

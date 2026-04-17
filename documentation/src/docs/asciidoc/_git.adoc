@@ -2,14 +2,46 @@
 
 == Git Plugins
 
-This chapter describes all the plugins contained in the `git-plugin` module.
-
 === `io.freefair.git-version`
 
-This plugin sets the project version according to the current git tag or branch.
+This plugin sets the project version automatically based on the current Git state.
+Apply it to the root project only -- the resolved version is propagated to all subprojects.
 
-It should only be applied to the root project.
+--
+[source,groovy,subs=attributes+,role="primary"]
+.Groovy
+----
+plugins {
+    id "io.freefair.git-version" version "{revnumber}"
+}
+----
+[source,kotlin,subs=attributes+,role="secondary"]
+.Kotlin
+----
+plugins {
+    id("io.freefair.git-version") version "{revnumber}"
+}
+----
+--
 
-== Git Tasks
+==== Version Resolution
 
-This module does not contain any tasks.
+The plugin resolves the version using the following strategy (in priority order):
+
+1. If the project already has an explicit version set, it is kept as-is.
+2. CI/CD environment variables are checked (GitHub Actions, GitLab CI, Travis CI, CircleCI, Jenkins).
+3. `git describe --tags --exact-match` is executed to match an exact tag.
+4. `git symbolic-ref --short HEAD` is used as a fallback to get the branch name.
+
+==== Tag and Branch Processing
+
+- *Tags* matching `vX.Y.Z` have the leading `v` stripped (e.g., `v1.2.3` becomes `1.2.3`).
+- *Release branches* matching `release-X.Y.Z` produce `X.Y.Z-SNAPSHOT`.
+- *Hotfix branches* matching `hotfix-X.Y.Z` produce `X.Y.Z-SNAPSHOT`.
+- Forward slashes in branch names are replaced with hyphens (e.g., `feature/foo` becomes `feature-foo`).
+- Dirty working trees append `-SNAPSHOT` to tag-based versions.
+
+==== Prerequisites
+
+- Git must be installed and available on the system `PATH`.
+- The project directory must be inside a Git repository.
