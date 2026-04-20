@@ -11,17 +11,17 @@ import java.io.IOException;
 @Setter(AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class ProjectFile {
-	private String namespace;
-	private String filename;
+    private String namespace;
+    private String filename;
 
-	@Getter(AccessLevel.PACKAGE)
-	private ProjectContext context;
+    @Getter(AccessLevel.PACKAGE)
+    private ProjectContext context;
 
-	public String read() throws IOException {
-		return context.readFile(namespace, filename);
-	}
+    public String read() throws IOException {
+        return context.readFile(namespace, filename);
+    }
 
-	public String read(String encoding) throws IOException {
-		return context.readFile(namespace, filename, encoding);
-	}
+    public String read(String encoding) throws IOException {
+        return context.readFile(namespace, filename, encoding);
+    }
 }
