@@ -44,10 +44,18 @@
             <property name="tokens" value="AT, INC, DEC, UNARY_MINUS, UNARY_PLUS, BNOT, LNOT, DOT, ARRAY_DECLARATOR, INDEX_OP" />
         </module>
         <module name="NoWhitespaceBefore">
-            <property name="allowLineBreaks" value="true" />
+            <property name="allowLineBreaks" value="true"/>
         </module>
         <module name="NoWhitespaceBeforeCaseDefaultColon"/>
         <module name="TypecastParenPad"/>
+        <module name="WhitespaceAround">
+            <property name="allowEmptyCatches" value="true"/>
+            <property name="allowEmptyConstructors" value="true"/>
+            <property name="allowEmptyLambdas" value="true"/>
+            <property name="allowEmptyLoops" value="true"/>
+            <property name="allowEmptyMethods" value="true"/>
+            <property name="allowEmptyTypes" value="true"/>
+        </module>
 
     </module>
 </module>

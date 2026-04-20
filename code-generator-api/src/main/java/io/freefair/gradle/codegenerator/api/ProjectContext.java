@@ -98,7 +98,7 @@ public class ProjectContext implements Serializable {
 
 	public <T> T getConfigurationValueAs(String key, Class<T> clazz) {
 		Object data = configurationValues.get(key);
-		if(clazz.isAssignableFrom(data.getClass()))
+		if (clazz.isAssignableFrom(data.getClass()))
 			return (T) data;
 		throw new RuntimeException("Could not transform value of type " + data.getClass().getCanonicalName() + " to " + clazz.getCanonicalName());
 	}

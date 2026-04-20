@@ -78,7 +78,7 @@ public class AbstractPluginTest {
 
     protected String readJavaClassFromDirectory(String direcotry, String packageName, String className) {
         try {
-            if(!direcotry.endsWith("/"))
+            if (!direcotry.endsWith("/"))
                 direcotry += "/";
             String path = direcotry + packageName.replace(".", "/");
             return new String(Files.readAllBytes(getFile(path, className + ".java").toPath()));

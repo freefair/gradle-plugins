@@ -12,8 +12,8 @@ class CodeGeneratorExecutor {
 
 	CodeGeneratorExecutor(Class<?> c) throws Exception {
 		Constructor<?> constructor = Arrays.stream(c.getConstructors()).filter(ctr -> ctr.getParameterCount() == 0).findFirst().orElse(null);
-		if(constructor == null) throw new Exception("No default constructor found for " + c.getCanonicalName());
-		if(!constructor.isAccessible()) constructor.setAccessible(true);
+		if (constructor == null) throw new Exception("No default constructor found for " + c.getCanonicalName());
+		if (!constructor.isAccessible()) constructor.setAccessible(true);
 		this.constructor = constructor;
 	}
 
@@ -21,7 +21,7 @@ class CodeGeneratorExecutor {
 	public void execute(ProjectContext context) throws Exception {
 		Object o = constructor.newInstance();
 		Generator gen;
-		if(isCodeGeneratorInterface(o))
+		if (isCodeGeneratorInterface(o))
 			gen = (Generator) o;
 		else
 			gen = new GeneratorWrapper(o);
@@ -29,7 +29,7 @@ class CodeGeneratorExecutor {
 		gen.generate(context);
 	}
 
-	private boolean isCodeGeneratorInterface(Object o){
+	private boolean isCodeGeneratorInterface(Object o) {
 		return o instanceof Generator;
 	}
 
@@ -41,7 +41,7 @@ class CodeGeneratorExecutor {
 			Class<?> aClass = this.instance.getClass();
 			Method generate = aClass.getMethod("generate", ProjectContext.class);
 
-			if(!generate.isAccessible()) generate.setAccessible(true);
+			if (!generate.isAccessible()) generate.setAccessible(true);
 
 			this.generateMethod = generate;
 		}
