@@ -40,12 +40,25 @@ public class GithubPomPlugin implements Plugin<Project> {
 
             try {
                 repo = githubService.getRepository(slug).execute().body();
-                user = githubService.getUser(githubExtension.getOwner().get()).execute().body();
-                if (repo.getLicense() != null) {
+            } catch (IOException e) {
+                project.getLogger().warn("Failed to fetch GitHub repository info for '{}': {}", slug, e.getMessage());
+                return;
+            }
+
+            if (repo == null) {
+                project.getLogger().warn("Could not retrieve GitHub repository info for '{}'. POM will not be enriched.", slug);
+                return;
+            }
+
+            try {
+                if (repo.getLicense() != null && hasText(repo.getLicense().getUrl())) {
                     ghLicense = githubService.getLicense(repo.getLicense().getUrl()).execute().body();
                 }
+                if (githubExtension.getOwner().isPresent()) {
+                    user = githubService.getUser(githubExtension.getOwner().get()).execute().body();
+                }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                project.getLogger().warn("Failed to fetch GitHub user/license info for '{}': {}", slug, e.getMessage());
             }
 
             project.getPlugins().withType(PublishingPlugin.class, publishingPlugin -> {
@@ -74,23 +87,27 @@ public class GithubPomPlugin implements Plugin<Project> {
             }
 
             pom.getName().convention(project.getName());
-            pom.getInceptionYear().convention(repo.getCreated_at().substring(0, 4));
+            if (hasText(repo.getCreated_at()) && repo.getCreated_at().length() >= 4) {
+                pom.getInceptionYear().convention(repo.getCreated_at().substring(0, 4));
+            }
 
-            pom.organization(organization -> {
-                if (hasText(user.getName())) {
-                    organization.getName().convention(user.getName());
-                }
-                else {
-                    organization.getName().convention(user.getLogin());
-                }
+            if (user != null) {
+                pom.organization(organization -> {
+                    if (hasText(user.getName())) {
+                        organization.getName().convention(user.getName());
+                    }
+                    else {
+                        organization.getName().convention(user.getLogin());
+                    }
 
-                if (hasText(user.getBlog())) {
-                    organization.getUrl().convention(user.getBlog());
-                }
-                else {
-                    organization.getUrl().convention(user.getHtml_url());
-                }
-            });
+                    if (hasText(user.getBlog())) {
+                        organization.getUrl().convention(user.getBlog());
+                    }
+                    else {
+                        organization.getUrl().convention(user.getHtml_url());
+                    }
+                });
+            }
 
             if (githubExtension.getTravis().getOrElse(false)) {
                 pom.ciManagement(ciManagement -> {
@@ -124,8 +141,12 @@ public class GithubPomPlugin implements Plugin<Project> {
 
             pom.scm(scm -> {
                 scm.getUrl().convention(repo.getHtml_url());
-                scm.getConnection().convention("scm:git:" + repo.getClone_url());
-                scm.getDeveloperConnection().convention("scm:git:" + repo.getSsh_url());
+                if (hasText(repo.getClone_url())) {
+                    scm.getConnection().convention("scm:git:" + repo.getClone_url());
+                }
+                if (hasText(repo.getSsh_url())) {
+                    scm.getDeveloperConnection().convention("scm:git:" + repo.getSsh_url());
+                }
                 scm.getTag().convention(githubExtension.getTag());
             });
 
