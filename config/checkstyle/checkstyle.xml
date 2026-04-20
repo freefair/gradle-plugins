@@ -36,6 +36,7 @@
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
+        <module name="AvoidEscapedUnicodeCharacters"/>
         <module name="CommentsIndentation"/>
         <module name="HexLiteralCase"/>
         <module name="NoCodeInFile"/>
