@@ -35,6 +35,7 @@
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
+        <module name="OuterTypeFilename"/>
         <module name="UncommentedMain"/>
         <module name="UpperEll"/>
 
