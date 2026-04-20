@@ -21,6 +21,7 @@
 
         <!-- Class Design -->
         <module name="InnerTypeLast"/>
+        <module name="InterfaceIsType"/>
         <module name="OneTopLevelClass"/>
 
         <!-- Coding -->
