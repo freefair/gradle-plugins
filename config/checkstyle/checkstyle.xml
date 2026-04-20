@@ -13,6 +13,9 @@
         <!-- Annotations -->
         <module name="AnnotationLocation"/>
 
+        <!-- Blocks -->
+        <module name="AvoidNestedBlocks"/>
+
         <!-- Class Design -->
         <module name="OneTopLevelClass"/>
 
