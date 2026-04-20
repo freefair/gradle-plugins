@@ -33,8 +33,7 @@ public class SevenZipFileTree extends ArchiveFileTree<SevenZipArchiveInputStream
         public long getLastModified() {
             if (getArchiveEntry().getHasLastModifiedDate()) {
                 return getArchiveEntry().getLastModifiedDate().getTime();
-            }
-            else {
+            } else {
                 return 0;
             }
         }

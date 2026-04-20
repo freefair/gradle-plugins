@@ -56,8 +56,7 @@ public class GithubClient {
 
             if (d < 0.1) {
                 log.warn("{}/{} GitHub requests remaining", remainingString, limitString);
-            }
-            else {
+            } else {
                 log.info("{}/{} GitHub requests remaining", remainingString, limitString);
             }
         }

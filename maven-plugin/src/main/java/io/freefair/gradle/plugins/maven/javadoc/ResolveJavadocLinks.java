@@ -109,14 +109,12 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
         if (wellKnownLink != null) {
             getLogger().info("Using well known link '{}' for '{}:{}:{}'", wellKnownLink, group, artifact, version);
             return wellKnownLink;
-        }
-        else {
+        } else {
             String javadocIoLink = String.format("https://www.javadoc.io/doc/%s/%s/%s/", group, artifact, version);
             if (checkLink(javadocIoLink)) {
                 getLogger().info("Using javadoc.io link for '{}:{}:{}'", group, artifact, version);
                 return javadocIoLink;
-            }
-            else {
+            } else {
                 return null;
             }
         }
@@ -139,8 +137,7 @@ public abstract class ResolveJavadocLinks extends OkHttpTask {
                 getLogger().info("Failed to access {}", request.url(), e);
                 if (exception == null) {
                     exception = e;
-                }
-                else {
+                } else {
                     exception.addSuppressed(e);
                 }
             }

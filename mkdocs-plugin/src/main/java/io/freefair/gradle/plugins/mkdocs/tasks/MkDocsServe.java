@@ -98,8 +98,7 @@ public abstract class MkDocsServe extends MkDocs {
         if (getLivereload().isPresent()) {
             if (getLivereload().get()) {
                 mkdocs.args("--livereload");
-            }
-            else {
+            } else {
                 mkdocs.args("--no-livereload");
             }
         }

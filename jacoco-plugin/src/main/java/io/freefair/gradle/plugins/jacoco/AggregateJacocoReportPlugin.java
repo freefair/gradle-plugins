@@ -47,8 +47,7 @@ public class AggregateJacocoReportPlugin implements Plugin<Project> {
                     ((DirectoryReport) report).getOutputLocation().convention(reportingExtension
                             .getReportsDirectory()
                             .dir(reportTask.getName() + "/" + report.getName()));
-                }
-                else if (report instanceof SingleFileReport) {
+                } else if (report instanceof SingleFileReport) {
                     ((SingleFileReport) report).getOutputLocation().convention(reportingExtension
                             .getReportsDirectory()
                             .file(reportTask.getName() + "/" + reportTask.getName() + "." + report.getName()));

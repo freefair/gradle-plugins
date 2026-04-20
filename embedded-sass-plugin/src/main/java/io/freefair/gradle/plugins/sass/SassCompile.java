@@ -122,8 +122,7 @@ public abstract class SassCompile extends SourceTask {
 
                                     if (getSourceMapEmbed().get()) {
                                         mapUrl = "data:application/json;base64," + Base64.getEncoder().encodeToString(output.getSourceMapBytes().toByteArray());
-                                    }
-                                    else {
+                                    } else {
                                         mapUrl = realMap.getName();
                                     }
 
@@ -131,16 +130,14 @@ public abstract class SassCompile extends SourceTask {
                                 }
 
                                 Files.write(realOut.toPath(), css.getBytes(StandardCharsets.UTF_8));
-                            }
-                            else {
+                            } else {
                                 getLogger().error("Cannot write into {}", realOut.getParentFile());
                                 throw new GradleException("Cannot write into " + realMap.getParentFile());
                             }
                             if (getSourceMapEnabled().get() && !getSourceMapEmbed().get()) {
                                 if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
                                     Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
-                                }
-                                else {
+                                } else {
                                     getLogger().error("Cannot write into {}", realMap.getParentFile());
                                     throw new GradleException("Cannot write into " + realMap.getParentFile());
                                 }

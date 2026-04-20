@@ -27,8 +27,7 @@ public class SpringLinkProvider implements JavadocLinkProvider {
             if (parsedVersion.compareTo(newDocsVersion) < 0) {
                 sitePrefix = "https://docs.spring.io/spring-boot/docs/";
                 sitePostfix = "/api/";
-            }
-            else {
+            } else {
                 siteVersion = version.substring(0, version.indexOf('.', version.indexOf('.') + 1));
             }
 

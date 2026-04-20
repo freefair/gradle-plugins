@@ -70,8 +70,7 @@ public abstract class OkHttpTask extends DefaultTask {
 
         if (getForceCache().getOrElse(false)) {
             builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_CACHE));
-        }
-        else if (getForceNetwork().getOrElse(false)) {
+        } else if (getForceNetwork().getOrElse(false)) {
             builder.addInterceptor(new CacheControlInterceptor(CacheControl.FORCE_NETWORK));
         }
 

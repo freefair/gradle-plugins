@@ -41,8 +41,7 @@ public class TaskUtils {
 
             if (type.isInterface()) {
                 break;
-            }
-            else {
+            } else {
                 type = type.getSuperclass();
             }
         }
@@ -52,8 +51,7 @@ public class TaskUtils {
     private static <M extends Member & AnnotatedElement> void registerNested(Task task, M member, Object object, String prefix) throws IllegalAccessException, InvocationTargetException {
         if (member.isSynthetic()) {
             return;
-        }
-        else if (member.isAnnotationPresent(Internal.class)) {
+        } else if (member.isAnnotationPresent(Internal.class)) {
             return;
         }
 
@@ -61,11 +59,9 @@ public class TaskUtils {
         if (member instanceof Field) {
             ((Field) member).setAccessible(true);
             value = ((Field) member).get(object);
-        }
-        else if (member instanceof Method) {
+        } else if (member instanceof Method) {
             value = ((Method) member).invoke(object);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException();
         }
 

@@ -48,8 +48,7 @@ public class GithubBasePlugin implements Plugin<Project> {
 
         if (GitUtil.isTravisCi(project.getProviders())) {
             return true;
-        }
-        else if (GitUtil.isGithubActions(project.getProviders())) {
+        } else if (GitUtil.isGithubActions(project.getProviders())) {
             return false;
         }
 

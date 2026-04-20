@@ -87,8 +87,7 @@ public class GitUtils {
                 .map(githubRef -> {
                     if (githubRef.startsWith("refs/tags/")) {
                         return githubRef.substring("refs/tags/".length());
-                    }
-                    else {
+                    } else {
                         return null;
                     }
                 });

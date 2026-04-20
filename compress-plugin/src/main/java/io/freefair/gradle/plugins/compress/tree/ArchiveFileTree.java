@@ -88,8 +88,7 @@ public class ArchiveFileTree<IS extends ArchiveInputStream, E extends ArchiveEnt
                         try {
                             if (archiveEntry.isDirectory()) {
                                 visitor.visitDir(details);
-                            }
-                            else {
+                            } else {
                                 visitor.visitFile(details);
                             }
                         } finally {

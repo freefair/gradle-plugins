@@ -139,8 +139,7 @@ public abstract class Delombok extends DefaultTask implements LombokTask {
             if (file.isDirectory()) {
                 if (fileTree == null) {
                     fileTree = getFileOperations().fileTree(file);
-                }
-                else {
+                } else {
                     fileTree.from(file);
                 }
             }

@@ -154,8 +154,7 @@ public class AjcAction implements Action<Task> {
             spec.setDestinationDir(abstractCompile.getDestinationDirectory().get().getAsFile());
             spec.setTargetCompatibility(abstractCompile.getTargetCompatibility());
             spec.setSourceCompatibility(abstractCompile.getSourceCompatibility());
-        }
-        else if (compile instanceof KotlinJvmCompile kotlinJvmCompile) {
+        } else if (compile instanceof KotlinJvmCompile kotlinJvmCompile) {
             spec.setDestinationDir(kotlinJvmCompile.getDestinationDirectory().get().getAsFile());
             spec.setTargetCompatibility(kotlinJvmCompile.getCompilerOptions().getJvmTarget().get().getTarget());
             spec.setSourceCompatibility(kotlinJvmCompile.getCompilerOptions().getJvmTarget().get().getTarget());
@@ -193,8 +192,7 @@ public class AjcAction implements Action<Task> {
         FileCollection classpath = null;
         if (task instanceof AbstractCompile) {
             classpath = ((AbstractCompile) task).getClasspath();
-        }
-        else if (task instanceof KotlinJvmCompile) {
+        } else if (task instanceof KotlinJvmCompile) {
             classpath = ((KotlinJvmCompile) task).getLibraries();
         }
 

@@ -83,8 +83,7 @@ public class GitVersionPlugin implements Plugin<Project> {
                 logger.lifecycle("Using TRAVIS_BRANCH '{}' as version: {}", travisBranch.get(), version);
                 return version;
             }
-        }
-        else if (GitUtil.isGithubActions(providerFactory)) {
+        } else if (GitUtil.isGithubActions(providerFactory)) {
             Provider<String> githubRef = providerFactory.environmentVariable("GITHUB_REF");
             if (githubRef.isPresent()) {
                 if (githubRef.get().startsWith("refs/tags/")) {
@@ -92,22 +91,18 @@ public class GitVersionPlugin implements Plugin<Project> {
                     String version = resolveTagVersion(tag);
                     logger.lifecycle("Using GitHub Tag '{}' as version: {}", githubRef.get(), version);
                     return version;
-                }
-                else if (githubRef.get().startsWith("refs/heads/")) {
+                } else if (githubRef.get().startsWith("refs/heads/")) {
                     String branch = githubRef.get().substring("refs/heads/".length());
                     String version = resolveBranchVersion(branch);
                     logger.lifecycle("Using GitHub Branch '{}' as version: {}", githubRef.get(), version);
                     return version;
-                }
-                else {
+                } else {
                     logger.warn("Unknown prefix for 'GITHUB_REF' {}", githubRef.get());
                 }
-            }
-            else {
+            } else {
                 logger.warn("No GITHUB_REF found on GitHub Actions");
             }
-        }
-        else if (GitUtil.isCircleCi(providerFactory)) {
+        } else if (GitUtil.isCircleCi(providerFactory)) {
             Provider<String> circleTag = providerFactory.environmentVariable("CIRCLE_TAG");
             if (circleTag.isPresent()) {
                 String version = resolveTagVersion(circleTag.get().trim());

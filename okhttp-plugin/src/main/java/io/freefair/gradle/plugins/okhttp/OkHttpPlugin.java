@@ -41,11 +41,9 @@ public class OkHttpPlugin implements Plugin<Project> {
     private HttpLoggingInterceptor.Level getLevel() {
         if (project.getLogger().isTraceEnabled()) {
             return HttpLoggingInterceptor.Level.BODY;
-        }
-        else if (project.getLogger().isDebugEnabled()) {
+        } else if (project.getLogger().isDebugEnabled()) {
             return HttpLoggingInterceptor.Level.HEADERS;
-        }
-        else if (project.getLogger().isInfoEnabled()) {
+        } else if (project.getLogger().isInfoEnabled()) {
             return HttpLoggingInterceptor.Level.BASIC;
         }
 

@@ -104,8 +104,7 @@ public class AspectJPostCompileWeavingPlugin implements Plugin<Project> {
         action.getOptions().getInpath().from(inpath);
         if (compileTask instanceof AbstractCompile) {
             action.getAdditionalInpath().from(((AbstractCompile) compileTask).getDestinationDirectory());
-        }
-        else if (compileTask instanceof KotlinJvmCompile) {
+        } else if (compileTask instanceof KotlinJvmCompile) {
             action.getAdditionalInpath().from(((KotlinJvmCompile) compileTask).getDestinationDirectory());
         }
         action.getClasspath().from(aspectjConfiguration);

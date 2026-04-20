@@ -74,15 +74,13 @@ public class GithubPomPlugin implements Plugin<Project> {
 
             if (hasText(repo.getHomepage())) {
                 pom.getUrl().convention(repo.getHomepage());
-            }
-            else {
+            } else {
                 pom.getUrl().convention(repo.getHtml_url());
             }
 
             if (hasText(repo.getDescription())) {
                 pom.getDescription().convention(repo.getDescription());
-            }
-            else {
+            } else {
                 pom.getDescription().convention(project.getDescription());
             }
 
@@ -95,15 +93,13 @@ public class GithubPomPlugin implements Plugin<Project> {
                 pom.organization(organization -> {
                     if (hasText(user.getName())) {
                         organization.getName().convention(user.getName());
-                    }
-                    else {
+                    } else {
                         organization.getName().convention(user.getLogin());
                     }
 
                     if (hasText(user.getBlog())) {
                         organization.getUrl().convention(user.getBlog());
-                    }
-                    else {
+                    } else {
                         organization.getUrl().convention(user.getHtml_url());
                     }
                 });
@@ -114,8 +110,7 @@ public class GithubPomPlugin implements Plugin<Project> {
                     ciManagement.getSystem().convention("Travis CI");
                     ciManagement.getUrl().convention(String.format("https://travis-ci.org/%s/", slug));
                 });
-            }
-            else if (GitUtil.isGithubActions(project.getProviders())) {
+            } else if (GitUtil.isGithubActions(project.getProviders())) {
                 pom.ciManagement(ciManagement -> {
                     ciManagement.getSystem().convention("GitHub Actions");
                     ciManagement.getUrl().convention(String.format("https://github.com/%s/actions", slug));

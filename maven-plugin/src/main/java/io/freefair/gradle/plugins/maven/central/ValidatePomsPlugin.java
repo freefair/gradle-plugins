@@ -24,8 +24,7 @@ public class ValidatePomsPlugin implements Plugin<Project> {
 
             if (generateMavenPom.getName().startsWith("generate")) {
                 checkTaskName = "validate" + generateMavenPom.getName().substring(8);
-            }
-            else {
+            } else {
                 checkTaskName = "validate" + generateMavenPom.getName();
             }
 

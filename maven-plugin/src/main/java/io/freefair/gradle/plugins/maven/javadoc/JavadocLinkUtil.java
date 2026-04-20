@@ -32,8 +32,7 @@ public class JavadocLinkUtil {
 
         if (javaVersion.isJava11Compatible()) {
             return "https://docs.oracle.com/en/java/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
-        }
-        else {
+        } else {
             return "https://docs.oracle.com/javase/" + javaVersion.getMajorVersion() + "/docs/api/";
         }
     }

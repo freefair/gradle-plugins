@@ -27,8 +27,7 @@ public class MavenPluginPlugin implements Plugin<Project> {
             mavenPublishJavaPlugin.getPublication().getPom().withXml(xmlProvider ->
                     xmlProvider.asNode().appendNode("packaging", "maven-plugin")
             );
-        }
-        else {
+        } else {
             mavenPublishJavaPlugin.getPublication().getPom().setPackaging("maven-plugin");
         }
 

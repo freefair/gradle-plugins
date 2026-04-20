@@ -74,8 +74,7 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
 
         if (isEmpty(model.getLicenses())) {
             logError("licenses");
-        }
-        else {
+        } else {
             model.getLicenses().forEach(license -> {
                 if (isEmpty(license.getName())) {
                     logError("license.name");
@@ -88,8 +87,7 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
 
         if (isEmpty(model.getDevelopers())) {
             logError("developers");
-        }
-        else {
+        } else {
             model.getDevelopers().forEach(developer -> {
                 if (isEmpty(developer.getId())) {
                     logError("developer.id");
@@ -105,8 +103,7 @@ public abstract class ValidateMavenPom extends DefaultTask implements Verificati
 
         if (model.getScm() == null) {
             logError("scm");
-        }
-        else {
+        } else {
             if (isEmpty(model.getScm().getConnection())) {
                 logError("scm.connection");
             }

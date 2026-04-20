@@ -34,8 +34,7 @@ public abstract class LombokConfigAction implements WorkAction<LombokConfigParam
         Duration duration = Duration.ofNanos(System.nanoTime() - start);
         if (duration.getSeconds() > 1) {
             log.warn("lombok config {} took {}ms", arguments, duration.toMillis());
-        }
-        else {
+        } else {
             log.info("lombok config {} took {}ms", arguments, duration.toMillis());
         }
     }

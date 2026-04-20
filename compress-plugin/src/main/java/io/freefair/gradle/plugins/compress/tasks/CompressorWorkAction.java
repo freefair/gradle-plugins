@@ -29,8 +29,7 @@ public abstract class CompressorWorkAction<OS extends CompressorOutputStream, P 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-        else {
+        } else {
             throw new RuntimeException(outputDir + " could not be created");
         }
     }

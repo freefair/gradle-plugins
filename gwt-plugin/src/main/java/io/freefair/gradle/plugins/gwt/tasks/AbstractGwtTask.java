@@ -75,12 +75,10 @@ public abstract class AbstractGwtTask extends JavaExec implements CommonGwtToolO
         if (property.isPresent()) {
             if (property.get()) {
                 args.add("-" + argName);
-            }
-            else {
+            } else {
                 if (argName.startsWith("X")) {
                     args.add("-Xno" + argName.substring(1));
-                }
-                else {
+                } else {
                     args.add("-no" + argName);
                 }
             }
