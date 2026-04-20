@@ -37,6 +37,7 @@
         <!-- Javadoc -->
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocBlockTagLocation"/>
+        <module name="JavadocContentLocation"/>
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
