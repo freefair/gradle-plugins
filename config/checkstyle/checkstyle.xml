@@ -20,6 +20,7 @@
         <module name="RightCurly"/>
 
         <!-- Class Design -->
+        <module name="InnerTypeLast"/>
         <module name="OneTopLevelClass"/>
 
         <!-- Coding -->
