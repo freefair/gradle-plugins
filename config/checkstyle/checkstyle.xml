@@ -36,6 +36,7 @@
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
+        <module name="HexLiteralCase"/>
         <module name="NoCodeInFile"/>
         <module name="NumericalPrefixesInfixesSuffixesCharacterCase"/>
         <module name="OuterTypeFilename"/>
