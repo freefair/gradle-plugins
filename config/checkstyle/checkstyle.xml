@@ -16,6 +16,7 @@
         <!-- Blocks -->
         <module name="AvoidNestedBlocks"/>
         <module name="EmptyBlock"/>
+        <module name="LeftCurly"/>
 
         <!-- Class Design -->
         <module name="OneTopLevelClass"/>
