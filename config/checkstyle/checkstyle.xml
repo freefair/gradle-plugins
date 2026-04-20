@@ -38,6 +38,7 @@
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocBlockTagLocation"/>
         <module name="JavadocContentLocation"/>
+        <module name="JavadocLeadingAsteriskAlign"/>
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
