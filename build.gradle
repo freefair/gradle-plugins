@@ -28,7 +28,6 @@ allprojects {
         }
 
         plugins.apply "jacoco"
-        plugins.apply "checkstyle"
         plugins.apply "io.freefair.lombok"
 
         jacocoTestReport.reports.xml.required = true
@@ -36,6 +35,16 @@ allprojects {
         tasks.withType(Test) {
             useJUnitPlatform()
             jvmArgs('--add-opens=java.base/java.lang=ALL-UNNAMED')
+        }
+
+        plugins.apply "checkstyle"
+
+        checkstyle.toolVersion = "13.4.0"
+
+        tasks.withType(Checkstyle).configureEach {
+            javaLauncher = javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(21)
+            }
         }
 
         dependencies {

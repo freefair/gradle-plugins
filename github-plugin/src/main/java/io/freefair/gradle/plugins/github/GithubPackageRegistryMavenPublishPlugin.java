@@ -9,7 +9,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
 
 /**
  * @author Lars Grefer
- * @see https://docs.github.com/en/free-pro-team@latest/packages/using-github-packages-with-your-projects-ecosystem/configuring-gradle-for-use-with-github-packages
+ * @see <a href="https://docs.github.com/en/free-pro-team@latest/packages/using-github-packages-with-your-projects-ecosystem/configuring-gradle-for-use-with-github-packages">GitHub Docs</a>
  */
 public class GithubPackageRegistryMavenPublishPlugin implements Plugin<Project> {
 
