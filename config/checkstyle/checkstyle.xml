@@ -34,6 +34,9 @@
             <property name="illegalClasses" value="org.jetbrains.annotations.NotNull, org.jetbrains.annotations.Nullable, org.springframework.lang.NonNull, org.springframework.lang.Nullable"/>
         </module>
 
+        <!-- Javadoc -->
+        <module name="InvalidJavadocPosition"/>
+
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
         <module name="AvoidEscapedUnicodeCharacters"/>
