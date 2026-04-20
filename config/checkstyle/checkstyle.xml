@@ -6,6 +6,7 @@
 <module name="Checker">
 
     <module name="FileTabCharacter"/>
+    <module name="NewlineAtEndOfFile"/>
 
     <module name="TreeWalker">
 
