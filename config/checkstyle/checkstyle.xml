@@ -15,6 +15,7 @@
 
         <!-- Blocks -->
         <module name="AvoidNestedBlocks"/>
+        <module name="EmptyBlock"/>
 
         <!-- Class Design -->
         <module name="OneTopLevelClass"/>
