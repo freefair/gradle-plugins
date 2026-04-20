@@ -40,6 +40,7 @@
         <module name="JavadocContentLocation"/>
         <module name="JavadocLeadingAsteriskAlign"/>
         <module name="JavadocMissingLeadingAsterisk"/>
+        <module name="JavadocMissingWhitespaceAfterAsterisk"/>
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
