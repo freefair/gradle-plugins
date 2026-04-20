@@ -76,7 +76,7 @@ public class AspectJPlugin implements Plugin<Project> {
         sourceSet.getExtensions().add(WeavingSourceSet.IN_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
         sourceSet.getExtensions().add(WeavingSourceSet.ASPECT_PATH_EXTENSION_NAME, project.getObjects().fileCollection());
 
-        String aspectjSrcDisplayName = ((DefaultSourceSet)sourceSet).getDisplayName() + " AspectJ source";
+        String aspectjSrcDisplayName = ((DefaultSourceSet) sourceSet).getDisplayName() + " AspectJ source";
 
         AspectjSourceDirectorySet aspectjSource = project.getObjects().newInstance(DefaultAspectjSourceDirectorySet.class, project.getObjects().sourceDirectorySet("aspectj", aspectjSrcDisplayName));
         sourceSet.getExtensions().add(AspectjSourceDirectorySet.class, "aspectj", aspectjSource);

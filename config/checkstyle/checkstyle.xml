@@ -48,6 +48,7 @@
         </module>
         <module name="NoWhitespaceBeforeCaseDefaultColon"/>
         <module name="TypecastParenPad"/>
+        <module name="WhitespaceAfter"/>
         <module name="WhitespaceAround">
             <property name="allowEmptyCatches" value="true"/>
             <property name="allowEmptyConstructors" value="true"/>

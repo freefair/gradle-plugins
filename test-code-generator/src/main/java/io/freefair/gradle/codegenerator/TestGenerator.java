@@ -9,6 +9,6 @@ public class TestGenerator implements Generator {
 
     @Override
     public void generate(ProjectContext context) throws Exception {
-        context.writeOutputFile("io.freefair.gradle.codegen.test","TestClass.java", "package io.freefair.gradle.codegen.test;\nclass TestClass {\n}");
+        context.writeOutputFile("io.freefair.gradle.codegen.test", "TestClass.java", "package io.freefair.gradle.codegen.test;\nclass TestClass {\n}");
     }
 }
