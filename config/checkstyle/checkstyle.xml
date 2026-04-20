@@ -39,6 +39,7 @@
         <module name="JavadocBlockTagLocation"/>
         <module name="JavadocContentLocation"/>
         <module name="JavadocLeadingAsteriskAlign"/>
+        <module name="JavadocMissingLeadingAsterisk"/>
 
         <!-- Miscellaneous -->
         <module name="ArrayTypeStyle"/>
