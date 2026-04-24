@@ -54,11 +54,16 @@ public class GithubPomPlugin implements Plugin<Project> {
                 if (repo.getLicense() != null && hasText(repo.getLicense().getUrl())) {
                     ghLicense = githubService.getLicense(repo.getLicense().getUrl()).execute().body();
                 }
+            } catch (IOException e) {
+                project.getLogger().warn("Failed to fetch GitHub license info for '{}': {}", slug, e.getMessage());
+            }
+
+            try {
                 if (githubExtension.getOwner().isPresent()) {
                     user = githubService.getUser(githubExtension.getOwner().get()).execute().body();
                 }
             } catch (IOException e) {
-                project.getLogger().warn("Failed to fetch GitHub user/license info for '{}': {}", slug, e.getMessage());
+                project.getLogger().warn("Failed to fetch GitHub user info for '{}': {}", slug, e.getMessage());
             }
 
             project.getPlugins().withType(PublishingPlugin.class, publishingPlugin -> {
