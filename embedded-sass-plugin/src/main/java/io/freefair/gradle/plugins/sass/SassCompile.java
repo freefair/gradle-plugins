@@ -66,7 +66,21 @@ public abstract class SassCompile extends SourceTask {
     @TaskAction
     public void compileSass() throws IOException {
 
-        try (SassCompiler compiler = SassCompilerFactory.bundled()) {
+        URLClassLoader webjarsLoader = null;
+        if (!getWebjars().isEmpty()) {
+            LinkedHashSet<URL> urls = new LinkedHashSet<>();
+
+            for (File webjar : getWebjars()) {
+                urls.add(webjar.toURI().toURL());
+            }
+
+            webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
+        }
+
+        // Close classloader after compiler so the compiler can still access webjar resources during shutdown
+        try (URLClassLoader classLoaderToClose = webjarsLoader;
+             SassCompiler compiler = SassCompilerFactory.bundled()) {
+
             compiler.setOutputStyle(getOutputStyle().getOrNull());
             compiler.setGenerateSourceMaps(getSourceMapEnabled().getOrElse(true));
             compiler.setSourceMapIncludeSources(getSourceMapContents().getOrElse(false));
@@ -78,14 +92,7 @@ public abstract class SassCompile extends SourceTask {
             getCustomImporters().get().forEach(compiler::registerImporter);
             getHostFunctions().get().forEach(compiler::registerFunction);
 
-            if (!getWebjars().isEmpty()) {
-                LinkedHashSet<URL> urls = new LinkedHashSet<>();
-
-                for (File webjar : getWebjars()) {
-                    urls.add(webjar.toURI().toURL());
-                }
-
-                URLClassLoader webjarsLoader = new URLClassLoader(urls.toArray(new URL[0]));
+            if (webjarsLoader != null) {
                 compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
             }
 
@@ -132,7 +139,7 @@ public abstract class SassCompile extends SourceTask {
                                 Files.write(realOut.toPath(), css.getBytes(StandardCharsets.UTF_8));
                             } else {
                                 getLogger().error("Cannot write into {}", realOut.getParentFile());
-                                throw new GradleException("Cannot write into " + realMap.getParentFile());
+                                throw new GradleException("Cannot write into " + realOut.getParentFile());
                             }
                             if (getSourceMapEnabled().get() && !getSourceMapEmbed().get()) {
                                 if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
