@@ -13,6 +13,7 @@ import org.gradle.api.attributes.DocsType;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
+import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
@@ -45,7 +46,7 @@ public class LombokPlugin implements Plugin<Project> {
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
 
-    private boolean spotbugConfigured;
+    private boolean spotbugsConfigured;
 
     @Override
     public void apply(Project project) {
@@ -121,10 +122,10 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void configureForSpotbugs(JavaPluginExtension javaPluginExtension) {
-        if (spotbugConfigured) {
+        if (spotbugsConfigured) {
             return;
         }
-        spotbugConfigured = true;
+        spotbugsConfigured = true;
 
         javaPluginExtension.getSourceSets().all(sourceSet -> {
             // Use findByName: sourceSets.all also fires for source sets added later
@@ -142,7 +143,6 @@ public class LombokPlugin implements Plugin<Project> {
         });
     }
 
-    @SuppressWarnings("unchecked")
     private String resolveSpotBugVersion() {
         if (!project.getPlugins().hasPlugin("com.github.spotbugs")) {
             return SPOTBUGS_DEFAULT_VERSION;
@@ -156,14 +156,16 @@ public class LombokPlugin implements Plugin<Project> {
         try {
             Object result = spotbugsExtension.getClass().getMethod("getToolVersion").invoke(spotbugsExtension);
             if (result instanceof org.gradle.api.provider.Property) {
-                String version = ((org.gradle.api.provider.Property<String>) result).getOrNull();
+                @SuppressWarnings("unchecked")
+                Property<String> toolVersionProperty = (Property<String>) result;
+                String version = toolVersionProperty.getOrNull();
                 if (version != null) {
                     return version;
                 }
             } else if (result instanceof String) {
                 return (String) result;
             }
-        } catch (ReflectiveOperationException e) {
+        } catch (ReflectiveOperationException | ClassCastException e) {
             project.getLogger().warn("Could not resolve SpotBugs tool version via reflection; falling back to {}", SPOTBUGS_DEFAULT_VERSION, e);
         }
 
