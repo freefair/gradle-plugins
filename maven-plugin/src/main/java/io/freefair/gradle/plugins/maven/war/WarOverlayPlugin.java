@@ -44,7 +44,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
         project.getPluginManager().apply(WarPlugin.class);
 
         project.getTasks().withType(War.class, warTask -> {
-            NamedDomainObjectContainer<WarOverlay> warOverlays = project.container(WarOverlay.class, name -> new WarOverlay(name, warTask));
+            NamedDomainObjectContainer<WarOverlay> warOverlays = project.getObjects().domainObjectContainer(WarOverlay.class, name -> new WarOverlay(name, warTask));
             warTask.getExtensions().add("overlays", warOverlays);
 
             Configuration warOverlayClasspath = project.getConfigurations().create(warTask.getName() + "OverlayClasspath");
