@@ -6,8 +6,10 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.TaskProvider;
@@ -51,22 +53,24 @@ public class JavadocLinksPlugin implements Plugin<Project> {
 
         TaskProvider<ResolveJavadocLinks> resolveJavadocLinks = project.getTasks().register("resolveJavadocLinks", ResolveJavadocLinks.class);
 
+        RegularFile optionsFile = project.getLayout().getBuildDirectory().file("javadoc-links.options").get();
+
         resolveJavadocLinks.configure(rjd -> {
             rjd.getJavadocTool().convention(javadocTaskProvider.flatMap(Javadoc::getJavadocTool));
             rjd.setClasspath(classpath);
+            rjd.getOutputFile().set(optionsFile);
         });
 
         javadocTaskProvider.configure(javadoc -> {
             javadoc.dependsOn(resolveJavadocLinks);
             javadoc.getInputs()
                     .file(resolveJavadocLinks.map(ResolveJavadocLinks::getOutputFile))
-                    .withPathSensitivity(PathSensitivity.NAME_ONLY);
+                    .withPathSensitivity(PathSensitivity.NONE);
 
             MinimalJavadocOptions options = javadoc.getOptions();
 
-            if (options instanceof StandardJavadocDocletOptions) {
-                StandardJavadocDocletOptions standardOptions = (StandardJavadocDocletOptions) options;
-                standardOptions.linksFile(resolveJavadocLinks.flatMap(ResolveJavadocLinks::getOutputFile).map(f -> f.getAsFile()).get());
+            if (options instanceof StandardJavadocDocletOptions standardOptions) {
+                standardOptions.linksFile(optionsFile.getAsFile());
             }
         });
 
