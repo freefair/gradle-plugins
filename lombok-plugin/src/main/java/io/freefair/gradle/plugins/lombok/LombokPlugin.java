@@ -122,6 +122,7 @@ public class LombokPlugin implements Plugin<Project> {
 
                 if (hasModuleInfo) {
                     delombok.getModulePath().from(sourceSet.getCompileClasspath());
+                    delombok.getSourcepath().from(sourceSet.getJava().getSourceDirectories());
                 } else {
                     delombok.getClasspath().from(sourceSet.getCompileClasspath());
                 }
