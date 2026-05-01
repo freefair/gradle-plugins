@@ -10,7 +10,6 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.attributes.DocsType;
-import org.gradle.api.internal.plugins.DslObject;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
@@ -47,7 +46,7 @@ public class LombokPlugin implements Plugin<Project> {
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
 
-    private boolean spotbugConfigured;
+    private boolean spotbugsConfigured;
 
     @Override
     public void apply(Project project) {
@@ -132,10 +131,10 @@ public class LombokPlugin implements Plugin<Project> {
     }
 
     private void configureForSpotbugs(JavaPluginExtension javaPluginExtension) {
-        if (spotbugConfigured) {
+        if (spotbugsConfigured) {
             return;
         }
-        spotbugConfigured = true;
+        spotbugsConfigured = true;
 
         javaPluginExtension.getSourceSets().all(sourceSet -> {
             // Use findByName: sourceSets.all also fires for source sets added later
@@ -163,8 +162,25 @@ public class LombokPlugin implements Plugin<Project> {
             return ((CodeQualityExtension) spotbugsExtension).getToolVersion();
         }
 
-        Property<String> toolVersionProperty = (Property<String>) new DslObject(spotbugsExtension).getAsDynamicObject().getProperty("toolVersion");
-        return toolVersionProperty.get();
+        try {
+            java.lang.reflect.Method method = spotbugsExtension.getClass().getMethod("getToolVersion");
+            method.setAccessible(true);
+            Object result = method.invoke(spotbugsExtension);
+            if (result instanceof org.gradle.api.provider.Property) {
+                @SuppressWarnings("unchecked")
+                Property<String> toolVersionProperty = (Property<String>) result;
+                return toolVersionProperty.getOrElse(SPOTBUGS_DEFAULT_VERSION);
+            } else if (result instanceof String) {
+                return (String) result;
+            } else {
+                project.getLogger().debug("resolveSpotBugVersion: getToolVersion() returned unexpected type {}; using default {}",
+                        result == null ? "null" : result.getClass().getName(), SPOTBUGS_DEFAULT_VERSION);
+            }
+        } catch (ReflectiveOperationException | ClassCastException e) {
+            project.getLogger().warn("Could not resolve SpotBugs tool version via reflection; falling back to {}", SPOTBUGS_DEFAULT_VERSION, e);
+        }
+
+        return SPOTBUGS_DEFAULT_VERSION;
     }
 
     private void configureDelombokDefaults(Delombok delombok) {
