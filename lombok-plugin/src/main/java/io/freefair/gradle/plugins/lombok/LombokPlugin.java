@@ -154,16 +154,18 @@ public class LombokPlugin implements Plugin<Project> {
         }
 
         try {
-            Object result = spotbugsExtension.getClass().getMethod("getToolVersion").invoke(spotbugsExtension);
+            java.lang.reflect.Method method = spotbugsExtension.getClass().getMethod("getToolVersion");
+            method.setAccessible(true);
+            Object result = method.invoke(spotbugsExtension);
             if (result instanceof org.gradle.api.provider.Property) {
                 @SuppressWarnings("unchecked")
                 Property<String> toolVersionProperty = (Property<String>) result;
-                String version = toolVersionProperty.getOrNull();
-                if (version != null) {
-                    return version;
-                }
+                return toolVersionProperty.getOrElse(SPOTBUGS_DEFAULT_VERSION);
             } else if (result instanceof String) {
                 return (String) result;
+            } else {
+                project.getLogger().debug("resolveSpotBugVersion: getToolVersion() returned unexpected type {}; using default {}",
+                        result == null ? "null" : result.getClass().getName(), SPOTBUGS_DEFAULT_VERSION);
             }
         } catch (ReflectiveOperationException | ClassCastException e) {
             project.getLogger().warn("Could not resolve SpotBugs tool version via reflection; falling back to {}", SPOTBUGS_DEFAULT_VERSION, e);
