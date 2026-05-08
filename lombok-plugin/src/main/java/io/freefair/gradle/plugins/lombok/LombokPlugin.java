@@ -134,7 +134,7 @@ public class LombokPlugin implements Plugin<Project> {
                     .findByName(sourceSet.getCompileOnlyConfigurationName());
             if (compileOnly != null) {
                 compileOnly.withDependencies(deps -> {
-                    String toolVersion = resolveSpotBugVersion();
+                    String toolVersion = resolveSpotbugsVersion();
                     deps.add(project.getDependencies().create(
                             "com.github.spotbugs:spotbugs-annotations:" + toolVersion
                     ));
@@ -143,7 +143,7 @@ public class LombokPlugin implements Plugin<Project> {
         });
     }
 
-    private String resolveSpotBugVersion() {
+    private String resolveSpotbugsVersion() {
         if (!project.getPlugins().hasPlugin("com.github.spotbugs")) {
             return SPOTBUGS_DEFAULT_VERSION;
         }
@@ -155,16 +155,15 @@ public class LombokPlugin implements Plugin<Project> {
 
         try {
             java.lang.reflect.Method method = spotbugsExtension.getClass().getMethod("getToolVersion");
-            method.setAccessible(true);
             Object result = method.invoke(spotbugsExtension);
-            if (result instanceof org.gradle.api.provider.Property) {
+            if (result instanceof Property) {
                 @SuppressWarnings("unchecked")
                 Property<String> toolVersionProperty = (Property<String>) result;
                 return toolVersionProperty.getOrElse(SPOTBUGS_DEFAULT_VERSION);
             } else if (result instanceof String) {
                 return (String) result;
             } else {
-                project.getLogger().debug("resolveSpotBugVersion: getToolVersion() returned unexpected type {}; using default {}",
+                project.getLogger().debug("resolveSpotbugsVersion: getToolVersion() returned unexpected type {}; using default {}",
                         result == null ? "null" : result.getClass().getName(), SPOTBUGS_DEFAULT_VERSION);
             }
         } catch (ReflectiveOperationException | ClassCastException e) {
