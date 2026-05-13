@@ -19,6 +19,7 @@ import org.gradle.api.tasks.Sync;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import org.gradle.api.tasks.bundling.War;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.util.Collection;
@@ -210,7 +211,7 @@ public class WarOverlayPlugin implements Plugin<Project> {
         }
 
         @Override
-        public void execute(Task w) {
+        public void execute(@NonNull Task w) {
             warCopySpec.exclude(element -> provided);
         }
     }

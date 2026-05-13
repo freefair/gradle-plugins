@@ -6,7 +6,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileTreeElement
-import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.plugins.internal.JvmPluginsHelper
@@ -90,7 +89,7 @@ open class QuicktypePlugin : Plugin<Project> {
     }*/
 
     private fun configureSourceSet(sourceSet: SourceSet) {
-        val quicktypeSourceSet = DslObject(sourceSet).extensions.create(
+        val quicktypeSourceSet = sourceSet.extensions.create(
             "quicktype",
             DefaultQuicktypeSourceSet::class.java,
             project?.objects!!,

@@ -2,12 +2,12 @@ package io.freefair.gradle.plugins.sass;
 
 import com.sass_lang.embedded_protocol.OutputStyle;
 import org.gradle.api.Incubating;
-import org.gradle.api.internal.plugins.DslObject;
+import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.provider.Property;
 
 @Incubating
-public abstract class SassExtension {
+public abstract class SassExtension implements ExtensionAware {
 
     public abstract Property<Boolean> getOmitSourceMapUrl();
 
@@ -35,7 +35,7 @@ public abstract class SassExtension {
         getSourceMapEmbed().convention(false);
         getSourceMapEnabled().convention(true);
 
-        ExtraPropertiesExtension extraProperties = new DslObject(this).getExtensions().getExtraProperties();
+        ExtraPropertiesExtension extraProperties = this.getExtensions().getExtraProperties();
         for (OutputStyle value : OutputStyle.values()) {
             extraProperties.set(value.name(), value);
         }
