@@ -13,6 +13,7 @@ import org.gradle.api.attributes.DocsType;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
 import org.gradle.api.plugins.quality.CodeQualityExtension;
+import java.lang.reflect.Method;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.PathSensitivity;
@@ -154,7 +155,7 @@ public class LombokPlugin implements Plugin<Project> {
         }
 
         try {
-            java.lang.reflect.Method method = spotbugsExtension.getClass().getMethod("getToolVersion");
+            Method method = spotbugsExtension.getClass().getMethod("getToolVersion");
             Object result = method.invoke(spotbugsExtension);
             if (result instanceof Property) {
                 @SuppressWarnings("unchecked")
@@ -167,7 +168,8 @@ public class LombokPlugin implements Plugin<Project> {
                         result == null ? "null" : result.getClass().getName(), SPOTBUGS_DEFAULT_VERSION);
             }
         } catch (ReflectiveOperationException | ClassCastException e) {
-            project.getLogger().warn("Could not resolve SpotBugs tool version via reflection; falling back to {}", SPOTBUGS_DEFAULT_VERSION, e);
+            project.getLogger().info("Could not resolve SpotBugs tool version via reflection ({}); falling back to {}",
+                    e.getMessage(), SPOTBUGS_DEFAULT_VERSION);
         }
 
         return SPOTBUGS_DEFAULT_VERSION;
