@@ -5,6 +5,9 @@ import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import io.freefair.gradle.plugins.lombok.tasks.LombokTask;
 import lombok.Getter;
+
+import java.lang.reflect.Method;
+
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -12,8 +15,6 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.attributes.DocsType;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginExtension;
-import org.gradle.api.plugins.quality.CodeQualityExtension;
-import java.lang.reflect.Method;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.PathSensitivity;
@@ -150,9 +151,6 @@ public class LombokPlugin implements Plugin<Project> {
         }
 
         Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
-        if (spotbugsExtension instanceof CodeQualityExtension) {
-            return ((CodeQualityExtension) spotbugsExtension).getToolVersion();
-        }
 
         try {
             Method method = spotbugsExtension.getClass().getMethod("getToolVersion");
