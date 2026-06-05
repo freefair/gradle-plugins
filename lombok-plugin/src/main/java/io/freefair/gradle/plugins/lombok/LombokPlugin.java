@@ -150,7 +150,13 @@ public class LombokPlugin implements Plugin<Project> {
             return SPOTBUGS_DEFAULT_VERSION;
         }
 
-        Object spotbugsExtension = project.getExtensions().getByName("spotbugs");
+        Object spotbugsExtension;
+        try {
+            spotbugsExtension = project.getExtensions().getByName("spotbugs");
+        } catch (Exception e) {
+            project.getLogger().info("Could not find SpotBugs extension; falling back to {}", SPOTBUGS_DEFAULT_VERSION);
+            return SPOTBUGS_DEFAULT_VERSION;
+        }
 
         try {
             Method method = spotbugsExtension.getClass().getMethod("getToolVersion");
@@ -166,8 +172,9 @@ public class LombokPlugin implements Plugin<Project> {
                         result == null ? "null" : result.getClass().getName(), SPOTBUGS_DEFAULT_VERSION);
             }
         } catch (ReflectiveOperationException | ClassCastException e) {
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
             project.getLogger().info("Could not resolve SpotBugs tool version via reflection ({}); falling back to {}",
-                    e.getMessage(), SPOTBUGS_DEFAULT_VERSION);
+                    cause.getMessage(), SPOTBUGS_DEFAULT_VERSION);
         }
 
         return SPOTBUGS_DEFAULT_VERSION;
