@@ -164,14 +164,15 @@ public class LombokPlugin implements Plugin<Project> {
             if (result instanceof Property) {
                 @SuppressWarnings("unchecked")
                 Property<String> toolVersionProperty = (Property<String>) result;
-                return toolVersionProperty.getOrElse(SPOTBUGS_DEFAULT_VERSION);
-            } else if (result instanceof String) {
-                return (String) result;
+                String resolved = toolVersionProperty.getOrElse(SPOTBUGS_DEFAULT_VERSION);
+                return resolved.isBlank() ? SPOTBUGS_DEFAULT_VERSION : resolved;
+            } else if (result instanceof String version && !version.isBlank()) {
+                return version;
             } else {
                 project.getLogger().debug("resolveSpotbugsVersion: getToolVersion() returned unexpected type {}; using default {}",
                         result == null ? "null" : result.getClass().getName(), SPOTBUGS_DEFAULT_VERSION);
             }
-        } catch (ReflectiveOperationException | ClassCastException e) {
+        } catch (ReflectiveOperationException | RuntimeException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             project.getLogger().info("Could not resolve SpotBugs tool version via reflection ({}); falling back to {}",
                     cause.getMessage(), SPOTBUGS_DEFAULT_VERSION);
