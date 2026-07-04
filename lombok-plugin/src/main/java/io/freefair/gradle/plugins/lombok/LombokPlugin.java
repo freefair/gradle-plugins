@@ -4,12 +4,14 @@ import io.freefair.gradle.plugins.lombok.internal.ConfigUtil;
 import io.freefair.gradle.plugins.lombok.tasks.Delombok;
 import io.freefair.gradle.plugins.lombok.tasks.LombokConfig;
 import io.freefair.gradle.plugins.lombok.tasks.LombokTask;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.lang.reflect.Method;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.UnknownDomainObjectException;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.attributes.DocsType;
@@ -48,6 +50,7 @@ public class LombokPlugin implements Plugin<Project> {
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
 
+    @Getter(AccessLevel.NONE)
     private boolean spotbugsConfigured;
 
     @Override
@@ -153,7 +156,7 @@ public class LombokPlugin implements Plugin<Project> {
         Object spotbugsExtension;
         try {
             spotbugsExtension = project.getExtensions().getByName("spotbugs");
-        } catch (Exception e) {
+        } catch (UnknownDomainObjectException e) {
             project.getLogger().info("Could not find SpotBugs extension; falling back to {}", SPOTBUGS_DEFAULT_VERSION);
             return SPOTBUGS_DEFAULT_VERSION;
         }
@@ -175,7 +178,7 @@ public class LombokPlugin implements Plugin<Project> {
         } catch (ReflectiveOperationException | RuntimeException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             project.getLogger().info("Could not resolve SpotBugs tool version via reflection ({}); falling back to {}",
-                    cause.getMessage(), SPOTBUGS_DEFAULT_VERSION);
+                    String.valueOf(cause.getMessage()), SPOTBUGS_DEFAULT_VERSION);
         }
 
         return SPOTBUGS_DEFAULT_VERSION;
