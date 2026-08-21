@@ -2,7 +2,7 @@
 
 > A collection of 45+ Gradle plugins for Lombok, AspectJ, SASS, PlantUML, Maven integration, GitHub publishing, and more.
 
-All plugin IDs follow the pattern `io.freefair.<name>`. Since version 8, the major.minor version aligns with Gradle's version (e.g., plugin 9.x targets Gradle 9.x). Java 17+ required.
+All plugin IDs follow the pattern `io.freefair.<name>`. Since version 8, the major.minor version aligns with Gradle's version (e.g., plugin 9.x targets Gradle 9.x). Java 17 or newer is required to run Gradle (Gradle 9.7 supports JVM 17 - 26).
 
 ## Docs
 
