@@ -45,7 +45,7 @@ import org.gradle.jvm.toolchain.JavaToolchainService;
 public class LombokPlugin implements Plugin<Project> {
 
     private static final String LOMBOK_MAPSTRUCT_VERSION = "0.2.0";
-    private static final String SPOTBUGS_DEFAULT_VERSION = "4.7.3";
+    private static final String SPOTBUGS_DEFAULT_VERSION = "4.10.4";
 
     private LombokBasePlugin lombokBasePlugin;
     private Project project;
