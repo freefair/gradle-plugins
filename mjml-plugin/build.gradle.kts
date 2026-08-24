@@ -7,8 +7,8 @@ plugins {
 description = "MJML processor Gradle plugins"
 
 dependencies {
-    implementation("org.apache.maven:maven-model:3.9.4")
-    implementation("com.github.node-gradle:gradle-node-plugin:7.0.0")
+    implementation("org.apache.maven:maven-model:3.9.16")
+    implementation("com.github.node-gradle:gradle-node-plugin:7.1.0")
 
     testImplementation(project(":test-common"))
 }
