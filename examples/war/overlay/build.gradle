@@ -3,7 +3,7 @@ apply plugin: "io.freefair.war-overlay"
 war {
     overlays {
         cas {
-            from "org.apereo.cas:cas-server-webapp-tomcat:6.6.15.2@war"
+            from "org.apereo.cas:cas-server-webapp-tomcat:8.0.1.1@war"
         }
     }
 }
