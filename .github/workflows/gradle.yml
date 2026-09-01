@@ -60,3 +60,22 @@ jobs:
 
       - run: ./gradlew -V assemble -s
       - run: ./gradlew -V check -s
+
+  # Single stable status check for branch protection. The build jobs use a
+  # version matrix, so their check names change whenever the matrix changes —
+  # a required context that no longer reports blocks the branch forever.
+  build-gate:
+    name: build-gate
+    runs-on: ubuntu-latest
+    needs: [ build, build-examples ]
+    if: always()
+    steps:
+      - name: Verify build results
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          EXAMPLES_RESULT: ${{ needs.build-examples.result }}
+        run: |
+          echo "Build plugin:          $BUILD_RESULT"
+          echo "Build example projects: $EXAMPLES_RESULT"
+          [ "$BUILD_RESULT" = "success" ] || exit 1
+          [ "$EXAMPLES_RESULT" = "success" ] || exit 1
