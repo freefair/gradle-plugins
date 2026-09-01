@@ -1,0 +1,46 @@
+# Merges pull requests carrying the "auto-merge-ok" label once every required
+# status check has passed. The label is the human decision; GitHub's native
+# auto-merge does the waiting.
+
+name: Auto merge
+
+on:
+  pull_request_target:
+    types: [ labeled, synchronize ]
+
+# pull_request_target runs against the base branch and never checks out the
+# pull request's code, so the elevated token is not exposed to it.
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  enable:
+    name: Enable auto merge
+    if: github.event.action == 'labeled' && github.event.label.name == 'auto-merge-ok'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable auto merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"
+
+  revoke:
+    name: Revoke auto merge
+    # A label approves the commits that existed when it was set. Dependabot
+    # rebases its own branches without changing their content, everyone else
+    # has to be approved again.
+    if: >-
+      github.event.action == 'synchronize'
+      && github.event.pull_request.user.login != 'dependabot[bot]'
+      && contains(github.event.pull_request.labels.*.name, 'auto-merge-ok')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disable auto merge and drop the label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr merge --disable-auto "$PR_URL"
+          gh pr edit "$PR_URL" --remove-label auto-merge-ok
