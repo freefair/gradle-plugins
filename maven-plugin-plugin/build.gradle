@@ -9,7 +9,7 @@ description = "Gradle Plugin for building Maven Plugins"
 dependencies {
     api project(':maven-plugin')
 
-    implementation platform("org.apache.maven.plugin-tools:maven-plugin-tools:3.15.2")
+    implementation platform("org.apache.maven.plugin-tools:maven-plugin-tools:3.16.0")
 
     implementation "org.apache.maven.plugin-tools:maven-plugin-tools-generators"
     implementation "org.apache.maven.plugin-tools:maven-plugin-tools-annotations"
