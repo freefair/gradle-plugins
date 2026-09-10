@@ -96,6 +96,11 @@ public class GitVersionPlugin implements Plugin<Project> {
                     String version = resolveBranchVersion(branch);
                     logger.lifecycle("Using GitHub Branch '{}' as version: {}", githubRef.get(), version);
                     return version;
+                } else if (githubRef.get().startsWith("refs/pull/")) {
+                    String pullRequest = githubRef.get().substring("refs/pull/".length());
+                    String version = resolveBranchVersion(pullRequest);
+                    logger.lifecycle("Using GitHub Pull Request '{}' as version: {}", githubRef.get(), version);
+                    return version;
                 } else {
                     logger.warn("Unknown prefix for 'GITHUB_REF' {}", githubRef.get());
                 }
