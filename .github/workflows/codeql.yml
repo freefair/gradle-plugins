@@ -63,14 +63,14 @@ jobs:
     # on 17 directly keeps the build off whatever JDKs the runner image happens
     # to ship.
     - name: Set up JDK 17
-      uses: actions/setup-java@v5.7.0
+      uses: actions/setup-java@v6.0.0
       with:
         java-version: 17
         distribution: 'temurin'
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v4.37.7
+      uses: github/codeql-action/init@v4.37.9
       with:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
@@ -93,6 +93,6 @@ jobs:
       run: ./gradlew testClasses --no-daemon --no-build-cache -S
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v4.37.7
+      uses: github/codeql-action/analyze@v4.37.9
       with:
         category: "/language:${{matrix.language}}"
