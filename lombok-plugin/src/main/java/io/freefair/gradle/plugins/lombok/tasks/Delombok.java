@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.*;
-import org.gradle.api.internal.file.FileOperations;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.jvm.toolchain.JavaLauncher;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 public abstract class Delombok extends DefaultTask implements LombokTask {
 
     @Inject
-    protected abstract FileOperations getFileOperations();
+    protected abstract ObjectFactory getObjectFactory();
 
     @Inject
     protected abstract FileSystemOperations getFileSystemOperations();
@@ -133,19 +133,14 @@ public abstract class Delombok extends DefaultTask implements LombokTask {
     @SkipWhenEmpty
     @IgnoreEmptyDirectories
     protected FileTree getFilteredInput() {
-        ConfigurableFileTree fileTree = null;
+        ConfigurableFileCollection dirs = getObjectFactory().fileCollection();
 
-        for (File file : getInput().getFiles()) {
-            if (file.isDirectory()) {
-                if (fileTree == null) {
-                    fileTree = getFileOperations().fileTree(file);
-                } else {
-                    fileTree.from(file);
-                }
-            }
-        }
+        getInput().getFiles()
+                .stream()
+                .filter(File::isDirectory)
+                .forEach(dirs::from);
 
-        return fileTree;
+        return dirs.getAsFileTree();
     }
 
     @TaskAction
