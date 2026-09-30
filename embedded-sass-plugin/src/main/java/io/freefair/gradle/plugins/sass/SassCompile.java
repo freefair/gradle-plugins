@@ -85,7 +85,7 @@ public abstract class SassCompile extends SourceTask {
             compiler.setGenerateSourceMaps(getSourceMapEnabled().getOrElse(true));
             compiler.setSourceMapIncludeSources(getSourceMapContents().getOrElse(false));
 
-            compiler.setLoggingHandler(new Slf4jLoggingHandler(getLogger()));
+            compiler.setLoggingHandler(new GradleLoggingHandler(this, getProblems()));
             compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
 
             getFileImporters().get().forEach(compiler::registerImporter);
