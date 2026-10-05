@@ -5,22 +5,30 @@ import com.sass_lang.embedded_protocol.OutboundMessage;
 import com.sass_lang.embedded_protocol.SourceSpan;
 import de.larsgrefer.sass.embedded.logging.Slf4jLoggingHandler;
 import lombok.Setter;
-import org.gradle.api.Task;
+import org.gradle.api.Incubating;
 import org.gradle.api.logging.Logger;
-import org.gradle.api.problems.*;
+import org.gradle.api.problems.ProblemGroup;
+import org.gradle.api.problems.ProblemId;
+import org.gradle.api.problems.ProblemReporter;
+import org.gradle.api.problems.Problems;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 
 @Setter
 public class GradleLoggingHandler extends Slf4jLoggingHandler {
 
-    static final ProblemGroup group = ProblemGroup.create("sass-deprecations", "Sass Deprecations");
+    private static final ProblemGroup problemGroup = ProblemGroup.create("sass-deprecations", "Sass Deprecation Warnings");
 
+    @NonNull
     private final Logger logger;
 
+    @Nullable
     private ProblemReporter problemReporter;
 
-    public GradleLoggingHandler(Task task, Problems problems) {
-        this(task.getLogger());
+    @Incubating
+    public GradleLoggingHandler(Logger logger, Problems problems) {
+        this(logger);
         this.problemReporter = problems.getReporter();
     }
 
@@ -34,30 +42,32 @@ public class GradleLoggingHandler extends Slf4jLoggingHandler {
 
         if (logEvent.getType() == LogEventType.DEPRECATION_WARNING) {
             logger.lifecycle(logEvent.getFormatted());
-            String deprecationType = logEvent.getDeprecationType();
-            problemReporter.report(ProblemId.create(deprecationType, deprecationType, group), problemSpec -> fillProblemSpec(logEvent, problemSpec));
+            reportProblem(logEvent);
         } else {
             super.handle(logEvent);
         }
     }
 
-    private static void fillProblemSpec(OutboundMessage.LogEventOrBuilder logEvent, ProblemSpec problemSpec) {
-
-        if (logEvent.hasSpan()) {
-            SourceSpan span = logEvent.getSpan();
-
-            if (span.hasEnd()) {
-                int size = span.getEnd().getOffset() - span.getStart().getOffset();
-                problemSpec = problemSpec.lineInFileLocation(span.getUrl(), span.getStart().getLine(), span.getStart().getColumn(), size);
-            } else {
-                problemSpec = problemSpec.lineInFileLocation(span.getUrl(), span.getStart().getLine(), span.getStart().getColumn());
-            }
+    @SuppressWarnings("UnstableApiUsage")
+    @Incubating
+    private void reportProblem(OutboundMessage.LogEventOrBuilder logEvent) {
+        if (problemReporter == null) {
+            return;
         }
 
-        problemSpec
-                .contextualLabel(logEvent.getDeprecationType())
-                .solution(logEvent.getMessage())
-                .documentedAt("https://sass-lang.com/d/" + logEvent.getDeprecationType())
-                .details(logEvent.getFormatted());
+        String deprecationType = logEvent.getDeprecationType();
+        ProblemId problemId = ProblemId.create(deprecationType, "sass:" + deprecationType, problemGroup);
+        problemReporter.report(problemId, problemSpec -> {
+
+            if (logEvent.hasSpan()) {
+                SassProblemUtils.fillSpanInfo(problemSpec, logEvent.getSpan());
+            }
+
+            problemSpec
+                    .solution(logEvent.getMessage())
+                    .documentedAt("https://sass-lang.com/d/" + logEvent.getDeprecationType())
+                    .details(logEvent.getFormatted());
+        });
     }
+
 }

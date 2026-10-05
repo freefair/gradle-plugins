@@ -19,13 +19,12 @@ import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.problems.ProblemGroup;
 import org.gradle.api.problems.ProblemId;
 import org.gradle.api.problems.Problems;
-import org.gradle.api.problems.Severity;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
+import org.jspecify.annotations.NonNull;
 import org.webjars.WebJarAssetLocator;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +32,6 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.LinkedHashSet;
@@ -83,7 +81,7 @@ public abstract class SassCompile extends SourceTask {
             compiler.setGenerateSourceMaps(getSourceMapEnabled().getOrElse(true));
             compiler.setSourceMapIncludeSources(getSourceMapContents().getOrElse(false));
 
-            compiler.setLoggingHandler(new GradleLoggingHandler(this, getProblems()));
+            compiler.setLoggingHandler(new GradleLoggingHandler(getLogger(), getProblems()));
             compiler.getLoadPaths().addAll(getIncludePaths().getFiles());
 
             getFileImporters().get().forEach(compiler::registerImporter);
@@ -100,7 +98,7 @@ public abstract class SassCompile extends SourceTask {
             getSource().visit(new EmptyFileVisitor() {
 
                 @Override
-                public void visitFile(@Nonnull FileVisitDetails fileVisitDetails) {
+                public void visitFile(@NonNull FileVisitDetails fileVisitDetails) {
                     String name = fileVisitDetails.getName();
                     if (name.startsWith("_"))
                         return;
@@ -134,14 +132,14 @@ public abstract class SassCompile extends SourceTask {
                                     css += "\n/*# sourceMappingURL=" + mapUrl + " */";
                                 }
 
-                                Files.write(realOut.toPath(), css.getBytes(StandardCharsets.UTF_8));
+                                Files.writeString(realOut.toPath(), css);
                             } else {
                                 getLogger().error("Cannot write into {}", realOut.getParentFile());
                                 throw new GradleException("Cannot write into " + realOut.getParentFile());
                             }
                             if (getSourceMapEnabled().get() && !getSourceMapEmbed().get()) {
                                 if (realMap.getParentFile().exists() || realMap.getParentFile().mkdirs()) {
-                                    Files.write(realMap.toPath(), output.getSourceMap().getBytes(StandardCharsets.UTF_8));
+                                    Files.writeString(realMap.toPath(), output.getSourceMap());
                                 } else {
                                     getLogger().error("Cannot write into {}", realMap.getParentFile());
                                     throw new GradleException("Cannot write into " + realMap.getParentFile());
@@ -154,9 +152,10 @@ public abstract class SassCompile extends SourceTask {
 
                             ProblemId problemId = ProblemId.create("sass-compilation-failed", "Sass Compilation Failed", PROBLEM_GROUP);
                             throw getProblems().getReporter().throwing(e, problemId, problemSpec -> {
-                                problemSpec.lineInFileLocation(sassError.getSpan().getUrl(), sassError.getSpan().getStart().getLine(), sassError.getSpan().getStart().getColumn());
+                                if (sassError.hasSpan()) {
+                                    SassProblemUtils.fillSpanInfo(problemSpec, sassError.getSpan());
+                                }
                                 problemSpec.details(sassError.getFormatted());
-                                problemSpec.severity(Severity.ERROR);
                             });
 
                         } catch (IOException e) {
@@ -187,7 +186,7 @@ public abstract class SassCompile extends SourceTask {
     @Optional
     public abstract ListProperty<CustomImporter> getCustomImporters();
 
-    @Classpath
+    @CompileClasspath
     @Optional
     public abstract ConfigurableFileCollection getWebjars();
 
@@ -236,7 +235,7 @@ public abstract class SassCompile extends SourceTask {
     @SkipWhenEmpty
     @IgnoreEmptyDirectories
     @PathSensitive(PathSensitivity.RELATIVE)
-    public FileTree getSource() {
+    public @NonNull FileTree getSource() {
         return super.getSource();
     }
 
