@@ -19,10 +19,12 @@ public class LombokBasePlugin implements Plugin<Project> {
         lombokExtension = project.getExtensions().create("lombok", LombokExtension.class);
         lombokExtension.getDisableConfig().convention(ConfigUtil.isDisableConfig(project));
 
-        lombokConfiguration = project.getConfigurations().create("lombok");
-        lombokConfiguration.defaultDependencies(dependencySet -> dependencySet.add(
-                project.getDependencies().create("org.projectlombok:lombok:" + lombokExtension.getVersion().get())
-        ));
+        lombokConfiguration = project.getConfigurations().create("lombok", lombok -> {
+            lombok.defaultDependencies(dependencySet -> dependencySet.add(
+                    project.getDependencies().create("org.projectlombok:lombok:" + lombokExtension.getVersion().get())
+            ));
+            lombok.setCanBeConsumed(false);
+        });
 
         project.getTasks().withType(LombokTask.class)
                 .configureEach(lombokTask -> lombokTask.getLombokClasspath().from(lombokConfiguration));
