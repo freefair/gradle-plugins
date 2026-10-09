@@ -2,7 +2,6 @@ package io.freefair.gradle.plugins.sass;
 
 import com.sass_lang.embedded_protocol.LogEventType;
 import com.sass_lang.embedded_protocol.OutboundMessage;
-import com.sass_lang.embedded_protocol.SourceSpan;
 import de.larsgrefer.sass.embedded.logging.Slf4jLoggingHandler;
 import lombok.Setter;
 import org.gradle.api.Incubating;
