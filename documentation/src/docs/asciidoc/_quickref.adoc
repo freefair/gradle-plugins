@@ -39,6 +39,12 @@ All plugin IDs follow the pattern `io.freefair.<name>`.
 | `io.freefair.compress`
 | Provides Ar, Cpio, 7z archive tasks and GZip, BZip2, LZMA, Deflate compression tasks via Apache Commons Compress.
 
+| `io.freefair.compress-java-resources`
+| Pre-compresses static Java resources with GZip and Brotli for direct serving by webservers.
+
+| `io.freefair.compress-war-resources`
+| Pre-compresses static webapp resources with GZip and Brotli for WAR projects.
+
 | `io.freefair.code-generator`
 | Framework for custom code generation plugins.
 

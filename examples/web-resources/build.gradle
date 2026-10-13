@@ -1,0 +1,15 @@
+plugins {
+    id "war"
+    id "io.freefair.compress-java-resources"
+    id "io.freefair.compress-war-resources"
+    id "io.freefair.sass-war"
+    id "io.freefair.sass-java"
+}
+
+tasks.named("compressResources", SourceTask).configure {
+    source(tasks.named("compileSass"))
+}
+
+tasks.named("compressWebappResources", SourceTask).configure {
+    source(tasks.named("compileWebappSass"))
+}

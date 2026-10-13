@@ -44,6 +44,20 @@ gradlePlugin {
             description = "Allows to open formats supported by commons-compress as FileTree"
             tags.set(['commons-compress'])
         }
+        compressWebResources {
+            id = "io.freefair.compress-war-resources"
+            implementationClass = "io.freefair.gradle.plugins.compress.web.CompressWarResourcesPlugin"
+            displayName = "War Resource Compression Plugin"
+            description = "Pre-compress static resources, so webservers can serve them directly"
+            tags.set(['web', 'compression'])
+        }
+        compressJavaResources {
+            id = "io.freefair.compress-java-resources"
+            implementationClass = "io.freefair.gradle.plugins.compress.web.CompressJavaResourcesPlugin"
+            displayName = "Java Resource Compression Plugin"
+            description = "Pre-compress static resources, so webservers can serve them directly"
+            tags.set(['web', 'compression'])
+        }
     }
 }
 

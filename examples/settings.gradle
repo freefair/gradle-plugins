@@ -48,3 +48,5 @@ include ":mjml"
 include ":okhttp"
 
 include ":gwt:war"
+
+include ":web-resources"

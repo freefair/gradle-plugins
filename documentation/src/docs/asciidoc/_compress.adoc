@@ -73,6 +73,16 @@ This plugin makes the <<Cpio>> task available without it's qualified name.
 
 This plugin makes the <<SevenZip>> task available without it's qualified name.
 
+=== `io.freefair.compress-java-resources`
+
+This plugin pre-compresses static Java resources (using GZip and Brotli) so webservers or embedded servlet containers can serve them directly.
+For each https://docs.gradle.org/current/dsl/org.gradle.api.tasks.SourceSet.html[source set], it registers a <<CompressResourcesTask>> (e.g. `compressResources`, `compressTestResources`) that compresses files from `sourceSet.resources` into `build/compressed-<sourceSet>-resources` and includes them into the corresponding `processResources` task.
+
+=== `io.freefair.compress-war-resources`
+
+This plugin pre-compresses static web application resources (using GZip and Brotli) so webservers can serve them directly.
+It applies the `war` plugin, registers a `compressWebappResources` task of type <<CompressResourcesTask>> that compresses files from the webapp directory into `build/compressed-war-resources`, and includes the compressed files into the `war` task archive.
+
 == Compress Tasks
 
 [#Ar]
@@ -131,6 +141,33 @@ tasks.register<io.freefair.gradle.plugins.compress.tasks.BZip2>("compressBZip2")
     source("src/main/resources")
     destinationDir = file("$buildDir/compressed")
     fileExtension = "bz2"
+}
+----
+--
+
+[#CompressResourcesTask]
+=== `CompressResourcesTask`
+
+This task pre-compresses static files using GZip and Brotli algorithms in parallel using the Gradle Worker API.
+A compressed (`.gz` or `.br`) file is produced if the source file meets the optional `minSize` threshold and achieves a compression ratio of at least 1.1.
+
+--
+[source, groovy, role="primary"]
+.Groovy
+----
+task compressResources(type: io.freefair.gradle.plugins.compress.web.CompressResourcesTask) {
+    source "src/main/resources"
+    outputDir = file("$buildDir/compressed-resources")
+    minSize = 1024
+}
+----
+[source, kotlin, role="secondary"]
+.Kotlin
+----
+tasks.register<io.freefair.gradle.plugins.compress.web.CompressResourcesTask>("compressResources") {
+    source("src/main/resources")
+    outputDir.set(file("$buildDir/compressed-resources"))
+    minSize.set(1024)
 }
 ----
 --
