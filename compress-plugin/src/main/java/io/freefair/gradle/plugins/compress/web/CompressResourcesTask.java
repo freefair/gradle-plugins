@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.compress.web;
 import io.freefair.gradle.plugins.compress.BrotliWorkAction;
 import io.freefair.gradle.plugins.compress.tasks.GZip;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.workers.WorkQueue;
@@ -11,6 +12,7 @@ import org.gradle.workers.WorkerExecutor;
 import javax.inject.Inject;
 import java.io.File;
 
+@CacheableTask
 public abstract class CompressResourcesTask extends SourceTask {
 
     @OutputDirectory
@@ -22,6 +24,15 @@ public abstract class CompressResourcesTask extends SourceTask {
 
     @Inject
     protected abstract WorkerExecutor getWorkerExecutor();
+
+    @Override
+    @InputFiles
+    @SkipWhenEmpty
+    @IgnoreEmptyDirectories
+    @PathSensitive(PathSensitivity.RELATIVE)
+    public FileTree getSource() {
+        return super.getSource();
+    }
 
     @TaskAction
     public void compressResources() {
