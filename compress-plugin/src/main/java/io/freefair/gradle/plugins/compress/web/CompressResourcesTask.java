@@ -3,17 +3,25 @@ package io.freefair.gradle.plugins.compress.web;
 import io.freefair.gradle.plugins.compress.BrotliWorkAction;
 import io.freefair.gradle.plugins.compress.tasks.GZip;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileSystemOperations;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
 import org.gradle.workers.WorkQueue;
 import org.gradle.workers.WorkerExecutor;
+import org.jspecify.annotations.NonNull;
 
 import javax.inject.Inject;
 import java.io.File;
 
 @CacheableTask
 public abstract class CompressResourcesTask extends SourceTask {
+
+    @Inject
+    protected abstract WorkerExecutor getWorkerExecutor();
+
+    @Inject
+    protected abstract FileSystemOperations getFileSystemOperations();
 
     @OutputDirectory
     public abstract DirectoryProperty getOutputDir();
@@ -22,20 +30,30 @@ public abstract class CompressResourcesTask extends SourceTask {
     @Optional
     public abstract Property<Integer> getMinSize();
 
-    @Inject
-    protected abstract WorkerExecutor getWorkerExecutor();
+    @Input
+    @Optional
+    public abstract Property<Double> getMinCompressionRatio();
 
-    @Override
+    @Input
+    @Optional
+    public abstract Property<Boolean> getEnableBrotli();
+
+    @Input
+    @Optional
+    public abstract Property<Boolean> getEnableGzip();
+
     @InputFiles
     @SkipWhenEmpty
     @IgnoreEmptyDirectories
     @PathSensitive(PathSensitivity.RELATIVE)
-    public FileTree getSource() {
+    public @NonNull FileTree getSource() {
         return super.getSource();
     }
 
     @TaskAction
     public void compressResources() {
+
+        getFileSystemOperations().delete(deleteSpec -> deleteSpec.delete(getOutputDir()));
 
         WorkQueue workQueue = getWorkerExecutor().noIsolation();
 
@@ -52,23 +70,30 @@ public abstract class CompressResourcesTask extends SourceTask {
 
             getLogger().info("Compressing resource: {}", fileVisitDetails.getRelativePath());
 
-            File gzFile = new File(getOutputDir().get().getAsFile(), fileVisitDetails.getPath() + ".gz");
-            File brFile = new File(getOutputDir().get().getAsFile(), fileVisitDetails.getPath() + ".br");
+            if (getEnableGzip().getOrElse(true)) {
+                File gzFile = new File(getOutputDir().get().getAsFile(), fileVisitDetails.getPath() + ".gz");
 
-            workQueue.submit(GZip.GZipWorkAction.class, gZipWorkParameters -> {
-                gZipWorkParameters.getSourceFile().set(fileVisitDetails.getFile());
-                gZipWorkParameters.getTargetFile().set(gzFile);
-                gZipWorkParameters.getCompressionLevel().set(9);
-                gZipWorkParameters.getAddFilename().set(false);
-                gZipWorkParameters.getOnlyIfMinCompressionRatio().set(1.1d);
-            });
+                workQueue.submit(GZip.GZipWorkAction.class, gZipWorkParameters -> {
+                    gZipWorkParameters.getSourceFile().set(fileVisitDetails.getFile());
+                    gZipWorkParameters.getTargetFile().set(gzFile);
+                    gZipWorkParameters.getCompressionLevel().set(9);
+                    gZipWorkParameters.getAddFilename().set(false);
+                    gZipWorkParameters.getOnlyIfMinCompressionRatio().set(getMinCompressionRatio().orElse(1.1d));
+                });
+            }
 
-            workQueue.submit(BrotliWorkAction.class, brotliWorkParameters -> {
-                brotliWorkParameters.getSourceFile().set(fileVisitDetails.getFile());
-                brotliWorkParameters.getTargetFile().set(brFile);
-                brotliWorkParameters.getBest().set(true);
-                brotliWorkParameters.getOnlyIfMinCompressionRatio().set(1.1d);
-            });
+            if (getEnableBrotli().getOrElse(true)) {
+                File brFile = new File(getOutputDir().get().getAsFile(), fileVisitDetails.getPath() + ".br");
+
+                workQueue.submit(BrotliWorkAction.class, brotliWorkParameters -> {
+                    brotliWorkParameters.getSourceFile().set(fileVisitDetails.getFile());
+                    brotliWorkParameters.getTargetFile().set(brFile);
+                    brotliWorkParameters.getBest().set(true);
+                    brotliWorkParameters.getOnlyIfMinCompressionRatio().set(getMinCompressionRatio().orElse(1.1d));
+                });
+
+            }
+
 
         });
     }

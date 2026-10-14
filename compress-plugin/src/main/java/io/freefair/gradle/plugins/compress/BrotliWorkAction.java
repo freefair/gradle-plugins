@@ -21,37 +21,31 @@ public abstract class BrotliWorkAction implements WorkAction<BrotliWorkParameter
     public void execute() {
 
         File outputFile = getParameters().getTargetFile().getAsFile().get();
-        File outputDir = outputFile.getParentFile();
 
-        if (outputDir.isDirectory() || outputDir.mkdirs()) {
+        List<String> command = new ArrayList<>();
+        command.add("brotli");
 
-            List<String> command = new ArrayList<>();
-            command.add("brotli");
-
-            if (getParameters().getForce().getOrElse(true)) {
-                command.add("--force");
-            }
-
-            if (getParameters().getQuality().isPresent()) {
-                command.add("--quality=" + getParameters().getQuality().get());
-            }
-
-            if (getParameters().getBest().getOrElse(false)) {
-                command.add("--best");
-            }
-
-            command.add("--output=" + outputFile.getAbsolutePath());
-            command.add(getParameters().getSourceFile().get().getAsFile().getAbsolutePath());
-
-            getExecOperations().exec(spec -> {
-                spec.commandLine(command);
-                spec.setIgnoreExitValue(false);
-            });
-
-            checkMinCompressionRatio(getParameters());
-
-        } else {
-            throw new RuntimeException("Could not create output directory: " + outputDir.getAbsolutePath());
+        if (getParameters().getForce().getOrElse(true)) {
+            command.add("--force");
         }
+
+        if (getParameters().getQuality().isPresent()) {
+            command.add("--quality=" + getParameters().getQuality().get());
+        }
+
+        if (getParameters().getBest().getOrElse(false)) {
+            command.add("--best");
+        }
+
+        command.add("--output=" + outputFile.getAbsolutePath());
+        command.add(getParameters().getSourceFile().get().getAsFile().getAbsolutePath());
+
+        getExecOperations().exec(spec -> {
+            spec.commandLine(command);
+            spec.setIgnoreExitValue(false);
+        });
+
+        checkMinCompressionRatio(getParameters());
+
     }
 }
