@@ -3,6 +3,7 @@ package io.freefair.gradle.plugins.sass;
 import com.sass_lang.embedded_protocol.LogEventType;
 import com.sass_lang.embedded_protocol.OutboundMessage;
 import de.larsgrefer.sass.embedded.logging.Slf4jLoggingHandler;
+import de.larsgrefer.sass.spec.Deprecation;
 import lombok.Setter;
 import org.gradle.api.Incubating;
 import org.gradle.api.logging.Logger;
@@ -55,16 +56,25 @@ public class GradleLoggingHandler extends Slf4jLoggingHandler {
         }
 
         String deprecationType = logEvent.getDeprecationType();
-        ProblemId problemId = ProblemId.create(deprecationType, "sass:" + deprecationType, problemGroup);
+        Deprecation deprecation = Deprecation.find(deprecationType);
+        String displayName = "sass:" + deprecationType;
+        if (deprecation != null) {
+            displayName = deprecation.getDescription();
+        }
+        ProblemId problemId = ProblemId.create(deprecationType, displayName, problemGroup);
         problemReporter.report(problemId, problemSpec -> {
 
             if (logEvent.hasSpan()) {
                 SassProblemUtils.fillSpanInfo(problemSpec, logEvent.getSpan());
             }
 
+            String url = "https://sass-lang.com/d/" + logEvent.getDeprecationType();
+            if (deprecation != null) {
+                url = deprecation.getDocumentationLink();
+            }
             problemSpec
                     .solution(logEvent.getMessage())
-                    .documentedAt("https://sass-lang.com/d/" + logEvent.getDeprecationType())
+                    .documentedAt(url)
                     .details(logEvent.getFormatted());
         });
     }
