@@ -21,6 +21,11 @@ public abstract class BrotliWorkAction implements WorkAction<BrotliWorkParameter
     public void execute() {
 
         File outputFile = getParameters().getTargetFile().getAsFile().get();
+        File parentFile = outputFile.getParentFile();
+
+        if (!parentFile.exists()) {
+            parentFile.mkdirs();
+        }
 
         List<String> command = new ArrayList<>();
         command.add("brotli");
