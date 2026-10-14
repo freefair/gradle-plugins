@@ -39,7 +39,7 @@ allprojects {
 
         plugins.apply "checkstyle"
 
-        checkstyle.toolVersion = "13.4.0"
+        checkstyle.toolVersion = "14.3.0"
 
         tasks.withType(Checkstyle).configureEach {
             javaLauncher = javaToolchains.launcherFor {
