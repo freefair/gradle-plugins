@@ -88,6 +88,10 @@ public abstract class SassCompile extends SourceTask {
             getCustomImporters().get().forEach(compiler::registerImporter);
             getHostFunctions().get().forEach(compiler::registerFunction);
 
+            getFatalDeprecations().get().forEach(compiler::addFatalDeprecation);
+            getSilenceDeprecations().get().forEach(compiler::addSilenceDeprecation);
+            getFutureDeprecations().get().forEach(compiler::addFutureDeprecation);
+
             if (webjarsLoader != null) {
                 compiler.registerImporter(new WebjarsImporter(webjarsLoader, new WebJarAssetLocator(webjarsLoader)).autoCanonicalize());
             }
@@ -242,4 +246,32 @@ public abstract class SassCompile extends SourceTask {
     public void setOutputStyle(String outputStyle) {
         getOutputStyle().set(OutputStyle.valueOf(outputStyle.trim().toUpperCase()));
     }
+
+    /**
+     * Deprecation IDs or versions to treat as fatal.
+     *
+     * @see SassCompiler#addFatalDeprecation(String)
+     */
+    @Input
+    @Optional
+    public abstract ListProperty<String> getFatalDeprecations();
+
+    /**
+     * Deprecation IDs to ignore.
+     *
+     * @see SassCompiler#addSilenceDeprecation(String)
+     */
+    @Input
+    @Optional
+    public abstract ListProperty<String> getSilenceDeprecations();
+
+    /**
+     * Deprecation IDs to opt into early.
+     *
+     * @see SassCompiler#addFutureDeprecation(String)
+     */
+    @Input
+    @Optional
+    public abstract ListProperty<String> getFutureDeprecations();
+
 }
