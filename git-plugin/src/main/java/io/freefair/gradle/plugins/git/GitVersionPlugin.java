@@ -1,33 +1,34 @@
 package io.freefair.gradle.plugins.git;
 
+import io.freefair.gradle.util.GitUtil;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.logging.Logger;
-
-import io.freefair.gradle.util.GitUtil;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 
+import javax.inject.Inject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author Lars Grefer
  */
-public class GitVersionPlugin implements Plugin<Project> {
+public abstract class GitVersionPlugin implements Plugin<Project> {
 
     private static final Pattern releaseBranchPattern = Pattern.compile("release-(\\d+.*)");
     private static final Pattern hotfixBranchPattern = Pattern.compile("hotfix-(\\d+.*)");
     private static final Pattern vTagPattern = Pattern.compile("v(\\d+.*)");
 
-    private Project project;
     private Logger logger;
+
+    @Inject
+    protected abstract ProviderFactory getProviderFactory();
 
     @Override
     public void apply(Project project) {
-        this.project = project;
         this.logger = project.getLogger();
-        project.setVersion(resolveVersion());
+        project.setVersion(resolveVersion(project));
 
         project.allprojects(p -> p.setVersion(project.getVersion()));
     }
@@ -61,30 +62,28 @@ public class GitVersionPlugin implements Plugin<Project> {
         return version;
     }
 
-    private Object resolveVersion() {
+    private Object resolveVersion(Project project) {
         if (!"unspecified".equals(project.getVersion().toString())) {
             logger.lifecycle("Using explicit version {}", project.getVersion());
             return project.getVersion();
         }
 
-        ProviderFactory providerFactory = project.getProviders();
-
-        if (GitUtil.isTravisCi(providerFactory)) {
-            Provider<String> travisTag = providerFactory.environmentVariable("TRAVIS_TAG");
+        if (GitUtil.isTravisCi(getProviderFactory())) {
+            Provider<String> travisTag = getProviderFactory().environmentVariable("TRAVIS_TAG");
             if (travisTag.isPresent()) {
                 String version = resolveTagVersion(travisTag.get().trim());
                 logger.lifecycle("Using TRAVIS_TAG '{}' as version: {}", travisTag.get(), version);
                 return version;
             }
 
-            Provider<String> travisBranch = providerFactory.environmentVariable("TRAVIS_BRANCH");
+            Provider<String> travisBranch = getProviderFactory().environmentVariable("TRAVIS_BRANCH");
             if (travisBranch.isPresent()) {
                 String version = resolveBranchVersion(travisBranch.get());
                 logger.lifecycle("Using TRAVIS_BRANCH '{}' as version: {}", travisBranch.get(), version);
                 return version;
             }
-        } else if (GitUtil.isGithubActions(providerFactory)) {
-            Provider<String> githubRef = providerFactory.environmentVariable("GITHUB_REF");
+        } else if (GitUtil.isGithubActions(getProviderFactory())) {
+            Provider<String> githubRef = getProviderFactory().environmentVariable("GITHUB_REF");
             if (githubRef.isPresent()) {
                 if (githubRef.get().startsWith("refs/tags/")) {
                     String tag = githubRef.get().substring("refs/tags/".length());
@@ -107,30 +106,30 @@ public class GitVersionPlugin implements Plugin<Project> {
             } else {
                 logger.warn("No GITHUB_REF found on GitHub Actions");
             }
-        } else if (GitUtil.isCircleCi(providerFactory)) {
-            Provider<String> circleTag = providerFactory.environmentVariable("CIRCLE_TAG");
+        } else if (GitUtil.isCircleCi(getProviderFactory())) {
+            Provider<String> circleTag = getProviderFactory().environmentVariable("CIRCLE_TAG");
             if (circleTag.isPresent()) {
                 String version = resolveTagVersion(circleTag.get().trim());
                 logger.lifecycle("Using CIRCLE_TAG '{}' as version: {}", circleTag.get(), version);
                 return version;
             }
 
-            Provider<String> circleBranch = providerFactory.environmentVariable("CIRCLE_BRANCH");
+            Provider<String> circleBranch = getProviderFactory().environmentVariable("CIRCLE_BRANCH");
             if (circleBranch.isPresent()) {
                 String version = resolveBranchVersion(circleBranch.get());
                 logger.lifecycle("Using CIRCLE_BRANCH '{}' as version: {}", circleBranch.get(), version);
                 return version;
             }
 
-        } else if (GitUtil.isGitLab(providerFactory)) {
-            Provider<String> gitLabTag = providerFactory.environmentVariable("CI_COMMIT_TAG");
+        } else if (GitUtil.isGitLab(getProviderFactory())) {
+            Provider<String> gitLabTag = getProviderFactory().environmentVariable("CI_COMMIT_TAG");
             if (gitLabTag.isPresent()) {
                 String version = resolveTagVersion(gitLabTag.get().trim());
                 logger.lifecycle("Using CI_COMMIT_TAG '{}' as version: {}", gitLabTag.get(), version);
                 return version;
             }
 
-            Provider<String> gitLabBranch = providerFactory.environmentVariable("CI_COMMIT_BRANCH");
+            Provider<String> gitLabBranch = getProviderFactory().environmentVariable("CI_COMMIT_BRANCH");
             if (gitLabBranch.isPresent()) {
                 String version = resolveBranchVersion(gitLabBranch.get());
                 logger.lifecycle("Using CI_COMMIT_BRANCH '{}' as version: {}", gitLabBranch.get(), version);
@@ -139,7 +138,7 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         try {
-            String gitTag = providerFactory
+            String gitTag = getProviderFactory()
                     .exec(execSpec -> {
                         execSpec.setWorkingDir(project.getProjectDir());
                         execSpec.commandLine("git", "describe", "--tags", "--exact-match", "--dirty=-SNAPSHOT");
@@ -159,20 +158,20 @@ public class GitVersionPlugin implements Plugin<Project> {
             logger.debug("Failed to get current git tag", e);
         }
 
-        if (GitUtil.isJenkins(providerFactory)) {
-            Provider<String> gitLocalBranch = providerFactory.environmentVariable("GIT_LOCAL_BRANCH");
+        if (GitUtil.isJenkins(getProviderFactory())) {
+            Provider<String> gitLocalBranch = getProviderFactory().environmentVariable("GIT_LOCAL_BRANCH");
             if (gitLocalBranch.isPresent()) {
                 String version = resolveBranchVersion(gitLocalBranch.get());
                 logger.lifecycle("Using GIT_LOCAL_BRANCH '{}' as version: {}", gitLocalBranch.get(), version);
                 return version;
             }
-            Provider<String> gitBranch = providerFactory.environmentVariable("GIT_BRANCH");
+            Provider<String> gitBranch = getProviderFactory().environmentVariable("GIT_BRANCH");
             if (gitBranch.isPresent()) {
                 String version = resolveBranchVersion(gitBranch.get());
                 logger.lifecycle("Using GIT_BRANCH '{}' as version: {}", gitBranch.get(), version);
                 return version;
             }
-            Provider<String> branchName = providerFactory.environmentVariable("BRANCH_NAME");
+            Provider<String> branchName = getProviderFactory().environmentVariable("BRANCH_NAME");
             if (branchName.isPresent()) {
                 String version = resolveBranchVersion(branchName.get());
                 logger.lifecycle("Using BRANCH_NAME '{}' as version: {}", branchName.get(), version);
@@ -181,7 +180,7 @@ public class GitVersionPlugin implements Plugin<Project> {
         }
 
         try {
-            String gitBranch = providerFactory
+            String gitBranch = getProviderFactory()
                     .exec(execSpec -> {
                         execSpec.setWorkingDir(project.getProjectDir());
                         execSpec.commandLine("git", "symbolic-ref", "--short", "HEAD");
