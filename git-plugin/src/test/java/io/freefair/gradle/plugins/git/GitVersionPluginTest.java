@@ -27,7 +27,7 @@ public class GitVersionPluginTest {
 
     @Test
     void resolveTagVersion() {
-        GitVersionPlugin plugin = new GitVersionPlugin();
+        GitVersionPlugin plugin = project.getObjects().newInstance(GitVersionPlugin.class);
 
         assertThat(plugin.resolveTagVersion("foo")).isEqualTo("foo");
         assertThat(plugin.resolveTagVersion("v1.3")).isEqualTo("1.3");
@@ -35,7 +35,7 @@ public class GitVersionPluginTest {
 
     @Test
     void resolveBranchVersion() {
-        GitVersionPlugin plugin = new GitVersionPlugin();
+        GitVersionPlugin plugin = project.getObjects().newInstance(GitVersionPlugin.class);
 
         assertThat(plugin.resolveBranchVersion("develop")).isEqualTo("develop-SNAPSHOT");
         assertThat(plugin.resolveBranchVersion("feature/foo")).isEqualTo("feature-foo-SNAPSHOT");
