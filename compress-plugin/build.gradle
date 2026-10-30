@@ -66,6 +66,7 @@ dependencies {
     implementation 'org.tukaani:xz:1.12'
 
     implementation 'org.brotli:dec:0.1.2'
+    compileOnly 'com.aayushatharva.brotli4j:brotli4j:1.24.0'
 
     testImplementation project(":test-common")
     testImplementation platform("org.spockframework:spock-bom:2.5-groovy-4.0")

@@ -1,5 +1,6 @@
 package io.freefair.gradle.plugins.compress.web;
 
+import io.freefair.gradle.plugins.compress.brotli4j.Brotli4jBasePlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.JavaPlugin;
@@ -9,10 +10,12 @@ import org.gradle.api.tasks.TaskProvider;
 import org.gradle.language.jvm.tasks.ProcessResources;
 
 public class CompressJavaResourcesPlugin implements Plugin<Project> {
+
     @Override
     public void apply(Project project) {
 
         project.getPlugins().apply(JavaPlugin.class);
+        project.getPlugins().apply(Brotli4jBasePlugin.class);
 
         for (SourceSet sourceSet : project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets()) {
 

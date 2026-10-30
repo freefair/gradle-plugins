@@ -11,6 +11,7 @@ import java.util.List;
 
 import static io.freefair.gradle.plugins.compress.tasks.CompressorWorkAction.checkMinCompressionRatio;
 
+@Deprecated
 @Slf4j
 public abstract class BrotliWorkAction implements WorkAction<BrotliWorkParameters> {
 

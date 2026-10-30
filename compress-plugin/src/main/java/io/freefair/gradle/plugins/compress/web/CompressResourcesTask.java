@@ -1,6 +1,7 @@
 package io.freefair.gradle.plugins.compress.web;
 
-import io.freefair.gradle.plugins.compress.BrotliWorkAction;
+import io.freefair.gradle.plugins.compress.brotli4j.Brotli4jWorkAction;
+import io.freefair.gradle.plugins.compress.brotli4j.Brotli4jTask;
 import io.freefair.gradle.plugins.compress.tasks.GZip;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
@@ -15,7 +16,7 @@ import javax.inject.Inject;
 import java.io.File;
 
 @CacheableTask
-public abstract class CompressResourcesTask extends SourceTask {
+public abstract class CompressResourcesTask extends SourceTask implements Brotli4jTask {
 
     @Inject
     protected abstract WorkerExecutor getWorkerExecutor();
@@ -57,6 +58,12 @@ public abstract class CompressResourcesTask extends SourceTask {
 
         WorkQueue workQueue = getWorkerExecutor().noIsolation();
 
+        WorkQueue brotliWorkQueue = getWorkerExecutor().processIsolation(pi -> {
+            pi.getClasspath().from(getBrotli4jClasspath());
+            pi.getForkOptions().setMinHeapSize("8m");
+            pi.getForkOptions().setMaxHeapSize("32m");
+        });
+
         getSource().visit(fileVisitDetails -> {
 
             if (fileVisitDetails.isDirectory()) {
@@ -85,7 +92,7 @@ public abstract class CompressResourcesTask extends SourceTask {
             if (getEnableBrotli().getOrElse(true)) {
                 File brFile = new File(getOutputDir().get().getAsFile(), fileVisitDetails.getPath() + ".br");
 
-                workQueue.submit(BrotliWorkAction.class, brotliWorkParameters -> {
+                brotliWorkQueue.submit(Brotli4jWorkAction.class, brotliWorkParameters -> {
                     brotliWorkParameters.getSourceFile().set(fileVisitDetails.getFile());
                     brotliWorkParameters.getTargetFile().set(brFile);
                     brotliWorkParameters.getBest().set(true);
