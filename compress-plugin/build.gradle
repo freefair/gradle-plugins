@@ -1,8 +1,11 @@
+import io.freefair.gradle.plugins.build.GenerateStaticFieldsClass
+
 plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish"
     id "groovy"
+    id "build.default-versions"
 }
 
 description = "Collection of Apache Commons Compress related Gradle plugins"
@@ -61,12 +64,14 @@ gradlePlugin {
     }
 }
 
+def brotli4jVersion = "1.24.0"
+
 dependencies {
     api 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.tukaani:xz:1.12'
 
     implementation 'org.brotli:dec:0.1.2'
-    compileOnly 'com.aayushatharva.brotli4j:brotli4j:1.24.0'
+    compileOnly "com.aayushatharva.brotli4j:brotli4j:$brotli4jVersion"
 
     testImplementation project(":test-common")
     testImplementation platform("org.spockframework:spock-bom:2.5-groovy-4.0")
@@ -74,3 +79,10 @@ dependencies {
     testImplementation 'org.spockframework:spock-junit4'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
+
+tasks.named("generateDefaultVersionsClass", GenerateStaticFieldsClass) {
+    fieldValues = [
+            "BROTLI4J_VERSION": brotli4jVersion
+    ]
+}
+

@@ -1,15 +1,26 @@
+import io.freefair.gradle.plugins.build.GenerateStaticFieldsClass
+
 plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish"
+    id "build.default-versions"
 }
 
 description = "Collection of Lombok related Gradle plugins"
 
+def lombokVersion = "1.18.48"
+
 dependencies {
     testImplementation project(":test-common")
-    testImplementation 'org.projectlombok:lombok:1.18.48'
+    testImplementation "org.projectlombok:lombok:$lombokVersion"
     testImplementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:7.5.0.8588'
+}
+
+tasks.named("generateDefaultVersionsClass", GenerateStaticFieldsClass) {
+    fieldValues = [
+            "LOMBOK_VERSION": lombokVersion
+    ]
 }
 
 gradlePlugin {

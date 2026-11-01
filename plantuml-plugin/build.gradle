@@ -1,7 +1,10 @@
+import io.freefair.gradle.plugins.build.GenerateStaticFieldsClass
+
 plugins {
     id "maven-publish"
     id "java-gradle-plugin"
     id "com.gradle.plugin-publish"
+    id "build.default-versions"
 }
 
 description = "Gradle Plugin for PlantUML"
@@ -15,6 +18,13 @@ dependencies {
 
     testRuntimeOnly "net.sourceforge.plantuml:plantuml:${plantUmlVersion}"
 }
+
+tasks.named("generateDefaultVersionsClass", GenerateStaticFieldsClass) {
+    fieldValues = [
+            "PLANTUML_VERSION": plantUmlVersion
+    ]
+}
+
 
 gradlePlugin {
     plugins {

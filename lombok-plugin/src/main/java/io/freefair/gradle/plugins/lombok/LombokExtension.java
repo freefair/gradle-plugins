@@ -11,7 +11,8 @@ import javax.inject.Inject;
  */
 public abstract class LombokExtension {
 
-    public static final String LOMBOK_VERSION = "1.18.48";
+    @Deprecated
+    public static final String LOMBOK_VERSION = DefaultVersions.LOMBOK_VERSION;
 
     /**
      * The version of Lombok which will be used.
@@ -24,7 +25,7 @@ public abstract class LombokExtension {
     protected abstract ProviderFactory getProviders();
 
     public LombokExtension() {
-        getVersion().convention(LOMBOK_VERSION);
+        getVersion().convention(DefaultVersions.LOMBOK_VERSION);
 
         getDisableConfig().convention(
             getProviders().systemProperty("lombok.disableConfig")

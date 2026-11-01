@@ -1,0 +1,20 @@
+plugins {
+    id "java-gradle-plugin"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.palantir.javapoet:javapoet:0.22.0")
+}
+
+gradlePlugin {
+    plugins {
+        register("build.default-versions") {
+            implementationClass = "io.freefair.gradle.plugins.build.DefaultVersionsClassPlugin"
+        }
+    }
+}
+
