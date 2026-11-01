@@ -80,6 +80,8 @@ public abstract class CompressResourcesTask extends SourceTask implements Brotli
             if (getEnableGzip().getOrElse(true)) {
                 File gzFile = new File(getOutputDir().get().getAsFile(), fileVisitDetails.getPath() + ".gz");
 
+                gzFile.getParentFile().mkdirs();
+
                 workQueue.submit(GZip.GZipWorkAction.class, gZipWorkParameters -> {
                     gZipWorkParameters.getSourceFile().set(fileVisitDetails.getFile());
                     gZipWorkParameters.getTargetFile().set(gzFile);
@@ -91,6 +93,8 @@ public abstract class CompressResourcesTask extends SourceTask implements Brotli
 
             if (getEnableBrotli().getOrElse(true)) {
                 File brFile = new File(getOutputDir().get().getAsFile(), fileVisitDetails.getPath() + ".br");
+
+                brFile.getParentFile().mkdirs();
 
                 brotliWorkQueue.submit(Brotli4jWorkAction.class, brotliWorkParameters -> {
                     brotliWorkParameters.getSourceFile().set(fileVisitDetails.getFile());
