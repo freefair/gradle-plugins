@@ -34,7 +34,7 @@ dependencies {
 
     implementation "org.springframework.boot:spring-boot-starter:4.1.2"
 
-    implementation "org.aspectj:aspectjrt:1.9.26"
+    implementation "org.aspectj:aspectjrt:1.9.27"
     implementation localGroovy()
 
     testImplementation "junit:junit:4.13.2"
