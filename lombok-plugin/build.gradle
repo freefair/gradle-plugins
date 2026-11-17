@@ -14,7 +14,7 @@ def lombokVersion = "1.18.48"
 dependencies {
     testImplementation project(":test-common")
     testImplementation "org.projectlombok:lombok:$lombokVersion"
-    testImplementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:7.5.0.8588'
+    testImplementation 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:7.6.0.18749'
 }
 
 tasks.named("generateDefaultVersionsClass", GenerateStaticFieldsClass) {
