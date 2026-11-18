@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.palantir.javapoet:javapoet:0.22.0")
+    implementation("com.palantir.javapoet:javapoet:0.23.0")
 }
 
 gradlePlugin {
